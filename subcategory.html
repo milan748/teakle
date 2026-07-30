@@ -90,7 +90,9 @@
   }
   .product-card:hover .product-image img { transform: scale(1.04); }
 
-  /* Skeleton loading */
+  /* Skeleton loading with crossfade */
+  .product-image { position: relative; }
+  .product-image.is-loading img { opacity: 0; }
   .product-image.is-loading::after {
     content: '';
     position: absolute;
@@ -141,6 +143,8 @@
   }
   .product-card:hover .wishlist-btn { opacity: 1; transform: scale(1); }
   .wishlist-btn:hover { background: var(--bronze); color: #fff; }
+  .wishlist-btn:active { transform: scale(0.85); }
+  .wishlist-btn:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; opacity: 1; transform: scale(1); }
   .wishlist-btn svg { width: 13px; height: 13px; }
   .product-info {
     display: flex;
@@ -861,6 +865,8 @@
             price: btn.dataset.price,
             image: btn.dataset.image
           });
+          btn.style.transform = 'scale(1.3)';
+          setTimeout(function() { btn.style.transform = 'scale(1)'; }, 150);
           btn.style.background = result.added ? 'var(--bronze)' : 'rgba(255,255,255,0.9)';
           btn.style.color = result.added ? '#fff' : 'var(--text-primary)';
         }
@@ -883,7 +889,12 @@
         case 'price-desc': sorted.sort(function(a, b) { return b.price - a.price; }); break;
         case 'name': sorted.sort(function(a, b) { return a.name.localeCompare(b.name); }); break;
       }
-      renderProducts(sorted);
+      grid.style.transition = 'opacity 200ms var(--ease)';
+      grid.style.opacity = '0';
+      setTimeout(function() {
+        renderProducts(sorted);
+        requestAnimationFrame(function() { grid.style.opacity = '1'; });
+      }, 200);
     });
   }
 })();

@@ -85,6 +85,8 @@
     transition: background var(--dur-fast) var(--ease);
   }
   .qty-control button:hover { background: var(--stone); }
+  .qty-control button:active { background: var(--bronze); color: var(--bg-primary); }
+  .qty-control button:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
   .qty-control span {
     width: 44px;
     text-align: center;
@@ -106,6 +108,8 @@
     transition: color var(--dur-fast) var(--ease);
   }
   .remove-btn:hover { color: var(--error); }
+.remove-btn:active { opacity: 0.7; }
+.remove-btn:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
 
   .cart-summary {
     background: var(--bg-secondary);

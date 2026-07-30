@@ -93,10 +93,16 @@ html {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Page fade-in */
+@keyframes pageIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+body { animation: pageIn 350ms var(--ease) forwards; }
 
 body {
   font-family: var(--font-body);
@@ -197,15 +203,25 @@ em, .accent-italic {
   background: var(--walnut);
   border: 1px solid var(--walnut);
   padding: 1rem 2.25rem;
-  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
 .btn-primary:hover {
   background: var(--forest);
   border-color: var(--forest);
 }
+.btn-primary:active {
+  transform: scale(0.97);
+}
 .btn-primary:focus-visible {
   outline: 2px solid var(--bronze);
   outline-offset: 3px;
+}
+.btn-primary:disabled,
+.btn-primary[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .link-quiet {
@@ -221,6 +237,9 @@ em, .accent-italic {
   border-color: var(--bronze);
   color: var(--bronze);
 }
+.link-quiet:active {
+  opacity: 0.7;
+}
 .link-quiet:focus-visible {
   outline: 2px solid var(--bronze);
   outline-offset: 3px;
@@ -229,8 +248,8 @@ em, .accent-italic {
 /* Scroll reveal utility — opacity + 12px rise, nothing bouncy */
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  transform: translateY(12px);
+  transition: opacity 400ms var(--ease), transform 400ms var(--ease);
 }
 .reveal.is-visible {
   opacity: 1;
@@ -268,18 +287,20 @@ em, .accent-italic {
   top: 0; left: 0; right: 0;
   z-index: 100;
   background: transparent;
-  transition: background var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease);
+  transition: background var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease), backdrop-filter var(--dur-slow) var(--ease);
   border-bottom: 1px solid transparent;
 }
 .site-header.is-scrolled {
   background: rgba(247, 244, 238, 0.92);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-bottom: var(--border-light);
 }
 .site-header.is-solid {
   position: fixed;
   background: rgba(247, 244, 238, 0.95);
   backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   border-bottom: var(--border-light);
 }
 .header-inner {
@@ -361,6 +382,8 @@ em, .accent-italic {
   position: relative;
   -webkit-tap-highlight-color: transparent;
 }
+.nav-toggle:active { opacity: 0.7; }
+.nav-toggle:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
 .nav-toggle span {
   position: absolute;
   left: 10px; right: 10px;
@@ -381,17 +404,19 @@ em, .accent-italic {
 .nav-toggle.is-open span { background: var(--text-primary); }
 
 .nav-backdrop {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(43,34,27,0.3);
   z-index: 150;
   opacity: 0;
-  transition: opacity var(--dur-slow) var(--ease);
+  visibility: hidden;
+  transition: opacity var(--dur-slow) var(--ease), visibility var(--dur-slow) var(--ease);
+  pointer-events: none;
 }
 .nav-backdrop.is-visible {
-  display: block;
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 /* Header actions — cart, wishlist, account icons */
@@ -574,9 +599,10 @@ em, .accent-italic {
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
-  transition: color var(--dur-fast) var(--ease);
+  transition: color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
 }
 .footer-social a:hover { color: var(--bronze); }
+.footer-social a:active { transform: scale(0.9); }
 
 /* ============================================
    Shared: Page Hero (full-bleed image header for interior pages)
@@ -653,11 +679,14 @@ em, .accent-italic {
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--dur-fast) var(--ease), visibility var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  transform: translateY(8px) scale(0.9);
+  transition: opacity var(--dur-fast) var(--ease), visibility var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
   z-index: 100;
 }
 .scroll-top-btn:hover { background: var(--bronze); }
-.scroll-top-btn.is-visible { opacity: 1; visibility: visible; }
+.scroll-top-btn:active { transform: scale(0.9); background: var(--bronze); }
+.scroll-top-btn:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+.scroll-top-btn.is-visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
 .scroll-top-btn svg {
   width: 20px;
   height: 20px;
@@ -767,7 +796,7 @@ em, .accent-italic {
     text-decoration: none;
     color: var(--text-secondary);
     border-radius: 12px;
-    transition: color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
     -webkit-tap-highlight-color: transparent;
     position: relative;
     padding: 0;
@@ -785,7 +814,7 @@ em, .accent-italic {
     width: 18px;
     height: 18px;
     stroke-width: 1.5;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform var(--dur-fast) var(--ease);
   }
   .bottom-nav-link.active {
     color: var(--bronze);
@@ -847,13 +876,9 @@ em, .accent-italic {
   /* Mobile: hide desktop link, show dropdown toggle */
   .nav-dropdown-desktop-link { display: none; }
   .nav-dropdown-toggle,
-  .nav-dropdown-menu,
-  .nav-subdropdown-toggle,
-  .nav-subdropdown-menu { display: none; }
+  .nav-subdropdown-toggle { display: none; }
   .nav-dropdown.is-open > .nav-dropdown-toggle { display: flex; }
-  .nav-dropdown.is-open > .nav-dropdown-menu { display: block; }
   .nav-subdropdown.is-open > .nav-subdropdown-toggle { display: flex; }
-  .nav-subdropdown.is-open > .nav-subdropdown-menu { display: block; }
   .nav-dropdown-toggle {
     align-items: center;
     justify-content: space-between;
@@ -873,19 +898,26 @@ em, .accent-italic {
     content: '+';
     font-size: 1.1rem;
     font-weight: 300;
-    transition: transform 0.3s var(--ease);
+    transition: transform var(--dur-fast) var(--ease);
     color: var(--text-secondary);
   }
   .nav-dropdown.is-open > .nav-dropdown-toggle::after {
     transform: rotate(45deg);
   }
   .nav-dropdown-menu {
-    display: none;
+    max-height: 0;
+    overflow: hidden;
     list-style: none;
-    padding: 0.25rem 0 0.25rem var(--space-sm);
+    padding: 0 0 0 var(--space-sm);
     margin: 0;
+    transition: max-height var(--dur-slow) var(--ease), padding var(--dur-slow) var(--ease), opacity var(--dur-fast) var(--ease);
+    opacity: 0;
   }
-  .nav-dropdown.is-open > .nav-dropdown-menu { display: block; }
+  .nav-dropdown.is-open > .nav-dropdown-menu {
+    max-height: 600px;
+    padding: 0.25rem 0 0.25rem var(--space-sm);
+    opacity: 1;
+  }
 
   /* Category items */
   .nav-subdropdown { width: 100%; }
@@ -907,19 +939,26 @@ em, .accent-italic {
   .nav-subdropdown-toggle::after {
     content: '›';
     font-size: 0.85rem;
-    transition: transform 0.3s var(--ease);
+    transition: transform var(--dur-fast) var(--ease);
     color: var(--stone);
   }
   .nav-subdropdown.is-open > .nav-subdropdown-toggle::after {
     transform: rotate(90deg);
   }
   .nav-subdropdown-menu {
-    display: none;
+    max-height: 0;
+    overflow: hidden;
     list-style: none;
-    padding: 0 0 0.125rem var(--space-sm);
+    padding: 0 0 0 var(--space-sm);
     margin: 0;
+    transition: max-height var(--dur-slow) var(--ease), padding var(--dur-slow) var(--ease), opacity var(--dur-fast) var(--ease);
+    opacity: 0;
   }
-  .nav-subdropdown.is-open > .nav-subdropdown-menu { display: block; }
+  .nav-subdropdown.is-open > .nav-subdropdown-menu {
+    max-height: 400px;
+    padding: 0 0 0.125rem var(--space-sm);
+    opacity: 1;
+  }
   .nav-subdropdown-menu li a {
     font-size: 0.75rem;
     padding: 0.3rem 0;
@@ -988,7 +1027,7 @@ em, .accent-italic {
     font-size: 1.25rem;
     font-weight: 300;
     color: var(--text-secondary);
-    transition: transform 0.25s var(--ease);
+    transition: transform var(--dur-fast) var(--ease);
   }
   .footer-nav[open] summary::after {
     content: '\2212';
