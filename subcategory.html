@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Teakle</title>
+<meta name="description" content="Browse handcrafted solid timber products from the Teakle workshop.">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .breadcrumb {
+    padding: var(--space-lg) 0 0;
+    font-size: var(--text-caption);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--bronze); }
+  .breadcrumb span { margin: 0 0.5em; }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md) var(--space-sm);
+    padding: var(--space-xl) 0 var(--space-2xl);
+  }
+  .product-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+  }
+  .product-card.is-visible { opacity: 1; transform: translateY(0); }
+  .product-card:hover { color: inherit; }
+  .product-image {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--stone);
+    margin-bottom: var(--space-sm);
+    overflow: hidden;
+  }
+  .product-image img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s var(--ease);
+  }
+  .product-card:hover .product-image img { transform: scale(1.05); }
+  .product-badge {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3em 0.6em;
+    line-height: 1;
+    z-index: 2;
+  }
+  .product-badge:empty { display: none; }
+  .wishlist-btn {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease), background 0.2s var(--ease);
+    z-index: 2;
+    color: var(--text-primary);
+  }
+  .product-card:hover .wishlist-btn { opacity: 1; transform: scale(1); }
+  .wishlist-btn:hover { background: var(--bronze); color: #fff; }
+  .wishlist-btn svg { width: 14px; height: 14px; }
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .product-info h3 {
+    font-size: var(--text-body);
+    font-weight: 500;
+    margin-bottom: 0;
+    max-width: none;
+    line-height: 1.4;
+  }
+  .product-price {
+    font-size: var(--text-caption);
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .subcategory-loading {
+    text-align: center;
+    padding: var(--space-2xl) 0;
+    color: var(--text-secondary);
+    font-size: var(--text-body);
+  }
+  @media (max-width: 860px) {
+    .products-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+    .wishlist-btn { opacity: 1; transform: scale(1); }
+  }
+  @media (max-width: 560px) {
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+    .product-image { aspect-ratio: 3 / 4; margin-bottom: var(--space-sm); }
+    .product-info h3 { font-size: var(--text-body); font-weight: 500; line-height: 1.3; }
+    .product-price { font-size: var(--text-caption); }
+    .wishlist-btn { width: 28px; height: 28px; }
+    .wishlist-btn svg { width: 12px; height: 12px; }
+  }
+  @media (max-width: 430px) {
+    .product-info h3 { font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <a href="gallery.html" class="nav-dropdown-desktop-link">Gallery</a>
+        <button class="nav-dropdown-toggle">Gallery</button>
+        <ul class="nav-dropdown-menu">
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Kitchen</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=kitchen&sub=countertop-essentials">Countertop Essentials</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=coffee-tea-station">Coffee &amp; Tea Station</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=cooking-essentials">Cooking Essentials</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=dining-serving">Dining &amp; Serving</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=storage-organization">Storage &amp; Organization</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Living Room</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=living&sub=coffee-table-decor">Coffee Table Decor</a></li>
+              <li><a href="subcategory.html?cat=living&sub=sculptures">Sculptures</a></li>
+              <li><a href="subcategory.html?cat=living&sub=vases">Vases</a></li>
+              <li><a href="subcategory.html?cat=living&sub=storage-boxes">Storage</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Bedroom</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=bedroom&sub=nightstand-essentials">Nightstand Essentials</a></li>
+              <li><a href="subcategory.html?cat=bedroom&sub=organizers">Organizers</a></li>
+              <li><a href="subcategory.html?cat=bedroom&sub=mirrors">Mirrors</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Office</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=office&sub=desk-organization">Desk Organization</a></li>
+              <li><a href="subcategory.html?cat=office&sub=pen-holders">Pen Holders</a></li>
+              <li><a href="subcategory.html?cat=office&sub=laptop-stands">Laptop Stands</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Bathroom</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=bathroom&sub=vanity-organizers">Vanity Organizers</a></li>
+              <li><a href="subcategory.html?cat=bathroom&sub=soap-dispensers">Soap Dispensers</a></li>
+              <li><a href="subcategory.html?cat=bathroom&sub=toothbrush-holders">Toothbrush Holders</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Outdoor</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=outdoor&sub=planters">Planters</a></li>
+              <li><a href="subcategory.html?cat=outdoor&sub=garden-decor">Garden Decor</a></li>
+              <li><a href="subcategory.html?cat=outdoor&sub=outdoor-serving">Outdoor Serving</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Seasonal</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=seasonal&sub=festive-decor">Festive Decor</a></li>
+              <li><a href="subcategory.html?cat=seasonal&sub=limited-editions">Limited Editions</a></li>
+              <li><a href="subcategory.html?cat=seasonal&sub=collectors-series">Collector's Series</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Dining</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=dining&sub=serving-boards">Serving Boards</a></li>
+              <li><a href="subcategory.html?cat=dining&sub=trays">Trays</a></li>
+              <li><a href="subcategory.html?cat=dining&sub=bowls">Bowls</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="archive.html">Archive</a></li>
+      <li><a href="studio.html">Studio</a></li>
+      <li><a href="journal.html">Journal</a></li>
+      <li><a href="custom.html">Customize</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="header-actions">
+      <a href="wishlist.html" class="header-icon" aria-label="Wishlist">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="icon-badge" id="wishlistCount" style="display:none">0</span>
+      </a>
+      <a href="cart.html" class="header-icon" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="icon-badge" id="cartCount" style="display:none">0</span>
+      </a>
+      <a href="login.html" class="header-icon" id="authLink" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<section class="page-hero">
+  <img id="subcategoryHeroImg" src="https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="">
+  <div class="page-hero-content">
+    <span class="eyebrow eyebrow-light">Gallery</span>
+    <h1 id="subcategoryHeroTitle">Gallery</h1>
+    <p id="subcategoryHeroDesc">Browse handcrafted solid timber products from the Teakle workshop.</p>
+  </div>
+</section>
+
+<div class="container">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="gallery.html">Gallery</a>
+    <span>/</span>
+    <a href="#" id="breadcrumbCategory">Gallery</a>
+    <span>/</span>
+    <span id="breadcrumbSubcategory">Gallery</span>
+  </nav>
+</div>
+
+<section class="products-section">
+  <div class="container">
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+        <p>Made by hand in India, one piece at a time.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="Pinterest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.78 1.2-5.08 1.2-5.08s-.31-.61-.31-1.51c0-1.42.82-2.48 1.84-2.48.87 0 1.29.65 1.29 1.43 0 .87-.56 2.18-.84 3.39-.24 1.01.51.83 1.49 1.83 1.79 0 3.17-1.89 3.17-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .87.33 1.79.75 2.3.08.1.09.19.07.29-.08.31-.25 1.01-.28 1.15-.05.19-.15.23-.35.14-1.31-.61-2.13-2.53-2.13-4.07 0-3.31 2.41-6.36 6.94-6.36 3.65 0 6.48 2.6 6.48 6.07 0 3.62-2.28 6.54-5.45 6.54-1.06 0-2.07-.55-2.41-1.21l-.66 2.5c-.24.91-.88 2.06-1.31 2.76.99.31 2.03.47 3.12.47 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg></a>
+          <a href="mailto:hello@teakle.in" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="archive.html">Archive</a></li>
+          <li><a href="studio.html">Studio</a></li>
+          <li><a href="journal.html">Journal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="trade.html">Trade &amp; Bulk Inquiries</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="custom.html">Custom Orders</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-newsletter">
+        <h4>From the Workshop</h4>
+        <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
+        <form class="footer-newsletter-form" id="footerNewsletterForm">
+          <input type="email" name="email" placeholder="Your email" required>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Teakle. All pieces made to order.</span>
+      <span>India</span>
+    </div>
+  </div>
+</footer>
+<script src="products.js"></script>
+<script src="main.js" defer></script>
+<script>
+  setTimeout(function () {
+    document.querySelectorAll('.reveal, .piece-card, .product-card, .category-card, .subcategory-card').forEach(function (el) {
+      el.classList.add('is-visible');
+    });
+  }, 1500);
+</script>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+<script>
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    scrollTopBtn.classList.toggle('is-visible', window.scrollY > 400);
+  });
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+<script>
+  const footerNewsletterForm = document.getElementById('footerNewsletterForm');
+  if (footerNewsletterForm) {
+    footerNewsletterForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('button');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sent';
+      btn.disabled = true;
+      this.querySelector('input').value = '';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 3000);
+    });
+  }
+</script>
+<script>
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var catKey = params.get('cat');
+  var subKey = params.get('sub');
+  if (!catKey || !subKey) { window.location.href = 'gallery.html'; return; }
+
+  var CATS = {
+  "kitchen": {
+    "name": "Kitchen",
+    "image": "https://images.pexels.com/photos/4805236/pexels-photo-4805236.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "countertop-essentials",
+        "name": "Countertop Essentials",
+        "image": "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "coffee-tea-station",
+        "name": "Coffee & Tea Station",
+        "image": "https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "cooking-essentials",
+        "name": "Cooking Essentials",
+        "image": "https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "dining-serving",
+        "name": "Dining & Serving",
+        "image": "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "storage-organization",
+        "name": "Storage & Organization",
+        "image": "https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "kitchen-decor",
+        "name": "Kitchen Decor",
+        "image": "https://images.pexels.com/photos/6474482/pexels-photo-6474482.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "baking-essentials",
+        "name": "Baking Essentials",
+        "image": "https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "pantry-organization",
+        "name": "Pantry Organization",
+        "image": "https://images.pexels.com/photos/6474490/pexels-photo-6474490.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "dining": {
+    "name": "Dining",
+    "image": "https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "serving-boards",
+        "name": "Serving Boards",
+        "image": "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "trays",
+        "name": "Trays",
+        "image": "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "bowls",
+        "name": "Bowls",
+        "image": "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "cutlery",
+        "name": "Cutlery",
+        "image": "https://images.pexels.com/photos/4750272/pexels-photo-4750272.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "drinkware-accessories",
+        "name": "Drinkware Accessories",
+        "image": "https://images.pexels.com/photos/6474495/pexels-photo-6474495.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "table-centerpieces",
+        "name": "Table Centerpieces",
+        "image": "https://images.pexels.com/photos/5591890/pexels-photo-5591890.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "dining-decor",
+        "name": "Dining Decor",
+        "image": "https://images.pexels.com/photos/6996100/pexels-photo-6996100.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "living": {
+    "name": "Living Room",
+    "image": "https://images.pexels.com/photos/5858085/pexels-photo-5858085.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "sculptures",
+        "name": "Sculptures",
+        "image": "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "decorative-objects",
+        "name": "Decorative Objects",
+        "image": "https://images.pexels.com/photos/6044818/pexels-photo-6044818.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "vases",
+        "name": "Vases",
+        "image": "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "coffee-table-decor",
+        "name": "Coffee Table Decor",
+        "image": "https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "shelving-decor",
+        "name": "Shelving Decor",
+        "image": "https://images.pexels.com/photos/6044812/pexels-photo-6044812.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "storage-boxes",
+        "name": "Storage Boxes",
+        "image": "https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "candle-holders",
+        "name": "Candle Holders",
+        "image": "https://images.pexels.com/photos/6044808/pexels-photo-6044808.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "bedroom": {
+    "name": "Bedroom",
+    "image": "https://images.pexels.com/photos/6045088/pexels-photo-6045088.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "nightstand-essentials",
+        "name": "Nightstand Essentials",
+        "image": "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "jewelry-storage",
+        "name": "Jewelry Storage",
+        "image": "https://images.pexels.com/photos/6045084/pexels-photo-6045084.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "organizers",
+        "name": "Organizers",
+        "image": "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "mirrors",
+        "name": "Mirrors",
+        "image": "https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "decorative-accents",
+        "name": "Decorative Accents",
+        "image": "https://images.pexels.com/photos/6045078/pexels-photo-6045078.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "bedroom-decor",
+        "name": "Bedroom Decor",
+        "image": "https://images.pexels.com/photos/6045076/pexels-photo-6045076.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "office": {
+    "name": "Office",
+    "image": "https://images.pexels.com/photos/7979604/pexels-photo-7979604.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "desk-organization",
+        "name": "Desk Organization",
+        "image": "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "pen-holders",
+        "name": "Pen Holders",
+        "image": "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "laptop-stands",
+        "name": "Laptop Stands",
+        "image": "https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "document-storage",
+        "name": "Document Storage",
+        "image": "https://images.pexels.com/photos/7979596/pexels-photo-7979596.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "office-decor",
+        "name": "Office Decor",
+        "image": "https://images.pexels.com/photos/7979594/pexels-photo-7979594.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "accessories",
+        "name": "Accessories",
+        "image": "https://images.pexels.com/photos/7979592/pexels-photo-7979592.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "bathroom": {
+    "name": "Bathroom",
+    "image": "https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "vanity-organizers",
+        "name": "Vanity Organizers",
+        "image": "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "soap-dispensers",
+        "name": "Soap Dispensers",
+        "image": "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "toothbrush-holders",
+        "name": "Toothbrush Holders",
+        "image": "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "storage",
+        "name": "Storage",
+        "image": "https://images.pexels.com/photos/8005389/pexels-photo-8005389.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "bathroom-decor",
+        "name": "Bathroom Decor",
+        "image": "https://images.pexels.com/photos/8005387/pexels-photo-8005387.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "outdoor": {
+    "name": "Outdoor",
+    "image": "https://images.pexels.com/photos/6480210/pexels-photo-6480210.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "planters",
+        "name": "Planters",
+        "image": "https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "garden-decor",
+        "name": "Garden Decor",
+        "image": "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "outdoor-serving",
+        "name": "Outdoor Serving",
+        "image": "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "patio-accessories",
+        "name": "Patio Accessories",
+        "image": "https://images.pexels.com/photos/6480202/pexels-photo-6480202.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "storage",
+        "name": "Storage",
+        "image": "https://images.pexels.com/photos/6480200/pexels-photo-6480200.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  },
+  "seasonal": {
+    "name": "Seasonal Collections",
+    "image": "https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600",
+    "subs": [
+      {
+        "key": "festive-decor",
+        "name": "Festive Decor",
+        "image": "https://images.pexels.com/photos/6045074/pexels-photo-6045074.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "limited-editions",
+        "name": "Limited Editions",
+        "image": "https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "collectors-series",
+        "name": "Collector's Series",
+        "image": "https://images.pexels.com/photos/6045070/pexels-photo-6045070.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      },
+      {
+        "key": "gift-collections",
+        "name": "Gift Collections",
+        "image": "https://images.pexels.com/photos/6045068/pexels-photo-6045068.jpeg?auto=compress&cs=tinysrgb&w=900",
+        "count": 14
+      }
+    ]
+  }
+};
+
+  var cat = CATS[catKey];
+  if (!cat) { window.location.href = 'gallery.html'; return; }
+
+  var sub = null;
+  for (var i = 0; i < cat.subs.length; i++) {
+    if (cat.subs[i].key === subKey) { sub = cat.subs[i]; break; }
+  }
+  if (!sub) { window.location.href = 'gallery-category.html?cat=' + catKey; return; }
+
+  document.title = sub.name + ' — ' + cat.name + ' — Teakle';
+
+  var bcCat = document.getElementById('breadcrumbCategory');
+  if (bcCat) { bcCat.textContent = cat.name; bcCat.href = 'gallery-category.html?cat=' + catKey; }
+  var bcSub = document.getElementById('breadcrumbSubcategory');
+  if (bcSub) bcSub.textContent = sub.name;
+
+  var heroTitle = document.getElementById('subcategoryHeroTitle');
+  if (heroTitle) heroTitle.textContent = sub.name;
+  var heroDesc = document.getElementById('subcategoryHeroDesc');
+  if (heroDesc) heroDesc.textContent = sub.name + ' — handcrafted from solid timber.';
+  var heroImg = document.getElementById('subcategoryHeroImg');
+  if (heroImg) heroImg.src = sub.image;
+
+  var grid = document.getElementById('productsGrid');
+  if (!grid) return;
+
+  /* Render products from products.js */
+  if (typeof TEAKLE_PRODUCTS === 'undefined') {
+    grid.innerHTML = '<p class="subcategory-loading">Products data not loaded.</p>';
+    return;
+  }
+
+  var filtered = TEAKLE_PRODUCTS.filter(function(p) {
+    return p.category === catKey && p.subcategory === subKey;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p class="subcategory-loading">Products coming soon. Enquire for custom options.</p>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(product) {
+    var badgeText = '';
+    if (product.availability === 'Limited Edition') badgeText = 'Limited';
+    else if (product.availability === 'In Stock') badgeText = 'In Stock';
+
+    html += '<a href="shop-detail.html?id=' + product.id + '" class="product-card">' +
+      '<div class="product-image">' +
+        '<img src="' + product.images[0] + '" alt="' + product.name + '" loading="lazy">' +
+        (badgeText ? '<span class="product-badge">' + badgeText + '</span>' : '') +
+        '<button class="wishlist-btn" data-id="' + product.id + '" data-name="' + product.name.replace(/"/g, '&quot;') + '" data-price="' + product.priceFormatted + '" data-image="' + product.images[0] + '" aria-label="Add to wishlist">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="product-info">' +
+        '<h3>' + product.name + '</h3>' +
+        '<span class="product-price">' + product.priceFormatted + '</span>' +
+      '</div>' +
+    '</a>';
+  });
+  grid.innerHTML = html;
+
+  /* Wishlist buttons on product cards */
+  grid.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof Teakle !== 'undefined' && !Teakle.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+      if (typeof Teakle !== 'undefined') {
+        var result = Teakle.toggleWishlist({
+          id: btn.dataset.id,
+          name: btn.dataset.name,
+          price: btn.dataset.price,
+          image: btn.dataset.image
+        });
+        btn.style.background = result.added ? 'var(--bronze)' : 'rgba(255,255,255,0.9)';
+        btn.style.color = result.added ? '#fff' : 'var(--text-primary)';
+      }
+    });
+
+    if (typeof Teakle !== 'undefined' && Teakle.isInWishlist(btn.dataset.id)) {
+      btn.style.background = 'var(--bronze)';
+      btn.style.color = '#fff';
+    }
+  });
+})();
+</script>
+<nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+  <a href="index.html" class="bottom-nav-link" data-page="index">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="gallery.html" class="bottom-nav-link" data-page="gallery">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span>Gallery</span>
+  </a>
+  <a href="wishlist.html" class="bottom-nav-link" data-page="wishlist">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <span>Wishlist</span>
+    <span class="bottom-nav-badge" id="bottomWishlistCount" style="display:none">0</span>
+  </a>
+  <a href="cart.html" class="bottom-nav-link" data-page="cart">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <span>Cart</span>
+    <span class="bottom-nav-badge" id="bottomCartCount" style="display:none">0</span>
+  </a>
+  <a href="login.html" class="bottom-nav-link" data-page="account">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Account</span>
+  </a>
+</nav>
+<script>
+  const siteHeader = document.getElementById('siteHeader');
+  if (siteHeader && !siteHeader.classList.contains('is-solid')) {
+    window.addEventListener('scroll', () => {
+      siteHeader.classList.toggle('is-scrolled', window.scrollY > 60);
+    });
+  }
+</script>
+<script src="app.js"></script>
+</body>
+</html>

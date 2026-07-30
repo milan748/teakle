@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — Teakle</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .cart-section {
+    padding: calc(var(--space-2xl) + var(--space-xl)) 0 var(--space-xl);
+    min-height: 60vh;
+  }
+  .cart-empty {
+    text-align: center;
+    padding: var(--space-2xl) 0;
+  }
+  .cart-empty h2 {
+    font-size: var(--text-h1);
+    margin-bottom: var(--space-sm);
+    max-width: none;
+  }
+  .cart-empty p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    max-width: none;
+  }
+
+  .cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .cart-items { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+  .cart-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: var(--space-sm);
+    align-items: center;
+    padding: var(--space-sm);
+    background: var(--bg-secondary);
+    border: 1px solid rgba(43,34,27,0.06);
+  }
+  .cart-item-image {
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    background: var(--stone);
+  }
+  .cart-item-image img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-item-info h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    max-width: none;
+  }
+  .cart-item-info .item-price {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    max-width: none;
+  }
+  .cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .qty-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--stone);
+  }
+  .qty-control button {
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .qty-control button:hover { background: var(--stone); }
+  .qty-control span {
+    width: 44px;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-left: 1px solid var(--stone);
+    border-right: 1px solid var(--stone);
+    line-height: 44px;
+  }
+  .remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: var(--space-xs) 0;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .remove-btn:hover { color: #b44; }
+
+  .cart-summary {
+    background: var(--bg-secondary);
+    padding: var(--space-md);
+    border: 1px solid rgba(43,34,27,0.06);
+    position: sticky;
+    top: 120px;
+  }
+  .cart-summary h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: var(--space-sm);
+    max-width: none;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-sm) 0;
+    font-size: 0.8rem;
+    max-width: none;
+  }
+  .summary-row.total {
+    border-top: 1px solid var(--stone);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .checkout-btn {
+    display: block;
+    width: 100%;
+    margin-top: var(--space-sm);
+    padding: var(--space-md);
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg-primary);
+    background: var(--walnut);
+    border: 1px solid var(--walnut);
+    cursor: pointer;
+    text-align: center;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .checkout-btn:hover { background: var(--forest); }
+
+  .continue-link {
+    display: block;
+    text-align: center;
+    margin-top: var(--space-sm);
+    font-size: var(--text-caption);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--stone);
+    padding-bottom: var(--space-xs);
+    max-width: none;
+    transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  }
+  .continue-link:hover { color: var(--bronze); border-color: var(--bronze); }
+
+  @media (max-width: 860px) {
+    .cart-layout { grid-template-columns: 1fr; gap: var(--space-md); }
+    .cart-summary { position: static; }
+    .cart-item { grid-template-columns: 60px 1fr; gap: var(--space-sm); }
+    .cart-item-actions { grid-column: 1 / -1; justify-content: space-between; }
+    .cart-item-info h3 { font-size: var(--text-subhead); }
+    .cart-item-info .item-price { font-size: var(--text-caption); }
+    .remove-btn { font-size: var(--text-caption); }
+    .qty-control button { width: 44px; height: 44px; }
+    .qty-control span { width: 44px; line-height: 44px; }
+    .checkout-btn { font-size: var(--text-caption); }
+    .continue-link { font-size: var(--text-caption); }
+  }
+  @media (max-width: 560px) {
+    .cart-section { padding: calc(var(--space-lg) + var(--space-md)) 0 var(--space-lg); min-height: 50vh; }
+    .cart-section h1 { font-size: var(--text-h1); }
+    .cart-empty { padding: var(--space-lg) 0; }
+    .cart-empty h2 { font-size: var(--text-h2); }
+    .cart-empty p { font-size: var(--text-body); }
+    .cart-item { grid-template-columns: 50px 1fr; gap: var(--space-sm); padding: var(--space-sm) 0; }
+    .cart-item-info h3 { font-size: var(--text-subhead); }
+    .cart-item-info .item-price { font-size: var(--text-caption); }
+    .qty-control button { width: 44px; height: 44px; }
+    .qty-control span { width: 44px; line-height: 44px; font-size: var(--text-caption); }
+    .remove-btn { font-size: var(--text-caption); }
+    .cart-summary-inner { padding: var(--space-md); }
+    .summary-row { font-size: var(--text-body); padding: var(--space-sm) 0; }
+    .summary-total { font-size: var(--text-subhead); }
+    .cart-checkout { min-height: 48px; font-size: var(--text-caption); }
+    .continue-link { font-size: var(--text-caption); }
+  }
+  @media (max-width: 430px) {
+    .cart-section { padding-top: calc(var(--space-lg) + var(--space-sm)); }
+    .cart-item { grid-template-columns: 44px 1fr; }
+    .cart-empty h2 { font-size: 1.25rem; }
+    .summary-total { font-size: var(--text-subhead); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+    <ul class="nav-links" id="navLinks">
+      <li class="nav-dropdown">
+        <a href="gallery.html" class="nav-dropdown-desktop-link">Gallery</a>
+        <button class="nav-dropdown-toggle">Gallery</button>
+        <ul class="nav-dropdown-menu">
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Kitchen</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=kitchen&sub=countertop-essentials">Countertop Essentials</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=coffee-tea-station">Coffee &amp; Tea Station</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=cooking-essentials">Cooking Essentials</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=dining-serving">Dining &amp; Serving</a></li>
+              <li><a href="subcategory.html?cat=kitchen&sub=storage-organization">Storage &amp; Organization</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Living Room</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=living&sub=coffee-table-decor">Coffee Table Decor</a></li>
+              <li><a href="subcategory.html?cat=living&sub=sculptures">Sculptures</a></li>
+              <li><a href="subcategory.html?cat=living&sub=vases">Vases</a></li>
+              <li><a href="subcategory.html?cat=living&sub=storage-boxes">Storage</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Bedroom</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=bedroom&sub=nightstand-essentials">Nightstand Essentials</a></li>
+              <li><a href="subcategory.html?cat=bedroom&sub=organizers">Organizers</a></li>
+              <li><a href="subcategory.html?cat=bedroom&sub=mirrors">Mirrors</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Office</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=office&sub=desk-organization">Desk Organization</a></li>
+              <li><a href="subcategory.html?cat=office&sub=pen-holders">Pen Holders</a></li>
+              <li><a href="subcategory.html?cat=office&sub=laptop-stands">Laptop Stands</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Bathroom</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=bathroom&sub=vanity-organizers">Vanity Organizers</a></li>
+              <li><a href="subcategory.html?cat=bathroom&sub=soap-dispensers">Soap Dispensers</a></li>
+              <li><a href="subcategory.html?cat=bathroom&sub=toothbrush-holders">Toothbrush Holders</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Outdoor</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=outdoor&sub=planters">Planters</a></li>
+              <li><a href="subcategory.html?cat=outdoor&sub=garden-decor">Garden Decor</a></li>
+              <li><a href="subcategory.html?cat=outdoor&sub=outdoor-serving">Outdoor Serving</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Seasonal</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=seasonal&sub=festive-decor">Festive Decor</a></li>
+              <li><a href="subcategory.html?cat=seasonal&sub=limited-editions">Limited Editions</a></li>
+              <li><a href="subcategory.html?cat=seasonal&sub=collectors-series">Collector's Series</a></li>
+            </ul>
+          </li>
+          <li class="nav-subdropdown">
+            <button class="nav-subdropdown-toggle">Dining</button>
+            <ul class="nav-subdropdown-menu">
+              <li><a href="subcategory.html?cat=dining&sub=serving-boards">Serving Boards</a></li>
+              <li><a href="subcategory.html?cat=dining&sub=trays">Trays</a></li>
+              <li><a href="subcategory.html?cat=dining&sub=bowls">Bowls</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="archive.html">Archive</a></li>
+      <li><a href="studio.html">Studio</a></li>
+      <li><a href="journal.html">Journal</a></li>
+      <li><a href="custom.html">Customize</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="header-actions">
+      <a href="wishlist.html" class="header-icon" aria-label="Wishlist">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="icon-badge" id="wishlistCount" style="display:none">0</span>
+      </a>
+      <a href="cart.html" class="header-icon" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="icon-badge" id="cartCount" style="display:none">0</span>
+      </a>
+      <a href="login.html" class="header-icon" id="authLink" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<section class="cart-section">
+  <div class="container">
+    <div class="page-header" style="padding:0 0 var(--space-md)">
+      <h1 style="font-size:var(--text-h1);text-align:left;max-width:none">Your Cart</h1>
+    </div>
+
+    <div id="cartContent"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+        <p>Made by hand in India, one piece at a time.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="Pinterest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.78 1.2-5.08 1.2-5.08s-.31-.61-.31-1.51c0-1.42.82-2.48 1.84-2.48.87 0 1.29.65 1.29 1.43 0 .87-.56 2.18-.84 3.39-.24 1.01.51.83 1.49 1.83 1.79 0 3.17-1.89 3.17-4.61 0-2.41-1.73-4.1-4.21-4.1-2.87 0-4.55 2.15-4.55 4.37 0 .87.33 1.79.75 2.3.08.1.09.19.07.29-.08.31-.25 1.01-.28 1.15-.05.19-.15.23-.35.14-1.31-.61-2.13-2.53-2.13-4.07 0-3.31 2.41-6.36 6.94-6.36 3.65 0 6.48 2.6 6.48 6.07 0 3.62-2.28 6.54-5.45 6.54-1.06 0-2.07-.55-2.41-1.21l-.66 2.5c-.24.91-.88 2.06-1.31 2.76.99.31 2.03.47 3.12.47 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg></a>
+          <a href="mailto:hello@teakle.in" aria-label="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="archive.html">Archive</a></li>
+          <li><a href="studio.html">Studio</a></li>
+          <li><a href="journal.html">Journal</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul>
+          <li><a href="trade.html">Trade &amp; Bulk Inquiries</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="custom.html">Custom Orders</a></li>
+        </ul>
+      </div>
+      <div class="footer-col footer-newsletter">
+        <h4>From the Workshop</h4>
+        <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
+        <form class="footer-newsletter-form" id="footerNewsletterForm">
+          <input type="email" name="email" placeholder="Your email" required>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Teakle. All pieces made to order.</span>
+      <span>India</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js" defer></script>
+<script>
+  /* Safety net: if main.js fails to load for any reason (missing file,
+     wrong path, blocked script), force all reveal content visible after
+     a short delay so the page can never get stuck blank. */
+  setTimeout(function () {
+    document.querySelectorAll('.reveal, .piece-card').forEach(function (el) {
+      el.classList.add('is-visible');
+    });
+  }, 1500);
+</script>
+<script>
+  const siteHeader = document.getElementById('siteHeader');
+  if (siteHeader && !siteHeader.classList.contains('is-solid')) {
+    window.addEventListener('scroll', () => {
+      siteHeader.classList.toggle('is-scrolled', window.scrollY > 60);
+    });
+  }
+</script>
+<script src="app.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var container = document.getElementById('cartContent');
+
+    function render() {
+      var cart = Teakle.getCart();
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="cart-empty"><h2>Your cart is empty</h2><p>Find something you love in the gallery.</p><a href="gallery.html" class="btn-primary">Browse Gallery</a></div>';
+        return;
+      }
+
+      var total = 0;
+      var itemsHtml = cart.map(function (item) {
+        var lineTotal = 0;
+        if (item.price) {
+          var num = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+          if (!isNaN(num)) lineTotal = num * (item.qty || 1);
+          total += lineTotal;
+        }
+        return '<div class="cart-item" data-id="' + item.id + '">' +
+          '<div class="cart-item-image"><img src="' + (item.image || '') + '" alt="' + item.name + '"></div>' +
+          '<div class="cart-item-info"><h3>' + item.name + '</h3>' +
+          (item.price ? '<span class="item-price">' + item.price + '</span>' : '') +
+          '</div>' +
+          '<div class="cart-item-actions">' +
+            '<div class="qty-control">' +
+              '<button class="qty-minus" aria-label="Decrease quantity">&minus;</button>' +
+              '<span>' + (item.qty || 1) + '</span>' +
+              '<button class="qty-plus" aria-label="Increase quantity">+</button>' +
+            '</div>' +
+            '<button class="remove-btn" data-id="' + item.id + '">Remove</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      var summaryHtml = '<div class="cart-layout">' +
+        '<div class="cart-items">' + itemsHtml + '</div>' +
+        '<div class="cart-summary">' +
+          '<h2>Summary</h2>' +
+          '<div class="summary-row"><span>Items</span><span>' + cart.reduce(function (s, c) { return s + (c.qty || 1); }, 0) + '</span></div>' +
+          '<div class="summary-row total"><span>Total</span><span>' + (total > 0 ? '₹' + total.toLocaleString() : '—') + '</span></div>' +
+          '<button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>' +
+          '<a href="gallery.html" class="continue-link">Continue Shopping</a>' +
+        '</div>' +
+      '</div>';
+
+      container.innerHTML = summaryHtml;
+
+      container.querySelectorAll('.qty-minus').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.closest('.cart-item').dataset.id;
+          var item = cart.find(function (c) { return c.id === id; });
+          if (item) {
+            Teakle.updateCartQty(id, (item.qty || 1) - 1);
+            render();
+          }
+        });
+      });
+
+      container.querySelectorAll('.qty-plus').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.closest('.cart-item').dataset.id;
+          var item = cart.find(function (c) { return c.id === id; });
+          if (item) {
+            Teakle.updateCartQty(id, (item.qty || 1) + 1);
+            render();
+          }
+        });
+      });
+
+      container.querySelectorAll('.remove-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          Teakle.removeFromCart(btn.dataset.id);
+          render();
+        });
+      });
+
+      var checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function () {
+          if (!Teakle.isLoggedIn()) {
+            window.location.href = 'login.html';
+          } else {
+            alert('Checkout coming soon!');
+          }
+        });
+      }
+    }
+
+    render();
+  });
+</script>
+<script>
+  var footerNewsletterForm = document.getElementById('footerNewsletterForm');
+  if (footerNewsletterForm) {
+    footerNewsletterForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = this.querySelector('button');
+      var originalText = btn.textContent;
+      btn.textContent = 'Sent';
+      btn.disabled = true;
+      this.querySelector('input').value = '';
+      setTimeout(function() {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 3000);
+    });
+  }
+</script>
+<button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">
+  <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+<script>
+  var scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', function () {
+    scrollTopBtn.classList.toggle('is-visible', window.scrollY > 400);
+  });
+  scrollTopBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+<nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+  <a href="index.html" class="bottom-nav-link" data-page="index">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="gallery.html" class="bottom-nav-link" data-page="gallery">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span>Gallery</span>
+  </a>
+  <a href="wishlist.html" class="bottom-nav-link" data-page="wishlist">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+    <span>Wishlist</span>
+    <span class="bottom-nav-badge" id="bottomWishlistCount" style="display:none">0</span>
+  </a>
+  <a href="cart.html" class="bottom-nav-link" data-page="cart">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    <span>Cart</span>
+    <span class="bottom-nav-badge" id="bottomCartCount" style="display:none">0</span>
+  </a>
+  <a href="login.html" class="bottom-nav-link" data-page="account">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Account</span>
+  </a>
+</nav>
+</body>
+</html>
