@@ -18,11 +18,54 @@
   .breadcrumb a:hover { color: var(--bronze); }
   .breadcrumb span { margin: 0 0.5em; }
 
+  /* Sort bar */
+  .sort-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) 0;
+    border-bottom: var(--border-subtle);
+    margin-bottom: var(--space-md);
+  }
+  .sort-bar-count {
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sort-bar-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .sort-bar-label {
+    font-size: var(--text-caption);
+    color: var(--text-secondary);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sort-bar-select {
+    font-family: var(--font-body);
+    font-size: var(--text-caption);
+    color: var(--text-primary);
+    background: none;
+    border: var(--border-hair);
+    padding: 0.4em 1.8em 0.4em 0.6em;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2361574F' stroke-width='1.2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5em center;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .sort-bar-select:hover { border-color: var(--bronze); }
+  .sort-bar-select:focus { outline: none; border-color: var(--bronze); }
+
   .products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-md) var(--space-sm);
-    padding: var(--space-xl) 0 var(--space-2xl);
+    padding: 0 0 var(--space-2xl);
   }
   .product-card {
     display: block;
@@ -37,19 +80,34 @@
   .product-image {
     position: relative;
     aspect-ratio: 3 / 4;
-    background: var(--stone);
-    margin-bottom: var(--space-sm);
+    background: var(--bg-secondary);
+    margin-bottom: 0.6rem;
     overflow: hidden;
   }
   .product-image img {
     width: 100%; height: 100%; object-fit: cover;
-    transition: transform var(--dur-slow) var(--ease);
+    transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
   }
-  .product-card:hover .product-image img { transform: scale(1.05); }
+  .product-card:hover .product-image img { transform: scale(1.04); }
+
+  /* Skeleton loading */
+  .product-image.is-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(43,34,27,0.04) 50%, var(--bg-secondary) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
   .product-badge {
     position: absolute;
-    top: var(--space-sm);
-    left: var(--space-sm);
+    top: 0.6rem;
+    left: 0.6rem;
     background: var(--bg-primary);
     color: var(--text-primary);
     font-family: var(--font-body);
@@ -64,10 +122,10 @@
   .product-badge:empty { display: none; }
   .wishlist-btn {
     position: absolute;
-    top: var(--space-sm);
-    right: var(--space-sm);
-    width: 32px;
-    height: 32px;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 30px;
+    height: 30px;
     background: rgba(255,255,255,0.9);
     border: none;
     border-radius: var(--radius-full);
@@ -76,26 +134,28 @@
     justify-content: center;
     cursor: pointer;
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.85);
     transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
     z-index: 2;
     color: var(--text-primary);
   }
   .product-card:hover .wishlist-btn { opacity: 1; transform: scale(1); }
   .wishlist-btn:hover { background: var(--bronze); color: #fff; }
-  .wishlist-btn svg { width: 14px; height: 14px; }
+  .wishlist-btn svg { width: 13px; height: 13px; }
   .product-info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.15rem;
   }
   .product-info h3 {
     font-size: var(--text-body);
     font-weight: 500;
     margin-bottom: 0;
     max-width: none;
-    line-height: 1.4;
+    line-height: 1.3;
+    transition: color var(--dur-fast) var(--ease);
   }
+  .product-card:hover .product-info h3 { color: var(--bronze); }
   .product-price {
     font-size: var(--text-caption);
     letter-spacing: 0.02em;
@@ -111,17 +171,20 @@
   @media (max-width: 860px) {
     .products-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
     .wishlist-btn { opacity: 1; transform: scale(1); }
+    .sort-bar { flex-wrap: wrap; gap: var(--space-xs); }
   }
   @media (max-width: 560px) {
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-    .product-image { aspect-ratio: 3 / 4; margin-bottom: var(--space-sm); }
-    .product-info h3 { font-size: var(--text-body); font-weight: 500; line-height: 1.3; }
-    .product-price { font-size: var(--text-caption); }
-    .wishlist-btn { width: 28px; height: 28px; }
-    .wishlist-btn svg { width: 12px; height: 12px; }
+    .product-image { aspect-ratio: 3 / 4; margin-bottom: var(--space-xs); }
+    .product-info h3 { font-size: var(--text-caption); font-weight: 500; line-height: 1.3; }
+    .product-price { font-size: 0.65rem; }
+    .wishlist-btn { width: 26px; height: 26px; }
+    .wishlist-btn svg { width: 11px; height: 11px; }
+    .sort-bar { padding: var(--space-sm) 0; }
+    .sort-bar-count { font-size: 0.65rem; }
   }
   @media (max-width: 430px) {
-    .product-info h3 { font-size: var(--text-body); }
+    .product-info h3 { font-size: var(--text-caption); }
   }
 </style>
 </head>
@@ -252,6 +315,18 @@
 
 <section class="products-section">
   <div class="container">
+    <div class="sort-bar" id="sortBar">
+      <span class="sort-bar-count" id="sortBarCount"></span>
+      <div class="sort-bar-controls">
+        <span class="sort-bar-label">Sort by</span>
+        <select class="sort-bar-select" id="sortSelect">
+          <option value="featured">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+    </div>
     <div class="products-grid" id="productsGrid"></div>
   </div>
 </section>
@@ -710,6 +785,8 @@
 
   var grid = document.getElementById('productsGrid');
   if (!grid) return;
+  var sortSelect = document.getElementById('sortSelect');
+  var sortBarCount = document.getElementById('sortBarCount');
 
   /* Render products from products.js */
   if (typeof TEAKLE_PRODUCTS === 'undefined') {
@@ -717,63 +794,95 @@
     return;
   }
 
-  var filtered = TEAKLE_PRODUCTS.filter(function(p) {
+  var allFiltered = TEAKLE_PRODUCTS.filter(function(p) {
     return p.category === catKey && p.subcategory === subKey;
   });
 
-  if (filtered.length === 0) {
+  if (allFiltered.length === 0) {
     grid.innerHTML = '<p class="subcategory-loading">Products coming soon. Enquire for custom options.</p>';
     return;
   }
 
-  var html = '';
-  filtered.forEach(function(product) {
-    var badgeText = '';
-    if (product.availability === 'Limited Edition') badgeText = 'Limited';
-    else if (product.availability === 'In Stock') badgeText = 'In Stock';
+  function renderProducts(products) {
+    var html = '';
+    products.forEach(function(product) {
+      var badgeText = '';
+      if (product.availability === 'Limited Edition') badgeText = 'Limited';
+      else if (product.availability === 'In Stock') badgeText = 'In Stock';
 
-    html += '<a href="shop-detail.html?id=' + product.id + '" class="product-card">' +
-      '<div class="product-image">' +
-        '<img src="' + product.images[0] + '" alt="' + product.name + '" loading="lazy">' +
-        (badgeText ? '<span class="product-badge">' + badgeText + '</span>' : '') +
-        '<button class="wishlist-btn" data-id="' + product.id + '" data-name="' + product.name.replace(/"/g, '&quot;') + '" data-price="' + product.priceFormatted + '" data-image="' + product.images[0] + '" aria-label="Add to wishlist">' +
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
-        '</button>' +
-      '</div>' +
-      '<div class="product-info">' +
-        '<h3>' + product.name + '</h3>' +
-        '<span class="product-price">' + product.priceFormatted + '</span>' +
-      '</div>' +
-    '</a>';
-  });
-  grid.innerHTML = html;
+      html += '<a href="shop-detail.html?id=' + product.id + '" class="product-card">' +
+        '<div class="product-image">' +
+          '<img src="' + product.images[0] + '" alt="' + product.name + '" loading="lazy">' +
+          (badgeText ? '<span class="product-badge">' + badgeText + '</span>' : '') +
+          '<button class="wishlist-btn" data-id="' + product.id + '" data-name="' + product.name.replace(/"/g, '&quot;') + '" data-price="' + product.priceFormatted + '" data-image="' + product.images[0] + '" aria-label="Add to wishlist">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="product-info">' +
+          '<h3>' + product.name + '</h3>' +
+          '<span class="product-price">' + product.priceFormatted + '</span>' +
+        '</div>' +
+      '</a>';
+    });
+    grid.innerHTML = html;
 
-  /* Wishlist buttons on product cards */
-  grid.querySelectorAll('.wishlist-btn').forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof Teakle !== 'undefined' && !Teakle.isLoggedIn()) {
-        window.location.href = 'login.html';
-        return;
-      }
-      if (typeof Teakle !== 'undefined') {
-        var result = Teakle.toggleWishlist({
-          id: btn.dataset.id,
-          name: btn.dataset.name,
-          price: btn.dataset.price,
-          image: btn.dataset.image
-        });
-        btn.style.background = result.added ? 'var(--bronze)' : 'rgba(255,255,255,0.9)';
-        btn.style.color = result.added ? '#fff' : 'var(--text-primary)';
-      }
+    if (sortBarCount) {
+      sortBarCount.textContent = products.length + ' piece' + (products.length !== 1 ? 's' : '');
+    }
+
+    grid.querySelectorAll('.product-card').forEach(function(card, i) {
+      setTimeout(function() { card.classList.add('is-visible'); }, 60 * i);
     });
 
-    if (typeof Teakle !== 'undefined' && Teakle.isInWishlist(btn.dataset.id)) {
-      btn.style.background = 'var(--bronze)';
-      btn.style.color = '#fff';
-    }
-  });
+    grid.querySelectorAll('.product-image').forEach(function(container) {
+      var img = container.querySelector('img');
+      if (!img) return;
+      if (img.complete) return;
+      container.classList.add('is-loading');
+      img.addEventListener('load', function() { container.classList.remove('is-loading'); });
+      img.addEventListener('error', function() { container.classList.remove('is-loading'); });
+    });
+
+    grid.querySelectorAll('.wishlist-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof Teakle !== 'undefined' && !Teakle.isLoggedIn()) {
+          window.location.href = 'login.html';
+          return;
+        }
+        if (typeof Teakle !== 'undefined') {
+          var result = Teakle.toggleWishlist({
+            id: btn.dataset.id,
+            name: btn.dataset.name,
+            price: btn.dataset.price,
+            image: btn.dataset.image
+          });
+          btn.style.background = result.added ? 'var(--bronze)' : 'rgba(255,255,255,0.9)';
+          btn.style.color = result.added ? '#fff' : 'var(--text-primary)';
+        }
+      });
+
+      if (typeof Teakle !== 'undefined' && Teakle.isInWishlist(btn.dataset.id)) {
+        btn.style.background = 'var(--bronze)';
+        btn.style.color = '#fff';
+      }
+    });
+  }
+
+  renderProducts(allFiltered);
+
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      var sorted = allFiltered.slice();
+      switch (sortSelect.value) {
+        case 'price-asc': sorted.sort(function(a, b) { return a.price - b.price; }); break;
+        case 'price-desc': sorted.sort(function(a, b) { return b.price - a.price; }); break;
+        case 'name': sorted.sort(function(a, b) { return a.name.localeCompare(b.name); }); break;
+      }
+      renderProducts(sorted);
+    });
+  }
 })();
 </script>
 <nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
