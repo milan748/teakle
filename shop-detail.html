@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Product — Teakle</title>
 <meta name="description" content="Handcrafted solid timber product from Teakle — made to order in India.">
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <style>
 /* ============================================
@@ -1142,13 +1143,13 @@
       <span class="eyebrow">Your Experience</span>
       <h2>Write a Review</h2>
       <div class="form-group">
-        <label>Your Rating</label>
-        <div class="form-rating" id="formRating">
-          <button type="button" class="form-rating-star" data-val="1">★</button>
-          <button type="button" class="form-rating-star" data-val="2">★</button>
-          <button type="button" class="form-rating-star" data-val="3">★</button>
-          <button type="button" class="form-rating-star" data-val="4">★</button>
-          <button type="button" class="form-rating-star" data-val="5">★</button>
+        <label id="ratingLabel">Your Rating</label>
+        <div class="form-rating" id="formRating" role="radiogroup" aria-labelledby="ratingLabel">
+          <button type="button" class="form-rating-star" role="radio" aria-checked="false" data-val="1">★</button>
+          <button type="button" class="form-rating-star" role="radio" aria-checked="false" data-val="2">★</button>
+          <button type="button" class="form-rating-star" role="radio" aria-checked="false" data-val="3">★</button>
+          <button type="button" class="form-rating-star" role="radio" aria-checked="false" data-val="4">★</button>
+          <button type="button" class="form-rating-star" role="radio" aria-checked="false" data-val="5">★</button>
         </div>
       </div>
       <div class="form-group">
@@ -1169,14 +1170,14 @@
 </section>
 
 <!-- Fullscreen Gallery Overlay -->
-<div class="gallery-overlay" id="galleryOverlay">
+<div class="gallery-overlay" id="galleryOverlay" role="dialog" aria-modal="true" aria-label="Fullscreen image gallery">
   <button class="gallery-overlay-close" id="overlayClose" aria-label="Close fullscreen">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
   </button>
   <button class="gallery-overlay-nav gallery-overlay-prev" id="overlayPrev" aria-label="Previous image">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
-  <img id="overlayImage" src="" alt="">
+  <img id="overlayImage" src="" alt="Product image">
   <button class="gallery-overlay-nav gallery-overlay-next" id="overlayNext" aria-label="Next image">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 18 15 12 9 6"/></svg>
   </button>
@@ -1197,7 +1198,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+        <a href="index.html" class="logo"><img loading="lazy" src="assets/logo-black.png" alt="Teakle"></a>
         <p>Made by hand in India, one piece at a time.</p>
         <div class="footer-social">
           <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
@@ -1211,7 +1212,7 @@
         <h4>From the Workshop</h4>
         <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
         <form class="footer-newsletter-form" id="footerNewsletterForm">
-          <input type="email" name="email" placeholder="Your email" required>
+          <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter">
           <button type="submit">Send</button>
         </form>
       </div>
@@ -1312,9 +1313,15 @@
   product.thumbnails.forEach(function(thumb, i) {
     var div = document.createElement('div');
     div.className = 'product-thumb' + (i === 0 ? ' is-active' : '');
-    div.innerHTML = '<img src="' + thumb + '" alt="' + product.name + ' view ' + (i+1) + '">';
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('role', 'button');
+    div.setAttribute('aria-label', 'View image ' + (i+1) + ' of ' + product.images.length);
+    div.innerHTML = '<img loading="lazy" src="' + thumb + '" alt="' + product.name + ' view ' + (i+1) + '">';
     div.addEventListener('click', function() {
       setActiveImage(i);
+    });
+    div.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveImage(i); }
     });
     thumbsContainer.appendChild(div);
   });
@@ -1357,16 +1364,21 @@
     openOverlay(currentImageIdx);
   });
 
+  var lastFocusedEl = null;
   function openOverlay(idx) {
     currentImageIdx = idx;
+    lastFocusedEl = document.activeElement;
     overlayImg.src = product.images[idx];
+    overlayImg.alt = product.name + ' image ' + (idx + 1);
     overlayCounter.textContent = (idx + 1) + ' / ' + product.images.length;
     overlay.classList.add('is-visible');
     document.body.style.overflow = 'hidden';
+    document.getElementById('overlayClose').focus();
   }
   function closeOverlay() {
     overlay.classList.remove('is-visible');
     document.body.style.overflow = '';
+    if (lastFocusedEl) lastFocusedEl.focus();
   }
   document.getElementById('overlayClose').addEventListener('click', closeOverlay);
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closeOverlay(); });
@@ -1387,6 +1399,13 @@
     if (e.key === 'Escape') closeOverlay();
     if (e.key === 'ArrowLeft') { currentImageIdx = (currentImageIdx - 1 + product.images.length) % product.images.length; overlayImg.src = product.images[currentImageIdx]; overlayCounter.textContent = (currentImageIdx+1)+' / '+product.images.length; }
     if (e.key === 'ArrowRight') { currentImageIdx = (currentImageIdx + 1) % product.images.length; overlayImg.src = product.images[currentImageIdx]; overlayCounter.textContent = (currentImageIdx+1)+' / '+product.images.length; }
+    if (e.key === 'Tab') {
+      var focusable = overlay.querySelectorAll('button');
+      if (focusable.length === 0) return;
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   });
 
   /* ---- Badge ---- */
@@ -1443,12 +1462,15 @@
   /* FAQs */
   var faqHtml = '';
   product.faqs.forEach(function(f, i) {
-    faqHtml += '<div class="faq-item" data-idx="' + i + '"><button class="faq-q">' + f.q + '</button><div class="faq-a">' + f.a + '</div></div>';
+    faqHtml += '<div class="faq-item" data-idx="' + i + '"><button class="faq-q" aria-expanded="false">' + f.q + '</button><div class="faq-a" aria-hidden="true">' + f.a + '</div></div>';
   });
   document.getElementById('faqList').innerHTML = faqHtml;
   document.querySelectorAll('.faq-q').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      btn.closest('.faq-item').classList.toggle('is-open');
+      var item = btn.closest('.faq-item');
+      var open = item.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open);
+      item.querySelector('.faq-a').setAttribute('aria-hidden', !open);
     });
   });
 
@@ -1459,8 +1481,8 @@
     var rp = TEAKLE_PRODUCTS.find(function(p) { return p.id === rid; });
     if (!rp) return;
     relatedHtml += '<a href="shop-detail.html?id=' + rp.id + '" class="piece-card">' +
-      '<div class="piece-image"><img src="' + rp.images[0] + '" alt="' + rp.name + '">' +
-      (rp.images[1] ? '<img class="img-secondary" src="' + rp.images[1] + '" alt="' + rp.name + ' detail">' : '') +
+      '<div class="piece-image"><img loading="lazy" src="' + rp.images[0] + '" alt="' + rp.name + '">' +
+      (rp.images[1] ? '<img class="img-secondary" loading="lazy" src="' + rp.images[1] + '" alt="' + rp.name + ' detail">' : '') +
       '</div><h3 class="piece-title">' + rp.name + '</h3>' +
       '<p class="piece-meta"><span>' + rp.priceFormatted + '</span><span class="discover">Discover →</span></p></a>';
   });
@@ -1482,8 +1504,8 @@
       var rp = TEAKLE_PRODUCTS.find(function(p) { return p.id === rid; });
       if (!rp) return;
       rvHtml += '<a href="shop-detail.html?id=' + rp.id + '" class="piece-card">' +
-        '<div class="piece-image"><img src="' + rp.images[0] + '" alt="' + rp.name + '">' +
-        (rp.images[1] ? '<img class="img-secondary" src="' + rp.images[1] + '" alt="' + rp.name + ' detail">' : '') +
+        '<div class="piece-image"><img loading="lazy" src="' + rp.images[0] + '" alt="' + rp.name + '">' +
+        (rp.images[1] ? '<img class="img-secondary" loading="lazy" src="' + rp.images[1] + '" alt="' + rp.name + ' detail">' : '') +
         '</div><h3 class="piece-title">' + rp.name + '</h3>' +
         '<p class="piece-meta"><span>' + rp.priceFormatted + '</span><span class="discover">Discover →</span></p></a>';
     });
@@ -1529,6 +1551,7 @@
       selectedRating = parseInt(btn.dataset.val);
       document.querySelectorAll('.form-rating-star').forEach(function(s, i) {
         s.classList.toggle('is-active', i < selectedRating);
+        s.setAttribute('aria-checked', i < selectedRating);
       });
     });
   });

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gallery — Teakle</title>
 <meta name="description" content="Browse the full Teakle gallery — kitchen, dining, living, bedroom, office, bathroom, outdoor, and seasonal collections, all handcrafted from solid timber.">
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <style>
 /* ============================================
@@ -931,7 +932,7 @@
         <h4>From the Workshop</h4>
         <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
         <form class="footer-newsletter-form" id="footerNewsletterForm">
-          <input type="email" name="email" placeholder="Your email" required>
+          <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter">
           <button type="submit">Send</button>
         </form>
       </div>
@@ -1074,7 +1075,6 @@
     <span>Account</span>
   </a>
 </nav>
-<script src="main.js" defer></script>
 <script>
   /* Safety net: if main.js fails to load for any reason (missing file,
      wrong path, blocked script), force all reveal content visible after

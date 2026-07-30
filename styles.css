@@ -155,15 +155,11 @@ h1, h2, h3, h4 {
   color: var(--text-primary);
 }
 
-em, .accent-italic {
+em {
   font-style: italic;
   font-weight: 500;
 }
 
-
-.text-block p {
-  max-width: 62ch;
-}
 
 .container {
   max-width: var(--container);
@@ -254,13 +250,6 @@ em, .accent-italic {
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* If JavaScript is unavailable, never leave content invisible */
-.no-js .reveal,
-.no-js .piece-card {
-  opacity: 1 !important;
-  transform: none !important;
 }
 
 /* Slight image zoom on hover, per brief (2%) */
@@ -488,6 +477,13 @@ em, .accent-italic {
   padding: var(--space-xl) 0 var(--space-md);
   border-top: 1px solid var(--stone);
 }
+/* Contrast fix: darken secondary text in footer (4.5:1 on bg-secondary) */
+.site-footer { color: #4A4038; }
+.site-footer .footer-brand p,
+.site-footer .footer-col a,
+.site-footer .footer-bottom,
+.site-footer .footer-newsletter p,
+.site-footer .footer-newsletter input::placeholder { color: #4A4038; }
 .footer-grid {
   display: grid;
   grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
@@ -794,7 +790,7 @@ em, .accent-italic {
     height: 48px;
     gap: 1px;
     text-decoration: none;
-    color: var(--text-secondary);
+    color: #4A4038;
     border-radius: 12px;
     transition: color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
     -webkit-tap-highlight-color: transparent;
@@ -1078,9 +1074,6 @@ em, .accent-italic {
     width: 44px;
     height: 44px;
   }
-
-  /* Section heading */
-  .section-heading h2 { font-size: var(--text-h2); }
 }
 
 /* ============================================

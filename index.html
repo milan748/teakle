@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teakle — Objects for a Permanent Home</title>
 <meta name="description" content="An Indian workshop making solid wood objects, one piece at a time.">
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <link rel="preload" href="assets/logo-black.png" as="image">
 <style>
@@ -402,8 +403,12 @@
     height: 6px;
     border-radius: var(--radius-full);
     background: var(--stone);
+    border: none;
+    padding: 0;
+    cursor: pointer;
     transition: background var(--dur-fast) var(--ease);
   }
+  .dot:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
   .dot.active { background: var(--text-primary); }
 
   /* ---- Explore Our Products ---- */
@@ -869,14 +874,14 @@
       <span class="btn-outline-sm">Discover</span>
     </a>
   </div>
-  <div class="carousel-dots">
-    <span class="dot active"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
+  <div class="carousel-dots" role="tablist" aria-label="Carousel slides">
+    <button class="dot active" role="tab" aria-selected="true" aria-label="Slide 1" tabindex="0"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 2" tabindex="-1"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 3" tabindex="-1"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 4" tabindex="-1"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 5" tabindex="-1"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 6" tabindex="-1"></button>
+    <button class="dot" role="tab" aria-selected="false" aria-label="Slide 7" tabindex="-1"></button>
   </div>
 </section>
 
@@ -1050,7 +1055,7 @@
         <h4>From the Workshop</h4>
         <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
         <form class="footer-newsletter-form" id="footerNewsletterForm">
-          <input type="email" name="email" placeholder="Your email" required>
+          <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter">
           <button type="submit">Send</button>
         </form>
       </div>
@@ -1134,7 +1139,12 @@
     const maxScroll = track.scrollWidth - track.clientWidth;
     const itemWidth = items[0].offsetWidth + 32;
     currentIndex = Math.round(scrollLeft / itemWidth);
-    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+    dots.forEach((dot, i) => {
+      const active = i === currentIndex;
+      dot.classList.toggle('active', active);
+      dot.setAttribute('aria-selected', active);
+      dot.setAttribute('tabindex', active ? '0' : '-1');
+    });
     prevBtn.style.opacity = scrollLeft < 5 ? '0' : '1';
     prevBtn.style.pointerEvents = scrollLeft < 5 ? 'none' : 'auto';
     nextBtn.style.opacity = scrollLeft >= maxScroll - 5 ? '0' : '1';
@@ -1156,6 +1166,15 @@
     dot.addEventListener('click', () => {
       const itemWidth = items[0].offsetWidth + 32;
       track.scrollTo({ left: i * itemWidth, behavior: 'smooth' });
+    });
+    dot.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        const next = (i + dir + dots.length) % dots.length;
+        dots[next].focus();
+        dots[next].click();
+      }
     });
   });
 

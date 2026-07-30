@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login — Teakle</title>
+<meta name="description" content="Sign in or create a Teakle account to manage your orders and wishlist.">
 <link rel="stylesheet" href="styles.css">
 <style>
   /* ============================================
@@ -547,15 +548,15 @@
     <h1>Welcome</h1>
     <p class="subtitle">Sign in to manage your collection, or create an account to begin.</p>
 
-    <div class="auth-tabs">
-      <button class="is-active" id="tabLogin">Sign In</button>
-      <button id="tabRegister">Create Account</button>
+    <div class="auth-tabs" role="tablist" aria-label="Authentication method">
+      <button class="is-active" id="tabLogin" role="tab" aria-selected="true" aria-controls="loginForm">Sign In</button>
+      <button id="tabRegister" role="tab" aria-selected="false" aria-controls="registerForm">Create Account</button>
     </div>
 
     <p class="auth-error" id="authError"></p>
     <p class="auth-success" id="authSuccess"></p>
 
-    <form class="auth-form is-active" id="loginForm">
+    <form class="auth-form is-active" id="loginForm" role="tabpanel" aria-labelledby="tabLogin">
       <div class="form-group">
         <label for="loginEmail">Email</label>
         <input type="email" id="loginEmail" placeholder="you@example.com" required>
@@ -574,7 +575,7 @@
       <button type="submit" class="auth-submit">Sign In</button>
     </form>
 
-    <form class="auth-form" id="registerForm">
+    <form class="auth-form" id="registerForm" role="tabpanel" aria-labelledby="tabRegister">
       <div class="form-group">
         <label for="regName">Full Name</label>
         <input type="text" id="regName" placeholder="Your name" required>
@@ -615,7 +616,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+        <a href="index.html" class="logo"><img loading="lazy" src="assets/logo-black.png" alt="Teakle"></a>
         <p>Made by hand in India, one piece at a time.</p>
         <div class="footer-social">
           <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
@@ -644,7 +645,7 @@
         <h4>From the Workshop</h4>
         <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
         <form class="footer-newsletter-form" id="footerNewsletterForm">
-          <input type="email" name="email" placeholder="Your email" required>
+          <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter">
           <button type="submit">Send</button>
         </form>
       </div>
@@ -783,7 +784,9 @@
       clearMessages();
       otpSection.classList.remove('is-visible');
       tabLogin.classList.add('is-active');
+      tabLogin.setAttribute('aria-selected', 'true');
       tabRegister.classList.remove('is-active');
+      tabRegister.setAttribute('aria-selected', 'false');
       loginForm.classList.add('is-active');
       registerForm.classList.remove('is-active');
     });
@@ -792,7 +795,9 @@
       clearMessages();
       otpSection.classList.remove('is-visible');
       tabRegister.classList.add('is-active');
+      tabRegister.setAttribute('aria-selected', 'true');
       tabLogin.classList.remove('is-active');
+      tabLogin.setAttribute('aria-selected', 'false');
       registerForm.classList.add('is-active');
       loginForm.classList.remove('is-active');
     });

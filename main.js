@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function () {
       navLinks.querySelectorAll('.nav-dropdown.is-open, .nav-subdropdown.is-open').forEach(function(el) {
         el.classList.remove('is-open');
       });
+      navLinks.querySelectorAll('.nav-dropdown-toggle[aria-expanded], .nav-subdropdown-toggle[aria-expanded]').forEach(function(btn) {
+        btn.setAttribute('aria-expanded', 'false');
+      });
     }
 
     navToggle.addEventListener('click', function () {
@@ -49,16 +52,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* Gallery dropdown toggles */
     navLinks.querySelectorAll('.nav-dropdown-toggle').forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'false');
       btn.addEventListener('click', function () {
         var dropdown = btn.closest('.nav-dropdown');
-        dropdown.classList.toggle('is-open');
+        var open = dropdown.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open);
       });
     });
     navLinks.querySelectorAll('.nav-subdropdown-toggle').forEach(function (btn) {
+      btn.setAttribute('aria-expanded', 'false');
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         var sub = btn.closest('.nav-subdropdown');
-        sub.classList.toggle('is-open');
+        var open = sub.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open);
       });
     });
   }

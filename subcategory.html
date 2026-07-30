@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gallery — Teakle</title>
+<title>Browse Products — Teakle</title>
 <meta name="description" content="Browse handcrafted solid timber products from the Teakle workshop.">
+<link rel="preconnect" href="https://images.pexels.com" crossorigin>
 <link rel="stylesheet" href="styles.css">
 <style>
   .breadcrumb {
@@ -302,7 +303,7 @@
 
 <main id="main-content">
 <section class="page-hero">
-  <img id="subcategoryHeroImg" src="https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="">
+  <img id="subcategoryHeroImg" src="https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Browse products">
   <div class="page-hero-content">
     <span class="eyebrow eyebrow-light">Gallery</span>
     <h1 id="subcategoryHeroTitle">Gallery</h1>
@@ -325,7 +326,7 @@
     <div class="sort-bar" id="sortBar">
       <span class="sort-bar-count" id="sortBarCount"></span>
       <div class="sort-bar-controls">
-        <span class="sort-bar-label">Sort by</span>
+        <label class="sort-bar-label" for="sortSelect">Sort by</label>
         <select class="sort-bar-select" id="sortSelect">
           <option value="featured">Featured</option>
           <option value="price-asc">Price: Low to High</option>
@@ -343,7 +344,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><img src="assets/logo-black.png" alt="Teakle"></a>
+        <a href="index.html" class="logo"><img loading="lazy" src="assets/logo-black.png" alt="Teakle"></a>
         <p>Made by hand in India, one piece at a time.</p>
         <div class="footer-social">
           <a href="#" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
@@ -372,7 +373,7 @@
         <h4>From the Workshop</h4>
         <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
         <form class="footer-newsletter-form" id="footerNewsletterForm">
-          <input type="email" name="email" placeholder="Your email" required>
+          <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter">
           <button type="submit">Send</button>
         </form>
       </div>
