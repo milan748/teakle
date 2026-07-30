@@ -6,6 +6,7 @@
 <title>Teakle — Objects for a Permanent Home</title>
 <meta name="description" content="An Indian workshop making solid wood objects, one piece at a time.">
 <link rel="stylesheet" href="styles.css">
+<link rel="preload" href="assets/logo-black.png" as="image">
 <style>
   /* ---- Hero ---- */
   .hero {
@@ -93,7 +94,7 @@
     animation: fadeUp var(--dur-slow) var(--ease) 1100ms forwards;
   }
   .hero-scroll-cue span {
-    font-size: 0.6875rem;
+    font-size: var(--text-caption);
     letter-spacing: 0.18em;
     text-transform: uppercase;
   }
@@ -118,7 +119,7 @@
   @media (max-width: 860px) {
     .hero { min-height: 0; height: 65vh; }
     .hero-content { padding: 0 var(--space-lg) var(--space-lg); padding-bottom: calc(var(--space-lg) + 56px); margin-left: 0; margin-top: 0; max-width: 100%; }
-    .hero h1 { font-size: 2.125rem; margin-bottom: var(--space-md); line-height: 1.1; }
+    .hero h1 { font-size: var(--text-h1); margin-bottom: var(--space-md); line-height: 1.1; }
     .hero-actions { gap: var(--space-md); }
     .hero-actions .btn-primary { min-height: 50px; padding: 0.85rem calc(var(--space-lg) + var(--space-sm)); font-size: var(--text-caption); letter-spacing: 0.12em; }
     .hero-scroll-cue { display: none; }
@@ -126,7 +127,7 @@
     .edition-grid { gap: var(--space-md); }
     .edition-image { max-height: 420px; }
     .edition-text h3 { font-size: var(--text-subhead); }
-    .edition-text p { font-size: var(--text-body); line-height: 1.65; }
+    .edition-text p { font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
     .carousel-item { flex: 0 0 150px; }
   }
@@ -159,7 +160,7 @@
     font-size: var(--text-caption);
     letter-spacing: 0.06em;
     color: var(--bronze);
-    border: 1px solid rgba(167,134,89,0.4);
+    border: 1px solid color-mix(in srgb, var(--bronze), transparent 60%);
     padding: var(--space-sm) var(--space-md);
     margin-bottom: var(--space-md);
   }
@@ -197,7 +198,7 @@
     color: var(--stone);
     opacity: 0.8;
   }
-  .edition-past a { color: var(--bronze); border-bottom: 1px solid rgba(167,134,89,0.4); }
+  .edition-past a { color: var(--bronze); border-bottom: 1px solid color-mix(in srgb, var(--bronze), transparent 60%); }
   .edition-past a:hover { border-color: var(--bronze); }
 
   @media (max-width: 860px) {
@@ -273,7 +274,7 @@
     max-width: none;
     font-size: var(--text-body);
     color: var(--text-secondary);
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
   }
   .philosophy p + p {
     margin-top: var(--space-sm);
@@ -368,7 +369,7 @@
   .dot {
     width: 6px;
     height: 6px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     background: var(--stone);
     transition: background var(--dur-fast) var(--ease);
   }
@@ -401,7 +402,7 @@
     background: var(--stone);
     overflow: hidden;
     margin-bottom: var(--space-md);
-    border-radius: 2px;
+    border-radius: var(--radius-sm);
   }
   .product-image img {
     width: 100%;
@@ -478,7 +479,7 @@
     max-width: none;
     font-size: var(--text-body);
     color: var(--text-secondary);
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
   }
   .craft-text p + p {
     margin-top: var(--space-sm);
@@ -533,7 +534,7 @@
     .story-block p {
       color: var(--text-secondary);
       font-size: var(--text-body);
-      line-height: 1.65;
+      line-height: var(--lh-relaxed);
       max-width: none;
       margin-bottom: var(--space-md);
     }
@@ -543,13 +544,13 @@
     .philosophy-inner { padding: 0 calc(var(--space-lg) + var(--space-sm)); max-width: 100%; text-align: center; }
     .philosophy .eyebrow { justify-content: center; margin-bottom: var(--space-md); }
     .philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-md); line-height: 1.3; max-width: none; }
-    .philosophy-inner p { font-size: var(--text-body); line-height: 1.7; max-width: 52ch; margin-left: auto; margin-right: auto; }
+    .philosophy-inner p { font-size: var(--text-body); line-height: var(--lh-relaxed); max-width: 52ch; margin-left: auto; margin-right: auto; }
   }
 
   @media (max-width: 560px) {
     .hero { height: 62vh; min-height: 380px; }
     .hero-content { padding: 0 var(--space-lg) var(--space-md); padding-bottom: calc(var(--space-md) + 52px); }
-    .hero h1 { font-size: 1.625rem; margin-bottom: var(--space-sm); letter-spacing: -0.02em; line-height: 1.1; }
+    .hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-sm); letter-spacing: -0.02em; line-height: 1.1; }
     .hero-actions { flex-direction: column; gap: var(--space-sm); width: 100%; }
     .hero-actions .btn-primary { width: 100%; min-height: 50px; font-size: var(--text-caption); }
     .hero-actions .link-quiet { align-self: center; font-size: var(--text-caption); }
@@ -565,11 +566,11 @@
     .story-block + .story-block { margin-top: var(--space-xl); }
     .story-block-content { padding: var(--space-lg) var(--space-lg); }
     .story-block h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); }
-    .story-block p { font-size: var(--text-body); line-height: 1.65; }
+    .story-block p { font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .philosophy { padding: var(--space-lg) 0; }
     .philosophy-inner { padding: 0 var(--space-lg); }
     .philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); }
-    .philosophy-inner p { font-size: var(--text-body); line-height: 1.7; }
+    .philosophy-inner p { font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
     .product-image { aspect-ratio: 4 / 5; margin-bottom: var(--space-sm); }
     .product-info { gap: 2px; }
@@ -579,18 +580,18 @@
   }
 
   @media (max-width: 430px) {
-    .hero h1 { font-size: 1.5rem; margin-bottom: var(--space-md); }
+    .hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-md); }
     .hero-content { padding: 0 var(--space-md) var(--space-md); padding-bottom: calc(var(--space-md) + 48px); }
     .hero-actions .btn-primary { min-height: 44px; font-size: var(--text-caption); }
     .hero-actions .link-quiet { font-size: var(--text-caption); }
     .edition-text h3 { font-size: var(--text-subhead); }
     .edition-text p { font-size: var(--text-body); }
     .products-grid { gap: var(--space-sm); }
-    .product-info h3 { font-size: 1rem; }
-    .story-block h2 { font-size: 1.25rem; }
-    .story-block p { font-size: 0.875rem; }
-    .philosophy h2 { font-size: 1.25rem; }
-    .philosophy-inner p { font-size: 0.875rem; }
+    .product-info h3 { font-size: var(--text-body); }
+    .story-block h2 { font-size: var(--text-subhead); }
+    .story-block p { font-size: var(--text-caption); }
+    .philosophy h2 { font-size: var(--text-subhead); }
+    .philosophy-inner p { font-size: var(--text-caption); }
     .carousel-item { flex: 0 0 110px; }
   }
 
@@ -814,7 +815,7 @@
     </div>
     <div class="products-grid">
       <a href="shop-detail.html?id=anchor-table" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>The Anchor Table</h3>
@@ -824,7 +825,7 @@
         </div>
       </a>
       <a href="shop-detail.html?id=bearing-chair" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>The Bearing Chair</h3>
@@ -834,7 +835,7 @@
         </div>
       </a>
       <a href="shop-detail.html?id=teak-serving-board" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>Teak Serving Board</h3>
@@ -844,7 +845,7 @@
         </div>
       </a>
       <a href="shop-detail.html?id=spice-rack" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>Spice Rack</h3>
@@ -854,7 +855,7 @@
         </div>
       </a>
       <a href="shop-detail.html?id=drift-sculpture" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>Drift Sculpture</h3>
@@ -864,7 +865,7 @@
         </div>
       </a>
       <a href="shop-detail.html?id=hourglass-vase" class="product-card reveal">
-        <div class="product-image"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase"></div>
+        <div class="product-image"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy"></div>
         <div class="product-info">
           <div>
             <h3>Hourglass Vase</h3>
@@ -892,7 +893,7 @@
 </section>
 
 <section class="story-block reveal">
-  <img src="https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A craftsman's weathered hands sanding a wooden surface in the workshop.">
+  <img src="https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A craftsman's weathered hands sanding a wooden surface in the workshop." loading="lazy">
   <div class="story-block-content">
     <span class="eyebrow eyebrow-light">The Workshop</span>
     <h2>A family workshop, unchanged in method for three generations.</h2>
@@ -902,7 +903,7 @@
 </section>
 
 <section class="story-block reveal">
-  <img src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Timber being shaped by hand, filmed for a process video.">
+  <img src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Timber being shaped by hand, filmed for a process video." loading="lazy">
   <div class="story-block-content">
     <span class="eyebrow eyebrow-light">Watch It Made</span>
     <h2>Every piece is documented from timber to finish.</h2>

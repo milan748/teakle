@@ -17,14 +17,14 @@
     gap: var(--space-2xl);
     align-items: start;
   }
-  .trade-text p { color: var(--text-secondary); margin-bottom: var(--space-md); line-height: 1.65; }
+  .trade-text p { color: var(--text-secondary); margin-bottom: var(--space-md); line-height: var(--lh-relaxed); }
   .trade-list { border-top: var(--border-hair); margin-top: var(--space-lg); }
   .trade-list-item {
     padding: var(--space-sm) 0;
     border-bottom: var(--border-hair);
     font-size: var(--text-body);
     color: var(--text-secondary);
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
   }
   .trade-list-item strong { color: var(--text-primary); font-weight: 500; }
 
@@ -77,7 +77,7 @@
   @media (max-width: 860px) {
     .trade-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
     .form-two-col { grid-template-columns: 1fr; }
-    .form-row input, .form-row select, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: 1.65; }
+    .form-row input, .form-row select, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .form-row label { font-size: var(--text-caption); }
     .inquiry-form { padding: var(--space-md); }
   }

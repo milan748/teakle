@@ -60,7 +60,7 @@
     font-size: var(--text-body);
     margin-bottom: var(--space-md);
     max-width: 42ch;
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
   }
 
   .sold-info {
@@ -75,7 +75,7 @@
   .buyer-avatar {
     width: 42px;
     height: 42px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     overflow: hidden;
     background: var(--stone);
     flex-shrink: 0;
@@ -179,8 +179,8 @@
     .edition-actions { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
   }
   @media (max-width: 430px) {
-    .edition-title { font-size: 1.125rem; }
-    .edition-desc { font-size: 0.875rem; }
+    .edition-title { font-size: var(--text-subhead); }
+    .edition-desc { font-size: var(--text-caption); }
   }
 </style>
 </head>

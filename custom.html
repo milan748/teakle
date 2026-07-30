@@ -73,7 +73,7 @@
     cursor: pointer;
     font-size: var(--text-body);
     color: var(--text-primary);
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
   }
   .radio-label input[type="radio"] {
     width: auto;
@@ -129,7 +129,7 @@
   @media (max-width: 860px) {
     .custom-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
     .form-two-col { grid-template-columns: 1fr; }
-    .form-row input, .form-row select, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: 1.65; }
+    .form-row input, .form-row select, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .form-row label { font-size: var(--text-caption); }
     .custom-form { padding: var(--space-md); }
   }

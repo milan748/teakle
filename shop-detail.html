@@ -17,7 +17,7 @@
   background: var(--bg-primary);
 }
 .breadcrumb {
-  font-size: 0.65rem;
+  font-size: var(--text-caption);
   letter-spacing: 0.04em;
   color: var(--text-secondary);
   display: flex;
@@ -58,7 +58,7 @@
 }
 .product-gallery-main img {
   width: 100%; height: 100%; object-fit: cover;
-  transition: opacity var(--dur-slow) var(--ease), transform 0.1s linear;
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-fast) linear;
 }
 .product-gallery-main:hover img { transform: scale(1.08); }
 .product-gallery-badge {
@@ -67,7 +67,7 @@
   left: var(--space-sm);
   background: var(--walnut);
   color: var(--bg-primary);
-  font-size: 0.6rem;
+  font-size: var(--text-caption);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0.35rem 0.75rem;
@@ -155,7 +155,7 @@
   content: '';
   width: 6px; height: 6px;
   background: var(--forest);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
 }
 .product-availability.is-limited { color: var(--bronze); }
 .product-availability.is-limited::before { background: var(--bronze); }
@@ -163,7 +163,7 @@
 .product-short-desc {
   color: var(--text-secondary);
   font-size: var(--text-body);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
   margin-bottom: var(--space-md);
   max-width: 50ch;
 }
@@ -179,7 +179,7 @@
   gap: var(--space-md);
   padding: 0.65rem 0;
   border-bottom: var(--border-hair);
-  font-size: 0.85rem;
+  font-size: var(--text-body);
 }
 .spec-label { color: var(--text-secondary); }
 .spec-value { color: var(--text-primary); text-align: right; font-weight: 500; }
@@ -207,7 +207,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: var(--text-subhead);
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -284,7 +284,7 @@
   border: 1px solid var(--stone);
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 0.7rem;
+  font-size: var(--text-caption);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -307,7 +307,7 @@
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
-  font-size: 0.8rem;
+  font-size: var(--text-body);
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -324,7 +324,7 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
-  font-size: 0.65rem;
+  font-size: var(--text-caption);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -350,7 +350,7 @@
 }
 .detail-section p {
   color: var(--text-secondary);
-  line-height: 1.7;
+  line-height: var(--lh-relaxed);
   margin-bottom: var(--space-sm);
 }
 .detail-section p:last-child { margin-bottom: 0; }
@@ -369,13 +369,13 @@
 }
 .detail-col p {
   font-size: var(--text-body);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
 }
 
 /* Full spec table */
 .spec-table-full { border-top: var(--border-hair); }
 .spec-table-full .spec-row {
-  font-size: 0.9rem;
+  font-size: var(--text-body);
   padding: 0.75rem 0;
 }
 
@@ -404,7 +404,7 @@
   font-size: 1.2rem;
   font-weight: 300;
   color: var(--text-secondary);
-  transition: transform 0.3s var(--ease);
+  transition: transform var(--dur-fast) var(--ease);
   flex-shrink: 0;
 }
 .faq-item.is-open .faq-q::after { transform: rotate(45deg); }
@@ -413,7 +413,7 @@
   padding: 0 0 var(--space-md);
   font-size: var(--text-body);
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
 }
 .faq-item.is-open .faq-a { display: block; }
 
@@ -449,7 +449,7 @@
 }
 .piece-image img {
   width: 100%; height: 100%; object-fit: cover;
-  transition: opacity 0.4s var(--ease), transform 0.6s var(--ease);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
 }
 .piece-image .img-secondary {
   position: absolute;
@@ -541,11 +541,12 @@
   font-size: var(--text-label);
   color: var(--text-secondary);
 }
-.review-stars { color: var(--bronze); font-size: 0.85rem; letter-spacing: 0.08em; margin-bottom: var(--space-xs); }
+.review-stars { color: var(--bronze);   font-size: var(--text-body);
+  letter-spacing: 0.08em; margin-bottom: var(--space-xs); }
 .review-text {
   font-size: var(--text-body);
   color: var(--text-secondary);
-  line-height: 1.65;
+  line-height: var(--lh-relaxed);
 }
 
 /* Review Form */
@@ -742,7 +743,7 @@
   .product-thumbs { gap: var(--space-xs); }
   .product-thumbs img { min-height: 56px; }
   .btn-add-cart, .btn-buy-now { min-height: 44px; }
-  .spec-row { font-size: 0.85rem; }
+  .spec-row { font-size: var(--text-body); }
   .related-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xs); }
 }
 </style>
@@ -819,7 +820,7 @@
 
     <!-- RIGHT: Details -->
     <div class="product-details">
-      <h1 class="product-title" id="productTitle"></h1>
+      <h1 class="product-title" id="productTitle">Teakle Product</h1>
       <p class="product-material-tag" id="productMaterialTag"></p>
 
       <div class="product-price-row">

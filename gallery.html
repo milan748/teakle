@@ -17,7 +17,7 @@
   top: 0;
   z-index: 50;
   background: var(--bg-primary);
-  border-bottom: 1px solid rgba(43,34,27,0.08);
+  border-bottom: var(--border-light);
   padding: 0 var(--space-md);
 }
 .gallery-tabs-inner {
@@ -32,7 +32,7 @@
   flex-shrink: 0;
   padding: var(--space-sm) var(--space-md);
   font-family: var(--font-body);
-  font-size: 0.68rem;
+  font-size: var(--text-caption);
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -64,7 +64,7 @@
   padding: var(--space-xl) 0 var(--space-lg);
 }
 .category-section + .category-section {
-  border-top: 1px solid rgba(43,34,27,0.06);
+  border-top: var(--border-subtle);
 }
 .category-heading-row {
   display: flex;
@@ -116,7 +116,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform var(--dur-slow) var(--ease);
 }
 .subcategory-card:hover .subcategory-card-image img {
   transform: scale(1.04);
@@ -133,9 +133,9 @@
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.9);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   opacity: 0;
-  transition: opacity 0.3s var(--ease);
+  transition: opacity var(--dur-fast) var(--ease);
   z-index: 2;
 }
 .subcategory-card:hover .subcategory-card-wishlist {
@@ -155,7 +155,7 @@
 }
 .subcategory-card-title {
   font-family: var(--font-display);
-  font-size: 0.95rem;
+  font-size: var(--text-body);
   font-weight: 500;
   letter-spacing: 0.01em;
   line-height: 1.3;
@@ -165,13 +165,19 @@
 .subcategory-card:hover .subcategory-card-title {
   color: var(--bronze);
 }
+.subcategory-card-count {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
 
 
 /* ============================================
    RESPONSIVE — Tablet (≤860px)
    ============================================ */
 @media (max-width: 860px) {
-  .gallery-tab { padding: var(--space-xs) var(--space-sm); font-size: 0.62rem; }
+  .gallery-tab { padding: var(--space-xs) var(--space-sm); font-size: var(--text-caption); }
 
   .category-section { padding: var(--space-lg) 0 var(--space-md); }
 
@@ -179,7 +185,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-md) var(--space-sm);
   }
-  .subcategory-card-title { font-size: 0.88rem; }
+  .subcategory-card-title { font-size: var(--text-body); }
 }
 
 /* ============================================
@@ -189,13 +195,13 @@
   .gallery-tabs { padding: 0 var(--space-sm); }
 
   .category-section { padding: var(--space-md) 0; }
-  .category-heading { font-size: 0.58rem; }
+  .category-heading { font-size: var(--text-caption); }
 
   .subcategory-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md) var(--space-sm);
   }
-  .subcategory-card-title { font-size: 0.82rem; }
+  .subcategory-card-title { font-size: var(--text-caption); }
   .subcategory-card-wishlist { opacity: 1; }
 }
 
@@ -203,7 +209,7 @@
    RESPONSIVE — Small Phone (≤430px)
    ============================================ */
 @media (max-width: 430px) {
-  .subcategory-card-title { font-size: 0.78rem; }
+  .subcategory-card-title { font-size: var(--text-caption); }
 }
 </style>
 </head>
@@ -356,6 +362,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Countertop Essentials</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -368,6 +376,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Coffee & Tea Station</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -380,6 +390,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Cooking Essentials</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -392,6 +404,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Spice Storage</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -404,6 +418,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Knife & Utensil Holders</h3>
+          <p class="subcategory-card-count">2 pieces</p>
+        
 
         </div>
       </a>
@@ -416,6 +432,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Trays</h3>
+          <p class="subcategory-card-count">2 pieces</p>
+        
 
         </div>
       </a>
@@ -428,6 +446,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Bread Boxes</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -440,6 +460,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Fruit Bowls</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -462,6 +484,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Serving Boards</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -474,6 +498,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Serving Trays</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -486,6 +512,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Platters</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -498,6 +526,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Coasters</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -510,6 +540,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Napkin Holders</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -522,6 +554,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Cutlery Organizers</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -534,6 +568,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Dining Centerpieces</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -556,6 +592,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Coffee Table Objects</h3>
+          <p class="subcategory-card-count">2 pieces</p>
+        
 
         </div>
       </a>
@@ -568,6 +606,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Decorative Boxes</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -580,6 +620,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Bookends</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -592,6 +634,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Candle Holders</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -604,6 +648,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Tissue Boxes</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -626,6 +672,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Nightstand Essentials</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -638,6 +686,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Organizers</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -650,6 +700,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Mirrors</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -672,6 +724,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Laptop Stands</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -684,6 +738,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Desk Organization</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -696,6 +752,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Pen Holders</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -718,6 +776,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Vanity Organizers</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -730,6 +790,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Soap Dispensers</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -742,6 +804,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Toothbrush Holders</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -764,6 +828,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Planters</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -776,6 +842,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Garden Decor</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>
@@ -788,6 +856,8 @@
         </div>
         <div class="subcategory-card-info">
           <h3 class="subcategory-card-title">Outdoor Serving</h3>
+          <p class="subcategory-card-count">1 piece</p>
+        
 
         </div>
       </a>

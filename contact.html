@@ -30,7 +30,7 @@
   }
   .contact-info-block p, .contact-info-block a {
     font-size: var(--text-body);
-    line-height: 1.65;
+    line-height: var(--lh-relaxed);
     color: var(--text-primary);
   }
   .contact-info-block a { transition: color var(--dur-fast) var(--ease); }
@@ -82,7 +82,7 @@
   @media (max-width: 860px) {
     .contact-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
     .form-two-col { grid-template-columns: 1fr; }
-    .form-row input, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: 1.65; }
+    .form-row input, .form-row textarea { min-height: 44px; font-size: var(--text-body); line-height: var(--lh-relaxed); }
     .form-row label { font-size: var(--text-caption); }
     .contact-form { padding: var(--space-md); }
     .contact-info-block h3 { font-size: var(--text-caption); }
