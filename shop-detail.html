@@ -13,7 +13,7 @@
 
 /* --- Breadcrumb --- */
 .breadcrumb-bar {
-  padding: calc(var(--space-xl) + var(--space-md)) 0 var(--space-sm);
+  padding: calc(var(--space-xl) + var(--space-sm)) 0 var(--space-sm);
   background: var(--bg-primary);
 }
 .breadcrumb {
@@ -73,6 +73,18 @@
   padding: 0.35rem 0.75rem;
   z-index: 2;
 }
+.product-gallery-counter {
+  position: absolute;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  background: rgba(43,34,27,0.65);
+  backdrop-filter: blur(4px);
+  color: var(--bg-primary);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.65rem;
+  z-index: 2;
+}
 .product-gallery-fullscreen {
   position: absolute;
   top: var(--space-sm);
@@ -89,6 +101,20 @@
 }
 .product-gallery-fullscreen:hover { background: #fff; }
 .product-gallery-fullscreen svg { width: 18px; height: 18px; color: var(--text-primary); }
+
+/* Gallery loading skeleton */
+.product-gallery-main.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(43,34,27,0.04) 50%, var(--bg-secondary) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 .product-thumbs {
   display: grid;
@@ -313,6 +339,25 @@
 }
 .delivery-row svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; color: var(--bronze); }
 
+.trust-strip {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  padding: var(--space-sm) 0;
+  margin-bottom: var(--space-md);
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.trust-item svg { width: 14px; height: 14px; color: var(--bronze); flex-shrink: 0; }
+
+/* Trust badges (legacy, kept for delivery box) */
 .trust-badges {
   display: flex;
   gap: var(--space-sm);
@@ -627,6 +672,49 @@
   border-top: var(--border-hair);
 }
 
+/* --- Mobile Sticky CTA --- */
+.mobile-sticky-cta {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 160;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--stone);
+  padding: var(--space-sm) var(--space-md);
+  gap: var(--space-sm);
+  align-items: center;
+}
+.mobile-sticky-cta.is-visible { display: flex; }
+.mobile-sticky-price {
+  font-family: var(--font-display);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.mobile-sticky-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 0.75rem var(--space-md);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+  background: var(--walnut);
+  border: 1px solid var(--walnut);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background var(--dur-fast) var(--ease);
+}
+.mobile-sticky-btn:hover { background: var(--forest); border-color: var(--forest); }
+.mobile-sticky-btn svg { width: 16px; height: 16px; }
+
 /* --- Fullscreen Gallery Overlay --- */
 .gallery-overlay {
   display: none;
@@ -691,7 +779,7 @@
   .product-details { position: static; }
   .product-gallery-main { aspect-ratio: 4/5; }
   .product-thumbs { grid-template-columns: repeat(4, 1fr); gap: var(--space-xs); }
-  .breadcrumb-bar { padding: calc(var(--space-xl) + var(--space-sm)) 0 var(--space-xs); }
+  .breadcrumb-bar { padding: calc(var(--space-xl) + var(--space-xs)) 0 var(--space-xs); }
   .breadcrumb { font-size: var(--text-caption); }
   .detail-columns { grid-template-columns: 1fr; gap: var(--space-md); }
   .related-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
@@ -702,13 +790,14 @@
   .reviews-section { padding: var(--space-lg) 0; }
   .review-form-section { padding: var(--space-lg) 0; }
   .recently-viewed { padding: var(--space-lg) 0; }
+  .trust-strip { gap: var(--space-md); flex-wrap: wrap; justify-content: flex-start; }
 }
 
 /* ============================================
    RESPONSIVE — Phone (≤560px)
    ============================================ */
 @media (max-width: 560px) {
-  .breadcrumb-bar { padding: calc(var(--space-lg) + var(--space-md)) 0 var(--space-xs); }
+  .breadcrumb-bar { padding: calc(var(--space-lg) + var(--space-sm)) 0 var(--space-xs); }
   .breadcrumb { font-size: var(--text-caption); }
   .product-section { padding: var(--space-sm) 0 var(--space-lg); }
   .product-grid { gap: var(--space-md); }
@@ -731,6 +820,8 @@
   .gallery-overlay-nav { width: 40px; height: 40px; }
   .gallery-overlay-prev { left: var(--space-xs); }
   .gallery-overlay-next { right: var(--space-xs); }
+  .mobile-sticky-cta { display: flex; }
+  body { padding-bottom: 60px; }
 }
 
 /* ============================================
@@ -745,6 +836,8 @@
   .btn-add-cart, .btn-buy-now { min-height: 44px; }
   .spec-row { font-size: var(--text-body); }
   .related-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xs); }
+  .trust-strip { gap: var(--space-sm); }
+  .trust-item { font-size: 0.6rem; }
 }
 </style>
 </head>
@@ -808,8 +901,9 @@
 
     <!-- LEFT: Gallery -->
     <div class="product-gallery">
-      <div class="product-gallery-main" id="galleryMain">
+      <div class="product-gallery-main is-loading" id="galleryMain">
         <span class="product-gallery-badge" id="galleryBadge"></span>
+        <span class="product-gallery-counter" id="galleryCounter">1 / 4</span>
         <button class="product-gallery-fullscreen" id="fullscreenBtn" aria-label="View fullscreen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
         </button>
@@ -833,6 +927,7 @@
 
       <!-- Specs -->
       <div class="product-specs" id="productSpecs"></div>
+      <a href="#specsSection" class="link-quiet" style="font-size:var(--text-caption);display:inline-block;margin-bottom:var(--space-md);">View All Specifications</a>
 
       <!-- Quantity -->
       <div class="qty-row">
@@ -861,6 +956,22 @@
             Share
           </button>
         </div>
+      </div>
+
+      <!-- Trust Strip -->
+      <div class="trust-strip">
+        <span class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Handcrafted
+        </span>
+        <span class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Secure Checkout
+        </span>
+        <span class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Quality Guaranteed
+        </span>
       </div>
 
       <!-- Delivery & Trust -->
@@ -970,7 +1081,7 @@
   <div class="container">
     <div class="related-header">
       <span class="eyebrow">Curated</span>
-      <h2>You May Also Like</h2>
+      <h2>Complete the Space</h2>
     </div>
     <div class="related-grid" id="relatedGrid"></div>
   </div>
@@ -1051,6 +1162,15 @@
   <span class="gallery-overlay-counter" id="overlayCounter"></span>
 </div>
 </main>
+
+<!-- Mobile Sticky CTA -->
+<div class="mobile-sticky-cta" id="mobileStickyCta">
+  <span class="mobile-sticky-price" id="mobileStickyPrice"></span>
+  <button class="mobile-sticky-btn" id="mobileStickyBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Add to Cart
+  </button>
+</div>
 
 <footer class="site-footer">
   <div class="container">
@@ -1160,6 +1280,13 @@
 
   mainImage.src = product.images[0];
   mainImage.alt = product.name;
+  var galleryCounter = document.getElementById('galleryCounter');
+  galleryCounter.textContent = '1 / ' + product.images.length;
+
+  /* Remove loading state when image loads */
+  mainImage.addEventListener('load', function() {
+    document.getElementById('galleryMain').classList.remove('is-loading');
+  });
 
   product.thumbnails.forEach(function(thumb, i) {
     var div = document.createElement('div');
@@ -1175,10 +1302,12 @@
     currentImageIdx = idx;
     var thumbs = thumbsContainer.querySelectorAll('.product-thumb');
     thumbs.forEach(function(t, i) { t.classList.toggle('is-active', i === idx); });
+    document.getElementById('galleryMain').classList.add('is-loading');
     mainImage.style.opacity = '0';
     setTimeout(function() {
       mainImage.src = product.images[idx];
       mainImage.style.opacity = '1';
+      galleryCounter.textContent = (idx + 1) + ' / ' + product.images.length;
     }, 200);
   }
 
@@ -1472,6 +1601,29 @@
       });
     }
   });
+
+  /* ---- Mobile Sticky CTA ---- */
+  var mobileStickyPrice = document.getElementById('mobileStickyPrice');
+  if (mobileStickyPrice) mobileStickyPrice.textContent = product.priceFormatted;
+  var mobileStickyBtn = document.getElementById('mobileStickyBtn');
+  if (mobileStickyBtn) {
+    mobileStickyBtn.addEventListener('click', function() {
+      Teakle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0] });
+      this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg> Added';
+      setTimeout(function() {
+        mobileStickyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg> Add to Cart';
+      }, 2000);
+    });
+  }
+  var stickyCta = document.getElementById('mobileStickyCta');
+  if (stickyCta) {
+    window.addEventListener('scroll', function() {
+      var addBtn = document.getElementById('addToCartBtn');
+      if (!addBtn) return;
+      var rect = addBtn.getBoundingClientRect();
+      stickyCta.classList.toggle('is-visible', rect.bottom < 0);
+    });
+  }
 
 })();
 </script>
