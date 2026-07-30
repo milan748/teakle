@@ -61,6 +61,12 @@
   transition: opacity var(--dur-slow) var(--ease), transform var(--dur-fast) linear;
 }
 .product-gallery-main:hover img { transform: scale(1.08); }
+
+/* Disable hover zoom on touch devices */
+@media (hover: none) {
+  .product-gallery-main:hover img { transform: none; }
+  .product-gallery-main { cursor: default; }
+}
 .product-gallery-badge {
   position: absolute;
   top: var(--space-sm);
@@ -662,7 +668,7 @@
 .mobile-sticky-cta {
   display: none;
   position: fixed;
-  bottom: 0;
+  bottom: 52px;
   left: 0;
   right: 0;
   z-index: 160;
@@ -803,11 +809,11 @@
   .piece-price { font-size: var(--text-caption); }
   .detail-section h2 { font-size: var(--text-h2); }
   .faq-q { font-size: var(--text-body); }
-  .gallery-overlay-nav { width: 40px; height: 40px; }
+  .gallery-overlay-nav { width: 44px; height: 44px; }
   .gallery-overlay-prev { left: var(--space-xs); }
   .gallery-overlay-next { right: var(--space-xs); }
   .mobile-sticky-cta { display: flex; }
-  body { padding-bottom: 60px; }
+  body { padding-bottom: 110px; }
 }
 
 /* ============================================
@@ -824,6 +830,8 @@
   .related-grid { grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
   .trust-strip { gap: var(--space-sm); }
   .trust-item { font-size: 0.6rem; }
+  .mobile-sticky-cta { bottom: 48px; }
+  body { padding-bottom: 104px; }
 }
 </style>
 </head>

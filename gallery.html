@@ -192,7 +192,7 @@
    RESPONSIVE — Tablet (≤860px)
    ============================================ */
 @media (max-width: 860px) {
-  .gallery-tab { padding: var(--space-xs) var(--space-sm); font-size: var(--text-caption); }
+  .gallery-tab { padding: var(--space-sm) var(--space-sm); font-size: var(--text-caption); min-height: 44px; }
 
   .category-section { padding: var(--space-lg) 0 var(--space-md); }
 
@@ -201,6 +201,7 @@
     gap: var(--space-sm) var(--space-sm);
   }
   .subcategory-card-title { font-size: var(--text-caption); }
+  .subcategory-card-wishlist { opacity: 1; transform: scale(1); }
 }
 
 /* ============================================

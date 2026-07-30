@@ -553,7 +553,7 @@
     .story-block img {
       position: relative;
       width: 100%;
-      height: 380px;
+      height: 340px;
       object-fit: cover;
       transform: none;
     }
@@ -590,10 +590,10 @@
 
   @media (max-width: 560px) {
     .hero { height: 62vh; min-height: 380px; }
-    .hero-content { padding: 0 var(--space-lg) var(--space-md); padding-bottom: calc(var(--space-md) + 52px); }
+    .hero-content { padding: 0 var(--space-lg) var(--space-md); padding-bottom: calc(var(--space-md) + 54px); }
     .hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-sm); letter-spacing: -0.02em; line-height: 1.1; }
     .hero-actions { flex-direction: column; gap: var(--space-sm); width: 100%; }
-    .hero-actions .btn-primary { width: 100%; min-height: 50px; font-size: var(--text-caption); }
+    .hero-actions .btn-primary { width: 100%; min-height: 48px; font-size: var(--text-caption); }
     .hero-actions .link-quiet { align-self: center; font-size: var(--text-caption); }
     .hero-edition { padding: var(--space-xl) 0; }
     .edition-grid { gap: var(--space-md); }
@@ -603,7 +603,8 @@
     .edition-text h3 { font-size: var(--text-subhead); }
     .edition-text p { font-size: var(--text-body); }
     .collection-carousel { padding: var(--space-xl) var(--space-sm) var(--space-md); }
-    .story-block img { height: 320px; }
+    .carousel-item { min-height: 44px; }
+    .story-block img { height: 280px; }
     .story-block + .story-block { margin-top: var(--space-xl); }
     .story-block-content { padding: var(--space-lg) var(--space-lg); }
     .story-block h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); }
@@ -622,13 +623,14 @@
 
   @media (max-width: 430px) {
     .hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-md); }
-    .hero-content { padding: 0 var(--space-md) var(--space-md); padding-bottom: calc(var(--space-md) + 48px); }
+    .hero-content { padding: 0 var(--space-md) var(--space-md); padding-bottom: calc(var(--space-md) + 52px); }
     .hero-actions .btn-primary { min-height: 44px; font-size: var(--text-caption); }
     .hero-actions .link-quiet { font-size: var(--text-caption); }
     .edition-text h3 { font-size: var(--text-subhead); }
     .edition-text p { font-size: var(--text-body); }
     .products-grid { gap: var(--space-sm); }
     .product-info h3 { font-size: var(--text-body); }
+    .story-block img { height: 240px; }
     .story-block h2 { font-size: var(--text-subhead); }
     .story-block p { font-size: var(--text-caption); }
     .philosophy h2 { font-size: var(--text-subhead); }
