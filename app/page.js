@@ -5,34 +5,6 @@ import { useEffect } from 'react'
 export default function Home() {
 
   useEffect(() => {
-    setTimeout(function () {
-      document.querySelectorAll('.reveal, .piece-card').forEach(function (el) {
-        el.classList.add('is-visible')
-      })
-    }, 1500)
-  }, [])
-
-  useEffect(() => {
-    const footerNewsletterForm = document.getElementById('footerNewsletterForm')
-    if (footerNewsletterForm) {
-      const handler = function(e) {
-        e.preventDefault()
-        const btn = this.querySelector('button')
-        const originalText = btn.textContent
-        btn.textContent = 'Sent'
-        btn.disabled = true
-        this.querySelector('input').value = ''
-        setTimeout(() => {
-          btn.textContent = originalText
-          btn.disabled = false
-        }, 3000)
-      }
-      footerNewsletterForm.addEventListener('submit', handler)
-      return () => footerNewsletterForm.removeEventListener('submit', handler)
-    }
-  }, [])
-
-  useEffect(() => {
     const track = document.querySelector('.carousel-track')
     const prevBtn = document.querySelector('.carousel-prev')
     const nextBtn = document.querySelector('.carousel-next')

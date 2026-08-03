@@ -1,17 +1,4 @@
-'use client'
-
-import { useEffect } from 'react'
-
 export default function ArchivePage() {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      document.querySelectorAll('.reveal').forEach((el) => {
-        el.classList.add('is-visible')
-      })
-    }, 1500)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
     <>
       <style>{`

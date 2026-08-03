@@ -1,17 +1,4 @@
-'use client'
-
-import { useEffect } from 'react'
-
 export default function JournalPage() {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      document.querySelectorAll('.reveal, .piece-card').forEach((el) => {
-        el.classList.add('is-visible')
-      })
-    }, 1500)
-    return () => clearTimeout(timer)
-  }, [])
-
   return (
     <>
       <style>{`
