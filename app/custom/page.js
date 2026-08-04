@@ -260,7 +260,7 @@ export default function CustomPage() {
 
             <div className="custom-list reveal">
               <div className="custom-list-item"><strong>Architects</strong> — custom wooden elements for residential and commercial projects.</div>
-              <div className="custom-list-item"><strong>Interior Designers</strong> — bespoke furniture, fixtures, and decorative pieces for client spaces.</div>
+              <div className="custom-list-item"><strong>Interior Designers</strong> — handcrafted furniture, fixtures, and decorative pieces for client spaces.</div>
               <div className="custom-list-item"><strong>Homeowners</strong> — personalised nameplates, gift items, and statement pieces for your home.</div>
               <div className="custom-list-item"><strong>Art Collectors</strong> — hand-carved sculptures, wall art, and limited-edition works.</div>
               <div className="custom-list-item"><strong>Hospitality &amp; Retail</strong> — custom furniture, signage, and fit-outs for hotels, cafés, and stores.</div>

@@ -109,7 +109,7 @@ export default function LoginPage() {
           pendingRef.current.password
         );
         if (reg.ok) {
-          showSuccess('Account created. Welcome to your private collection...');
+          showSuccess('Account created. Welcome to Teakle.');
           setTimeout(() => { window.location.href = '/account'; }, 1200);
         } else {
           setIsLoading(false);

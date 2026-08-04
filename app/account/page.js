@@ -57,7 +57,7 @@ export default function AccountPage() {
       const stored = JSON.parse(localStorage.getItem('teakle_notifications') || '[]');
       if (stored.length === 0) {
         setNotifications([
-          { id: 1, title: 'Welcome to Teakle', desc: 'Your private collection awaits. Explore handcrafted pieces made exclusively for you.', time: 'Just now', read: false },
+          { id: 1, title: 'Welcome to Teakle', desc: 'Your collection awaits. Explore handcrafted pieces made with care.', time: 'Just now', read: false },
           { id: 2, title: 'Order Confirmed', desc: 'Your Anchor Table is now in production. Estimated delivery in 2–3 weeks.', time: '2 days ago', read: false },
           { id: 3, title: 'Craft Care Reminder', desc: 'Monthly care tips for your walnut pieces are available in your guide.', time: '1 week ago', read: true },
         ]);

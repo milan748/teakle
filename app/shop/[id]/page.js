@@ -964,7 +964,7 @@ export default function ShopDetailPage() {
     ? 'Limited Edition'
     : product.availability === 'In Stock'
       ? 'In Stock'
-      : 'Made to Order';
+      : 'Handcrafted';
 
   /* Category for breadcrumb */
   const cat = product && window?.TEAKLE_CATEGORIES?.[product.category];
