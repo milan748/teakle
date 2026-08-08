@@ -112,8 +112,8 @@ export default function ClientScripts() {
     };
 
     /* Teakle module init (from app.js) */
-    if (typeof window !== 'undefined' && window.Teachle) {
-      window.Teachle.init();
+    if (typeof window !== 'undefined' && window.Teakle) {
+      window.Teakle.init();
     }
 
     /* Footer newsletter form */

@@ -1,5 +1,11 @@
 import StudioRoadmap from '../components/StudioRoadmap'
 
+export const metadata = {
+  title: 'Studio',
+  description: 'Inside the Teakle workshop. How our objects are designed, crafted, and finished by hand.',
+  openGraph: { title: 'Studio — Teakle', description: 'Inside the Teakle workshop.' },
+};
+
 export default function StudioPage() {
   return (
     <>
@@ -457,15 +463,15 @@ export default function StudioPage() {
             <h2 className="reveal">The people and tools behind every piece.</h2>
           </div>
           <div className="gallery-grid">
-            <a href="#" className="gallery-item img-zoom reveal">
+            <div className="gallery-item img-zoom reveal">
               <img loading="lazy" src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="A craftsman planing a wooden board in natural light." />
-            </a>
-            <a href="#" className="gallery-item img-zoom reveal">
+            </div>
+            <div className="gallery-item img-zoom reveal">
               <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." />
-            </a>
-            <a href="#" className="gallery-item img-zoom reveal">
+            </div>
+            <div className="gallery-item img-zoom reveal">
               <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." />
-            </a>
+            </div>
           </div>
         </div>
       </section>

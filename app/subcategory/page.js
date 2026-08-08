@@ -1,543 +1,748 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import Link from 'next/link';
+
+/* ============================================
+   SUBCATEGORY — Product Listing with Filters
+   ============================================ */
 
 const CATS = {
   kitchen: {
     name: 'Kitchen',
     image: 'https://images.pexels.com/photos/4805236/pexels-photo-4805236.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Solid teak boards, bowls, and utensil holders for daily kitchen use.',
     subs: [
-      { key: 'countertop-essentials', name: 'Countertop Essentials', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'coffee-tea-station', name: 'Coffee & Tea Station', image: 'https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'cooking-essentials', name: 'Cooking Essentials', image: 'https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'dining-serving', name: 'Dining & Serving', image: 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'storage-organization', name: 'Storage & Organization', image: 'https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'kitchen-decor', name: 'Kitchen Decor', image: 'https://images.pexels.com/photos/6474482/pexels-photo-6474482.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'baking-essentials', name: 'Baking Essentials', image: 'https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'pantry-organization', name: 'Pantry Organization', image: 'https://images.pexels.com/photos/6474490/pexels-photo-6474490.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'countertop-essentials', name: 'Countertop Essentials', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'coffee-tea-station', name: 'Coffee & Tea Station', image: 'https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'cooking-essentials', name: 'Cooking Essentials', image: 'https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'dining-serving', name: 'Dining & Serving', image: 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'storage-organization', name: 'Storage & Organization', image: 'https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   dining: {
     name: 'Dining',
     image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Serving boards, trays, and dining centrepieces for every occasion.',
     subs: [
-      { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'trays', name: 'Trays', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'bowls', name: 'Bowls', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'cutlery', name: 'Cutlery', image: 'https://images.pexels.com/photos/4750272/pexels-photo-4750272.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'drinkware-accessories', name: 'Drinkware Accessories', image: 'https://images.pexels.com/photos/6474495/pexels-photo-6474495.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'table-centerpieces', name: 'Table Centerpieces', image: 'https://images.pexels.com/photos/5591890/pexels-photo-5591890.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'dining-decor', name: 'Dining Decor', image: 'https://images.pexels.com/photos/6996100/pexels-photo-6996100.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'trays', name: 'Trays', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'bowls', name: 'Bowls', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   living: {
     name: 'Living Room',
     image: 'https://images.pexels.com/photos/5858085/pexels-photo-5858085.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Sculptural objects, vases, and coffee table pieces for your living space.',
     subs: [
-      { key: 'sculptures', name: 'Sculptures', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'decorative-objects', name: 'Decorative Objects', image: 'https://images.pexels.com/photos/6044818/pexels-photo-6044818.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'vases', name: 'Vases', image: 'https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'coffee-table-decor', name: 'Coffee Table Decor', image: 'https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'shelving-decor', name: 'Shelving Decor', image: 'https://images.pexels.com/photos/6044812/pexels-photo-6044812.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'storage-boxes', name: 'Storage Boxes', image: 'https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'candle-holders', name: 'Candle Holders', image: 'https://images.pexels.com/photos/6044808/pexels-photo-6044808.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'sculptures', name: 'Sculptures', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'vases', name: 'Vases', image: 'https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'coffee-table-decor', name: 'Coffee Table Decor', image: 'https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'storage-boxes', name: 'Storage Boxes', image: 'https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   bedroom: {
     name: 'Bedroom',
     image: 'https://images.pexels.com/photos/6045088/pexels-photo-6045088.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Nightstand essentials, organisers, and mirrors for private spaces.',
     subs: [
-      { key: 'nightstand-essentials', name: 'Nightstand Essentials', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'jewelry-storage', name: 'Jewelry Storage', image: 'https://images.pexels.com/photos/6045084/pexels-photo-6045084.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'organizers', name: 'Organizers', image: 'https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'mirrors', name: 'Mirrors', image: 'https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'decorative-accents', name: 'Decorative Accents', image: 'https://images.pexels.com/photos/6045078/pexels-photo-6045078.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'bedroom-decor', name: 'Bedroom Decor', image: 'https://images.pexels.com/photos/6045076/pexels-photo-6045076.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'nightstand-essentials', name: 'Nightstand Essentials', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'organizers', name: 'Organizers', image: 'https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'mirrors', name: 'Mirrors', image: 'https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   office: {
     name: 'Office',
     image: 'https://images.pexels.com/photos/7979604/pexels-photo-7979604.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Desk organisers, pen holders, and laptop stands for your workspace.',
     subs: [
-      { key: 'desk-organization', name: 'Desk Organization', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'pen-holders', name: 'Pen Holders', image: 'https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'laptop-stands', name: 'Laptop Stands', image: 'https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'document-storage', name: 'Document Storage', image: 'https://images.pexels.com/photos/7979596/pexels-photo-7979596.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'office-decor', name: 'Office Decor', image: 'https://images.pexels.com/photos/7979594/pexels-photo-7979594.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'accessories', name: 'Accessories', image: 'https://images.pexels.com/photos/7979592/pexels-photo-7979592.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'desk-organization', name: 'Desk Organization', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'pen-holders', name: 'Pen Holders', image: 'https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'laptop-stands', name: 'Laptop Stands', image: 'https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   bathroom: {
     name: 'Bathroom',
     image: 'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Vanity organisers, soap dispensers, and toothbrush holders.',
     subs: [
-      { key: 'vanity-organizers', name: 'Vanity Organizers', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'soap-dispensers', name: 'Soap Dispensers', image: 'https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'toothbrush-holders', name: 'Toothbrush Holders', image: 'https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/8005389/pexels-photo-8005389.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'bathroom-decor', name: 'Bathroom Decor', image: 'https://images.pexels.com/photos/8005387/pexels-photo-8005387.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'vanity-organizers', name: 'Vanity Organizers', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'soap-dispensers', name: 'Soap Dispensers', image: 'https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'toothbrush-holders', name: 'Toothbrush Holders', image: 'https://images.pexels.com/photos/7055292/pexels-photo-7055292.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   outdoor: {
     name: 'Outdoor',
     image: 'https://images.pexels.com/photos/6480210/pexels-photo-6480210.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Planters, garden decor, and outdoor serving pieces.',
     subs: [
-      { key: 'planters', name: 'Planters', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'garden-decor', name: 'Garden Decor', image: 'https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'outdoor-serving', name: 'Outdoor Serving', image: 'https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'patio-accessories', name: 'Patio Accessories', image: 'https://images.pexels.com/photos/6480202/pexels-photo-6480202.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/6480200/pexels-photo-6480200.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-    ],
-  },
-  seasonal: {
-    name: 'Seasonal Collections',
-    image: 'https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    subs: [
-      { key: 'festive-decor', name: 'Festive Decor', image: 'https://images.pexels.com/photos/6045074/pexels-photo-6045074.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'limited-editions', name: 'Limited Editions', image: 'https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'collectors-series', name: "Collector's Series", image: 'https://images.pexels.com/photos/6045070/pexels-photo-6045070.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
-      { key: 'gift-collections', name: 'Gift Collections', image: 'https://images.pexels.com/photos/6045068/pexels-photo-6045068.jpeg?auto=compress&cs=tinysrgb&w=900', count: 14 },
+      { key: 'planters', name: 'Planters', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'garden-decor', name: 'Garden Decor', image: 'https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'outdoor-serving', name: 'Outdoor Serving', image: 'https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
 };
 
+const subStyles = `
+/* ================================================================
+   SUBCATEGORY — Product Listing
+   ================================================================ */
+.sub-hero {
+  position: relative;
+  height: 48vh;
+  min-height: 340px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background: var(--walnut);
+}
+.sub-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+  opacity: 0.8;
+  animation: subZoom 16s var(--ease) forwards;
+}
+@keyframes subZoom {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+.sub-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(51,38,29,0.05) 0%, rgba(51,38,29,0.5) 60%, rgba(51,38,29,0.82) 100%);
+  z-index: 1;
+}
+.sub-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 var(--space-md) var(--space-xl);
+  max-width: 700px;
+  margin-left: 4vw;
+}
+.sub-hero-content .eyebrow { color: var(--stone); margin-bottom: var(--space-sm); }
+.sub-hero-content h1 {
+  color: var(--bg-primary);
+  font-size: clamp(1.8rem, 4.5vw, var(--text-h1));
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.1;
+  margin-bottom: var(--space-sm);
+}
+.sub-hero-content p {
+  color: var(--stone);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+}
+
+/* Breadcrumb */
+.sub-breadcrumb {
+  padding: var(--space-lg) 0 0;
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.sub-breadcrumb a { color: var(--text-secondary); text-decoration: none; transition: color var(--dur-fast) var(--ease); }
+.sub-breadcrumb a:hover { color: var(--bronze); }
+.sub-breadcrumb span { margin: 0 0.5em; }
+.sub-breadcrumb .bc-current { color: var(--text-primary); }
+
+/* Toolbar */
+.sub-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  border-bottom: var(--border-subtle);
+  margin-bottom: var(--space-md);
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.sub-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+.sub-toolbar-count {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sub-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.sub-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  padding: 0.5em 1em;
+  cursor: pointer;
+  min-height: 40px;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.sub-filter-btn:hover { border-color: var(--bronze); }
+.sub-filter-btn.is-active { border-color: var(--bronze); color: var(--bronze); }
+.sub-sort-select {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  padding: 0.5em 1.8em 0.5em 0.6em;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2361574F' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5em center;
+  cursor: pointer;
+  min-height: 40px;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.sub-sort-select:hover { border-color: var(--bronze); }
+
+/* Filter Panel */
+.sub-filters {
+  display: none;
+  padding: var(--space-md) 0;
+  border-bottom: var(--border-subtle);
+  margin-bottom: var(--space-md);
+}
+.sub-filters.is-open { display: block; }
+.sub-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+.sub-filter-group h4 {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+.sub-filter-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  padding: 0.3rem 0;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+.sub-filter-group label:hover { color: var(--text-primary); }
+.sub-filter-group input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--bronze);
+  cursor: pointer;
+}
+.sub-filter-group select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  padding: 0.5em;
+  cursor: pointer;
+}
+.sub-filter-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+.sub-filter-clear {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5em;
+  transition: color var(--dur-fast) var(--ease);
+}
+.sub-filter-clear:hover { color: var(--bronze); }
+
+/* Product Grid */
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+  padding-bottom: var(--space-2xl);
+}
+.sub-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 400ms var(--ease);
+}
+.sub-card:hover { transform: translateY(-4px); }
+.sub-card-img {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  margin-bottom: 0.75rem;
+}
+.sub-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
+}
+.sub-card:hover .sub-card-img img { transform: scale(1.04); }
+.sub-card-img .sub-card-hover-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+.sub-card:hover .sub-card-hover-img { opacity: 1; }
+.sub-card-badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3em 0.6em;
+  z-index: 2;
+}
+.sub-card-badge:empty { display: none; }
+.sub-card-wishlist {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  z-index: 2;
+  color: var(--text-primary);
+}
+.sub-card:hover .sub-card-wishlist { opacity: 1; transform: scale(1); }
+.sub-card-wishlist:hover { background: var(--bronze); color: #fff; }
+.sub-card-wishlist:active { transform: scale(0.85); }
+.sub-card-wishlist svg { width: 14px; height: 14px; }
+.sub-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+.sub-card-info h3 {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color var(--dur-fast) var(--ease);
+  max-width: none;
+}
+.sub-card:hover .sub-card-info h3 { color: var(--bronze); }
+.sub-card-price {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.sub-empty {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+  grid-column: 1 / -1;
+}
+.sub-empty-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--stone);
+  margin-bottom: var(--space-md);
+}
+.sub-empty h3 {
+  font-size: var(--text-h2);
+  font-weight: 300;
+  margin-bottom: var(--space-sm);
+}
+.sub-empty p {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  margin-bottom: var(--space-md);
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mobile Sticky Filter */
+.sub-mobile-filter {
+  display: none;
+  position: fixed;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  z-index: 160;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--stone);
+  padding: var(--space-sm) var(--space-md);
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
+  pointer-events: none;
+}
+.sub-mobile-filter.is-visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.sub-mobile-filter-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+  background: var(--walnut);
+  border: 1px solid var(--walnut);
+  cursor: pointer;
+  min-height: 48px;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .sub-hero { height: 42vh; min-height: 280px; }
+  .sub-hero-content { padding: 0 var(--space-lg) var(--space-lg); margin-left: 0; max-width: 100%; }
+  .sub-hero-content h1 { font-size: var(--text-h1); }
+  .sub-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  .sub-filters-grid { grid-template-columns: repeat(2, 1fr); }
+  .sub-mobile-filter { display: block; }
+  body { padding-bottom: 110px; }
+}
+@media (max-width: 560px) {
+  .sub-hero { height: 38vh; min-height: 240px; }
+  .sub-hero-content { padding: 0 var(--space-md) var(--space-md); }
+  .sub-hero-content h1 { font-size: var(--text-h2); }
+  .sub-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .sub-card-wishlist { opacity: 1; transform: scale(1); }
+  .sub-toolbar { flex-wrap: wrap; }
+  .sub-toolbar-right { width: 100%; }
+  .sub-sort-select { flex: 1; }
+  .sub-filters-grid { grid-template-columns: 1fr; }
+  .sub-mobile-filter { bottom: 52px; }
+  body { padding-bottom: 104px; }
+}
+@media (max-width: 430px) {
+  .sub-card-info h3 { font-size: var(--text-caption); }
+  .sub-card-price { font-size: 0.65rem; }
+  .sub-grid { gap: var(--space-xs); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sub-hero-img { animation: none; transform: scale(1); }
+}
+`;
+
 export default function SubcategoryPage() {
   const [heroImg, setHeroImg] = useState('https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600');
   const [heroTitle, setHeroTitle] = useState('Gallery');
-  const [heroDesc, setHeroDesc] = useState('Browse handcrafted solid timber products from the Teakle workshop.');
-  const [breadcrumbCatName, setBreadcrumbCatName] = useState('Gallery');
-  const [breadcrumbCatHref, setBreadcrumbCatHref] = useState('/gallery');
-  const [breadcrumbSubName, setBreadcrumbSubName] = useState('Gallery');
+  const [heroDesc, setHeroDesc] = useState('Browse handcrafted solid timber products.');
+  const [catName, setCatName] = useState('');
+  const [catKey, setCatKey] = useState('');
+  const [subName, setSubName] = useState('');
   const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [sortValue, setSortValue] = useState('featured');
-  const [sortCount, setSortCount] = useState('');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({ material: [], price: '', availability: [] });
+  const [stickyFilterVisible, setStickyFilterVisible] = useState(false);
+  const gridRef = useRef(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const catKey = params.get('cat');
-    const subKey = params.get('sub');
-    if (!catKey || !subKey) {
+    const ck = params.get('cat');
+    const sk = params.get('sub');
+    if (!ck || !sk) {
       window.location.href = '/gallery';
       return;
     }
-
-    const cat = CATS[catKey];
+    const cat = CATS[ck];
     if (!cat) {
       window.location.href = '/gallery';
       return;
     }
-
     let sub = null;
     for (let i = 0; i < cat.subs.length; i++) {
-      if (cat.subs[i].key === subKey) {
-        sub = cat.subs[i];
-        break;
-      }
+      if (cat.subs[i].key === sk) { sub = cat.subs[i]; break; }
     }
     if (!sub) {
-      window.location.href = `/subcategory?cat=${catKey}`;
+      window.location.href = '/gallery';
       return;
     }
-
     document.title = `${sub.name} — ${cat.name} — Teakle`;
-
-    setBreadcrumbCatName(cat.name);
-    setBreadcrumbCatHref(`/subcategory?cat=${catKey}`);
-    setBreadcrumbSubName(sub.name);
+    setCatName(cat.name);
+    setCatKey(ck);
+    setSubName(sub.name);
     setHeroTitle(sub.name);
-    setHeroDesc(`${sub.name} — handcrafted from solid timber.`);
+    setHeroDesc(sub.description || `${sub.name} — handcrafted from solid timber.`);
     setHeroImg(sub.image);
 
-    if (typeof window.TEAKLE_PRODUCTS === 'undefined') {
-      setLoading(true);
-      return;
-    }
-
-    const allFiltered = window.TEAKLE_PRODUCTS.filter(
-      (p) => p.category === catKey && p.subcategory === subKey
+    if (typeof window.TEAKLE_PRODUCTS === 'undefined') return;
+    const filtered = window.TEAKLE_PRODUCTS.filter(
+      (p) => p.category === ck && p.subcategory === sk
     );
-
-    setProducts(allFiltered);
-    setSortCount(`${allFiltered.length} piece${allFiltered.length !== 1 ? 's' : ''}`);
+    setAllProducts(filtered);
+    setProducts(filtered);
     setLoading(false);
+  }, []);
 
-    document.querySelectorAll('.reveal, .piece-card, .product-card, .category-card, .subcategory-card').forEach((el) => {
-      el.classList.add('is-visible');
+  /* Sticky filter detection */
+  useEffect(() => {
+    function onScroll() {
+      const toolbar = document.querySelector('.sub-toolbar');
+      if (!toolbar) return;
+      setStickyFilterVisible(toolbar.getBoundingClientRect().bottom < 0);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  /* Apply filters and sorting */
+  useEffect(() => {
+    let result = [...allProducts];
+    if (filters.material.length > 0) {
+      result = result.filter((p) => filters.material.includes(p.material));
+    }
+    if (filters.price) {
+      const [min, max] = filters.price.split('-').map(Number);
+      result = result.filter((p) => p.price >= min && (!max || p.price <= max));
+    }
+    if (filters.availability.length > 0) {
+      result = result.filter((p) => filters.availability.includes(p.availability));
+    }
+    switch (sortValue) {
+      case 'price-asc': result.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': result.sort((a, b) => b.price - a.price); break;
+      case 'name': result.sort((a, b) => a.name.localeCompare(b.name)); break;
+      case 'newest': result.reverse(); break;
+      default: break;
+    }
+    setProducts(result);
+  }, [sortValue, filters, allProducts]);
+
+  const handleFilterChange = useCallback((type, value) => {
+    setFilters((prev) => {
+      if (type === 'price') return { ...prev, price: value };
+      const arr = prev[type];
+      return { ...prev, [type]: arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value] };
     });
   }, []);
 
-  useEffect(() => {
-    const sortSelect = document.getElementById('sortSelect');
-    if (!sortSelect) return;
+  const clearFilters = useCallback(() => {
+    setFilters({ material: [], price: '', availability: [] });
+    setSortValue('featured');
+  }, []);
 
-    const handler = () => {
-      const sorted = [...products];
-      switch (sortSelect.value) {
-        case 'price-asc':
-          sorted.sort((a, b) => a.price - b.price);
-          break;
-        case 'price-desc':
-          sorted.sort((a, b) => b.price - a.price);
-          break;
-        case 'name':
-          sorted.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-      }
-      const grid = document.getElementById('productsGrid');
-      if (grid) {
-        grid.style.transition = 'opacity 200ms var(--ease)';
-        grid.style.opacity = '0';
-        setTimeout(() => {
-          setProducts(sorted);
-          requestAnimationFrame(() => {
-            grid.style.opacity = '1';
-          });
-        }, 200);
-      }
-    };
+  const hasActiveFilters = filters.material.length > 0 || filters.price || filters.availability.length > 0;
 
-    sortSelect.addEventListener('change', handler);
-    return () => sortSelect.removeEventListener('change', handler);
-  }, [products]);
-
-  useEffect(() => {
-    if (products.length === 0) return;
-
-    const timers = [];
-    const grid = document.getElementById('productsGrid');
-    if (!grid) return;
-
-    const cards = grid.querySelectorAll('.product-card');
-    cards.forEach((card, i) => {
-      timers.push(setTimeout(() => card.classList.add('is-visible'), 60 * i));
-    });
-
-    grid.querySelectorAll('.product-image').forEach((container) => {
-      const img = container.querySelector('img');
-      if (!img) return;
-      if (img.complete) return;
-      container.classList.add('is-loading');
-      const onLoad = () => container.classList.remove('is-loading');
-      const onError = () => container.classList.remove('is-loading');
-      img.addEventListener('load', onLoad);
-      img.addEventListener('error', onError);
-      return () => {
-        img.removeEventListener('load', onLoad);
-        img.removeEventListener('error', onError);
-      };
-    });
-
-    grid.querySelectorAll('.wishlist-btn').forEach((btn) => {
-      const clickHandler = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (typeof window.TeaKle !== 'undefined' && !window.TeaKle.isLoggedIn()) {
-          window.location.href = '/login';
-          return;
-        }
-        if (typeof window.TeaKle !== 'undefined') {
-          const result = window.TeaKle.toggleWishlist({
-            id: btn.dataset.id,
-            name: btn.dataset.name,
-            price: btn.dataset.price,
-            image: btn.dataset.image,
-          });
-          btn.style.transform = 'scale(1.3)';
-          setTimeout(() => {
-            btn.style.transform = 'scale(1)';
-          }, 150);
-          btn.style.background = result.added ? 'var(--bronze)' : 'rgba(255,255,255,0.9)';
-          btn.style.color = result.added ? '#fff' : 'var(--text-primary)';
-        }
-      };
-
-      if (typeof window.TeaKle !== 'undefined' && window.TeaKle.isInWishlist(btn.dataset.id)) {
-        btn.style.background = 'var(--bronze)';
-        btn.style.color = '#fff';
-      }
-
-      btn.addEventListener('click', clickHandler);
-      timers.push({ remove: () => btn.removeEventListener('click', clickHandler) });
-    });
-
-    return () => {
-      timers.forEach((t) => {
-        if (typeof t === 'number') clearTimeout(t);
-        else if (t && t.remove) t.remove();
+  const handleWishlist = useCallback((e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window === 'undefined') return;
+    if (window.Teachle && window.Teachle.requireAuth && !window.Teachle.requireAuth()) return;
+    if (window.Teachle && window.Teachle.toggleWishlist) {
+      window.Teachle.toggleWishlist({
+        id: product.id, name: product.name,
+        price: product.priceFormatted, image: product.images[0],
       });
-    };
-  }, [products]);
+    }
+  }, []);
+
+  const materials = [...new Set(allProducts.map((p) => p.material).filter(Boolean))];
+  const availabilities = [...new Set(allProducts.map((p) => p.availability).filter(Boolean))];
 
   return (
     <>
-      <style>{`
-        .breadcrumb {
-          padding: var(--space-lg) 0 0;
-          font-size: var(--text-caption);
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-          color: var(--text-secondary);
-        }
-        .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
-        .breadcrumb a:hover { color: var(--bronze); }
-        .breadcrumb span { margin: 0 0.5em; }
+      <style>{subStyles}</style>
 
-        .sort-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: var(--space-md) 0;
-          border-bottom: var(--border-subtle);
-          margin-bottom: var(--space-md);
-        }
-        .sort-bar-count {
-          font-size: var(--text-caption);
-          color: var(--text-secondary);
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-        }
-        .sort-bar-controls {
-          display: flex;
-          align-items: center;
-          gap: var(--space-sm);
-        }
-        .sort-bar-label {
-          font-size: var(--text-caption);
-          color: var(--text-secondary);
-          letter-spacing: 0.04em;
-          text-transform: uppercase;
-        }
-        .sort-bar-select {
-          font-family: var(--font-body);
-          font-size: var(--text-caption);
-          color: var(--text-primary);
-          background: none;
-          border: var(--border-hair);
-          padding: 0.4em 1.8em 0.4em 0.6em;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2361574F' stroke-width='1.2'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 0.5em center;
-          cursor: pointer;
-          transition: border-color var(--dur-fast) var(--ease);
-        }
-        .sort-bar-select:hover { border-color: var(--bronze); }
-        .sort-bar-select:focus { outline: none; border-color: var(--bronze); }
-
-        .products-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: var(--space-md) var(--space-sm);
-          padding: 0 0 var(--space-2xl);
-        }
-        .product-card {
-          display: block;
-          text-decoration: none;
-          color: inherit;
-          opacity: 0;
-          transform: translateY(14px);
-          transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
-        }
-        .product-card.is-visible { opacity: 1; transform: translateY(0); }
-        .product-card:hover { color: inherit; }
-        .product-image {
-          position: relative;
-          aspect-ratio: 3 / 4;
-          background: var(--bg-secondary);
-          margin-bottom: 0.6rem;
-          overflow: hidden;
-        }
-        .product-image img {
-          width: 100%; height: 100%; object-fit: cover;
-          transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
-        }
-        .product-card:hover .product-image img { transform: scale(1.04); }
-
-        .product-image { position: relative; }
-        .product-image.is-loading img { opacity: 0; }
-        .product-image.is-loading::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(43,34,27,0.04) 50%, var(--bg-secondary) 75%);
-          background-size: 200% 100%;
-          animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-
-        .product-badge {
-          position: absolute;
-          top: 0.6rem;
-          left: 0.6rem;
-          background: var(--bg-primary);
-          color: var(--text-primary);
-          font-family: var(--font-body);
-          font-size: var(--text-caption);
-          font-weight: 500;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          padding: 0.3em 0.6em;
-          line-height: 1;
-          z-index: 2;
-        }
-        .product-badge:empty { display: none; }
-        .wishlist-btn {
-          position: absolute;
-          top: 0.6rem;
-          right: 0.6rem;
-          width: 44px;
-          height: 44px;
-          background: rgba(255,255,255,0.9);
-          border: none;
-          border-radius: var(--radius-full);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          opacity: 0;
-          transform: scale(0.85);
-          transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-          z-index: 2;
-          color: var(--text-primary);
-        }
-        .product-card:hover .wishlist-btn { opacity: 1; transform: scale(1); }
-        .wishlist-btn:hover { background: var(--bronze); color: #fff; }
-        .wishlist-btn:active { transform: scale(0.85); }
-        .wishlist-btn:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; opacity: 1; transform: scale(1); }
-        .wishlist-btn svg { width: 13px; height: 13px; }
-        .product-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.15rem;
-        }
-        .product-info h3 {
-          font-size: var(--text-body);
-          font-weight: 500;
-          margin-bottom: 0;
-          max-width: none;
-          line-height: 1.3;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          transition: color var(--dur-fast) var(--ease);
-        }
-        .product-card:hover .product-info h3 { color: var(--bronze); }
-        .product-price {
-          font-size: var(--text-caption);
-          letter-spacing: 0.02em;
-          color: var(--text-secondary);
-          line-height: 1.4;
-        }
-        .subcategory-loading {
-          text-align: center;
-          padding: var(--space-2xl) 0;
-          color: var(--text-secondary);
-          font-size: var(--text-body);
-        }
-        @media (max-width: 860px) {
-          .products-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
-          .wishlist-btn { opacity: 1; transform: scale(1); }
-          .sort-bar { flex-wrap: wrap; gap: var(--space-xs); }
-        }
-        @media (max-width: 560px) {
-          .products-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-          .product-image { aspect-ratio: 3 / 4; margin-bottom: var(--space-xs); }
-          .product-info h3 { font-size: var(--text-caption); font-weight: 500; line-height: 1.3; }
-          .product-price { font-size: 0.65rem; }
-          .wishlist-btn { width: 40px; height: 40px; }
-          .wishlist-btn svg { width: 14px; height: 14px; }
-          .sort-bar { padding: var(--space-sm) 0; }
-          .sort-bar-count { font-size: 0.65rem; }
-          .sort-bar-controls { width: 100%; }
-          .sort-bar-select { flex: 1; }
-        }
-        @media (max-width: 430px) {
-          .product-info h3 { font-size: var(--text-caption); }
-          .products-grid { gap: var(--space-xs); }
-        }
-      `}</style>
-
-      <section className="page-hero">
-        <img id="subcategoryHeroImg" src={heroImg} alt="Browse products" />
-        <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Gallery</span>
-          <h1 id="subcategoryHeroTitle">{heroTitle}</h1>
-          <p id="subcategoryHeroDesc">{heroDesc}</p>
+      {/* Hero */}
+      <section className="sub-hero">
+        <img className="sub-hero-img" src={heroImg} alt={heroTitle} />
+        <div className="sub-hero-content">
+          <span className="eyebrow eyebrow-light">{catName}</span>
+          <h1>{heroTitle}</h1>
+          <p>{heroDesc}</p>
         </div>
       </section>
 
+      {/* Breadcrumb */}
       <div className="container">
-        <nav className="breadcrumb" aria-label="Breadcrumb">
-          <a href="/gallery">Gallery</a>
+        <nav className="sub-breadcrumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
           <span>/</span>
-          <a href={breadcrumbCatHref} id="breadcrumbCategory">{breadcrumbCatName}</a>
+          <Link href="/gallery">Gallery</Link>
           <span>/</span>
-          <span id="breadcrumbSubcategory">{breadcrumbSubName}</span>
+          <Link href="/gallery">{catName}</Link>
+          <span>/</span>
+          <span className="bc-current">{subName}</span>
         </nav>
       </div>
 
-      <section className="products-section">
+      {/* Toolbar */}
+      <section style={{ background: 'var(--bg-primary)' }}>
         <div className="container">
-          <div className="sort-bar" id="sortBar">
-            <span className="sort-bar-count" id="sortBarCount">{sortCount}</span>
-            <div className="sort-bar-controls">
-              <label className="sort-bar-label" htmlFor="sortSelect">Sort by</label>
-              <select className="sort-bar-select" id="sortSelect" value={sortValue} onChange={(e) => setSortValue(e.target.value)}>
+          <div className="sub-toolbar">
+            <div className="sub-toolbar-left">
+              <span className="sub-toolbar-count">{products.length} piece{products.length !== 1 ? 's' : ''}</span>
+              {hasActiveFilters && (
+                <button className="sub-filter-clear" onClick={clearFilters}>Clear Filters</button>
+              )}
+            </div>
+            <div className="sub-toolbar-right">
+              <button className={`sub-filter-btn ${filtersOpen ? 'is-active' : ''}`} onClick={() => setFiltersOpen(!filtersOpen)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /><line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" /><line x1="17" y1="16" x2="23" y2="16" /></svg>
+                Filters
+              </button>
+              <select className="sub-sort-select" value={sortValue} onChange={(e) => setSortValue(e.target.value)}>
                 <option value="featured">Featured</option>
+                <option value="newest">Newest</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
                 <option value="name">Name</option>
               </select>
             </div>
           </div>
-          <div className="products-grid" id="productsGrid">
-            {loading ? (
-              <p className="subcategory-loading">Products data not loaded.</p>
-            ) : products.length === 0 ? (
-              <p className="subcategory-loading">Products coming soon. Enquire for custom options.</p>
-            ) : (
-              products.map((product) => {
-                const badgeText =
-                  product.availability === 'Limited Edition'
-                    ? 'Limited'
-                    : product.availability === 'In Stock'
-                    ? 'In Stock'
-                    : '';
 
+          {/* Filter Panel */}
+          <div className={`sub-filters ${filtersOpen ? 'is-open' : ''}`}>
+            <div className="sub-filters-grid">
+              {materials.length > 0 && (
+                <div className="sub-filter-group">
+                  <h4>Material</h4>
+                  {materials.map((m) => (
+                    <label key={m}>
+                      <input type="checkbox" checked={filters.material.includes(m)} onChange={() => handleFilterChange('material', m)} />
+                      {m}
+                    </label>
+                  ))}
+                </div>
+              )}
+              <div className="sub-filter-group">
+                <h4>Price Range</h4>
+                <label><input type="radio" name="price" checked={filters.price === ''} onChange={() => handleFilterChange('price', '')} /> All Prices</label>
+                <label><input type="radio" name="price" checked={filters.price === '0-10000'} onChange={() => handleFilterChange('price', '0-10000')} /> Under \u20B910,000</label>
+                <label><input type="radio" name="price" checked={filters.price === '10000-50000'} onChange={() => handleFilterChange('price', '10000-50000')} /> \u20B910,000 \u2013 \u20B950,000</label>
+                <label><input type="radio" name="price" checked={filters.price === '50000-'} onChange={() => handleFilterChange('price', '50000-')} /> Over \u20B950,000</label>
+              </div>
+              {availabilities.length > 0 && (
+                <div className="sub-filter-group">
+                  <h4>Availability</h4>
+                  {availabilities.map((a) => (
+                    <label key={a}>
+                      <input type="checkbox" checked={filters.availability.includes(a)} onChange={() => handleFilterChange('availability', a)} />
+                      {a}
+                    </label>
+                  ))}
+                </div>
+              )}
+              <div className="sub-filter-group">
+                <h4>Collection</h4>
+                <select style={{ width: '100%' }}>
+                  <option>All Collections</option>
+                  <option>Signature</option>
+                  <option>Kitchen & Dining</option>
+                  <option>Home Décor</option>
+                </select>
+              </div>
+            </div>
+            <div className="sub-filter-actions">
+              <button className="sub-filter-clear" onClick={clearFilters}>Clear All Filters</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Grid */}
+      <section style={{ background: 'var(--bg-primary)', padding: '0 var(--space-md)' }}>
+        <div className="container">
+          <div className="sub-grid" ref={gridRef}>
+            {loading ? (
+              <div className="sub-empty"><p>Loading products...</p></div>
+            ) : products.length === 0 ? (
+              <div className="sub-empty">
+                <svg className="sub-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                <h3>No pieces found</h3>
+                <p>{hasActiveFilters ? 'Try adjusting your filters to discover more pieces.' : 'This collection is being curated. Enquire for custom options.'}</p>
+                {hasActiveFilters ? (
+                  <button className="btn-primary" onClick={clearFilters}>Clear Filters</button>
+                ) : (
+                  <Link href="/contact" className="btn-primary">Get in Touch</Link>
+                )}
+              </div>
+            ) : (
+              products.map((p) => {
+                const badgeText = p.availability === 'Limited Edition' ? 'Limited' : p.availability === 'In Stock' ? 'In Stock' : '';
+                const hoverImg = p.images && p.images.length > 1 ? p.images[1] : null;
                 return (
-                  <a key={product.id} href={`/shop/${product.id}`} className="product-card">
-                    <div className="product-image">
-                      <img src={product.images[0]} alt={product.name} loading="lazy" />
-                      {badgeText && <span className="product-badge">{badgeText}</span>}
-                      <button
-                        className="wishlist-btn"
-                        data-id={product.id}
-                        data-name={product.name}
-                        data-price={product.priceFormatted}
-                        data-image={product.images[0]}
-                        aria-label="Add to wishlist"
-                      >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
+                  <Link key={p.id} href={`/shop/${p.id}`} className="sub-card">
+                    <div className="sub-card-img">
+                      <img src={p.images[0]} alt={p.name} loading="lazy" />
+                      {hoverImg && <img className="sub-card-hover-img" src={hoverImg} alt="" loading="lazy" />}
+                      {badgeText && <span className="sub-card-badge">{badgeText}</span>}
+                      <button className="sub-card-wishlist" aria-label={`Add ${p.name} to wishlist`} onClick={(e) => handleWishlist(e, p)}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                       </button>
                     </div>
-                    <div className="product-info">
-                      <h3>{product.name}</h3>
-                      <span className="product-price">{product.priceFormatted}</span>
+                    <div className="sub-card-info">
+                      <h3>{p.name}</h3>
+                      <span className="sub-card-price">{p.priceFormatted}</span>
                     </div>
-                  </a>
+                  </Link>
                 );
               })
             )}
           </div>
         </div>
       </section>
+
+      {/* Mobile Sticky Filter */}
+      <div className={`sub-mobile-filter ${stickyFilterVisible ? 'is-visible' : ''}`}>
+        <button className="sub-mobile-filter-btn" onClick={() => { setFiltersOpen(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /><line x1="1" y1="14" x2="7" y2="14" /><line x1="9" y1="8" x2="15" y2="8" /><line x1="17" y1="16" x2="23" y2="16" /></svg>
+          Filter & Sort
+        </button>
+      </div>
     </>
   );
 }

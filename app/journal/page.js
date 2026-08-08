@@ -1,3 +1,9 @@
+export const metadata = {
+  title: 'Journal',
+  description: 'Stories from the Teakle workshop. Notes on craft, material, and the objects we make.',
+  openGraph: { title: 'Journal — Teakle', description: 'Stories from the Teakle workshop.' },
+};
+
 export default function JournalPage() {
   return (
     <>

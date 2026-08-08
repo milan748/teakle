@@ -744,7 +744,7 @@ export default function Home() {
             <span className="eyebrow eyebrow-light v2-hero-eyebrow">An Indian Workshop</span>
             <h1>Where wood becomes<br />timeless art.</h1>
             <div className="v2-hero-actions">
-              <a href="/gallery" className="btn-primary">View the Gallery</a>
+              <a href="/gallery" className="btn-primary">View the Collection</a>
               <a href="/studio" className="link-quiet">Our Studio</a>
             </div>
           </div>
@@ -800,7 +800,7 @@ export default function Home() {
               <h2 className="reveal">This season&apos;s hero.</h2>
               <p className="reveal">One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted &mdash; once it&apos;s gone, the next edition begins.</p>
               <div className="v2-sig-actions reveal">
-                <a href="/shop-detail" className="btn-primary">View This Piece</a>
+                <a href="/shop/anchor-table" className="btn-primary">View This Piece</a>
                 <a href="/journal" className="link-quiet">Watch It Being Made</a>
               </div>
               <p className="v2-sig-past reveal">Looking for something from a past season? <a href="/archive">See past editions</a>.</p>
@@ -829,37 +829,37 @@ export default function Home() {
           <button className="v2-cprev" aria-label="Previous">&#8592;</button>
           <button className="v2-cnext" aria-label="Next">&#8594;</button>
           <div className="v2-ctrack" ref={carouselTrackRef}>
-            <a href="/shop-detail?id=anchor-table" className="v2-citem reveal">
+            <a href="/shop/anchor-table" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" /></div>
               <span className="v2-clabel">The Anchor Table</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=bearing-chair" className="v2-citem reveal">
+            <a href="/shop/bearing-chair" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" /></div>
               <span className="v2-clabel">The Bearing Chair</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=teak-serving-board" className="v2-citem reveal">
+            <a href="/shop/teak-serving-board" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" /></div>
               <span className="v2-clabel">Teak Serving Board</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=carving-board" className="v2-citem reveal">
+            <a href="/shop/carving-board" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/7123134/pexels-photo-7123134.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Carving Board" /></div>
               <span className="v2-clabel">Carving Board</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=spice-rack" className="v2-citem reveal">
+            <a href="/shop/spice-rack" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" /></div>
               <span className="v2-clabel">Spice Rack</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=drift-sculpture" className="v2-citem reveal">
+            <a href="/shop/drift-sculpture" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" /></div>
               <span className="v2-clabel">Drift Sculpture</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop-detail?id=hourglass-vase" className="v2-citem reveal">
+            <a href="/shop/hourglass-vase" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" /></div>
               <span className="v2-clabel">Hourglass Vase</span>
               <span className="v2-cbtn">Discover</span>
@@ -884,7 +884,7 @@ export default function Home() {
               <h2>Pieces Built to Last</h2>
             </div>
             <div className="v2-pgrid">
-              <a href="/shop-detail?id=anchor-table" className="v2-pcard reveal">
+              <a href="/shop/anchor-table" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -896,7 +896,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop-detail?id=bearing-chair" className="v2-pcard reveal">
+              <a href="/shop/bearing-chair" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -908,7 +908,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop-detail?id=teak-serving-board" className="v2-pcard reveal">
+              <a href="/shop/teak-serving-board" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -920,7 +920,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop-detail?id=spice-rack" className="v2-pcard reveal">
+              <a href="/shop/spice-rack" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -932,7 +932,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop-detail?id=drift-sculpture" className="v2-pcard reveal">
+              <a href="/shop/drift-sculpture" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -944,7 +944,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop-detail?id=hourglass-vase" className="v2-pcard reveal">
+              <a href="/shop/hourglass-vase" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>

@@ -1116,7 +1116,7 @@ em {
   visibility: hidden;
   transform: translateY(8px) scale(0.9);
   transition: opacity var(--dur-fast) var(--ease), visibility var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
-  z-index: 100;
+  z-index: 160;
 }
 .scroll-top-btn:hover { background: var(--bronze); }
 .scroll-top-btn:active { transform: scale(0.9); background: var(--bronze); }

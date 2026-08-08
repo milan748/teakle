@@ -68,8 +68,8 @@ export default function AccountPage() {
   }, []);
 
   const logout = useCallback(() => {
-    window.Teakle.logout();
-    window.location.href = '/';
+    if (window.Teakle) window.Teakle.logout();
+    window.location.href = '/login';
   }, []);
 
   function saveAddresses(addrs) {
@@ -120,8 +120,8 @@ export default function AccountPage() {
   const stats = [
     { label: 'Current Orders', value: orders.filter(o => o.status !== 'Delivered').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
     { label: 'Wishlist Items', value: wishlist.length, icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
-    { label: 'Saved Addresses', value: addresses.length, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' },
-    { label: 'Reward Points', value: '—', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
+    { label: 'Cart Items', value: cart.length, icon: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0' },
+    { label: 'Saved Addresses', value: addresses.length, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
   ];
 
   function renderContent() {
@@ -155,6 +155,16 @@ export default function AccountPage() {
           ))}
         </div>
 
+        {cart.length > 0 && (
+          <div style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid rgba(167,134,89,0.15)', background: 'rgba(167,134,89,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <div>
+              <p style={{ margin: 0, fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--text-primary)' }}>You have {cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart</p>
+              <p style={{ margin: '0.25rem 0 0', fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7 }}>Complete your purchase before these pieces are reserved.</p>
+            </div>
+            <Link href="/cart" className="acct-btn-sm" style={{ textDecoration: 'none' }}>View Cart</Link>
+          </div>
+        )}
+
         <h3 className="acct-subtitle">Recent Orders</h3>
         {orders.length === 0 ? (
           <div className="acct-empty">
@@ -164,7 +174,7 @@ export default function AccountPage() {
             </div>
             <p className="empty-heading">No orders yet</p>
             <p className="empty-desc">Your collection begins with a single piece.</p>
-            <Link href="/gallery" className="acct-cta">Explore the Gallery</Link>
+            <Link href="/gallery" className="acct-cta">Explore the Collection</Link>
           </div>
         ) : (
           <div className="acct-orders-list">
@@ -275,7 +285,7 @@ export default function AccountPage() {
             </div>
             <p className="empty-heading">Nothing viewed yet</p>
             <p className="empty-desc">Begin discovering pieces that speak to you.</p>
-            <Link href="/gallery" className="acct-cta">Browse the Gallery</Link>
+            <Link href="/gallery" className="acct-cta">Browse the Collection</Link>
           </div>
         ) : (
           <div className="acct-scroll-row">
@@ -1404,7 +1414,7 @@ export default function AccountPage() {
         .acct-mobile-toggle {
           display: none;
           position: fixed;
-          bottom: 60px;
+          bottom: 76px;
           right: 1rem;
           width: 44px;
           height: 44px;

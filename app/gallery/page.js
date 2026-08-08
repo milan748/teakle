@@ -1,797 +1,709 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import Link from 'next/link';
+
+/* ============================================
+   GALLERY — Curated Product Discovery
+   Use-case categories + filtering + sorting
+   ============================================ */
+
+const CATEGORIES = [
+  {
+    key: 'kitchen-dining',
+    title: 'Kitchen & Dining',
+    description: 'Cooking, serving, and gathering around the table.',
+    filter: (p) => p.category === 'kitchen' || p.category === 'dining',
+  },
+  {
+    key: 'coffee-tea',
+    title: 'Coffee & Tea',
+    description: 'Stations, caddies, and accessories for the daily ritual.',
+    filter: (p) => p.subcategory === 'coffee-tea-station' || p.subcategory === 'pantry-organization' || p.id === 'tea-caddy',
+  },
+  {
+    key: 'storage-organization',
+    title: 'Storage & Organization',
+    description: 'Shelves, caddies, and organisers for every room.',
+    filter: (p) => p.subcategory === 'storage-organization' || p.subcategory === 'organizers' || p.subcategory === 'desk-organization' || p.subcategory === 'pantry-organization' || p.subcategory === 'storage-boxes' || p.subcategory === 'pen-holders' || p.subcategory === 'laptop-stands' || p.subcategory === 'document-storage' || p.subcategory === 'office-decor' || p.subcategory === 'accessories' || p.id === 'blanket-ladder' || p.id === 'floating-shelf-set',
+  },
+  {
+    key: 'home-decor',
+    title: 'Home Décor',
+    description: 'Sculptural objects, vases, and candle holders.',
+    filter: (p) => p.subcategory === 'sculptures' || p.subcategory === 'vases' || p.subcategory === 'coffee-table-decor' || p.subcategory === 'candle-holders' || p.subcategory === 'decorative-objects' || p.subcategory === 'shelving-decor' || p.subcategory === 'mirrors' || p.subcategory === 'nightstand-essentials' || p.subcategory === 'jewelry-storage' || p.subcategory === 'decorative-accents' || p.subcategory === 'bedroom-decor',
+  },
+  {
+    key: 'bathroom',
+    title: 'Bathroom',
+    description: 'Vanity trays, soap dishes, and tumblers.',
+    filter: (p) => p.category === 'bathroom',
+  },
+  {
+    key: 'everyday-living',
+    title: 'Everyday Living',
+    description: 'Planters, outdoor serving, and limited editions.',
+    filter: (p) => p.category === 'outdoor' || p.category === 'seasonal',
+  },
+];
+
+const SORT_OPTIONS = [
+  { value: 'featured', label: 'Featured' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'name-asc', label: 'Name: A–Z' },
+];
+
+const PRICE_RANGES = [
+  { value: 'all', label: 'All Prices' },
+  { value: '0-5000', label: 'Under ₹5,000' },
+  { value: '5000-15000', label: '₹5,000 – ₹15,000' },
+  { value: '15000-50000', label: '₹15,000 – ₹50,000' },
+  { value: '50000+', label: '₹50,000+' },
+];
+
+const AVAILABILITY_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'Handcrafted', label: 'Handcrafted' },
+  { value: 'In Stock', label: 'In Stock' },
+  { value: 'Limited Edition', label: 'Limited Edition' },
+];
+
+const galleryStyles = `
+/* ================================================================
+   GALLERY — Curated Product Discovery
+   ================================================================ */
+.gal-page {
+  background: var(--bg-primary);
+  min-height: 100vh;
+}
+
+/* Category Navigation — Compact Pills */
+.gal-cat-nav {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.gal-cat-pill {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  background: none;
+  border: var(--border-hair);
+  border-radius: 100px;
+  padding: 0.55em 1.2em;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+  white-space: nowrap;
+}
+.gal-cat-pill:hover {
+  border-color: var(--bronze);
+  color: var(--text-primary);
+}
+.gal-cat-pill.is-active {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+.gal-cat-pill .pill-count {
+  font-weight: 400;
+  opacity: 0.6;
+  margin-left: 0.3em;
+}
+
+/* Toolbar — Sort + Filter Toggle */
+.gal-toolbar {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.gal-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.gal-result-count {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+}
+.gal-filter-toggle {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  background: none;
+  border: var(--border-hair);
+  border-radius: 100px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: all var(--dur-fast) var(--ease);
+}
+.gal-filter-toggle:hover {
+  border-color: var(--bronze);
+  color: var(--text-primary);
+}
+.gal-filter-toggle.is-active {
+  border-color: var(--bronze);
+  color: var(--bronze);
+}
+.gal-filter-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+.gal-sort-select {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  border-radius: 100px;
+  padding: 0.55em 1.8em 0.55em 0.8em;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2361574F' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6em center;
+  cursor: pointer;
+  min-height: 38px;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.gal-sort-select:hover {
+  border-color: var(--bronze);
+}
+
+/* Filter Panel */
+.gal-filters {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 400ms var(--ease), padding 400ms var(--ease);
+}
+.gal-filters.is-open {
+  max-height: 300px;
+  padding-bottom: var(--space-md);
+}
+.gal-filters-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  padding: var(--space-md) 0;
+  border-bottom: var(--border-subtle);
+}
+.gal-filter-group h4 {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.gal-filter-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  padding: 0.25rem 0;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+.gal-filter-group label:hover {
+  color: var(--text-primary);
+}
+.gal-filter-group input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--bronze);
+  cursor: pointer;
+}
+.gal-filter-group select {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  padding: 0.5em;
+  cursor: pointer;
+}
+.gal-filter-actions {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+.gal-filter-clear {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4em;
+  transition: color var(--dur-fast) var(--ease);
+}
+.gal-filter-clear:hover {
+  color: var(--bronze);
+}
+
+/* Active Filters Bar */
+.gal-active-filters {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-sm);
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.gal-active-filters:empty { display: none; }
+.gal-active-tag {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--bronze);
+  background: rgba(167, 134, 89, 0.08);
+  border: 1px solid rgba(167, 134, 89, 0.2);
+  border-radius: 100px;
+  padding: 0.3em 0.7em;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+}
+.gal-active-tag:hover {
+  background: rgba(167, 134, 89, 0.15);
+}
+.gal-active-tag svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Product Grid */
+.gal-grid {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-2xl);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+.gal-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 400ms var(--ease);
+}
+.gal-card:hover { transform: translateY(-4px); }
+.gal-card-img {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  margin-bottom: 0.75rem;
+}
+.gal-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
+}
+.gal-card:hover .gal-card-img img { transform: scale(1.04); }
+.gal-card-badge {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.3em 0.6em;
+  z-index: 2;
+}
+.gal-card-badge:empty { display: none; }
+.gal-card-wishlist {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  z-index: 2;
+  color: var(--text-primary);
+}
+.gal-card:hover .gal-card-wishlist { opacity: 1; transform: scale(1); }
+.gal-card-wishlist:hover { background: var(--bronze); color: #fff; }
+.gal-card-wishlist:active { transform: scale(0.85); }
+.gal-card-wishlist svg { width: 14px; height: 14px; }
+.gal-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-xs);
+}
+.gal-card-info h3 {
+  font-size: var(--text-body);
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color var(--dur-fast) var(--ease);
+  max-width: none;
+}
+.gal-card:hover .gal-card-info h3 { color: var(--bronze); }
+.gal-card-price {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Empty State */
+.gal-empty {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+}
+.gal-empty h2 {
+  font-size: var(--text-h2);
+  font-weight: 300;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  max-width: none;
+}
+.gal-empty p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+.gal-empty-btn {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+  background: var(--text-primary);
+  border: none;
+  padding: 0.8em 2em;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.gal-empty-btn:hover { background: var(--bronze); }
+
+/* Note */
+.gal-note {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-xl);
+  text-align: center;
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: var(--lh-relaxed);
+}
+.gal-note a { color: var(--bronze); border-bottom: 1px solid transparent; transition: border-color var(--dur-fast) var(--ease); }
+.gal-note a:hover { border-bottom-color: var(--bronze); }
+
+/* Responsive */
+@media (max-width: 860px) {
+  .gal-cat-nav { padding-top: var(--space-md); }
+  .gal-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  .gal-filters-inner { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-sm); }
+  .gal-cat-pill { font-size: 12px; padding: 0.45em 0.9em; }
+  .gal-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .gal-card-info h3 { font-size: var(--text-caption); }
+  .gal-card-wishlist { width: 36px; height: 36px; }
+  .gal-filters-inner { grid-template-columns: 1fr; }
+  .gal-toolbar { flex-direction: column; align-items: stretch; }
+  .gal-toolbar-left { justify-content: space-between; }
+}
+@media (max-width: 430px) {
+  .gal-grid { gap: var(--space-xs); }
+  .gal-cat-nav { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .gal-cat-nav::-webkit-scrollbar { display: none; }
+}
+`;
 
 export default function GalleryPage() {
+  const [products, setProducts] = useState([]);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('featured');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [priceRange, setPriceRange] = useState('all');
+  const [availability, setAvailability] = useState('all');
+
   useEffect(() => {
-    const tabs = document.querySelectorAll('.gallery-tab');
-    const sections = document.querySelectorAll('.category-section');
-    let animating = false;
-
-    sections.forEach((s) => {
-      s.style.transition = 'opacity var(--dur-slow) var(--ease)';
-    });
-
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', function () {
-        if (animating) return;
-        const cat = this.getAttribute('data-category');
-
-        tabs.forEach((t) => t.classList.remove('is-active'));
-        this.classList.add('is-active');
-
-        animating = true;
-        sections.forEach((section) => {
-          if (cat === 'all' || section.getAttribute('data-category') === cat) {
-            section.style.opacity = '0';
-            section.style.display = '';
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                section.style.opacity = '1';
-              });
-            });
-          } else {
-            section.style.opacity = '0';
-            setTimeout(() => {
-              section.style.display = 'none';
-              animating = false;
-            }, 500);
-          }
-        });
-
-        if (cat === 'all') {
-          setTimeout(() => {
-            animating = false;
-          }, 510);
-        }
-
-        if (cat !== 'all') {
-          const target = document.querySelector(
-            `.category-section[data-category="${cat}"]`
-          );
-          if (target) {
-            setTimeout(() => {
-              const tabHeight = document.querySelector('.gallery-tabs').offsetHeight;
-              const top =
-                target.getBoundingClientRect().top + window.pageYOffset - tabHeight - 20;
-              window.scrollTo({ top, behavior: 'smooth' });
-            }, 50);
-          }
-        }
-      });
-    });
+    document.title = 'Gallery — Teakle';
+    if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) {
+      setProducts(window.TEAKLE_PRODUCTS);
+    }
   }, []);
 
-  useEffect(() => {
-    document.querySelectorAll('.subcategory-card-image').forEach((container) => {
-      const img = container.querySelector('img');
-      if (!img) return;
-      if (img.complete) return;
-      container.classList.add('is-loading');
-      img.addEventListener('load', () => {
-        container.classList.remove('is-loading');
-      });
-      img.addEventListener('error', () => {
-        container.classList.remove('is-loading');
-      });
+  const categoryCounts = useMemo(() => {
+    const counts = { all: products.length };
+    CATEGORIES.forEach((cat) => {
+      counts[cat.key] = products.filter(cat.filter).length;
     });
+    return counts;
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    if (activeCategory !== 'all') {
+      const cat = CATEGORIES.find((c) => c.key === activeCategory);
+      if (cat) result = result.filter(cat.filter);
+    }
+
+    if (priceRange !== 'all') {
+      const [min, max] = priceRange.split('-').map(Number);
+      if (max) {
+        result = result.filter((p) => p.price >= min && p.price < max);
+      } else {
+        result = result.filter((p) => p.price >= 50000);
+      }
+    }
+
+    if (availability !== 'all') {
+      result = result.filter((p) => p.availability === availability);
+    }
+
+    switch (sortBy) {
+      case 'newest':
+        result.reverse();
+        break;
+      case 'price-asc':
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case 'name-asc':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      default:
+        break;
+    }
+
+    return result;
+  }, [products, activeCategory, sortBy, priceRange, availability]);
+
+  const hasActiveFilters = priceRange !== 'all' || availability !== 'all';
+
+  const clearFilters = useCallback(() => {
+    setPriceRange('all');
+    setAvailability('all');
+  }, []);
+
+  const removeFilter = useCallback((type) => {
+    if (type === 'price') setPriceRange('all');
+    if (type === 'availability') setAvailability('all');
+  }, []);
+
+  const handleWishlist = useCallback((e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window === 'undefined') return;
+    const t = window.Teakle;
+    if (t && t.requireAuth && !t.requireAuth()) return;
+    if (t && t.toggleWishlist) {
+      t.toggleWishlist({
+        id: product.id,
+        name: product.name,
+        price: product.priceFormatted,
+        image: product.images[0],
+      });
+    }
   }, []);
 
   return (
     <>
-      <style>{`
-        .gallery-tabs {
-          position: sticky;
-          top: 0;
-          z-index: 50;
-          background: var(--bg-primary);
-          border-bottom: var(--border-light);
-          padding: 0 var(--space-md);
-        }
-        .gallery-tabs-inner {
-          display: flex;
-          gap: 0;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-        }
-        .gallery-tabs-inner::-webkit-scrollbar { display: none; }
-        .gallery-tab {
-          flex-shrink: 0;
-          padding: var(--space-sm) var(--space-md);
-          font-family: var(--font-body);
-          font-size: var(--text-caption);
-          font-weight: 500;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--text-secondary);
-          background: none;
-          border: none;
-          border-bottom: 2px solid transparent;
-          cursor: pointer;
-          transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
-          white-space: nowrap;
-        }
-        .gallery-tab:hover {
-          color: var(--text-primary);
-        }
-        .gallery-tab.is-active {
-          color: var(--text-primary);
-          border-bottom-color: var(--text-primary);
-        }
-        .gallery-tab:focus-visible {
-          outline: 2px solid var(--bronze);
-          outline-offset: -2px;
-          border-radius: 2px;
-        }
-        .gallery-categories {
-          max-width: var(--container);
-          margin: 0 auto;
-          padding: 0 var(--space-md);
-        }
-        .category-section {
-          padding: var(--space-xl) 0 var(--space-lg);
-        }
-        .category-section + .category-section {
-          border-top: var(--border-subtle);
-        }
-        .category-heading-row {
-          display: flex;
-          align-items: center;
-          gap: var(--space-md);
-          margin-bottom: var(--space-md);
-        }
-        .category-heading {
-          font-family: var(--font-body);
-          font-size: var(--text-label);
-          font-weight: 600;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--text-primary);
-          margin: 0;
-          max-width: none;
-          white-space: nowrap;
-        }
-        .category-heading-line {
-          flex: 1;
-          height: 1px;
-          background: rgba(43,34,27,0.12);
-        }
-        .subcategory-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: var(--space-md) var(--space-sm);
-        }
-        .subcategory-card {
-          display: block;
-          text-decoration: none;
-          color: inherit;
-        }
-        .subcategory-card-image {
-          position: relative;
-          aspect-ratio: 3 / 4;
-          background: var(--bg-secondary);
-          margin-bottom: 0.6rem;
-          overflow: hidden;
-          border-radius: var(--radius-sm);
-        }
-        .subcategory-card-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
-        }
-        .subcategory-card:hover .subcategory-card-image img {
-          transform: scale(1.04);
-        }
-        .subcategory-card-image { position: relative; }
-        .subcategory-card-image img {
-          transition: opacity var(--dur-slow) var(--ease);
-        }
-        .subcategory-card-image.is-loading img { opacity: 0; }
-        .subcategory-card-image.is-loading::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(90deg, var(--bg-secondary) 25%, rgba(43,34,27,0.04) 50%, var(--bg-secondary) 75%);
-          background-size: 200% 100%;
-          animation: galleryShimmer 1.5s infinite;
-        }
-        @keyframes galleryShimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-        .subcategory-card-wishlist {
-          position: absolute;
-          top: 0.6rem;
-          right: 0.6rem;
-          width: 44px;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255,255,255,0.9);
-          border-radius: var(--radius-full);
-          opacity: 0;
-          transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-          z-index: 2;
-          transform: scale(0.85);
-        }
-        .subcategory-card:hover .subcategory-card-wishlist {
-          opacity: 1;
-          transform: scale(1);
-        }
-        .subcategory-card-wishlist:hover { background: var(--bronze); }
-        .subcategory-card-wishlist:hover svg { color: #fff; }
-        .subcategory-card-wishlist:active { transform: scale(0.85); }
-        .subcategory-card-wishlist:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; opacity: 1; transform: scale(1); }
-        .subcategory-card-wishlist svg {
-          width: 14px;
-          height: 14px;
-          color: var(--text-primary);
-        }
-        .subcategory-card-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.15rem;
-        }
-        .subcategory-card-title {
-          font-family: var(--font-body);
-          font-size: var(--text-body);
-          font-weight: 500;
-          letter-spacing: 0.01em;
-          line-height: 1.3;
-          max-width: none;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          transition: color var(--dur-fast) var(--ease);
-        }
-        .subcategory-card:hover .subcategory-card-title {
-          color: var(--bronze);
-        }
-        .subcategory-card:hover {
-          box-shadow: var(--shadow-card-hover);
-        }
-        .subcategory-card-count {
-          font-size: var(--text-caption);
-          color: var(--text-secondary);
-          letter-spacing: 0.02em;
-        }
-        .gallery-note {
-          max-width: var(--container);
-          margin: 0 auto;
-          padding: var(--space-lg) var(--space-md);
-          text-align: center;
-          font-size: var(--text-body);
-          color: var(--text-secondary);
-          line-height: var(--lh-relaxed);
-        }
-        .gallery-note a {
-          color: var(--bronze);
-          border-bottom: 1px solid transparent;
-          transition: border-color var(--dur-fast) var(--ease);
-        }
-        .gallery-note a:hover { border-bottom-color: var(--bronze); }
-        @media (max-width: 860px) {
-          .gallery-tab { padding: var(--space-sm) var(--space-sm); font-size: var(--text-caption); min-height: 44px; }
-          .category-section { padding: var(--space-lg) 0 var(--space-md); }
-          .subcategory-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--space-sm) var(--space-sm);
-          }
-          .subcategory-card-title { font-size: var(--text-caption); }
-          .subcategory-card-wishlist { opacity: 1; transform: scale(1); }
-        }
-        @media (max-width: 560px) {
-          .gallery-tabs { padding: 0 var(--space-sm); }
-          .category-section { padding: var(--space-md) 0; }
-          .category-heading { font-size: var(--text-caption); }
-          .subcategory-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm) var(--space-sm);
-          }
-          .subcategory-card-title { font-size: var(--text-caption); }
-          .subcategory-card-wishlist { opacity: 1; transform: scale(1); }
-        }
-        @media (max-width: 430px) {
-          .subcategory-card-title { font-size: var(--text-caption); }
-        }
-      `}</style>
+      <style>{galleryStyles}</style>
 
-      <section className="page-hero">
-        <img
-          src="https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1800"
-          alt="Solid timber furniture in a workshop."
-        />
-        <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Gallery</span>
-          <h1>Every piece, handcrafted from solid timber.</h1>
+      <main className="gal-page">
+        <section className="page-hero">
+          <img src="https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A curated collection of handcrafted teak serving pieces on a wooden table." />
+          <div className="page-hero-content">
+            <span className="eyebrow eyebrow-light">Gallery</span>
+            <h1>Every piece, handcrafted from solid timber.</h1>
+            <p>Browse by use case &mdash; kitchen, coffee, storage, d&eacute;cor, bathroom, and everyday living.</p>
+          </div>
+        </section>
+
+        <nav className="gal-cat-nav" aria-label="Product categories">
+          <button
+            className={`gal-cat-pill${activeCategory === 'all' ? ' is-active' : ''}`}
+            onClick={() => setActiveCategory('all')}
+          >
+            All<span className="pill-count">{categoryCounts.all}</span>
+          </button>
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.key}
+              className={`gal-cat-pill${activeCategory === cat.key ? ' is-active' : ''}`}
+              onClick={() => setActiveCategory(cat.key)}
+            >
+              {cat.title}<span className="pill-count">{categoryCounts[cat.key]}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="gal-toolbar">
+          <div className="gal-toolbar-left">
+            <span className="gal-result-count">
+              {filteredProducts.length} piece{filteredProducts.length !== 1 ? 's' : ''}
+            </span>
+            <button
+              className={`gal-filter-toggle${hasActiveFilters ? ' is-active' : ''}`}
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              aria-expanded={filtersOpen}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M3 6h18M7 12h10M10 18h4" />
+              </svg>
+              Filters
+            </button>
+          </div>
+          <select
+            className="gal-sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            aria-label="Sort products"
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={`gal-filters${filtersOpen ? ' is-open' : ''}`}>
+          <div className="gal-filters-inner">
+            <div className="gal-filter-group">
+              <h4>Price Range</h4>
+              <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
+                {PRICE_RANGES.map((r) => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="gal-filter-group">
+              <h4>Availability</h4>
+              {AVAILABILITY_OPTIONS.map((opt) => (
+                <label key={opt.value}>
+                  <input
+                    type="radio"
+                    name="gal-availability"
+                    checked={availability === opt.value}
+                    onChange={() => setAvailability(opt.value)}
+                  />
+                  {opt.label}
+                </label>
+              ))}
+            </div>
+            <div className="gal-filter-group">
+              <h4>Quick Actions</h4>
+              <div className="gal-filter-actions">
+                <button className="gal-filter-clear" onClick={clearFilters}>
+                  Clear All Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {hasActiveFilters && (
+          <div className="gal-active-filters">
+            {priceRange !== 'all' && (
+              <button className="gal-active-tag" onClick={() => removeFilter('price')}>
+                {PRICE_RANGES.find((r) => r.value === priceRange)?.label}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+            {availability !== 'all' && (
+              <button className="gal-active-tag" onClick={() => removeFilter('availability')}>
+                {availability}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
+
+        {filteredProducts.length > 0 ? (
+          <div className="gal-grid">
+            {filteredProducts.map((product) => (
+              <Link key={product.id} href={`/shop/${product.id}`} className="gal-card">
+                <div className="gal-card-img">
+                  <img src={product.images[0]} alt={product.name} loading="lazy" />
+                  <span className="gal-card-badge">{product.availability}</span>
+                  <button
+                    className="gal-card-wishlist"
+                    aria-label={`Add ${product.name} to wishlist`}
+                    onClick={(e) => handleWishlist(e, product)}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  </button>
+                </div>
+                <div className="gal-card-info">
+                  <h3>{product.name}</h3>
+                  <span className="gal-card-price">{product.priceFormatted}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="gal-empty">
+            <h2>No pieces found</h2>
+            <p>Try adjusting your filters or browse a different category.</p>
+            <button className="gal-empty-btn" onClick={clearFilters}>
+              Clear Filters
+            </button>
+          </div>
+        )}
+
+        <div className="gal-note">
           <p>
-            Browse by room or category — kitchen, dining, living, bedroom,
-            workspace, organization, and decor.
+            Each piece is handcrafted to order. Lead times vary by complexity. For
+            enquiries, visit our{' '}
+            <Link href="/contact">contact page</Link> or{' '}
+            <Link href="/custom">request a custom piece</Link>.
           </p>
         </div>
-      </section>
-
-      <nav className="gallery-tabs" aria-label="Filter by category">
-        <div className="gallery-tabs-inner">
-          <button className="gallery-tab is-active" data-category="all">All</button>
-          <button className="gallery-tab" data-category="kitchen">Kitchen</button>
-          <button className="gallery-tab" data-category="dining">Dining</button>
-          <button className="gallery-tab" data-category="living">Living</button>
-          <button className="gallery-tab" data-category="bedroom">Bedroom</button>
-          <button className="gallery-tab" data-category="office">Workspace</button>
-          <button className="gallery-tab" data-category="bathroom">Organization</button>
-          <button className="gallery-tab" data-category="outdoor">Decor</button>
-        </div>
-      </nav>
-
-      <section className="gallery-categories" id="galleryCategories">
-        {/* KITCHEN */}
-        <div className="category-section" data-category="kitchen">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Kitchen</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=kitchen&sub=countertop-essentials" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/28080318/pexels-photo-28080318.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Countertop Essentials" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Countertop Essentials</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=coffee-tea-station" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/16588584/pexels-photo-16588584.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Coffee & Tea Station" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Coffee & Tea Station</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=cooking-essentials" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/7123134/pexels-photo-7123134.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Cooking Essentials" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Cooking Essentials</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=storage-organization" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Spice Storage" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Spice Storage</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=dining-serving" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/29250824/pexels-photo-29250824.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Knife & Utensil Holders" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Knife & Utensil Holders</h3>
-                <p className="subcategory-card-count">2 pieces</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=dining-serving" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4736381/pexels-photo-4736381.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Trays" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Trays</h3>
-                <p className="subcategory-card-count">2 pieces</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=storage-organization" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4805230/pexels-photo-4805230.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Bread Boxes" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Bread Boxes</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=kitchen&sub=countertop-essentials" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/11913154/pexels-photo-11913154.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Fruit Bowls" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Fruit Bowls</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* DINING */}
-        <div className="category-section" data-category="dining">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Dining</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=dining&sub=serving-boards" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serving Boards" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Serving Boards</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=trays" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/8895213/pexels-photo-8895213.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serving Trays" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Serving Trays</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=bowls" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/7799698/pexels-photo-7799698.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Platters" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Platters</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=trays" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/29632116/pexels-photo-29632116.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Coasters" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Coasters</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=serving-boards" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4791748/pexels-photo-4791748.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Napkin Holders" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Napkin Holders</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=bowls" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/9646744/pexels-photo-9646744.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Cutlery Organizers" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Cutlery Organizers</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=dining&sub=serving-boards" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4989498/pexels-photo-4989498.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Dining Centerpieces" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Dining Centerpieces</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* LIVING */}
-        <div className="category-section" data-category="living">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Living</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=living&sub=coffee-table-decor" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Coffee Table Objects" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Coffee Table Objects</h3>
-                <p className="subcategory-card-count">2 pieces</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=living&sub=storage-boxes" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/33395641/pexels-photo-33395641.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Decorative Boxes" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Decorative Boxes</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=living&sub=sculptures" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/6956510/pexels-photo-6956510.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Bookends" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Bookends</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=living&sub=vases" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Candle Holders" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Candle Holders</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=living&sub=storage-boxes" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/11911824/pexels-photo-11911824.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Tissue Boxes" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Tissue Boxes</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* BEDROOM */}
-        <div className="category-section" data-category="bedroom">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Bedroom</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=bedroom&sub=nightstand-essentials" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/31538808/pexels-photo-31538808.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Nightstand Essentials" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Nightstand Essentials</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=bedroom&sub=organizers" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/15679388/pexels-photo-15679388.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Organizers" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Organizers</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=bedroom&sub=mirrors" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/8218187/pexels-photo-8218187.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Mirrors" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Mirrors</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* OFFICE / WORKSPACE */}
-        <div className="category-section" data-category="office">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Workspace</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=office&sub=laptop-stands" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/3847554/pexels-photo-3847554.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Laptop Stands" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Laptop Stands</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=office&sub=desk-organization" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/6340708/pexels-photo-6340708.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Desk Organization" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Desk Organization</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=office&sub=pen-holders" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/13162093/pexels-photo-13162093.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Pen Holders" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Pen Holders</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* BATHROOM / ORGANIZATION */}
-        <div className="category-section" data-category="bathroom">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Organization</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=bathroom&sub=vanity-organizers" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/7303908/pexels-photo-7303908.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Vanity Organizers" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Vanity Organizers</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=bathroom&sub=soap-dispensers" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/7303925/pexels-photo-7303925.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Soap Dispensers" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Soap Dispensers</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=bathroom&sub=toothbrush-holders" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/7055292/pexels-photo-7055292.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Toothbrush Holders" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Toothbrush Holders</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* OUTDOOR / DECOR */}
-        <div className="category-section" data-category="outdoor">
-          <div className="category-heading-row">
-            <h2 className="category-heading">Decor</h2>
-            <div className="category-heading-line"></div>
-          </div>
-          <div className="subcategory-grid">
-            <a href="/subcategory?cat=outdoor&sub=planters" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/4752017/pexels-photo-4752017.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Planters" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Planters</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=outdoor&sub=garden-decor" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/10418654/pexels-photo-10418654.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Garden Decor" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Garden Decor</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-            <a href="/subcategory?cat=outdoor&sub=outdoor-serving" className="subcategory-card">
-              <div className="subcategory-card-image">
-                <img src="https://images.pexels.com/photos/8170254/pexels-photo-8170254.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Outdoor Serving" loading="lazy" />
-                <button className="subcategory-card-wishlist" aria-label="Add to wishlist">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </button>
-              </div>
-              <div className="subcategory-card-info">
-                <h3 className="subcategory-card-title">Outdoor Serving</h3>
-                <p className="subcategory-card-count">1 piece</p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <div className="gallery-note">
-        <p>
-          Each piece is handcrafted to order. Lead times vary by complexity. For
-          enquiries, visit our{' '}
-          <a href="/contact">contact page</a> or{' '}
-          <a href="/custom">request a custom piece</a>.
-        </p>
-      </div>
+      </main>
     </>
   );
 }

@@ -11,7 +11,45 @@ export const metadata = {
     default: 'Teakle — Objects for a Permanent Home',
     template: '%s — Teakle',
   },
-  description: 'An Indian workshop making solid wood objects, one piece at a time.',
+  description: 'An Indian workshop making solid wood objects, one piece at a time. Handcrafted walnut and teak furniture, kitchenware, and home decor.',
+  keywords: ['handcrafted wood', 'solid wood furniture', 'walnut wood', 'teak wood', 'Indian craft', 'artisan furniture', 'wooden home decor'],
+  authors: [{ name: 'Teakle' }],
+  creator: 'Teakle',
+  publisher: 'Teakle',
+  metadataBase: new URL('https://teakle.in'),
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://teakle.in',
+    siteName: 'Teakle',
+    title: 'Teakle — Objects for a Permanent Home',
+    description: 'An Indian workshop making solid wood objects, one piece at a time.',
+    images: [
+      {
+        url: '/assets/hero-luxury-entryway.png',
+        width: 1200,
+        height: 630,
+        alt: 'Teakle handcrafted wooden furniture',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Teakle — Objects for a Permanent Home',
+    description: 'An Indian workshop making solid wood objects, one piece at a time.',
+    images: ['/assets/hero-luxury-entryway.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -19,6 +57,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="theme-color" content="#F7F4EE" />
+        <meta name="color-scheme" content="light" />
+        <link rel="icon" href="/assets/logo-black.png" />
+        <link rel="apple-touch-icon" href="/assets/logo-black.png" />
         <link rel="preconnect" href="https://images.pexels.com" crossOrigin="anonymous" />
         <link rel="preload" href="/assets/logo-black.png" as="image" />
       </head>

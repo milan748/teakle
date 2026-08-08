@@ -30,7 +30,7 @@ export default function Footer() {
             </ul>
           </div>
           <div className="footer-col">
-            <h4>Studio</h4>
+            <h4>Services</h4>
             <ul>
               <li><Link href="/trade">Trade &amp; Bulk Inquiries</Link></li>
               <li><Link href="/contact">Contact</Link></li>
@@ -40,8 +40,9 @@ export default function Footer() {
           <div className="footer-col footer-newsletter">
             <h4>From the Workshop</h4>
             <p>Receive occasional notes from the workshop. No spam. No offers. Only stories.</p>
-            <form className="footer-newsletter-form" id="footerNewsletterForm">
-              <input type="email" name="email" placeholder="Your email" required aria-label="Email address for newsletter" />
+            <form className="footer-newsletter-form" id="footerNewsletterForm" aria-label="Newsletter signup">
+              <label htmlFor="footer-email" className="visually-hidden">Email address for newsletter</label>
+              <input type="email" id="footer-email" name="email" placeholder="Your email" required aria-label="Email address for newsletter" />
               <button type="submit">Send</button>
             </form>
           </div>
