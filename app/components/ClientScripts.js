@@ -1,19 +1,22 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function ClientScripts() {
-  const cleanupRef = useRef(null);
+  const pathname = usePathname();
 
+  /* ---- Scroll reveal — re-initializes on every route change ---- */
   useEffect(() => {
     let observer;
     let safetyTimeout;
+    let frameId;
 
     /* Defer reveal DOM mutations past hydration with double rAF.
        The first rAF fires after the current paint (where React 19
        finishes its hydration commit). The second rAF guarantees
        execution on the NEXT frame, well after reconciliation. */
-    const frameId = requestAnimationFrame(() => {
+    frameId = requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         /* Scroll reveal with Intersection Observer */
         const reveals = document.querySelectorAll('.reveal, .piece-card, .product-card');
@@ -35,15 +38,19 @@ export default function ClientScripts() {
         safetyTimeout = setTimeout(() => {
           reveals.forEach((el) => el.classList.add('is-visible'));
         }, 1500);
-
-        cleanupRef.current = () => {
-          clearTimeout(safetyTimeout);
-          if (observer) observer.disconnect();
-        };
       });
     });
 
-    /* Mobile nav toggle — runs immediately, no hydration conflict */
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(safetyTimeout);
+      if (observer) observer.disconnect();
+    };
+  }, [pathname]);
+
+  /* ---- One-time initialization (nav, badges, Teakle, newsletter) ---- */
+  useEffect(() => {
+    /* Mobile nav toggle */
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.getElementById('navLinks');
     let backdrop;
@@ -56,6 +63,7 @@ export default function ClientScripts() {
         navLinks.classList.remove('is-open');
         navToggle.classList.remove('is-open');
         navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.setAttribute('aria-label', 'Open menu');
         if (backdrop) backdrop.classList.remove('is-visible');
         document.body.classList.remove('nav-drawer-open');
         navLinks.querySelectorAll('.nav-dropdown.is-open, .nav-subdropdown.is-open').forEach((el) => {
@@ -70,6 +78,7 @@ export default function ClientScripts() {
         const open = navLinks.classList.toggle('is-open');
         navToggle.classList.toggle('is-open', navLinks.classList.contains('is-open'));
         navToggle.setAttribute('aria-expanded', navLinks.classList.contains('is-open'));
+        navToggle.setAttribute('aria-label', navLinks.classList.contains('is-open') ? 'Close menu' : 'Open menu');
         backdrop.classList.toggle('is-visible', navLinks.classList.contains('is-open'));
         document.body.classList.toggle('nav-drawer-open', navLinks.classList.contains('is-open'));
       });
@@ -148,10 +157,7 @@ export default function ClientScripts() {
       });
     }
 
-    return () => {
-      cancelAnimationFrame(frameId);
-      if (cleanupRef.current) cleanupRef.current();
-    };
+    return () => {};
   }, []);
 
   return null;

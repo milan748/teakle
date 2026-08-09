@@ -218,6 +218,7 @@ export default function JournalArticlePage() {
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -255,11 +256,12 @@ export default function JournalArticlePage() {
     }
 
     setLoading(false);
-  }, [slug]);
+  }, [slug, scriptLoaded]);
 
   if (loading) {
     return (
       <>
+        <Script src="/journal-articles.js" strategy="beforeInteractive" onLoad={() => setScriptLoaded(true)} />
         <style>{articleStyles}</style>
         <section style={{ background: 'var(--bg-primary)', padding: 'var(--space-2xl) var(--space-md)', textAlign: 'center' }}>
           <p style={{ color: 'var(--text-secondary)' }}>Loading article...</p>
@@ -271,6 +273,7 @@ export default function JournalArticlePage() {
   if (!article) {
     return (
       <>
+        <Script src="/journal-articles.js" strategy="beforeInteractive" onLoad={() => setScriptLoaded(true)} />
         <style>{articleStyles}</style>
         <section style={{ background: 'var(--bg-primary)', padding: 'var(--space-2xl) var(--space-md)', textAlign: 'center' }}>
           <h1 style={{ marginBottom: 'var(--space-sm)' }}>Article not found</h1>
@@ -286,7 +289,7 @@ export default function JournalArticlePage() {
 
   return (
     <>
-      <Script src="/journal-articles.js" strategy="beforeInteractive" />
+      <Script src="/journal-articles.js" strategy="beforeInteractive" onLoad={() => setScriptLoaded(true)} />
       <style>{articleStyles}</style>
 
       {/* Hero */}

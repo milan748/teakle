@@ -3,15 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import Link from 'next/link';
-import Script from 'next/script';
 import ProductCard from '../../components/ProductCard';
 
 /* ============================================
-   PRODUCT PAGE — Type A (Signature) + Type B (Standard)
+   PRODUCT PAGE — Type A (Hero) + Type B (Standard)
    Refined v2 — improved hierarchy, gallery, mobile
    ============================================ */
-
-const SIGNATURE_IDS = ['anchor-table'];
 
 const pageStyles = `
 /* ================================================================
@@ -58,7 +55,6 @@ const pageStyles = `
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: opacity 400ms var(--ease), transform 400ms var(--ease);
 }
 .pd-gallery-main.is-zoomed { cursor: zoom-out; }
 .pd-gallery-main.is-zoomed img { transform: scale(1.8); }
@@ -913,6 +909,12 @@ const pageStyles = `
   padding: 0 var(--space-md);
 }
 
+.pd-recently-viewed {
+  background: var(--bg-primary);
+  padding: var(--space-xl) 0;
+  border-top: var(--border-hair);
+}
+
 /* ================================================================
    RESPONSIVE
    ================================================================ */
@@ -1019,13 +1021,14 @@ export default function ShopDetailPage() {
   const [storyOpen, setStoryOpen] = useState(false);
   const [specsOpen, setSpecsOpen] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const lastFocusedElRef = useRef(null);
   const addToCartBtnRef = useRef(null);
   const galleryMainRef = useRef(null);
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
 
-  const isSignature = SIGNATURE_IDS.includes(productId);
+  const isSignature = product?.isHero === true;
 
   /* Load product */
   useEffect(() => {
@@ -1156,7 +1159,8 @@ export default function ShopDetailPage() {
   const handleAddToCart = useCallback(() => {
     if (!product || typeof window === 'undefined') return;
     if (window.Teakle) {
-      window.Teakle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0], qty: qty });
+      const addQty = product.isHero ? 1 : qty;
+      window.Teakle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0], qty: addQty });
     }
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
@@ -1178,7 +1182,10 @@ export default function ShopDetailPage() {
     if (navigator.share) {
       navigator.share({ title: product?.name, text: product?.shortDescription, url: window.location.href });
     } else {
-      navigator.clipboard.writeText(window.location.href).then(() => alert('Link copied to clipboard.'));
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      });
     }
   }, [product]);
 
@@ -1201,12 +1208,23 @@ export default function ShopDetailPage() {
   const renderPurchasePanel = (className = '') => (
     <div className={className}>
       <div className="pd-qty">
-        <span className="pd-qty-label">Quantity</span>
-        <div className="pd-qty-ctrl">
-          <button className="pd-qty-btn" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>&minus;</button>
-          <span className="pd-qty-val">{qty}</span>
-          <button className="pd-qty-btn" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(10, q + 1))}>+</button>
-        </div>
+        {isSignature ? (
+          <>
+            <span className="pd-qty-label">Availability</span>
+            <div className="pd-qty-ctrl" style={{ border: 'none' }}>
+              <span className="pd-qty-val" style={{ width: 'auto', border: 'none', fontWeight: 500, color: 'var(--bronze)' }}>One of one</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <span className="pd-qty-label">Quantity</span>
+            <div className="pd-qty-ctrl">
+              <button className="pd-qty-btn" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>&minus;</button>
+              <span className="pd-qty-val">{qty}</span>
+              <button className="pd-qty-btn" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(10, q + 1))}>+</button>
+            </div>
+          </>
+        )}
       </div>
       <div className="pd-actions">
         <button ref={addToCartBtnRef} className={`pd-btn-add ${isAdded ? 'is-added' : ''}`} onClick={handleAddToCart}>
@@ -1223,7 +1241,7 @@ export default function ShopDetailPage() {
           </button>
           <button className="pd-btn-secondary" onClick={handleShare}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
-            Share
+            {shareCopied ? 'Copied!' : 'Share'}
           </button>
         </div>
       </div>
@@ -1270,7 +1288,7 @@ export default function ShopDetailPage() {
   const renderRecentlyViewed = () => {
     if (!showRecentlyViewed || recentlyViewed.length === 0) return null;
     return (
-      <section style={{ background: 'var(--bg-primary)', padding: 'var(--space-xl) 0', borderTop: 'var(--border-hair)' }}>
+      <section className="pd-recently-viewed">
         <div className="container">
           <div className="pd-related-head">
             <span className="eyebrow">Browsing History</span>
@@ -1425,7 +1443,6 @@ export default function ShopDetailPage() {
     return (
       <>
         <style>{pageStyles}</style>
-        <Script src="/products.js" strategy="beforeInteractive" />
 
         {/* Breadcrumb */}
         <section className="pd-breadcrumb">
@@ -1446,10 +1463,10 @@ export default function ShopDetailPage() {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <img src={product.images[currentImageIdx]} alt={product.name} style={{ opacity: isGalleryLoading ? 0 : 1 }} onLoad={() => setIsGalleryLoading(false)} />
+          <img src={product.images[currentImageIdx]} alt={`${product.name}, image ${currentImageIdx + 1} of ${product.images.length}`} onLoad={() => setIsGalleryLoading(false)} />
           <div className="sig-hero-overlay"></div>
           <div className="sig-hero-info">
-            <span className="sig-hero-tag">{'Piece N\u00B0 04 \u2014 This Season'}</span>
+            <span className="sig-hero-tag">Signature Piece</span>
             <h1>{product.name}</h1>
             <p className="sig-hero-price">{product.priceFormatted}</p>
           </div>
@@ -1505,7 +1522,7 @@ export default function ShopDetailPage() {
             <span className="eyebrow">The Craft</span>
             <h2>{product.craftsmanship?.substring(0, 80)}...</h2>
             <p>{product.story}</p>
-            <a href="/studio" className="link-quiet">Visit the Studio</a>
+            <Link href="/studio" className="link-quiet">Visit the Studio</Link>
           </div>
         </section>
 
@@ -1545,7 +1562,6 @@ export default function ShopDetailPage() {
   return (
     <>
       <style>{pageStyles}</style>
-      <Script src="/products.js" strategy="beforeInteractive" />
 
       {/* Breadcrumb */}
       <section className="pd-breadcrumb">
@@ -1577,7 +1593,7 @@ export default function ShopDetailPage() {
               onTouchEnd={handleTouchEnd}
             >
               <span className="pd-gallery-badge">{badgeText}</span>
-              <span className="pd-gallery-counter">{currentImageIdx + 1} / {product.images.length}</span>
+              <span className="pd-gallery-counter" aria-label={`Image ${currentImageIdx + 1} of ${product.images.length}`}>{currentImageIdx + 1} / {product.images.length}</span>
               <span className="pd-gallery-zoom-hint">Click to zoom</span>
               <button className="pd-gallery-fullscreen" aria-label="View fullscreen" onClick={(e) => { e.stopPropagation(); openOverlay(currentImageIdx); }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 18, height: 18, color: 'var(--text-primary)' }}>
@@ -1616,19 +1632,11 @@ export default function ShopDetailPage() {
 
           {/* Details — Purchase Hierarchy: Name → Desc → Price → Avail → Qty → Add to Cart → Wishlist → Share */}
           <div className="pd-details">
-            <h1 className="pd-title">{product.name}</h1>
+            <h2 className="pd-title">{product.name}</h2>
             <p className="pd-short-desc">{product.shortDescription}</p>
             <div className="pd-price-row">
               <span className="pd-price">{product.priceFormatted}</span>
               <span className={`pd-avail ${product.availability === 'Limited Edition' ? 'is-limited' : ''}`}>{product.availabilityNote}</span>
-            </div>
-            <div className="pd-info-sections">
-              {product.specifications.map((s, i) => (
-                <div key={i} className="pd-info-row">
-                  <span className="pd-info-label">{s.label}</span>
-                  <span className="pd-info-value">{s.value}</span>
-                </div>
-              ))}
             </div>
             {renderPurchasePanel()}
             {renderDelivery()}

@@ -19,6 +19,9 @@ const CATS = {
       { key: 'cooking-essentials', name: 'Cooking Essentials', image: 'https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'dining-serving', name: 'Dining & Serving', image: 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'storage-organization', name: 'Storage & Organization', image: 'https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'kitchen-decor', name: 'Kitchen Decor', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'baking-essentials', name: 'Baking Essentials', image: 'https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'pantry-organization', name: 'Pantry Organization', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   dining: {
@@ -29,6 +32,10 @@ const CATS = {
       { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'trays', name: 'Trays', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'bowls', name: 'Bowls', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'cutlery', name: 'Cutlery', image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'drinkware-accessories', name: 'Drinkware Accessories', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'table-centerpieces', name: 'Table Centerpieces', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'dining-decor', name: 'Dining Decor', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   living: {
@@ -40,6 +47,9 @@ const CATS = {
       { key: 'vases', name: 'Vases', image: 'https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'coffee-table-decor', name: 'Coffee Table Decor', image: 'https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'storage-boxes', name: 'Storage Boxes', image: 'https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'decorative-objects', name: 'Decorative Objects', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'shelving-decor', name: 'Shelving Decor', image: 'https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'candle-holders', name: 'Candle Holders', image: 'https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   bedroom: {
@@ -50,6 +60,9 @@ const CATS = {
       { key: 'nightstand-essentials', name: 'Nightstand Essentials', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'organizers', name: 'Organizers', image: 'https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'mirrors', name: 'Mirrors', image: 'https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'jewelry-storage', name: 'Jewelry Storage', image: 'https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'decorative-accents', name: 'Decorative Accents', image: 'https://images.pexels.com/photos/6045088/pexels-photo-6045088.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'bedroom-decor', name: 'Bedroom Decor', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   office: {
@@ -60,6 +73,9 @@ const CATS = {
       { key: 'desk-organization', name: 'Desk Organization', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'pen-holders', name: 'Pen Holders', image: 'https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'laptop-stands', name: 'Laptop Stands', image: 'https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'document-storage', name: 'Document Storage', image: 'https://images.pexels.com/photos/7979604/pexels-photo-7979604.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'office-decor', name: 'Office Decor', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'accessories', name: 'Accessories', image: 'https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   bathroom: {
@@ -70,6 +86,8 @@ const CATS = {
       { key: 'vanity-organizers', name: 'Vanity Organizers', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'soap-dispensers', name: 'Soap Dispensers', image: 'https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'toothbrush-holders', name: 'Toothbrush Holders', image: 'https://images.pexels.com/photos/7055292/pexels-photo-7055292.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'bathroom-decor', name: 'Bathroom Decor', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   outdoor: {
@@ -80,6 +98,19 @@ const CATS = {
       { key: 'planters', name: 'Planters', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'garden-decor', name: 'Garden Decor', image: 'https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'outdoor-serving', name: 'Outdoor Serving', image: 'https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'patio-accessories', name: 'Patio Accessories', image: 'https://images.pexels.com/photos/6480210/pexels-photo-6480210.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900' },
+    ],
+  },
+  seasonal: {
+    name: 'Seasonal',
+    image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    description: 'Festive decor, collectors pieces, and limited edition collections.',
+    subs: [
+      { key: 'festive-decor', name: 'Festive Decor', image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'collectors-series', name: "Collectors Series", image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'limited-editions', name: 'Limited Editions', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'gift-collections', name: 'Gift Collections', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
 };
@@ -573,15 +604,6 @@ export default function SubcategoryPage() {
                   ))}
                 </div>
               )}
-              <div className="sub-filter-group">
-                <h4>Collection</h4>
-                <select style={{ width: '100%' }}>
-                  <option>All Collections</option>
-                  <option>Signature</option>
-                  <option>Kitchen & Dining</option>
-                  <option>Home Décor</option>
-                </select>
-              </div>
             </div>
             <div className="sub-filter-actions">
               <button className="sub-filter-clear" onClick={clearFilters}>Clear All Filters</button>

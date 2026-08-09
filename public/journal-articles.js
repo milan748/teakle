@@ -43,7 +43,7 @@ window.TEAKLE_JOURNAL = [
     image: 'https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=700',
     imageAlt: 'A hand rubbing oil finish into a wooden surface.',
     featured: false,
-    relatedProducts: ['chopping-board', 'serving-plank', 'carve-board'],
+    relatedProducts: ['carving-board', 'serving-plank', 'carve-board'],
     body: [
       { type: 'paragraph', text: 'Lacquer has a reputation for producing flawless surfaces. And it does — when it\'s first applied. The finish is smooth, even, and has a depth that\'s hard to achieve with oil. For the first twelve months, a lacquered piece looks spectacular.' },
       { type: 'paragraph', text: 'Then reality sets in. Wood moves. It expands in humid seasons and contracts in dry ones. This is normal — it\'s what wood does, and it\'s been doing it for millennia. The problem is that lacquer forms a rigid film on the surface. When the wood moves underneath, the film can\'t move with it.' },
@@ -145,7 +145,7 @@ window.TEAKLE_JOURNAL = [
     image: 'https://images.pexels.com/photos/36299690/pexels-photo-36299690.jpeg?auto=compress&cs=tinysrgb&w=700',
     imageAlt: 'Natural imperfections and knots in wood grain.',
     featured: false,
-    relatedProducts: ['drift-sculpture', 'sculptural-objects-set', 'serving-plank'],
+    relatedProducts: ['drift-sculpture', 'decorative-objects-set', 'serving-plank'],
     body: [
       { type: 'paragraph', text: 'In industrial furniture production, knots are defects. They\'re cut out, filled, or hidden beneath veneer and paint. The goal is uniformity — every piece should look like every other piece, with no visible evidence that it came from a living tree.' },
       { type: 'paragraph', text: 'We see it differently. A knot is where a branch grew. A colour shift is where the grain changed direction. A mineral streak is where the tree drew up nutrients from the soil. These marks are the wood\'s autobiography — they tell the story of a specific tree, in a specific place, growing over specific years.' },

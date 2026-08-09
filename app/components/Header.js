@@ -5,48 +5,47 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 const galleryDropdown = [
-  { label: 'Kitchen', items: [
+  { label: 'Kitchen & Dining', items: [
     { label: 'Countertop Essentials', href: '/subcategory?cat=kitchen&sub=countertop-essentials' },
-    { label: 'Coffee & Tea Station', href: '/subcategory?cat=kitchen&sub=coffee-tea-station' },
     { label: 'Cooking Essentials', href: '/subcategory?cat=kitchen&sub=cooking-essentials' },
+    { label: 'Baking Essentials', href: '/subcategory?cat=kitchen&sub=baking-essentials' },
     { label: 'Dining & Serving', href: '/subcategory?cat=kitchen&sub=dining-serving' },
-    { label: 'Storage & Organization', href: '/subcategory?cat=kitchen&sub=storage-organization' },
+    { label: 'Serving Boards', href: '/subcategory?cat=dining&sub=serving-boards' },
+    { label: 'Bowls', href: '/subcategory?cat=dining&sub=bowls' },
+    { label: 'Trays', href: '/subcategory?cat=dining&sub=trays' },
   ]},
-  { label: 'Living Room', items: [
-    { label: 'Coffee Table Decor', href: '/subcategory?cat=living&sub=coffee-table-decor' },
-    { label: 'Sculptures', href: '/subcategory?cat=living&sub=sculptures' },
-    { label: 'Vases', href: '/subcategory?cat=living&sub=vases' },
-    { label: 'Storage', href: '/subcategory?cat=living&sub=storage-boxes' },
+  { label: 'Coffee & Tea', items: [
+    { label: 'Coffee & Tea Station', href: '/subcategory?cat=kitchen&sub=coffee-tea-station' },
+    { label: 'Pantry Organization', href: '/subcategory?cat=kitchen&sub=pantry-organization' },
   ]},
-  { label: 'Bedroom', items: [
-    { label: 'Nightstand Essentials', href: '/subcategory?cat=bedroom&sub=nightstand-essentials' },
-    { label: 'Organizers', href: '/subcategory?cat=bedroom&sub=organizers' },
-    { label: 'Mirrors', href: '/subcategory?cat=bedroom&sub=mirrors' },
-  ]},
-  { label: 'Office', items: [
+  { label: 'Storage & Organization', items: [
+    { label: 'Kitchen Storage', href: '/subcategory?cat=kitchen&sub=storage-organization' },
     { label: 'Desk Organization', href: '/subcategory?cat=office&sub=desk-organization' },
+    { label: 'Document Storage', href: '/subcategory?cat=office&sub=document-storage' },
     { label: 'Pen Holders', href: '/subcategory?cat=office&sub=pen-holders' },
     { label: 'Laptop Stands', href: '/subcategory?cat=office&sub=laptop-stands' },
+    { label: 'Shelving', href: '/subcategory?cat=living&sub=shelving-decor' },
+  ]},
+  { label: 'Home Décor', items: [
+    { label: 'Sculptures', href: '/subcategory?cat=living&sub=sculptures' },
+    { label: 'Vases', href: '/subcategory?cat=living&sub=vases' },
+    { label: 'Coffee Table Decor', href: '/subcategory?cat=living&sub=coffee-table-decor' },
+    { label: 'Candle Holders', href: '/subcategory?cat=living&sub=candle-holders' },
+    { label: 'Decorative Objects', href: '/subcategory?cat=living&sub=decorative-objects' },
+    { label: 'Mirrors', href: '/subcategory?cat=bedroom&sub=mirrors' },
   ]},
   { label: 'Bathroom', items: [
     { label: 'Vanity Organizers', href: '/subcategory?cat=bathroom&sub=vanity-organizers' },
     { label: 'Soap Dispensers', href: '/subcategory?cat=bathroom&sub=soap-dispensers' },
     { label: 'Toothbrush Holders', href: '/subcategory?cat=bathroom&sub=toothbrush-holders' },
   ]},
-  { label: 'Outdoor', items: [
+  { label: 'Everyday Living', items: [
     { label: 'Planters', href: '/subcategory?cat=outdoor&sub=planters' },
     { label: 'Garden Decor', href: '/subcategory?cat=outdoor&sub=garden-decor' },
     { label: 'Outdoor Serving', href: '/subcategory?cat=outdoor&sub=outdoor-serving' },
-  ]},
-  { label: 'Seasonal', items: [
     { label: 'Festive Decor', href: '/subcategory?cat=seasonal&sub=festive-decor' },
-    { label: 'Limited Editions', href: '/subcategory?cat=seasonal&sub=limited-editions' },
     { label: "Collector's Series", href: '/subcategory?cat=seasonal&sub=collectors-series' },
-  ]},
-  { label: 'Dining', items: [
-    { label: 'Serving Boards', href: '/subcategory?cat=dining&sub=serving-boards' },
-    { label: 'Trays', href: '/subcategory?cat=dining&sub=trays' },
-    { label: 'Bowls', href: '/subcategory?cat=dining&sub=bowls' },
+    { label: 'Limited Editions', href: '/subcategory?cat=seasonal&sub=limited-editions' },
   ]},
 ];
 
@@ -278,7 +277,7 @@ export default function Header() {
   return (
     <header className={`site-header${hasHero ? '' : ' is-solid'}`} id="siteHeader">
       <div className="header-inner">
-        <Link href="/" className="logo">
+        <Link href="/" className="logo" aria-label="Teakle Home">
           <img src={logoSrc} alt="Teakle" />
         </Link>
         <ul className="nav-links" id="navLinks">
@@ -326,28 +325,32 @@ export default function Header() {
           <li className="nav-dropdown">
             <div className="nav-mobile-link-row">
               <Link href="/gallery" className="nav-dropdown-desktop-link">Gallery</Link>
-              <button className="nav-dropdown-toggle" aria-label="Show Gallery categories" aria-expanded="false">
+              <button className="nav-dropdown-toggle" aria-label="Show Gallery categories" aria-expanded="false" aria-controls="gallery-dropdown-menu">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </div>
-            <ul className="nav-dropdown-menu">
-              {galleryDropdown.map((cat) => (
+            <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
+              {galleryDropdown.map((cat) => {
+                const subId = `subdropdown-${cat.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+                return (
                 <li key={cat.label} className="nav-subdropdown">
-                  <button className="nav-subdropdown-toggle">{cat.label}</button>
-                  <ul className="nav-subdropdown-menu">
+                  <button className="nav-subdropdown-toggle" aria-label={`${cat.label} categories`} aria-expanded="false" aria-controls={subId}>
+                    {cat.label}
+                  </button>
+                  <ul className="nav-subdropdown-menu" id={subId}>
                     {cat.items.map((item) => (
                       <li key={item.href}><Link href={item.href}>{item.label}</Link></li>
                     ))}
                   </ul>
                 </li>
-              ))}
+                );
+              })}
             </ul>
           </li>
           <li><Link href="/archive">Archive</Link></li>
           <li><Link href="/studio">Studio</Link></li>
           <li><Link href="/journal">Journal</Link></li>
           <li><Link href="/custom">Customize</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
         </ul>
         <div className="header-actions">
           <button className="header-icon" aria-label="Search" onClick={openSearch}>

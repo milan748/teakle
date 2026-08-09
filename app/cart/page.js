@@ -24,7 +24,7 @@ export default function CartPage() {
 
   function updateQty(id, newQty) {
     if (newQty < 1) return;
-    window.Teakle.updateCartQty(id, newQty);
+    window.Teakle.updateCartQty(id, Math.min(10, newQty));
     refreshCart();
   }
 
@@ -541,7 +541,12 @@ export default function CartPage() {
           {mounted && cartItems.length > 0 && (
             <div className="cart-layout">
               <div className="cart-items">
-                {cartItems.map((item) => (
+                {cartItems.map((item) => {
+                  const product = typeof window !== 'undefined' && window.TEAKLE_PRODUCTS
+                    ? window.TEAKLE_PRODUCTS.find((p) => p.id === item.id)
+                    : null;
+                  const isHero = product?.isHero === true;
+                  return (
                   <div className={`cart-item ${removingId === item.id ? 'is-removing' : ''}`} key={item.id}>
                     <div className="cart-item-image">
                       <Link href={`/shop/${item.id}`}>
@@ -553,11 +558,14 @@ export default function CartPage() {
                         <Link href={`/shop/${item.id}`}>{item.name}</Link>
                       </p>
                       {item.price && <p className="cart-item-price">{item.price}</p>}
-                      <p className="cart-item-meta">Handcrafted &middot; In Stock</p>
+                      <p className="cart-item-meta">{isHero ? 'One of one' : 'Handcrafted \u00B7 In Stock'}</p>
                     </div>
                     <div className="cart-item-actions">
                       <p className="cart-item-price-lg">{item.price || ''}</p>
                       <div className="cart-item-btns">
+                        {isHero ? (
+                          <span style={{ fontSize: 'var(--text-caption)', color: 'var(--bronze)', letterSpacing: '0.04em', fontWeight: 500 }}>One available</span>
+                        ) : (
                         <div className="qty-control" role="group" aria-label={`Quantity for ${item.name}`}>
                           <button
                             className="qty-btn"
@@ -572,10 +580,12 @@ export default function CartPage() {
                             className="qty-btn"
                             aria-label="Increase quantity"
                             onClick={() => updateQty(item.id, (item.qty || 1) + 1)}
+                            disabled={(item.qty || 1) >= 10}
                           >
                             +
                           </button>
                         </div>
+                        )}
                         <button
                           className="cart-action-link"
                           onClick={() => saveForLater(item)}
@@ -593,7 +603,8 @@ export default function CartPage() {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="cart-summary">
@@ -640,13 +651,13 @@ export default function CartPage() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                   </svg>
-                  <span className="trust-label">Secure Checkout</span>
+                  <span className="trust-label">Handcrafted Quality</span>
                 </div>
                 <div className="cart-trust-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                   </svg>
-                  <span className="trust-label">Handcrafted Quality</span>
+                  <span className="trust-label">Solid Wood</span>
                 </div>
                 <div className="cart-trust-item">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

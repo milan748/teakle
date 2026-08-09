@@ -183,7 +183,7 @@ export default function ProductCard({
         <div className="pcard-img">
           <img
             src={imgSrc}
-            alt={product.name}
+            alt={`${product.name}${product.material ? ', ' + product.material : ''}`}
             loading="lazy"
             onError={handleImageError}
           />
@@ -196,8 +196,8 @@ export default function ProductCard({
               onError={(e) => { e.target.style.display = 'none'; }}
             />
           )}
-          {showBadge && product.availability && (
-            <span className="pcard-badge">{product.availability}</span>
+          {showBadge && product.availability === 'Limited Edition' && (
+            <span className="pcard-badge">Limited Edition</span>
           )}
           {showWishlist && (
             <button

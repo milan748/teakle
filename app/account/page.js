@@ -15,8 +15,7 @@ const NAV_ITEMS = [
   { id: 'support', label: 'Support', icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ];
 
-function getGreeting() {
-  const h = new Date().getHours();
+function getGreeting(h) {
   if (h < 12) return 'Good Morning';
   if (h < 17) return 'Good Afternoon';
   return 'Good Evening';
@@ -39,6 +38,7 @@ export default function AccountPage() {
   const [newAddress, setNewAddress] = useState({ label: '', street: '', city: '', state: '', pin: '', phone: '' });
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [greeting, setGreeting] = useState('Good Morning');
 
   useEffect(() => {
     const t = window.Teakle;
@@ -48,6 +48,7 @@ export default function AccountPage() {
     }
     const u = t.getCurrentUser();
     setUser(u);
+    setGreeting(getGreeting(new Date().getHours()));
     setProfileForm({ name: u.name || '', email: u.email || '', phone: u.phone || '', dob: u.dob || '' });
     setWishlist(t.getWishlist());
     setCart(t.getCart());
@@ -1533,7 +1534,7 @@ export default function AccountPage() {
         {/* Main Content */}
         <div className="acct-main">
           <div className="acct-header">
-            <p className="acct-greeting">{getGreeting()},</p>
+            <p className="acct-greeting">{greeting},</p>
             <div className="acct-header-row">
               <div className="acct-avatar">{getInitials(user.name || 'U')}</div>
               <h1 className="acct-member-name">{user.name}</h1>

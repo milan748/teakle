@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 
 export default function CustomPage() {
   const formRef = useRef(null);
-  const statusRef = useRef(null);
   const fileInputRef = useRef(null);
   const fileUploadAreaRef = useRef(null);
   const filePreviewRef = useRef(null);
   const customSizeRowRef = useRef(null);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [formStatus, setFormStatus] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const sizeRadios = document.querySelectorAll('input[name="size"]');
@@ -72,33 +74,59 @@ export default function CustomPage() {
   }, [uploadedFiles]);
 
   useEffect(() => {
-    const form = formRef.current;
-    const status = statusRef.current;
-    if (!form || !status) return;
+    if (formErrors.details && uploadedFiles.length > 0) {
+      setFormErrors(prev => { const { details, ...rest } = prev; return rest; });
+    }
+  }, [uploadedFiles, formErrors.details]);
 
-    function handleSubmit(e) {
-      e.preventDefault();
-      status.textContent = 'Thank you. We will review your request and get back to you within two working days. (Demo mode — backend integration required.)';
-      status.classList.add('is-visible');
-      form.reset();
-      setUploadedFiles([]);
-      setTimeout(() => status.classList.remove('is-visible'), 5000);
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    const form = formRef.current;
+    if (!form) return;
+
+    const name = form.elements.name.value.trim();
+    const email = form.elements.email.value.trim();
+    const details = form.elements.details.value.trim();
+    const hasFiles = uploadedFiles.length > 0;
+    const errors = {};
+
+    if (!name) errors.name = 'Name is required.';
+    if (!email) errors.email = 'Email is required.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Please enter a valid email address.';
+    if (!details && !hasFiles) errors.details = 'Please describe your idea or upload a reference image.';
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
     }
 
-    form.addEventListener('submit', handleSubmit);
-    return () => form.removeEventListener('submit', handleSubmit);
-  }, []);
+    setFormErrors({});
+    setIsSubmitting(true);
+    setFormStatus('submitted');
+    form.reset();
+    setUploadedFiles([]);
+  }
 
   function handleFiles(files) {
     const newFiles = [];
+    const errors = [];
     for (const file of files) {
       if (file.size > 10 * 1024 * 1024) {
-        alert(file.name + ' exceeds 10 MB limit.');
+        errors.push(file.name + ' exceeds 10 MB limit.');
         continue;
       }
       newFiles.push(file);
     }
+    if (errors.length > 0) {
+      setFormErrors(prev => ({ ...prev, file: errors.join(' ') }));
+    } else {
+      setFormErrors(prev => { const { file, ...rest } = prev; return rest; });
+    }
     setUploadedFiles(prev => [...prev, ...newFiles]);
+    if (newFiles.length > 0 && formErrors.details) {
+      setFormErrors(prev => { const { details, ...rest } = prev; return rest; });
+    }
   }
 
   return (
@@ -161,6 +189,29 @@ export default function CustomPage() {
           transition: opacity var(--dur-fast) var(--ease);
         }
         .form-status.is-visible { opacity: 1; }
+        .form-error {
+          display: block;
+          font-size: var(--text-caption);
+          color: #b54a4a;
+          margin-top: 0.3rem;
+          letter-spacing: 0.02em;
+        }
+        .form-note {
+          font-size: var(--text-caption);
+          color: var(--text-secondary);
+          text-align: center;
+          margin-top: 0.75rem;
+          opacity: 0.7;
+        }
+        .form-success {
+          background: var(--bg-secondary);
+          padding: 1.25rem;
+          border-left: 3px solid var(--bronze);
+          margin-top: 0.5rem;
+        }
+        .form-success p { margin-bottom: 0.5rem; font-size: var(--text-body); color: var(--text-secondary); line-height: var(--lh-relaxed); }
+        .form-success p:last-child { margin-bottom: 0; }
+        .form-success strong { color: var(--text-primary); }
 
         .radio-group { display: flex; flex-wrap: wrap; gap: 1.15rem; margin-top: 0.4rem; }
         .radio-label {
@@ -268,15 +319,17 @@ export default function CustomPage() {
             </div>
           </div>
 
-          <form ref={formRef} className="custom-form reveal" id="customForm">
+          <form ref={formRef} className="custom-form reveal" id="customForm" noValidate onSubmit={handleSubmit}>
             <div className="form-two-col">
               <div className="form-row">
                 <label htmlFor="customName">Name</label>
-                <input type="text" id="customName" name="name" required />
+                <input type="text" id="customName" name="name" required aria-describedby={formErrors.name ? 'err-name' : undefined} />
+                {formErrors.name && <span className="form-error" id="err-name">{formErrors.name}</span>}
               </div>
               <div className="form-row">
                 <label htmlFor="customEmail">Email</label>
-                <input type="email" id="customEmail" name="email" required />
+                <input type="email" id="customEmail" name="email" required aria-describedby={formErrors.email ? 'err-email' : undefined} />
+                {formErrors.email && <span className="form-error" id="err-email">{formErrors.email}</span>}
               </div>
             </div>
             <div className="form-row">
@@ -297,21 +350,34 @@ export default function CustomPage() {
               <input type="text" id="customSize" name="custom_size" placeholder="e.g. 2 feet tall, 18 inches wide" />
             </div>
             <div className="form-row">
-              <label htmlFor="customDetails">Describe your idea</label>
-              <textarea id="customDetails" name="details" placeholder="Tell us about the piece — what it&apos;s for, how it should look, any reference images you have in mind." required></textarea>
+              <label htmlFor="customDetails">Describe your idea <span style={{textTransform:'none',letterSpacing:'normal',fontWeight:'normal',opacity:0.7}}>(optional if uploading a reference)</span></label>
+              <textarea id="customDetails" name="details" placeholder="Tell us about the piece — what it&apos;s for, how it should look, any reference images you have in mind." aria-describedby={formErrors.details ? 'err-details' : undefined} onChange={() => { if (formErrors.details) setFormErrors(prev => { const { details, ...rest } = prev; return rest; }); }}></textarea>
+              {formErrors.details && <span className="form-error" id="err-details">{formErrors.details}</span>}
             </div>
             <p style={{ textAlign: 'center', fontSize: 'var(--text-caption)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-secondary)', margin: '0.75rem 0' }}>Or</p>
             <div className="form-row">
               <label>Reference Images</label>
-              <div ref={fileUploadAreaRef} className="file-upload-area" id="fileUploadArea">
+              <div ref={fileUploadAreaRef} className="file-upload-area" id="fileUploadArea" role="button" tabIndex={0} aria-label="Upload reference images">
                 <input ref={fileInputRef} type="file" id="fileInput" name="references" multiple accept="image/*,.pdf" />
                 <p>Drag &amp; drop images here, or <span className="browse-link">browse</span></p>
               </div>
-              <p className="file-upload-hint">JPG, PNG, or PDF — up to 10 MB each</p>
+              <p className="file-upload-hint">Optional — JPG, PNG, or PDF up to 10 MB each</p>
+              {formErrors.file && <span className="form-error">{formErrors.file}</span>}
               <div ref={filePreviewRef} className="file-preview" id="filePreview"></div>
             </div>
-            <button type="submit" className="btn-primary form-submit">Request a Quote</button>
-            <p ref={statusRef} className="form-status" id="customFormStatus" role="status"></p>
+
+            {formStatus === 'submitted' ? (
+              <div className="form-success" role="status">
+                <p><strong>Demo mode — backend integration required.</strong></p>
+                <p>In production, your custom order request would be sent to our workshop team for review. We will review your request and respond with feasibility, pricing, and estimated timeline.</p>
+                <button type="button" className="btn-primary form-submit" onClick={() => setFormStatus('')}>Submit Another Request</button>
+              </div>
+            ) : (
+              <>
+                <button type="submit" className="btn-primary form-submit">Request a Quote</button>
+                <p className="form-note">Demo mode — no data is submitted. Backend integration required.</p>
+              </>
+            )}
           </form>
         </div>
       </section>

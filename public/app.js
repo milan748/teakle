@@ -47,22 +47,42 @@ var Teakle = (function () {
 
   function requireAuth() {
     if (isLoggedIn()) return true;
-    window.location.href = 'login.html';
+    window.location.href = '/login';
     return false;
   }
 
   /* ---------- CART ---------- */
-  function getCart() { return get('cart', []); }
+  function getCart() {
+    var cart = get('cart', []);
+    // Normalize hero products: cap qty at 1
+    if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) {
+      var changed = false;
+      cart.forEach(function (item) {
+        var product = window.TEAKLE_PRODUCTS.find(function (p) { return p.id === item.id; });
+        if (product && product.isHero && item.qty > 1) {
+          item.qty = 1;
+          changed = true;
+        }
+      });
+      if (changed) saveCart(cart);
+    }
+    return cart;
+  }
   function saveCart(c) { set('cart', c); }
 
   function addToCart(item) {
     var qty = item.qty || 1;
     var cart = getCart();
     var idx = cart.findIndex(function (c) { return c.id === item.id; });
+    // Look up product to check hero status
+    var product = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS)
+      ? window.TEAKLE_PRODUCTS.find(function (p) { return p.id === item.id; })
+      : null;
+    var isHero = product && product.isHero;
     if (idx > -1) {
-      cart[idx].qty = (cart[idx].qty || 1) + qty;
+      cart[idx].qty = isHero ? 1 : (cart[idx].qty || 1) + qty;
     } else {
-      cart.push({ id: item.id, name: item.name, price: item.price || '', image: item.image || '', qty: qty });
+      cart.push({ id: item.id, name: item.name, price: item.price || '', image: item.image || '', qty: isHero ? 1 : qty });
     }
     saveCart(cart);
     updateCounts();
@@ -80,8 +100,13 @@ var Teakle = (function () {
     var cart = getCart();
     var idx = cart.findIndex(function (c) { return c.id === id; });
     if (idx > -1) {
+      // Check hero status
+      var product = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS)
+        ? window.TEAKLE_PRODUCTS.find(function (p) { return p.id === id; })
+        : null;
+      var isHero = product && product.isHero;
       if (qty <= 0) { cart.splice(idx, 1); }
-      else { cart[idx].qty = qty; }
+      else { cart[idx].qty = isHero ? 1 : qty; }
     }
     saveCart(cart);
     updateCounts();
@@ -161,7 +186,7 @@ var Teakle = (function () {
         window.location.reload();
       };
     } else {
-      authLink.href = 'login.html';
+      authLink.href = '/login';
       authLink.onclick = null;
     }
   }

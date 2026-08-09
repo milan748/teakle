@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export const metadata = {
   title: 'Archive',
   description: 'Past collections from Teakle. A record of objects made, editions released, and craft explored.',
@@ -216,7 +218,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Mar 2026</span>
               </div>
               <div className="edition-actions">
-                <a href="/studio" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -241,7 +243,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Jan 2026</span>
               </div>
               <div className="edition-actions">
-                <a href="/studio" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -266,7 +268,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Sep 2025</span>
               </div>
               <div className="edition-actions">
-                <a href="/studio" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -291,7 +293,7 @@ export default function ArchivePage() {
                 <span className="sold-date">May 2025</span>
               </div>
               <div className="edition-actions">
-                <a href="/studio" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>

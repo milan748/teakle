@@ -627,7 +627,7 @@ export default function GalleryPage() {
           </select>
         </div>
 
-        <div className={`gal-filters${filtersOpen ? ' is-open' : ''}`}>
+        <div className={`gal-filters${filtersOpen ? ' is-open' : ''}`} role="region" aria-label="Product filters">
           <div className="gal-filters-inner">
             <div className="gal-filter-group gal-filter-price">
               <h4>Price Range</h4>
@@ -722,7 +722,7 @@ export default function GalleryPage() {
         {filteredProducts.length > 0 ? (
           <div className="gal-grid">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} showMeta />
             ))}
           </div>
         ) : (

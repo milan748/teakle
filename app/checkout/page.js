@@ -372,7 +372,7 @@ export default function CheckoutPage() {
       {isProcessing && (
         <div className="processing-overlay" role="alert" aria-live="assertive">
           <div className="processing-spinner"></div>
-          <p className="processing-text">Placing your order...</p>
+          <p className="processing-text">Demo mode — order not being processed</p>
         </div>
       )}
 
@@ -592,7 +592,7 @@ export default function CheckoutPage() {
                         <p style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Your order details have been saved.</p>
                       </div>
                       <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }}>
-                        Place Order &mdash; {formatPrice(subtotal)}
+                        Demo &mdash; Place Order &mdash; {formatPrice(subtotal)}
                       </button>
                       <button className="checkout-back" onClick={prevStep}>Back to Review</button>
                     </>
@@ -658,7 +658,7 @@ export default function CheckoutPage() {
                     className="checkout-mobile-btn"
                     onClick={step === 2 ? handlePlaceOrder : step === 1 ? () => setStep(2) : nextStep}
                   >
-                    {step === 2 ? 'Place Order' : 'Continue'}
+                    {step === 2 ? 'Demo — Place Order' : 'Continue'}
                   </button>
                 </div>
               </div>
