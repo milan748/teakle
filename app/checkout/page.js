@@ -110,6 +110,7 @@ export default function CheckoutPage() {
 
   return (
     <>
+      <title>Checkout — Teakle</title>
       <style>{`
         .checkout-page {
           padding: calc(var(--space-2xl) + var(--space-xl)) 0 var(--space-xl);

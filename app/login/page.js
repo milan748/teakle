@@ -130,6 +130,7 @@ export default function LoginPage() {
 
   return (
     <>
+      <title>Sign In — Teakle</title>
       <style>{`
         /* ============================================
            LOGIN — Private Atelier Experience

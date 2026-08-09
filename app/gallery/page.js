@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import GalleryClient from './GalleryClient';
 import { PRODUCTS } from '../data/products';
 
@@ -9,5 +10,9 @@ export const metadata = {
 };
 
 export default function GalleryPage() {
-  return <GalleryClient products={PRODUCTS} />;
+  return (
+    <Suspense>
+      <GalleryClient products={PRODUCTS} />
+    </Suspense>
+  );
 }

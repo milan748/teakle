@@ -745,8 +745,8 @@ export default function HomeClient() {
             <span className="eyebrow eyebrow-light v2-hero-eyebrow">An Indian Workshop</span>
             <h1>Where wood becomes<br />timeless art.</h1>
             <div className="v2-hero-actions">
-              <a href="/gallery" className="btn-primary">View the Collection</a>
-              <a href="/studio" className="link-quiet">Our Studio</a>
+              <Link href="/gallery" className="btn-primary">View the Collection</Link>
+              <Link href="/studio" className="link-quiet">Our Studio</Link>
             </div>
           </div>
           <a href="#philosophy" className="v2-scroll" aria-label="Scroll to explore">
@@ -801,10 +801,10 @@ export default function HomeClient() {
               <h2 className="reveal">This season&apos;s hero.</h2>
               <p className="reveal">One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted &mdash; once it&apos;s gone, the next edition begins.</p>
               <div className="v2-sig-actions reveal">
-                <a href="/shop/anchor-table" className="btn-primary">View This Piece</a>
+                <Link href="/shop/anchor-table" className="btn-primary">View This Piece</Link>
                 <Link href="/journal" className="link-quiet">Watch It Being Made</Link>
               </div>
-              <p className="v2-sig-past reveal">Looking for something from a past season? <a href="/archive">See past editions</a>.</p>
+              <p className="v2-sig-past reveal">Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
             </div>
           </div>
         </section>
@@ -820,7 +820,7 @@ export default function HomeClient() {
               <h2 className="reveal">Every piece passes through one pair of hands, start to finish.</h2>
               <p className="reveal">We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it &mdash; rushing this step is the most common way a piece fails early.</p>
               <p className="reveal">Joints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece&apos;s life, not sealed under lacquer that traps moisture and cracks.</p>
-              <a href="/studio" className="link-quiet reveal">Visit the Studio</a>
+              <Link href="/studio" className="link-quiet reveal">Visit the Studio</Link>
             </div>
           </div>
         </section>
@@ -830,41 +830,41 @@ export default function HomeClient() {
           <button className="v2-cprev" aria-label="Previous">&#8592;</button>
           <button className="v2-cnext" aria-label="Next">&#8594;</button>
           <div className="v2-ctrack" ref={carouselTrackRef}>
-            <a href="/shop/anchor-table" className="v2-citem reveal">
+            <Link href="/shop/anchor-table" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" /></div>
               <span className="v2-clabel">The Anchor Table</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/bearing-chair" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/bearing-chair" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" /></div>
               <span className="v2-clabel">The Bearing Chair</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/serving-plank" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/serving-plank" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" /></div>
               <span className="v2-clabel">Teak Serving Board</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/carving-board" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/carving-board" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/7123134/pexels-photo-7123134.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Carving Board" /></div>
               <span className="v2-clabel">Carving Board</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/spice-rack" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/spice-rack" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" /></div>
               <span className="v2-clabel">Spice Rack</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/drift-sculpture" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/drift-sculpture" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" /></div>
               <span className="v2-clabel">Drift Sculpture</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
-            <a href="/shop/hourglass-vase" className="v2-citem reveal">
+            </Link>
+            <Link href="/shop/hourglass-vase" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" /></div>
               <span className="v2-clabel">Hourglass Vase</span>
               <span className="v2-cbtn">Discover</span>
-            </a>
+            </Link>
           </div>
           <div className="v2-cdots">
             <span className="v2cdot active"></span>
@@ -885,7 +885,7 @@ export default function HomeClient() {
               <h2>Pieces Built to Last</h2>
             </div>
             <div className="v2-pgrid">
-              <a href="/shop/anchor-table" className="v2-pcard reveal">
+              <Link href="/shop/anchor-table" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -896,8 +896,8 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
-              <a href="/shop/bearing-chair" className="v2-pcard reveal">
+              </Link>
+              <Link href="/shop/bearing-chair" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -908,8 +908,8 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
-              <a href="/shop/serving-plank" className="v2-pcard reveal">
+              </Link>
+              <Link href="/shop/serving-plank" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -920,8 +920,8 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
-              <a href="/shop/spice-rack" className="v2-pcard reveal">
+              </Link>
+              <Link href="/shop/spice-rack" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -932,8 +932,8 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
-              <a href="/shop/drift-sculpture" className="v2-pcard reveal">
+              </Link>
+              <Link href="/shop/drift-sculpture" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -944,8 +944,8 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
-              <a href="/shop/hourglass-vase" className="v2-pcard reveal">
+              </Link>
+              <Link href="/shop/hourglass-vase" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -956,10 +956,10 @@ export default function HomeClient() {
                     </div>
                   </div>
                 </div>
-              </a>
+              </Link>
             </div>
             <div className="v2-pcta reveal">
-              <a href="/gallery" className="btn-primary">Explore the Full Collection</a>
+              <Link href="/gallery" className="btn-primary">Explore the Full Collection</Link>
             </div>
           </div>
         </section>
@@ -971,7 +971,7 @@ export default function HomeClient() {
             <span className="eyebrow eyebrow-light reveal">The Workshop</span>
             <h2 className="reveal">A family workshop, unchanged in method for three generations.</h2>
             <p className="reveal">The tools are old. The hands are patient. Nothing here is made to a deadline &mdash; a piece is finished when it is ready, and not before.</p>
-            <a href="/studio" className="link-quiet reveal">Read About Our Process</a>
+            <Link href="/studio" className="link-quiet reveal">Read About Our Process</Link>
           </div>
         </section>
 

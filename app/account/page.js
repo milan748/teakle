@@ -569,6 +569,7 @@ export default function AccountPage() {
 
   return (
     <>
+      <title>My Account — Teakle</title>
       <style>{`
         /* ============================================
            ACCOUNT — Private Members' Lounge

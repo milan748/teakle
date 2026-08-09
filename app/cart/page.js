@@ -66,6 +66,7 @@ export default function CartPage() {
 
   return (
     <>
+      <title>Your Cart — Teakle</title>
       <style>{`
         .cart-page {
           padding: calc(var(--space-2xl) + var(--space-xl)) 0 var(--space-xl);

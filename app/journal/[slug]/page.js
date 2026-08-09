@@ -4,6 +4,8 @@ import { PRODUCTS } from '../../data/products';
 import JournalArticleClient from './JournalArticleClient';
 import StructuredData from '../../components/StructuredData';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return getAllArticleSlugs().map((slug) => ({ slug }));
 }
@@ -11,10 +13,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
-  if (!article) return { title: 'Article Not Found \u2014 Teakle' };
+  if (!article) return { title: 'Article Not Found' };
 
   return {
-    title: `${article.title} \u2014 Teakle Journal`,
+    title: article.title,
     description: article.excerpt,
     openGraph: {
       title: `${article.title} \u2014 Teakle Journal`,

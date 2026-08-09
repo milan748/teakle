@@ -3,6 +3,8 @@ import { getProductById, getAllProductIds } from '../../data/products';
 import ShopDetailClient from './ShopDetailClient';
 import StructuredData from '../../components/StructuredData';
 
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return getAllProductIds().map((id) => ({ id }));
 }
@@ -10,10 +12,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const product = getProductById(id);
-  if (!product) return { title: 'Product Not Found \u2014 Teakle' };
+  if (!product) return { title: 'Product Not Found' };
 
   return {
-    title: `${product.name} \u2014 Teakle`,
+    title: product.name,
     description: product.shortDescription,
     openGraph: {
       title: `${product.name} \u2014 Teakle`,

@@ -43,6 +43,7 @@ export default function WishlistPage() {
 
   return (
     <>
+      <title>Your Wishlist — Teakle</title>
       <style>{`
         .wish-page {
           padding: calc(var(--space-2xl) + var(--space-xl)) 0 var(--space-xl);
