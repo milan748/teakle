@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import BottomNav from './components/BottomNav';
 import ScrollTopBtn from './components/ScrollTopBtn';
 import ClientScripts from './components/ClientScripts';
+import StructuredData from './components/StructuredData';
 
 export const metadata = {
   title: {
@@ -52,6 +53,27 @@ export const metadata = {
   },
 };
 
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Teakle',
+  url: 'https://teakle.in',
+  logo: 'https://teakle.in/assets/logo-black.png',
+  sameAs: ['https://www.instagram.com/teaklestudio'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    email: 'hello@teakle.in',
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Teakle',
+  url: 'https://teakle.in',
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -63,6 +85,8 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/assets/logo-black.png" />
         <link rel="preconnect" href="https://images.pexels.com" crossOrigin="anonymous" />
         <link rel="preload" href="/assets/logo-black.png" as="image" />
+        <StructuredData data={organizationSchema} />
+        <StructuredData data={websiteSchema} />
       </head>
       <body>
         <a href="#main-content" className="skip-link">Skip to content</a>
