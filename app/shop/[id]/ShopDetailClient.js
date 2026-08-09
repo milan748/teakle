@@ -1044,12 +1044,12 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
 
   const isSignature = product?.isHero === true;
 
-  /* Sync product from window.TEAKLE_PRODUCTS for extended fields */
+  /* Sync product from window.TEAKLE_PRODUCTS for extended fields (fallback if server data incomplete) */
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.TEAKLE_PRODUCTS) return;
     const p = window.TEAKLE_PRODUCTS.find((item) => item.id === productId);
-    if (p) setProduct(p);
+    if (p) setProduct((prev) => ({ ...prev, ...p }));
   }, [productId]);
 
   /* Wishlist state */

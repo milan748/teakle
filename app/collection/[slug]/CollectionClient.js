@@ -244,7 +244,7 @@ const collectionStyles = `
 }
 `;
 
-export default function CollectionClient() {
+export default function CollectionClient({ products: serverProducts }) {
   const params = useParams();
   const slug = params?.slug;
   const [products, setProducts] = useState([]);
@@ -262,8 +262,9 @@ export default function CollectionClient() {
     setCollection(col);
     document.title = `${col.name} — Teakle`;
 
-    if (typeof window === 'undefined' || !window.TEAKLE_PRODUCTS) return;
-    const all = window.TEAKLE_PRODUCTS;
+    const source = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (serverProducts || []);
+    if (!source.length) return;
+    const all = source;
     const filtered = all.filter(
       (p) => col.categories.includes(p.category) || col.subcategories.includes(p.subcategory)
     );

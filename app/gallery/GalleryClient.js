@@ -462,11 +462,11 @@ const galleryStyles = `
 }
 `;
 
-export default function GalleryClient() {
+export default function GalleryClient({ products: serverProducts }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const urlSearch = searchParams.get('search') || '';
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(serverProducts || []);
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -478,10 +478,10 @@ export default function GalleryClient() {
 
   useEffect(() => {
     document.title = searchQuery ? `Search: ${searchQuery} — Teakle` : 'Gallery — Teakle';
-    if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) {
+    if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS && (!serverProducts || !serverProducts.length)) {
       setProducts(window.TEAKLE_PRODUCTS);
     }
-  }, [searchQuery]);
+  }, [searchQuery, serverProducts]);
 
   const categoryCounts = useMemo(() => {
     let base = [...products];

@@ -1,4 +1,5 @@
 import SubcategoryClient from './SubcategoryClient';
+import { PRODUCTS } from '../data/products';
 
 export const metadata = {
   title: 'Shop',
@@ -8,5 +9,5 @@ export const metadata = {
 };
 
 export default function SubcategoryPage() {
-  return <SubcategoryClient />;
+  return <SubcategoryClient products={PRODUCTS} />;
 }

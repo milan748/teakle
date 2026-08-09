@@ -1,4 +1,5 @@
 import CollectionClient from './CollectionClient';
+import { PRODUCTS } from '../../data/products';
 
 export const metadata = {
   title: 'Collection',
@@ -8,5 +9,5 @@ export const metadata = {
 };
 
 export default function CollectionPage() {
-  return <CollectionClient />;
+  return <CollectionClient products={PRODUCTS} />;
 }

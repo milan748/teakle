@@ -1,94 +1,453 @@
 /**
- * Server-safe journal data module.
- * Used by generateMetadata(), sitemap, and structured data.
- * Client components continue reading from window.TEAKLE_JOURNAL.
+ * Full journal data — server-safe ES module.
+ * Used by server pages for initial render + generateMetadata.
+ * Client components also read from window.TEAKLE_JOURNAL for dynamic updates.
+ *
+ * AUTO-GENERATED from public/journal-articles.js — do not edit manually.
+ * Re-run: node merge-journal.js
  */
 
 export const JOURNAL = [
   {
-    slug: 'what-solid-wood-actually-means',
-    category: 'Wood Facts',
-    title: 'What "solid wood" actually means, and why the label is used loosely',
-    excerpt: 'Most furniture described as solid wood is a thin veneer over particleboard. Here\u2019s how to tell the difference before you buy \u2014 and why it matters more after five years than on day one.',
-    date: 'March 2026',
-    dateISO: '2026-03-01',
-    image: 'https://images.pexels.com/photos/8465898/pexels-photo-8465898.jpeg?auto=compress&cs=tinysrgb&w=1000',
-    imageAlt: 'Close-up of wood grain on a finished tabletop.',
+    slug: "what-solid-wood-actually-means",
+    category: "Wood Facts",
+    title: "What \"solid wood\" actually means, and why the label is used loosely",
+    excerpt: "Most furniture described as solid wood is a thin veneer over particleboard. Here's how to tell the difference before you buy — and why it matters more after five years than on day one.",
+    date: "March 2026",
+    dateISO: "2026-03-01",
+    image: "https://images.pexels.com/photos/8465898/pexels-photo-8465898.jpeg?auto=compress&cs=tinysrgb&w=1000",
+    imageAlt: "Close-up of wood grain on a finished tabletop.",
     featured: true,
-    relatedProducts: ['anchor-table', 'circle-table', 'hollow-bench'],
+    relatedProducts: [
+      "anchor-table",
+      "circle-table",
+      "hollow-bench"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "Walk into any furniture showroom and you'll see the phrase \"solid wood\" applied to everything from $200 nightstands to $20,000 dining tables. The label has become so overused that it's lost almost all meaning. Most of what it describes is veneer — a thin layer of real wood glued over particleboard or MDF."
+      },
+      {
+        type: "paragraph",
+        text: "There's nothing inherently wrong with veneer. It's a perfectly valid material, and in some applications it makes sense. But when a piece is marketed as \"solid wood\" and it's actually veneer, the customer is being misled about what they're buying — and more importantly, how the piece will age."
+      },
+      {
+        type: "heading",
+        text: "What solid wood actually is"
+      },
+      {
+        type: "paragraph",
+        text: "Solid wood means the entire piece — or at least every structural component — is cut from real timber. Not a thin layer over engineered wood. Not a laminate with a wood-grain print. The wood goes all the way through."
+      },
+      {
+        type: "paragraph",
+        text: "When you run your finger along the edge of a solid wood board, you feel the same grain pattern on the edge as you do on the face. That's because it's the same piece of wood. With veneer, the edge often reveals a different material underneath — particleboard, MDF, or plywood."
+      },
+      {
+        type: "heading",
+        text: "Why it matters after five years"
+      },
+      {
+        type: "paragraph",
+        text: "On day one, a well-made veneer piece and a solid wood piece can look identical. The difference emerges over time. Solid wood develops a patina — it darkens slightly, the grain becomes more pronounced, and small marks from daily use blend into the surface rather than revealing a different material underneath."
+      },
+      {
+        type: "paragraph",
+        text: "Veneer, by contrast, wears through. The thin layer — typically 0.5 to 1mm — can be scratched, chipped, or worn away, exposing the engineered material below. Once that happens, there's no way to repair it. The piece can't be sanded down and refinished because there's nothing underneath to refinish."
+      },
+      {
+        type: "heading",
+        text: "How to tell the difference"
+      },
+      {
+        type: "paragraph",
+        text: "The simplest test is to look at the edges and underside. Solid wood will show consistent grain patterns on all surfaces. Veneer will often show a seam where the thin layer meets the edge, or a different material entirely on the underside."
+      },
+      {
+        type: "paragraph",
+        text: "Weight is another indicator. Solid teak is dense — a solid wood dining table will be significantly heavier than a veneered one of the same size. If a large piece feels surprisingly light, it's likely engineered wood inside."
+      },
+      {
+        type: "paragraph",
+        text: "Ask about the construction. A maker who works in solid wood will know exactly which boards went into a piece, where the timber came from, and how it was dried. A manufacturer using veneer often can't answer those questions because the materials are sourced commodity items."
+      },
+      {
+        type: "paragraph",
+        text: "At Teakle, every piece is solid teak — not because we're making a statement, but because that's how wood is supposed to work. The grain runs through, the joints are cut to fit, and the surface is finished to age gracefully over decades, not just look good on delivery day."
+      }
+    ]
   },
   {
-    slug: 'why-we-never-seal-wood-with-lacquer',
-    category: 'Details',
-    title: 'Why we never seal wood with lacquer',
-    excerpt: 'Lacquer looks flawless for a year, then starts to crack at the edges. Oil ages differently \u2014 here\u2019s the tradeoff, honestly.',
-    date: 'February 2026',
-    dateISO: '2026-02-01',
-    image: 'https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'A hand rubbing oil finish into a wooden surface.',
+    slug: "why-we-never-seal-wood-with-lacquer",
+    category: "Details",
+    title: "Why we never seal wood with lacquer",
+    excerpt: "Lacquer looks flawless for a year, then starts to crack at the edges. Oil ages differently — here's the tradeoff, honestly.",
+    date: "February 2026",
+    dateISO: "2026-02-01",
+    image: "https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "A hand rubbing oil finish into a wooden surface.",
     featured: false,
-    relatedProducts: ['carving-board', 'serving-plank', 'carve-board'],
+    relatedProducts: [
+      "carving-board",
+      "serving-plank",
+      "carve-board"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "Lacquer has a reputation for producing flawless surfaces. And it does — when it's first applied. The finish is smooth, even, and has a depth that's hard to achieve with oil. For the first twelve months, a lacquered piece looks spectacular."
+      },
+      {
+        type: "paragraph",
+        text: "Then reality sets in. Wood moves. It expands in humid seasons and contracts in dry ones. This is normal — it's what wood does, and it's been doing it for millennia. The problem is that lacquer forms a rigid film on the surface. When the wood moves underneath, the film can't move with it."
+      },
+      {
+        type: "heading",
+        text: "What happens to lacquer over time"
+      },
+      {
+        type: "paragraph",
+        text: "After a year or two of seasonal movement, lacquer starts to show hairline cracks, particularly at joints and edges where the stress is greatest. These cracks are small at first — barely visible unless you're looking for them. But they widen over time, and moisture gets in."
+      },
+      {
+        type: "paragraph",
+        text: "Once moisture penetrates the cracks, it gets trapped between the lacquer film and the wood surface. This causes the finish to cloud, bubble, or peel. Repairing it means stripping the entire piece back to bare wood and refinishing — a process that costs more than the original finish."
+      },
+      {
+        type: "heading",
+        text: "How oil works differently"
+      },
+      {
+        type: "paragraph",
+        text: "Oil doesn't form a film. It penetrates into the wood fibres, hardening within the surface rather than sitting on top of it. This means the wood can still breathe — moisture can enter and leave through the surface without being trapped."
+      },
+      {
+        type: "paragraph",
+        text: "When the wood expands and contracts with seasonal changes, there's no film to crack because there's no film at all. The surface ages gradually, developing a patina that deepens with use. Small marks and scratches blend into the surface rather than standing out against a rigid coating."
+      },
+      {
+        type: "heading",
+        text: "The honest tradeoff"
+      },
+      {
+        type: "paragraph",
+        text: "Oil requires more maintenance than lacquer. A lacquered piece can be wiped clean and forgotten for years. An oiled piece benefits from occasional re-oiling — perhaps once or twice a year, depending on use and environment. It takes five minutes with a soft cloth and some food-safe oil."
+      },
+      {
+        type: "paragraph",
+        text: "But that small investment of time means the piece ages gracefully rather than deteriorating. After ten years, an oiled piece looks better than it did on day one. After ten years, a lacquered piece often needs professional refinishing."
+      },
+      {
+        type: "paragraph",
+        text: "We choose oil because we're building for decades, not for the showroom. Every Teakle piece is finished with food-safe oil, applied by hand in multiple thin coats. It's slower, it's more labour-intensive, and it produces a surface that gets better with time rather than worse."
+      }
+    ]
   },
   {
-    slug: 'how-long-wood-needs-to-dry',
-    category: 'Wood Facts',
-    title: 'How long wood needs to dry before it\u2019s usable',
-    excerpt: 'Rushed timber warps within a year. We explain the drying process we use and why it can\u2019t be shortened.',
-    date: 'January 2026',
-    dateISO: '2026-01-01',
-    image: 'https://images.pexels.com/photos/5599172/pexels-photo-5599172.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'Stacked timber boards drying in a workshop.',
+    slug: "how-long-wood-needs-to-dry",
+    category: "Wood Facts",
+    title: "How long wood needs to dry before it's usable",
+    excerpt: "Rushed timber warps within a year. We explain the drying process we use and why it can't be shortened.",
+    date: "January 2026",
+    dateISO: "2026-01-01",
+    image: "https://images.pexels.com/photos/5599172/pexels-photo-5599172.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "Stacked timber boards drying in a workshop.",
     featured: false,
-    relatedProducts: ['anchor-table', 'bearing-chair'],
+    relatedProducts: [
+      "anchor-table",
+      "bearing-chair"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "When a tree is felled, the wood contains a remarkable amount of water. Freshly cut teak can be 50% water by weight. That water is held within the cellular structure of the wood, and it has to come out slowly — over months, sometimes years — before the wood is stable enough to use."
+      },
+      {
+        type: "paragraph",
+        text: "Rushing this process is the single most common cause of furniture failure. Wood that hasn't dried properly will warp, crack, and split as the remaining moisture evaporates unevenly. The damage isn't immediate — it often takes six to twelve months to appear, by which point the piece is already in someone's home."
+      },
+      {
+        type: "heading",
+        text: "The drying process"
+      },
+      {
+        type: "paragraph",
+        text: "Air drying is the oldest and most reliable method. Stacked timber is exposed to ambient air, with spacers between boards to allow circulation. The wood gradually loses moisture over 6 to 12 months, depending on thickness and species. Teak, being dense and oily, tends toward the longer end of that range."
+      },
+      {
+        type: "paragraph",
+        text: "Kiln drying is faster — typically 2 to 6 weeks — but it carries more risk. The controlled environment can dry the wood too quickly, creating internal stresses that manifest as cracks or warping later. Many commercial furniture manufacturers use kiln drying because it's faster and more predictable for mass production."
+      },
+      {
+        type: "heading",
+        text: "What we do at Teakle"
+      },
+      {
+        type: "paragraph",
+        text: "We air dry all our timber for a minimum of six months. The boards are stacked in a covered outdoor area with proper spacing, allowing natural air circulation. We check moisture content periodically with a pin meter, waiting until the wood reaches equilibrium with the local environment before bringing it into the workshop."
+      },
+      {
+        type: "paragraph",
+        text: "This means we carry a significant inventory of drying timber at any time. It's expensive — we're paying for storage space and tying up capital in wood that can't be sold yet. But it's the only way to ensure the wood is truly stable before we cut a single joint."
+      },
+      {
+        type: "paragraph",
+        text: "There's no shortcut. You can't rush the physics of moisture evaporation without consequences. The drying process is as much a part of the craft as the joinery itself, and we treat it with the same patience and respect."
+      }
+    ]
   },
   {
-    slug: 'caring-for-solid-wood-over-decades',
-    category: 'Care',
-    title: 'Caring for a solid wood piece over decades',
-    excerpt: 'A simple seasonal routine \u2014 no special products, no polishes, just what actually keeps timber in good condition.',
-    date: 'December 2025',
-    dateISO: '2025-12-01',
-    image: 'https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'A finished wooden bench in a minimal room.',
+    slug: "caring-for-solid-wood-over-decades",
+    category: "Care",
+    title: "Caring for a solid wood piece over decades",
+    excerpt: "A simple seasonal routine — no special products, no polishes, just what actually keeps timber in good condition.",
+    date: "December 2025",
+    dateISO: "2025-12-01",
+    image: "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "A finished wooden bench in a minimal room.",
     featured: false,
-    relatedProducts: ['hollow-bench', 'spice-shelf', 'bread-box'],
+    relatedProducts: [
+      "hollow-bench",
+      "spice-shelf",
+      "bread-box"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "Solid wood doesn't need much. The mythology around wood care — special polishes, expensive treatments, annual professional servicing — is largely driven by companies selling those products. In reality, a simple seasonal routine is all that's required to keep a piece in excellent condition for decades."
+      },
+      {
+        type: "heading",
+        text: "The basics"
+      },
+      {
+        type: "paragraph",
+        text: "Wipe the surface with a damp (not wet) cloth when it's dusty. That's it for daily care. For deeper cleaning, use a mild soap solution and dry immediately. Never leave water sitting on the surface."
+      },
+      {
+        type: "paragraph",
+        text: "Avoid placing hot items directly on the surface. Use a trivet or coaster. The heat can cause white marks in the finish that take time to fade. Avoid placing very cold items directly on the wood as well — condensation can pool and cause dark spots."
+      },
+      {
+        type: "heading",
+        text: "Seasonal re-oiling"
+      },
+      {
+        type: "paragraph",
+        text: "Twice a year — once before the dry season and once before the wet season — apply a thin coat of food-safe oil to the surface. Use a soft cloth, wipe in the direction of the grain, and allow it to absorb for 15 to 20 minutes before wiping off any excess."
+      },
+      {
+        type: "paragraph",
+        text: "You'll know it's time to re-oil when the surface starts to look dry or dull. In a well-used piece like a dining table, this might be every few months. In a less-used piece like a shelf, it might be once a year. Let the wood tell you."
+      },
+      {
+        type: "heading",
+        text: "What to avoid"
+      },
+      {
+        type: "paragraph",
+        text: "Don't use silicone-based polishes. They create a shiny surface that looks good temporarily but builds up over time, making the wood difficult to re-oil. The silicone sits on top of the surface and prevents new oil from penetrating."
+      },
+      {
+        type: "paragraph",
+        text: "Don't use wax. Like silicone, wax builds up and interferes with the wood's ability to breathe. It also attracts dust, which acts as a mild abrasive on the surface."
+      },
+      {
+        type: "paragraph",
+        text: "Don't use furniture sprays marketed as \"wood conditioner.\" Most of these contain silicone or petroleum distillates that provide short-term shine at the cost of long-term health."
+      },
+      {
+        type: "heading",
+        text: "The patina"
+      },
+      {
+        type: "paragraph",
+        text: "Over years of use, solid teak develops a patina — a subtle deepening of colour and sheen that comes from UV light, handling, and regular oiling. This is a feature, not a flaw. It's the wood's way of recording its history. A piece that's been used carefully for twenty years has a richness that no amount of newness can replicate."
+      },
+      {
+        type: "paragraph",
+        text: "Embrace the changes. Small scratches, minor marks, and the gradual darkening of the grain are all part of the story. They're signs of a piece that's being used and loved, not sitting in a showroom."
+      }
+    ]
   },
   {
-    slug: 'why-we-dont-use-nails-or-screws',
-    category: 'Details',
-    title: 'Why we don\u2019t use nails or screws in most joints',
-    excerpt: 'A cut joint moves with the wood as it expands and contracts. Metal fasteners fight that movement instead.',
-    date: 'November 2025',
-    dateISO: '2025-11-01',
-    image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'Detail of a hand-cut wooden joint.',
+    slug: "why-we-dont-use-nails-or-screws",
+    category: "Details",
+    title: "Why we don't use nails or screws in most joints",
+    excerpt: "A cut joint moves with the wood as it expands and contracts. Metal fasteners fight that movement instead.",
+    date: "November 2025",
+    dateISO: "2025-11-01",
+    image: "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "Detail of a hand-cut wooden joint.",
     featured: false,
-    relatedProducts: ['anchor-table', 'hollow-bench', 'blanket-ladder'],
+    relatedProducts: [
+      "anchor-table",
+      "hollow-bench",
+      "blanket-ladder"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "Wood moves. This is the fundamental fact that every woodworker must understand and respect. A board will expand across its width in humid conditions and contract in dry conditions. The movement is predictable in direction but variable in amount — it depends on the species, the cut, and the environment."
+      },
+      {
+        type: "paragraph",
+        text: "When you join two pieces of wood together, you have a choice: you can fight that movement, or you can accommodate it. Metal fasteners — nails, screws, bolts — fight it. Traditional wood joints accommodate it."
+      },
+      {
+        type: "heading",
+        text: "What metal fasteners do"
+      },
+      {
+        type: "paragraph",
+        text: "A screw or nail creates a rigid connection between two pieces of wood. When the wood tries to move, the fastener holds it in place. This creates stress at the connection point. Over time, that stress manifests as cracks around the fastener, loosened joints, or splits in the wood."
+      },
+      {
+        type: "paragraph",
+        text: "In exterior applications, metal fasteners also create a pathway for moisture. Water wicks along the metal-wood interface, accelerating rot at the exact point where the structure needs to be strongest."
+      },
+      {
+        type: "heading",
+        text: "How wood joints work"
+      },
+      {
+        type: "paragraph",
+        text: "A well-cut wood joint — mortise and tenon, dovetail, sliding joint — creates a connection that moves with the wood. The joint is tight enough to be strong, but it allows the natural expansion and contraction to occur without building up stress."
+      },
+      {
+        type: "paragraph",
+        text: "The mortise and tenon, which we use extensively, is perhaps the oldest structural joint in woodworking. A projecting tenon fits into a corresponding mortise (hole). The fit is precise — tight enough to hold through friction and glue, loose enough to accommodate seasonal movement."
+      },
+      {
+        type: "heading",
+        text: "When we do use metal"
+      },
+      {
+        type: "paragraph",
+        text: "We're not dogmatic about this. Some applications genuinely require metal — hinges, for example, or drawer slides. Outdoor furniture that will be exposed to extreme weather may use stainless steel fasteners as a belt-and-suspenders approach alongside traditional joints."
+      },
+      {
+        type: "paragraph",
+        text: "But for the vast majority of structural connections, we use wood-to-wood joints. They're stronger, they last longer, and they respect the material we're working with. A joint that moves with the wood will outlast the person who built the piece."
+      }
+    ]
   },
   {
-    slug: 'why-we-dont-sand-away-knots',
-    category: 'Stories',
-    title: 'Why we don\u2019t sand away knots and colour shifts',
-    excerpt: 'An imperfection in the grain is a record of where the tree grew. Removing it doesn\u2019t make the wood better \u2014 it makes it generic.',
-    date: 'October 2025',
-    dateISO: '2025-10-01',
-    image: 'https://images.pexels.com/photos/36299690/pexels-photo-36299690.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'Natural imperfections and knots in wood grain.',
+    slug: "why-we-dont-sand-away-knots",
+    category: "Stories",
+    title: "Why we don't sand away knots and colour shifts",
+    excerpt: "An imperfection in the grain is a record of where the tree grew. Removing it doesn't make the wood better — it makes it generic.",
+    date: "October 2025",
+    dateISO: "2025-10-01",
+    image: "https://images.pexels.com/photos/36299690/pexels-photo-36299690.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "Natural imperfections and knots in wood grain.",
     featured: false,
-    relatedProducts: ['drift-sculpture', 'decorative-objects-set', 'serving-plank'],
+    relatedProducts: [
+      "drift-sculpture",
+      "decorative-objects-set",
+      "serving-plank"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "In industrial furniture production, knots are defects. They're cut out, filled, or hidden beneath veneer and paint. The goal is uniformity — every piece should look like every other piece, with no visible evidence that it came from a living tree."
+      },
+      {
+        type: "paragraph",
+        text: "We see it differently. A knot is where a branch grew. A colour shift is where the grain changed direction. A mineral streak is where the tree drew up nutrients from the soil. These marks are the wood's autobiography — they tell the story of a specific tree, in a specific place, growing over specific years."
+      },
+      {
+        type: "heading",
+        text: "What knots tell us"
+      },
+      {
+        type: "paragraph",
+        text: "Teak knots are dense and hard — often harder than the surrounding wood. They're structurally sound and visually distinctive. When we encounter a knot during construction, we work around it rather than cutting it out. The joint is adjusted, the layout is shifted, and the knot becomes a feature."
+      },
+      {
+        type: "paragraph",
+        text: "Colour shifts are equally valuable. Teak heartwood ranges from golden brown to deep chocolate, sometimes within the same board. These variations aren't inconsistencies — they're the natural colour range of the species, and they create visual depth that no stain or finish can replicate."
+      },
+      {
+        type: "heading",
+        text: "Why we preserve them"
+      },
+      {
+        type: "paragraph",
+        text: "When you sand away a knot or discard a board because of colour variation, you're making the wood more uniform. But uniformity isn't the same as quality. A piece with visible grain variation, knots, and natural colour shifts is more interesting, more honest, and more connected to its origins than a piece that looks like it was stamped out of a mould."
+      },
+      {
+        type: "paragraph",
+        text: "This isn't about tolerating flaws. It's about understanding that what industrial manufacturing calls a flaw is actually a characteristic. The tree didn't grow in a factory, and the wood shouldn't pretend it did."
+      },
+      {
+        type: "paragraph",
+        text: "Every Teakle piece carries the marks of its material. We don't hide them. We celebrate them. They're what make each piece unique, and they're what connect the finished object back to the living tree it came from."
+      }
+    ]
   },
   {
-    slug: 'the-tools-we-still-use',
-    category: 'Stories',
-    title: 'The tools we still use, and why we haven\u2019t replaced them',
-    excerpt: 'Some of the hand tools in daily use here are decades old. A short note on why that\u2019s a feature, not a limitation.',
-    date: 'September 2025',
-    dateISO: '2025-09-01',
-    image: 'https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700',
-    imageAlt: 'Hand tools arranged on a workshop bench.',
+    slug: "the-tools-we-still-use",
+    category: "Stories",
+    title: "The tools we still use, and why we haven't replaced them",
+    excerpt: "Some of the hand tools in daily use here are decades old. A short note on why that's a feature, not a limitation.",
+    date: "September 2025",
+    dateISO: "2025-09-01",
+    image: "https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700",
+    imageAlt: "Hand tools arranged on a workshop bench.",
     featured: false,
-    relatedProducts: ['bearing-chair', 'hourglass-vase'],
-  },
+    relatedProducts: [
+      "bearing-chair",
+      "hourglass-vase"
+    ],
+    body: [
+      {
+        type: "paragraph",
+        text: "There's a hand plane on the bench that's older than anyone in the workshop. The body is cast iron, worn smooth by decades of use. The blade has been sharpened so many times it's half its original length. It works better today than any new plane we've ever tried."
+      },
+      {
+        type: "paragraph",
+        text: "This isn't sentimentality. It's physics. A tool that's been used for decades has been broken in — the sole is perfectly flat from thousands of passes over wood, the adjustment mechanisms are smooth from repeated use, and the handle has been shaped by the hands that use it."
+      },
+      {
+        type: "heading",
+        text: "Why old tools work better"
+      },
+      {
+        type: "paragraph",
+        text: "New tools need breaking in. A factory-made hand plane often has a sole that isn't perfectly flat — it needs to be lapped and adjusted before it performs well. The adjustment mechanisms are stiff until they've been worked loose. The blade needs to be honed to the user's preferred angle."
+      },
+      {
+        type: "paragraph",
+        text: "An old tool has already been through that process. The sole is flat because it's been flattened by use. The adjustments are smooth because they've been used thousands of times. The blade has been sharpened to the angle that works best for the specific wood and the specific hands."
+      },
+      {
+        type: "heading",
+        text: "What we haven't replaced"
+      },
+      {
+        type: "paragraph",
+        text: "Our primary hand planes are all vintage — some are over fifty years old. Our chisels include pieces that have been in continuous use for decades. Our marking gauges, try squares, and measuring tools are a mix of old and new, chosen for accuracy rather than age."
+      },
+      {
+        type: "paragraph",
+        text: "We do use modern tools where they make sense — power saws for initial stock preparation, a thickness planer for dimensioning, a bandsaw for curves. But the final work — the surfaces you touch, the joints you see, the details that define the piece — is done by hand with tools that have earned their place on the bench."
+      },
+      {
+        type: "heading",
+        text: "Why this matters"
+      },
+      {
+        type: "paragraph",
+        text: "A workshop that uses old tools is a workshop that values performance over appearance. It's a workshop where the tools have been proven over decades of daily use, where every scratch and dent tells a story of work done well."
+      },
+      {
+        type: "paragraph",
+        text: "It's also a workshop that understands the difference between a tool and a product. Some people buy tools to display them. We use tools to make things. The difference is visible in the surface finish, in the tightness of the joints, and in the quality of the final piece."
+      }
+    ]
+  }
 ];
 
 export function getArticleBySlug(slug) {
@@ -106,3 +465,4 @@ export function getFeaturedArticle() {
 export function getNonFeaturedArticles() {
   return JOURNAL.filter((a) => !a.featured);
 }
+

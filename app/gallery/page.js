@@ -1,4 +1,5 @@
 import GalleryClient from './GalleryClient';
+import { PRODUCTS } from '../data/products';
 
 export const metadata = {
   title: 'Gallery',
@@ -8,5 +9,5 @@ export const metadata = {
 };
 
 export default function GalleryPage() {
-  return <GalleryClient />;
+  return <GalleryClient products={PRODUCTS} />;
 }

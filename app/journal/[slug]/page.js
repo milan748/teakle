@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getArticleBySlug, getAllArticleSlugs } from '../../data/journal';
+import { getArticleBySlug, getAllArticleSlugs, JOURNAL } from '../../data/journal';
+import { PRODUCTS } from '../../data/products';
 import JournalArticleClient from './JournalArticleClient';
 import StructuredData from '../../components/StructuredData';
 
@@ -68,7 +69,7 @@ export default async function JournalArticlePage({ params }) {
   return (
     <>
       <StructuredData data={articleSchema} />
-      <JournalArticleClient article={article} />
+      <JournalArticleClient article={article} allArticles={JOURNAL} allProducts={PRODUCTS} />
     </>
   );
 }

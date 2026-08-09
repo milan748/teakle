@@ -414,7 +414,7 @@ const subStyles = `
 }
 `;
 
-export default function SubcategoryClient() {
+export default function SubcategoryClient({ products: serverProducts }) {
   const [heroImg, setHeroImg] = useState('https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600');
   const [heroTitle, setHeroTitle] = useState('Gallery');
   const [heroDesc, setHeroDesc] = useState('Browse handcrafted solid timber products.');
@@ -422,7 +422,7 @@ export default function SubcategoryClient() {
   const [catKey, setCatKey] = useState('');
   const [subName, setSubName] = useState('');
   const [products, setProducts] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState(serverProducts || []);
   const [sortValue, setSortValue] = useState('featured');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -459,8 +459,9 @@ export default function SubcategoryClient() {
     setHeroDesc(sub.description || `${sub.name} — handcrafted from solid timber.`);
     setHeroImg(sub.image);
 
-    if (typeof window.TEAKLE_PRODUCTS === 'undefined') return;
-    const filtered = window.TEAKLE_PRODUCTS.filter(
+    const source = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (serverProducts || []);
+    if (!source.length) return;
+    const filtered = source.filter(
       (p) => p.category === ck && p.subcategory === sk
     );
     setAllProducts(filtered);

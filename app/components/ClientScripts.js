@@ -11,16 +11,13 @@ export default function ClientScripts() {
     let observer;
     let safetyTimeout;
     let frameId;
+    let mutationObserver;
 
-    /* Defer reveal DOM mutations past hydration with double rAF.
-       The first rAF fires after the current paint (where React 19
-       finishes its hydration commit). The second rAF guarantees
-       execution on the NEXT frame, well after reconciliation. */
-    frameId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        /* Scroll reveal with Intersection Observer */
-        const reveals = document.querySelectorAll('.reveal, .piece-card, .product-card');
-        if ('IntersectionObserver' in window) {
+    function initReveals(root) {
+      const reveals = (root || document).querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+      if (!reveals.length) return;
+      if ('IntersectionObserver' in window) {
+        if (!observer) {
           observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
@@ -29,22 +26,50 @@ export default function ClientScripts() {
               }
             });
           }, { threshold: 0.1 });
-          reveals.forEach((el) => observer.observe(el));
-        } else {
-          reveals.forEach((el) => el.classList.add('is-visible'));
         }
+        reveals.forEach((el) => observer.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('is-visible'));
+      }
+    }
 
-        /* Safety net: force reveal content visible after delay */
-        safetyTimeout = setTimeout(() => {
-          reveals.forEach((el) => el.classList.add('is-visible'));
-        }, 1500);
-      });
+    /* Single rAF — defer past React 19 hydration commit */
+    frameId = requestAnimationFrame(() => {
+      initReveals();
+
+      /* Safety net: force all reveals visible after 400ms */
+      safetyTimeout = setTimeout(() => {
+        document.querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)').forEach((el) => {
+          el.classList.add('is-visible');
+        });
+      }, 400);
+
+      /* MutationObserver catches dynamically added .reveal elements */
+      if ('MutationObserver' in window) {
+        mutationObserver = new MutationObserver((mutations) => {
+          for (const m of mutations) {
+            for (const node of m.addedNodes) {
+              if (node.nodeType === 1) {
+                if (node.classList && (node.classList.contains('reveal') || node.classList.contains('piece-card') || node.classList.contains('product-card'))) {
+                  initReveals(node.parentElement || document);
+                }
+                if (node.querySelectorAll) {
+                  const inner = node.querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+                  if (inner.length) initReveals(node.parentElement || document);
+                }
+              }
+            }
+          }
+        });
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
+      }
     });
 
     return () => {
       cancelAnimationFrame(frameId);
       clearTimeout(safetyTimeout);
-      if (observer) observer.disconnect();
+      if (observer) { observer.disconnect(); observer = null; }
+      if (mutationObserver) { mutationObserver.disconnect(); mutationObserver = null; }
     };
   }, [pathname]);
 
@@ -135,9 +160,18 @@ export default function ClientScripts() {
       syncBottomBadges();
     };
 
-    /* Teakle module init (from app.js) */
-    if (typeof window !== 'undefined' && window.Teakle) {
-      window.Teakle.init();
+    /* Teakle module init (from app.js) — retry if scripts load late */
+    function initTeakle() {
+      if (typeof window !== 'undefined' && window.Teakle) {
+        window.Teakle.init();
+        return true;
+      }
+      return false;
+    }
+    if (!initTeakle()) {
+      const retryTimer = setTimeout(initTeakle, 200);
+      const retryTimer2 = setTimeout(initTeakle, 600);
+      var _teakleCleanup = () => { clearTimeout(retryTimer); clearTimeout(retryTimer2); };
     }
 
     /* Footer newsletter form */
@@ -157,7 +191,9 @@ export default function ClientScripts() {
       });
     }
 
-    return () => {};
+    return () => {
+      if (typeof _teakleCleanup === 'function') _teakleCleanup();
+    };
   }, []);
 
   return null;

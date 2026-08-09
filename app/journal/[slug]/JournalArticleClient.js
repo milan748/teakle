@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Script from 'next/script';
 
 const articleStyles = `
   .j-hero {
@@ -194,16 +193,13 @@ const articleStyles = `
   }
 `;
 
-export default function JournalArticleClient({ article: serverArticle }) {
+export default function JournalArticleClient({ article: serverArticle, allArticles, allProducts }) {
   const [article, setArticle] = useState({ body: [], relatedProducts: [], ...serverArticle });
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const articles = window.TEAKLE_JOURNAL || [];
+    const articles = (typeof window !== 'undefined' && window.TEAKLE_JOURNAL) ? window.TEAKLE_JOURNAL : (allArticles || []);
     const found = articles.find((a) => a.slug === serverArticle.slug);
     const fullArticle = found || { body: [], relatedProducts: [], ...serverArticle };
     setArticle(fullArticle);
@@ -219,18 +215,18 @@ export default function JournalArticleClient({ article: serverArticle }) {
     }
     setRelatedArticles(related);
 
-    if (fullArticle.relatedProducts && window.TEAKLE_PRODUCTS) {
+    if (fullArticle.relatedProducts) {
+      const products = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (allProducts || []);
       const prods = fullArticle.relatedProducts
-        .map((id) => window.TEAKLE_PRODUCTS.find((p) => p.id === id))
+        .map((id) => products.find((p) => p.id === id))
         .filter(Boolean)
         .slice(0, 3);
       setRelatedProducts(prods);
     }
-  }, [serverArticle.slug, scriptLoaded]);
+  }, [serverArticle.slug, allArticles, allProducts]);
 
   return (
     <>
-      <Script src="/journal-articles.js" strategy="beforeInteractive" onLoad={() => setScriptLoaded(true)} />
       <style>{articleStyles}</style>
 
       <section className="j-hero">
