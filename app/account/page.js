@@ -537,9 +537,9 @@ export default function AccountPage() {
   function renderSupport() {
     const items = [
       { id: 'contact', title: 'Contact Support', desc: 'Reach our team directly for any questions.', href: '/contact' },
-      { id: 'faq', title: 'FAQ', desc: 'Answers to common questions about orders, shipping, and care.' },
-      { id: 'shipping', title: 'Shipping Information', desc: 'Details on delivery timelines, packaging, and international shipping.' },
-      { id: 'returns', title: 'Returns & Exchanges', desc: 'Our policy on returns, exchanges, and manufacturing defects.' },
+      { id: 'shipping', title: 'Shipping Information', desc: 'Details on delivery timelines, packaging, and international shipping.', href: '/shipping' },
+      { id: 'returns', title: 'Returns & Exchanges', desc: 'Our policy on returns, exchanges, and manufacturing defects.', href: '/returns-and-refunds' },
+      { id: 'warranty', title: 'Warranty', desc: 'Warranty coverage for your Teakle products.', href: '/warranty' },
       { id: 'care', title: 'Craft Care Guide', desc: 'How to maintain your Teakle pieces for generations.' },
     ];
 

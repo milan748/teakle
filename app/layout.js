@@ -84,7 +84,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/assets/logo-black.png" />
         <link rel="apple-touch-icon" href="/assets/logo-black.png" />
         <link rel="preconnect" href="https://images.pexels.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="/assets/logo-black.png" as="image" />
+        <noscript dangerouslySetInnerHTML={{__html: '<style>.reveal{opacity:1!important;transform:none!important;}</style>'}} />
         <StructuredData data={organizationSchema} />
         <StructuredData data={websiteSchema} />
       </head>
@@ -99,7 +102,7 @@ export default function RootLayout({ children }) {
         <BottomNav />
         <ClientScripts />
         <Script src="/app.js" strategy="beforeInteractive" />
-        <Script src="/products.js" strategy="beforeInteractive" />
+        <Script src="/products.js" strategy="afterInteractive" />
       </body>
     </html>
   );

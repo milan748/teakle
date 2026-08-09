@@ -101,9 +101,8 @@ export default function Header() {
       const scrolled = window.scrollY > 60;
       header.classList.toggle('is-scrolled', scrolled);
       if (hasHero) {
-        setLogoSrc(scrolled ? '/assets/logo-black.png' : '/assets/logo-white.png');
-      } else {
-        setLogoSrc('/assets/logo-black.png');
+        const newSrc = scrolled ? '/assets/logo-black.png' : '/assets/logo-white.png';
+        setLogoSrc((prev) => prev === newSrc ? prev : newSrc);
       }
     }
 
@@ -136,6 +135,7 @@ export default function Header() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [activeResultIdx, setActiveResultIdx] = useState(-1);
   const resultRefs = useRef([]);
+  const searchDebounceRef = useRef(null);
 
   const openSearch = useCallback(() => {
     setSearchOpen(true);
@@ -177,7 +177,8 @@ export default function Header() {
 
   const handleSearch = useCallback((q) => {
     setSearchQuery(q);
-    searchFields(q);
+    clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => searchFields(q), 200);
   }, [searchFields]);
 
   const closeDrawer = useCallback(() => {

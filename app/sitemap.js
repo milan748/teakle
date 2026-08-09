@@ -13,6 +13,12 @@ export default function sitemap() {
     { url: `${base}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/trade`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: `${base}/custom`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${base}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
+    { url: `${base}/terms`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
+    { url: `${base}/shipping`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${base}/returns-and-refunds`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${base}/cancellation`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
+    { url: `${base}/warranty`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
   ];
 
   const collections = ['kitchen-dining', 'home-decor', 'everyday-living', 'storage'];

@@ -47,7 +47,14 @@ export default function Footer() {
         </div>
         <div className="footer-bottom">
           <span>&copy; 2026 Teakle. Handcrafted in India.</span>
-          <span>India</span>
+          <div className="footer-legal">
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/shipping">Shipping</Link>
+            <Link href="/returns-and-refunds">Returns &amp; Refunds</Link>
+            <Link href="/cancellation">Cancellation</Link>
+            <Link href="/warranty">Warranty</Link>
+          </div>
         </div>
       </div>
     </footer>

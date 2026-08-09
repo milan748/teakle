@@ -740,7 +740,7 @@ export default function HomeClient() {
 
         {/* 1. Hero */}
         <section className="v2-hero" ref={heroRef}>
-          <img className="v2-hero-img" src="/assets/hero-luxury-entryway.png" alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." />
+          <img className="v2-hero-img" src="/assets/hero-luxury-entryway.png" alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchpriority="high" />
           <div className="v2-hero-content">
             <span className="eyebrow eyebrow-light v2-hero-eyebrow">An Indian Workshop</span>
             <h1>Where wood becomes<br />timeless art.</h1>
@@ -793,7 +793,7 @@ export default function HomeClient() {
         <section className="v2-signature">
           <div className="v2-sig-grid">
             <div className="v2-sig-img reveal">
-              <img src="https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="A single hand-shaped wooden stool, photographed on a plain neutral floor." />
+              <img src="https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="A single hand-shaped wooden stool, photographed on a plain neutral floor." loading="lazy" width="1200" height="800" />
             </div>
             <div className="v2-sig-text">
               <span className="v2-sig-tag reveal">{'Piece N\u00B0 04 \u2014 This Season'}</span>
@@ -831,37 +831,37 @@ export default function HomeClient() {
           <button className="v2-cnext" aria-label="Next">&#8594;</button>
           <div className="v2-ctrack" ref={carouselTrackRef}>
             <Link href="/shop/anchor-table" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">The Anchor Table</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/bearing-chair" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">The Bearing Chair</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/serving-plank" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">Teak Serving Board</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/carving-board" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/7123134/pexels-photo-7123134.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Carving Board" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/7123134/pexels-photo-7123134.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Carving Board" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">Carving Board</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/spice-rack" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">Spice Rack</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/drift-sculpture" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">Drift Sculpture</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
             <Link href="/shop/hourglass-vase" className="v2-citem reveal">
-              <div className="v2-cimage"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" /></div>
+              <div className="v2-cimage"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy" width="600" height="400" /></div>
               <span className="v2-clabel">Hourglass Vase</span>
               <span className="v2-cbtn">Discover</span>
             </Link>
@@ -886,7 +886,7 @@ export default function HomeClient() {
             </div>
             <div className="v2-pgrid">
               <Link href="/shop/anchor-table" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Anchor Table" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>The Anchor Table</h3>
@@ -898,7 +898,7 @@ export default function HomeClient() {
                 </div>
               </Link>
               <Link href="/shop/bearing-chair" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=600" alt="The Bearing Chair" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>The Bearing Chair</h3>
@@ -910,7 +910,7 @@ export default function HomeClient() {
                 </div>
               </Link>
               <Link href="/shop/serving-plank" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>Teak Serving Board</h3>
@@ -922,7 +922,7 @@ export default function HomeClient() {
                 </div>
               </Link>
               <Link href="/shop/spice-rack" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/34942955/pexels-photo-34942955.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Spice Rack" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>Spice Rack</h3>
@@ -934,7 +934,7 @@ export default function HomeClient() {
                 </div>
               </Link>
               <Link href="/shop/drift-sculpture" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Drift Sculpture" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>Drift Sculpture</h3>
@@ -946,7 +946,7 @@ export default function HomeClient() {
                 </div>
               </Link>
               <Link href="/shop/hourglass-vase" className="v2-pcard reveal">
-                <div className="v2-pimg"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy" /></div>
+                <div className="v2-pimg"><img src="https://images.pexels.com/photos/10677815/pexels-photo-10677815.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hourglass Vase" loading="lazy" width="600" height="400" /></div>
                 <div className="v2-pinfo">
                   <div>
                     <h3>Hourglass Vase</h3>
