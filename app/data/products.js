@@ -1,10 +1,18 @@
 /**
- * Full product data — server-safe ES module.
- * Used by server pages for initial render + generateMetadata + sitemap.
- * Client components also read from window.TEAKLE_PRODUCTS for dynamic updates.
+ * TEAKLE — Authoritative Product Dataset
  *
- * AUTO-GENERATED from public/products.js — do not edit manually.
- * Re-run: node merge-data.js
+ * This is the SINGLE SOURCE OF TRUTH for all product data.
+ * Server components import directly from this file.
+ * Client components receive data via props from server components.
+ * A lightweight browser version is generated at public/products-browser.js
+ * (contains only fields needed for search, cart, and wishlist).
+ *
+ * Re-run browser generation: node scripts/generate-browser-products.js
+ *
+ * FUTURE SHOPIFY MIGRATION:
+ *   Replace this file's data access with Shopify Storefront API.
+ *   The helper functions below define the data-access boundary.
+ *   UI imports from here → Shopify replaces the implementation.
  */
 
 export const PRODUCTS = [
@@ -4034,7 +4042,32 @@ export function getProductById(id) {
   return PRODUCTS.find((p) => p.id === id) || null;
 }
 
+export function getProductBySlug(slug) {
+  return PRODUCTS.find((p) => p.slug === slug) || null;
+}
+
 export function getAllProductIds() {
   return PRODUCTS.map((p) => p.id);
+}
+
+export function getAllProducts() {
+  return PRODUCTS;
+}
+
+export function getProductsByCategory(category) {
+  return PRODUCTS.filter((p) => p.category === category);
+}
+
+export function getProductsBySubcategory(category, subcategory) {
+  return PRODUCTS.filter(
+    (p) => p.category === category && p.subcategory === subcategory
+  );
+}
+
+export function getRelatedProducts(product) {
+  if (!product?.relatedProducts?.length) return [];
+  return product.relatedProducts
+    .map((id) => getProductById(id))
+    .filter(Boolean);
 }
 

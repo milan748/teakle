@@ -102,7 +102,7 @@ export default function RootLayout({ children }) {
         <BottomNav />
         <ClientScripts />
         <Script src="/app.js" strategy="beforeInteractive" />
-        <Script src="/products.js" strategy="afterInteractive" />
+        <Script src="/products-browser.js" strategy="beforeInteractive" />
       </body>
     </html>
   );
