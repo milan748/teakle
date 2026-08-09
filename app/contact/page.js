@@ -1,37 +1,12 @@
-'use client';
+import ContactForm from '../components/ContactForm';
 
-import { useEffect, useRef } from 'react';
+export const metadata = {
+  title: 'Contact',
+  description: 'Questions before you order are always welcome. Get in touch with the Teakle workshop.',
+  openGraph: { title: 'Contact — Teakle', description: 'Questions before you order are always welcome.' },
+};
 
 export default function ContactPage() {
-  const formRef = useRef(null);
-  const statusRef = useRef(null);
-
-  useEffect(() => {
-    const form = formRef.current;
-    const status = statusRef.current;
-    if (!form || !status) return;
-
-    function handleSubmit(e) {
-      e.preventDefault();
-      const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn.textContent;
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      setTimeout(() => {
-        status.textContent = 'Message received. We will reply within two working days.';
-        status.classList.add('is-visible');
-        form.reset();
-        btn.textContent = originalText;
-        btn.disabled = false;
-        setTimeout(() => status.classList.remove('is-visible'), 5000);
-      }, 1000);
-    }
-
-    form.addEventListener('submit', handleSubmit);
-    return () => form.removeEventListener('submit', handleSubmit);
-  }, []);
-
   return (
     <>
       <style>{`
@@ -95,10 +70,22 @@ export default function ContactPage() {
           outline: none;
           border-color: var(--bronze);
         }
+        .form-row input[aria-invalid="true"],
+        .form-row textarea[aria-invalid="true"] {
+          border-color: #c0392b;
+        }
+        .form-error {
+          display: block;
+          font-size: 12px;
+          color: #c0392b;
+          margin-top: 0.3rem;
+        }
+        .required { color: #c0392b; }
         .form-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
         .contact-submit { margin-top: 0.5rem; }
         .contact-submit:active { transform: scale(0.97); }
         .contact-submit:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+        .contact-submit:disabled { opacity: 0.6; cursor: not-allowed; }
         .contact-form-status {
           font-size: var(--text-caption);
           color: var(--forest);
@@ -147,28 +134,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <form ref={formRef} className="contact-form reveal" id="contactForm">
-            <div className="form-two-col">
-              <div className="form-row">
-                <label htmlFor="contactName">Name</label>
-                <input type="text" id="contactName" name="name" required />
-              </div>
-              <div className="form-row">
-                <label htmlFor="contactEmail">Email</label>
-                <input type="email" id="contactEmail" name="email" required />
-              </div>
-            </div>
-            <div className="form-row">
-              <label htmlFor="contactSubject">Subject</label>
-              <input type="text" id="contactSubject" name="subject" required />
-            </div>
-            <div className="form-row">
-              <label htmlFor="contactMessage">Message</label>
-              <textarea id="contactMessage" name="message" required></textarea>
-            </div>
-            <button type="submit" className="btn-primary contact-submit">Send Message</button>
-            <p ref={statusRef} className="contact-form-status" id="contactFormStatus" role="status"></p>
-          </form>
+          <ContactForm />
         </div>
       </section>
     </>

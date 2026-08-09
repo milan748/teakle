@@ -553,7 +553,7 @@ export default function CartPage() {
                         <Link href={`/shop/${item.id}`}>{item.name}</Link>
                       </p>
                       {item.price && <p className="cart-item-price">{item.price}</p>}
-                      <p className="cart-item-meta">Handcrafted &middot; Ships in 2&ndash;3 weeks</p>
+                      <p className="cart-item-meta">Handcrafted &middot; In Stock</p>
                     </div>
                     <div className="cart-item-actions">
                       <p className="cart-item-price-lg">{item.price || ''}</p>

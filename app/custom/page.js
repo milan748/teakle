@@ -78,7 +78,7 @@ export default function CustomPage() {
 
     function handleSubmit(e) {
       e.preventDefault();
-      status.textContent = 'Thank you. We will review your request and get back to you within two working days.';
+      status.textContent = 'Thank you. We will review your request and get back to you within two working days. (Demo mode — backend integration required.)';
       status.classList.add('is-visible');
       form.reset();
       setUploadedFiles([]);

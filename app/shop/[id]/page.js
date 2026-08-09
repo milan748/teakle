@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Script from 'next/script';
+import ProductCard from '../../components/ProductCard';
 
 /* ============================================
    PRODUCT PAGE — Type A (Signature) + Type B (Standard)
@@ -492,35 +493,6 @@ const pageStyles = `
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
-}
-.pd-piece-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 400ms var(--ease);
-}
-.pd-piece-card:hover { transform: translateY(-4px); }
-.pd-piece-img {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  background: var(--bg-secondary);
-  margin-bottom: 0.75rem;
-}
-.pd-piece-img img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-slow) var(--ease); }
-.pd-piece-card:hover .pd-piece-img img { transform: scale(1.04); }
-.pd-piece-title {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: 500;
-  margin-bottom: 0.2rem;
-  transition: color var(--dur-fast) var(--ease);
-}
-.pd-piece-card:hover .pd-piece-title { color: var(--bronze); }
-.pd-piece-price {
-  font-size: var(--text-label);
-  color: var(--text-secondary);
-  letter-spacing: 0.04em;
 }
 
 /* ---- Gallery Overlay ---- */
@@ -1072,8 +1044,8 @@ export default function ShopDetailPage() {
   /* Wishlist state */
   useEffect(() => {
     if (!product || typeof window === 'undefined') return;
-    if (window.Teachle && window.Teachle.isInWishlist) {
-      setIsWishlisted(window.Teachle.isInWishlist(product.id));
+    if (window.Teakle && window.Teakle.isInWishlist) {
+      setIsWishlisted(window.Teakle.isInWishlist(product.id));
     }
   }, [product]);
 
@@ -1183,10 +1155,8 @@ export default function ShopDetailPage() {
   /* Add to Cart */
   const handleAddToCart = useCallback(() => {
     if (!product || typeof window === 'undefined') return;
-    if (window.Teachle) {
-      for (let q = 0; q < qty; q++) {
-        window.Teachle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0] });
-      }
+    if (window.Teakle) {
+      window.Teakle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0], qty: qty });
     }
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);
@@ -1195,9 +1165,9 @@ export default function ShopDetailPage() {
   /* Wishlist */
   const handleWishlist = useCallback(() => {
     if (!product || typeof window === 'undefined') return;
-    if (window.Teachle && window.Teachle.requireAuth && !window.Teachle.requireAuth()) return;
-    if (window.Teachle && window.Teachle.toggleWishlist) {
-      const result = window.Teachle.toggleWishlist({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0] });
+    if (window.Teakle && window.Teakle.requireAuth && !window.Teakle.requireAuth()) return;
+    if (window.Teakle && window.Teakle.toggleWishlist) {
+      const result = window.Teakle.toggleWishlist({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0] });
       setIsWishlisted(result.added);
     }
   }, [product]);
@@ -1264,7 +1234,7 @@ export default function ShopDetailPage() {
     <div className="pd-delivery">
       <div className="pd-delivery-row">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
-        <span>{product.leadTime} delivery. White-glove service available.</span>
+        <span>White-glove delivery available.</span>
       </div>
       <div className="pd-delivery-row">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
@@ -1289,13 +1259,7 @@ export default function ShopDetailPage() {
             const rp = window?.TEAKLE_PRODUCTS?.find((p) => p.id === rid);
             if (!rp) return null;
             return (
-              <Link key={rid} href={`/shop/${rp.id}`} className="pd-piece-card">
-                <div className="pd-piece-img">
-                  <img loading="lazy" src={rp.images[0]} alt={rp.name} />
-                </div>
-                <h3 className="pd-piece-title">{rp.name}</h3>
-                <p className="pd-piece-price">{rp.priceFormatted}</p>
-              </Link>
+              <ProductCard key={rid} product={rp} />
             );
           })}
         </div>
@@ -1314,13 +1278,7 @@ export default function ShopDetailPage() {
           </div>
           <div className="pd-related-grid">
             {recentlyViewed.map((rp) => (
-              <Link key={rp.id} href={`/shop/${rp.id}`} className="pd-piece-card">
-                <div className="pd-piece-img">
-                  <img loading="lazy" src={rp.images[0]} alt={rp.name} />
-                </div>
-                <h3 className="pd-piece-title">{rp.name}</h3>
-                <p className="pd-piece-price">{rp.priceFormatted}</p>
-              </Link>
+              <ProductCard key={rp.id} product={rp} />
             ))}
           </div>
         </div>

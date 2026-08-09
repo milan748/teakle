@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import Link from 'next/link'
 
 export default function Home() {
   const heroRef = useRef(null)
@@ -772,7 +773,7 @@ export default function Home() {
               </div>
               <div className="v2-trust-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                <span>Made to Order</span>
+                <span>Sustainably Sourced</span>
               </div>
             </div>
           </div>
@@ -801,7 +802,7 @@ export default function Home() {
               <p className="reveal">One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted &mdash; once it&apos;s gone, the next edition begins.</p>
               <div className="v2-sig-actions reveal">
                 <a href="/shop/anchor-table" className="btn-primary">View This Piece</a>
-                <a href="/journal" className="link-quiet">Watch It Being Made</a>
+                <Link href="/journal" className="link-quiet">Watch It Being Made</Link>
               </div>
               <p className="v2-sig-past reveal">Looking for something from a past season? <a href="/archive">See past editions</a>.</p>
             </div>
@@ -839,7 +840,7 @@ export default function Home() {
               <span className="v2-clabel">The Bearing Chair</span>
               <span className="v2-cbtn">Discover</span>
             </a>
-            <a href="/shop/teak-serving-board" className="v2-citem reveal">
+            <a href="/shop/serving-plank" className="v2-citem reveal">
               <div className="v2-cimage"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" /></div>
               <span className="v2-clabel">Teak Serving Board</span>
               <span className="v2-cbtn">Discover</span>
@@ -908,7 +909,7 @@ export default function Home() {
                   </div>
                 </div>
               </a>
-              <a href="/shop/teak-serving-board" className="v2-pcard reveal">
+              <a href="/shop/serving-plank" className="v2-pcard reveal">
                 <div className="v2-pimg"><img src="https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Teak Serving Board" loading="lazy" /></div>
                 <div className="v2-pinfo">
                   <div>
@@ -981,7 +982,7 @@ export default function Home() {
             <span className="eyebrow eyebrow-light reveal">Watch It Made</span>
             <h2 className="reveal">Every piece is documented from timber to finish.</h2>
             <p className="reveal">We don&apos;t ask you to imagine the process &mdash; we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you&apos;re buying before you buy it.</p>
-            <a href="/journal" className="link-quiet reveal">Watch the Process</a>
+            <Link href="/journal" className="link-quiet reveal">Watch the Process</Link>
           </div>
         </section>
 

@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ProductCard from '../components/ProductCard';
 
 /* ============================================
    GALLERY — Curated Product Discovery
@@ -49,19 +51,12 @@ const CATEGORIES = [
 
 const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
-  { value: 'newest', label: 'Newest' },
   { value: 'price-asc', label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
   { value: 'name-asc', label: 'Name: A–Z' },
 ];
 
-const PRICE_RANGES = [
-  { value: 'all', label: 'All Prices' },
-  { value: '0-5000', label: 'Under ₹5,000' },
-  { value: '5000-15000', label: '₹5,000 – ₹15,000' },
-  { value: '15000-50000', label: '₹15,000 – ₹50,000' },
-  { value: '50000+', label: '₹50,000+' },
-];
+const PRICE_bounds = { min: 3500, max: 185000 };
 
 const AVAILABILITY_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -201,7 +196,7 @@ const galleryStyles = `
 }
 .gal-filters-inner {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
   padding: var(--space-md) 0;
   border-bottom: var(--border-subtle);
@@ -242,6 +237,70 @@ const galleryStyles = `
   border: var(--border-hair);
   padding: 0.5em;
   cursor: pointer;
+}
+.gal-filter-price { grid-column: 1 / -1; }
+.gal-price-display {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-caption);
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+}
+.gal-price-sliders {
+  position: relative;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+.gal-price-sliders input[type="range"] {
+  position: absolute;
+  width: 100%;
+  height: 36px;
+  background: none;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+}
+.gal-price-sliders input[type="range"]::-webkit-slider-runnable-track {
+  height: 3px;
+  background: var(--stone);
+  border-radius: 2px;
+}
+.gal-price-sliders input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  border: 2px solid var(--bg-primary);
+  cursor: pointer;
+  pointer-events: auto;
+  margin-top: -7.5px;
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+.gal-price-sliders input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(167, 134, 89, 0.15);
+}
+.gal-price-sliders input[type="range"]::-moz-range-track {
+  height: 3px;
+  background: var(--stone);
+  border-radius: 2px;
+}
+.gal-price-sliders input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  border: 2px solid var(--bg-primary);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.gal-price-sliders input[type="range"]::-moz-range-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(167, 134, 89, 0.15);
 }
 .gal-filter-actions {
   display: flex;
@@ -307,84 +366,6 @@ const galleryStyles = `
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
 }
-.gal-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 400ms var(--ease);
-}
-.gal-card:hover { transform: translateY(-4px); }
-.gal-card-img {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  background: var(--bg-secondary);
-  margin-bottom: 0.75rem;
-}
-.gal-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
-}
-.gal-card:hover .gal-card-img img { transform: scale(1.04); }
-.gal-card-badge {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.3em 0.6em;
-  z-index: 2;
-}
-.gal-card-badge:empty { display: none; }
-.gal-card-wishlist {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 40px;
-  height: 40px;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-  z-index: 2;
-  color: var(--text-primary);
-}
-.gal-card:hover .gal-card-wishlist { opacity: 1; transform: scale(1); }
-.gal-card-wishlist:hover { background: var(--bronze); color: #fff; }
-.gal-card-wishlist:active { transform: scale(0.85); }
-.gal-card-wishlist svg { width: 14px; height: 14px; }
-.gal-card-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-xs);
-}
-.gal-card-info h3 {
-  font-size: var(--text-body);
-  font-weight: 500;
-  line-height: 1.3;
-  transition: color var(--dur-fast) var(--ease);
-  max-width: none;
-}
-.gal-card:hover .gal-card-info h3 { color: var(--bronze); }
-.gal-card-price {
-  font-size: var(--text-caption);
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
 
 /* Empty State */
 .gal-empty {
@@ -418,6 +399,33 @@ const galleryStyles = `
   transition: background var(--dur-fast) var(--ease);
 }
 .gal-empty-btn:hover { background: var(--bronze); }
+.gal-empty-actions { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: var(--space-sm); }
+
+/* Search Banner */
+.gal-search-banner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+  max-width: var(--container); margin: 0 auto;
+  padding: var(--space-md) var(--space-md);
+  background: rgba(167,134,89,0.06);
+  border: 1px solid rgba(167,134,89,0.15);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+.gal-search-banner-inner { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+.gal-search-banner-label { font-size: var(--text-caption); color: var(--text-secondary); }
+.gal-search-banner-query { font-size: var(--text-body); font-weight: 500; color: var(--text-primary); }
+.gal-search-banner-count { font-size: var(--text-caption); color: var(--text-secondary); margin-left: 0.5rem; }
+.gal-search-reset-btn {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: var(--text-caption); font-weight: 500; letter-spacing: 0.02em;
+  color: var(--bg-primary); background: var(--text-primary);
+  border: none; border-radius: var(--radius-sm);
+  padding: 0.45em 1em;
+  text-decoration: none; cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.gal-search-reset-btn svg { flex-shrink: 0; }
+.gal-search-reset-btn:hover { background: var(--bronze); }
 
 /* Note */
 .gal-note {
@@ -442,11 +450,10 @@ const galleryStyles = `
   .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-sm); }
   .gal-cat-pill { font-size: 12px; padding: 0.45em 0.9em; }
   .gal-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-  .gal-card-info h3 { font-size: var(--text-caption); }
-  .gal-card-wishlist { width: 36px; height: 36px; }
   .gal-filters-inner { grid-template-columns: 1fr; }
   .gal-toolbar { flex-direction: column; align-items: stretch; }
   .gal-toolbar-left { justify-content: space-between; }
+  .gal-search-banner { padding: var(--space-xs) var(--space-sm); }
 }
 @media (max-width: 430px) {
   .gal-grid { gap: var(--space-xs); }
@@ -456,43 +463,70 @@ const galleryStyles = `
 `;
 
 export default function GalleryPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const urlSearch = searchParams.get('search') || '';
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState('all');
+  const [priceMin, setPriceMin] = useState(PRICE_bounds.min);
+  const [priceMax, setPriceMax] = useState(PRICE_bounds.max);
   const [availability, setAvailability] = useState('all');
 
+  const searchQuery = urlSearch.trim();
+
   useEffect(() => {
-    document.title = 'Gallery — Teakle';
+    document.title = searchQuery ? `Search: ${searchQuery} — Teakle` : 'Gallery — Teakle';
     if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) {
       setProducts(window.TEAKLE_PRODUCTS);
     }
-  }, []);
+  }, [searchQuery]);
 
   const categoryCounts = useMemo(() => {
-    const counts = { all: products.length };
+    let base = [...products];
+    if (searchQuery) {
+      const lower = searchQuery.toLowerCase();
+      base = base.filter((p) => {
+        const haystack = [
+          p.name, p.material, p.category, p.categoryName,
+          p.subcategory, p.subcategoryName, p.shortDescription,
+          p.description, p.availability,
+          ...(Array.isArray(p.tags) ? p.tags : []),
+        ].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(lower);
+      });
+    }
+    const counts = { all: base.length };
     CATEGORIES.forEach((cat) => {
-      counts[cat.key] = products.filter(cat.filter).length;
+      counts[cat.key] = base.filter(cat.filter).length;
     });
     return counts;
-  }, [products]);
+  }, [products, searchQuery]);
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
+
+    if (searchQuery) {
+      const lower = searchQuery.toLowerCase();
+      result = result.filter((p) => {
+        const haystack = [
+          p.name, p.material, p.category, p.categoryName,
+          p.subcategory, p.subcategoryName, p.shortDescription,
+          p.description, p.availability,
+          ...(Array.isArray(p.tags) ? p.tags : []),
+        ].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(lower);
+      });
+    }
 
     if (activeCategory !== 'all') {
       const cat = CATEGORIES.find((c) => c.key === activeCategory);
       if (cat) result = result.filter(cat.filter);
     }
 
-    if (priceRange !== 'all') {
-      const [min, max] = priceRange.split('-').map(Number);
-      if (max) {
-        result = result.filter((p) => p.price >= min && p.price < max);
-      } else {
-        result = result.filter((p) => p.price >= 50000);
-      }
+    if (priceMin > PRICE_bounds.min || priceMax < PRICE_bounds.max) {
+      result = result.filter((p) => p.price >= priceMin && p.price <= priceMax);
     }
 
     if (availability !== 'all') {
@@ -500,9 +534,6 @@ export default function GalleryPage() {
     }
 
     switch (sortBy) {
-      case 'newest':
-        result.reverse();
-        break;
       case 'price-asc':
         result.sort((a, b) => a.price - b.price);
         break;
@@ -517,34 +548,23 @@ export default function GalleryPage() {
     }
 
     return result;
-  }, [products, activeCategory, sortBy, priceRange, availability]);
+  }, [products, activeCategory, sortBy, priceMin, priceMax, availability, searchQuery]);
 
-  const hasActiveFilters = priceRange !== 'all' || availability !== 'all';
+  const hasActiveFilters = priceMin > PRICE_bounds.min || priceMax < PRICE_bounds.max || availability !== 'all';
 
   const clearFilters = useCallback(() => {
-    setPriceRange('all');
+    setPriceMin(PRICE_bounds.min);
+    setPriceMax(PRICE_bounds.max);
     setAvailability('all');
-  }, []);
+    if (urlSearch) router.push('/gallery');
+  }, [urlSearch, router]);
 
   const removeFilter = useCallback((type) => {
-    if (type === 'price') setPriceRange('all');
-    if (type === 'availability') setAvailability('all');
-  }, []);
-
-  const handleWishlist = useCallback((e, product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof window === 'undefined') return;
-    const t = window.Teakle;
-    if (t && t.requireAuth && !t.requireAuth()) return;
-    if (t && t.toggleWishlist) {
-      t.toggleWishlist({
-        id: product.id,
-        name: product.name,
-        price: product.priceFormatted,
-        image: product.images[0],
-      });
+    if (type === 'price') {
+      setPriceMin(PRICE_bounds.min);
+      setPriceMax(PRICE_bounds.max);
     }
+    if (type === 'availability') setAvailability('all');
   }, []);
 
   return (
@@ -609,13 +629,38 @@ export default function GalleryPage() {
 
         <div className={`gal-filters${filtersOpen ? ' is-open' : ''}`}>
           <div className="gal-filters-inner">
-            <div className="gal-filter-group">
+            <div className="gal-filter-group gal-filter-price">
               <h4>Price Range</h4>
-              <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
-                {PRICE_RANGES.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
-                ))}
-              </select>
+              <div className="gal-price-display">
+                <span>₹{priceMin.toLocaleString('en-IN')}</span>
+                <span>₹{priceMax.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="gal-price-sliders">
+                <input
+                  type="range"
+                  min={PRICE_bounds.min}
+                  max={PRICE_bounds.max}
+                  step="500"
+                  value={priceMin}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (v <= priceMax) setPriceMin(v);
+                  }}
+                  aria-label="Minimum price"
+                />
+                <input
+                  type="range"
+                  min={PRICE_bounds.min}
+                  max={PRICE_bounds.max}
+                  step="500"
+                  value={priceMax}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (v >= priceMin) setPriceMax(v);
+                  }}
+                  aria-label="Maximum price"
+                />
+              </div>
             </div>
             <div className="gal-filter-group">
               <h4>Availability</h4>
@@ -631,22 +676,19 @@ export default function GalleryPage() {
                 </label>
               ))}
             </div>
-            <div className="gal-filter-group">
-              <h4>Quick Actions</h4>
-              <div className="gal-filter-actions">
-                <button className="gal-filter-clear" onClick={clearFilters}>
-                  Clear All Filters
-                </button>
-              </div>
-            </div>
+          </div>
+          <div className="gal-filter-actions">
+            <button className="gal-filter-clear" onClick={clearFilters}>
+              Clear All Filters
+            </button>
           </div>
         </div>
 
         {hasActiveFilters && (
           <div className="gal-active-filters">
-            {priceRange !== 'all' && (
+            {(priceMin > PRICE_bounds.min || priceMax < PRICE_bounds.max) && (
               <button className="gal-active-tag" onClick={() => removeFilter('price')}>
-                {PRICE_RANGES.find((r) => r.value === priceRange)?.label}
+                ₹{priceMin.toLocaleString('en-IN')} – ₹{priceMax.toLocaleString('en-IN')}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
@@ -663,44 +705,47 @@ export default function GalleryPage() {
           </div>
         )}
 
+        {searchQuery && (
+          <div className="gal-search-banner">
+            <div className="gal-search-banner-inner">
+              <span className="gal-search-banner-label">Search results for</span>
+              <span className="gal-search-banner-query">&ldquo;{searchQuery}&rdquo;</span>
+              <span className="gal-search-banner-count">{filteredProducts.length} piece{filteredProducts.length !== 1 ? 's' : ''}</span>
+            </div>
+            <button className="gal-search-reset-btn" onClick={() => router.push('/gallery')}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Show all products
+            </button>
+          </div>
+        )}
+
         {filteredProducts.length > 0 ? (
           <div className="gal-grid">
             {filteredProducts.map((product) => (
-              <Link key={product.id} href={`/shop/${product.id}`} className="gal-card">
-                <div className="gal-card-img">
-                  <img src={product.images[0]} alt={product.name} loading="lazy" />
-                  <span className="gal-card-badge">{product.availability}</span>
-                  <button
-                    className="gal-card-wishlist"
-                    aria-label={`Add ${product.name} to wishlist`}
-                    onClick={(e) => handleWishlist(e, product)}
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                  </button>
-                </div>
-                <div className="gal-card-info">
-                  <h3>{product.name}</h3>
-                  <span className="gal-card-price">{product.priceFormatted}</span>
-                </div>
-              </Link>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
           <div className="gal-empty">
-            <h2>No pieces found</h2>
-            <p>Try adjusting your filters or browse a different category.</p>
-            <button className="gal-empty-btn" onClick={clearFilters}>
-              Clear Filters
-            </button>
+            <h2>{searchQuery ? 'No pieces matched your search' : 'No pieces found'}</h2>
+            <p>{searchQuery
+              ? `We couldn't find any pieces matching "${searchQuery}". Try a different search or browse the gallery.`
+              : 'Try adjusting your filters or browse a different category.'
+            }</p>
+            <div className="gal-empty-actions">
+              {searchQuery && <button className="gal-empty-btn" onClick={() => router.push('/gallery')}>Browse Gallery</button>}
+              <button className="gal-empty-btn" onClick={clearFilters}>
+                {searchQuery ? 'Clear search & filters' : 'Clear Filters'}
+              </button>
+            </div>
           </div>
         )}
 
         <div className="gal-note">
           <p>
-            Each piece is handcrafted to order. Lead times vary by complexity. For
-            enquiries, visit our{' '}
-            <Link href="/contact">contact page</Link> or{' '}
-            <Link href="/custom">request a custom piece</Link>.
+            Most pieces are in stock and ship within a week. For bespoke
+            creations, visit our{' '}
+            <Link href="/custom">custom orders page</Link>.
           </p>
         </div>
       </main>

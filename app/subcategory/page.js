@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import ProductCard from '../components/ProductCard';
 
 /* ============================================
    SUBCATEGORY — Product Listing with Filters
@@ -290,94 +291,6 @@ const subStyles = `
   gap: var(--space-md);
   padding-bottom: var(--space-2xl);
 }
-.sub-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 400ms var(--ease);
-}
-.sub-card:hover { transform: translateY(-4px); }
-.sub-card-img {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  background: var(--bg-secondary);
-  margin-bottom: 0.75rem;
-}
-.sub-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
-}
-.sub-card:hover .sub-card-img img { transform: scale(1.04); }
-.sub-card-img .sub-card-hover-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity var(--dur-slow) var(--ease);
-}
-.sub-card:hover .sub-card-hover-img { opacity: 1; }
-.sub-card-badge {
-  position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.3em 0.6em;
-  z-index: 2;
-}
-.sub-card-badge:empty { display: none; }
-.sub-card-wishlist {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 44px;
-  height: 44px;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-  z-index: 2;
-  color: var(--text-primary);
-}
-.sub-card:hover .sub-card-wishlist { opacity: 1; transform: scale(1); }
-.sub-card-wishlist:hover { background: var(--bronze); color: #fff; }
-.sub-card-wishlist:active { transform: scale(0.85); }
-.sub-card-wishlist svg { width: 14px; height: 14px; }
-.sub-card-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-xs);
-}
-.sub-card-info h3 {
-  font-size: var(--text-body);
-  font-weight: 500;
-  line-height: 1.3;
-  transition: color var(--dur-fast) var(--ease);
-  max-width: none;
-}
-.sub-card:hover .sub-card-info h3 { color: var(--bronze); }
-.sub-card-price {
-  font-size: var(--text-caption);
-  color: var(--text-secondary);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
 
 /* Empty State */
 .sub-empty {
@@ -455,7 +368,6 @@ const subStyles = `
   .sub-hero-content { padding: 0 var(--space-md) var(--space-md); }
   .sub-hero-content h1 { font-size: var(--text-h2); }
   .sub-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-  .sub-card-wishlist { opacity: 1; transform: scale(1); }
   .sub-toolbar { flex-wrap: wrap; }
   .sub-toolbar-right { width: 100%; }
   .sub-sort-select { flex: 1; }
@@ -464,8 +376,6 @@ const subStyles = `
   body { padding-bottom: 104px; }
 }
 @media (max-width: 430px) {
-  .sub-card-info h3 { font-size: var(--text-caption); }
-  .sub-card-price { font-size: 0.65rem; }
   .sub-grid { gap: var(--space-xs); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -575,19 +485,6 @@ export default function SubcategoryPage() {
   }, []);
 
   const hasActiveFilters = filters.material.length > 0 || filters.price || filters.availability.length > 0;
-
-  const handleWishlist = useCallback((e, product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof window === 'undefined') return;
-    if (window.Teachle && window.Teachle.requireAuth && !window.Teachle.requireAuth()) return;
-    if (window.Teachle && window.Teachle.toggleWishlist) {
-      window.Teachle.toggleWishlist({
-        id: product.id, name: product.name,
-        price: product.priceFormatted, image: product.images[0],
-      });
-    }
-  }, []);
 
   const materials = [...new Set(allProducts.map((p) => p.material).filter(Boolean))];
   const availabilities = [...new Set(allProducts.map((p) => p.availability).filter(Boolean))];
@@ -711,26 +608,9 @@ export default function SubcategoryPage() {
                 )}
               </div>
             ) : (
-              products.map((p) => {
-                const badgeText = p.availability === 'Limited Edition' ? 'Limited' : p.availability === 'In Stock' ? 'In Stock' : '';
-                const hoverImg = p.images && p.images.length > 1 ? p.images[1] : null;
-                return (
-                  <Link key={p.id} href={`/shop/${p.id}`} className="sub-card">
-                    <div className="sub-card-img">
-                      <img src={p.images[0]} alt={p.name} loading="lazy" />
-                      {hoverImg && <img className="sub-card-hover-img" src={hoverImg} alt="" loading="lazy" />}
-                      {badgeText && <span className="sub-card-badge">{badgeText}</span>}
-                      <button className="sub-card-wishlist" aria-label={`Add ${p.name} to wishlist`} onClick={(e) => handleWishlist(e, p)}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                      </button>
-                    </div>
-                    <div className="sub-card-info">
-                      <h3>{p.name}</h3>
-                      <span className="sub-card-price">{p.priceFormatted}</span>
-                    </div>
-                  </Link>
-                );
-              })
+              products.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))
             )}
           </div>
         </div>

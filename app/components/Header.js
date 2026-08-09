@@ -70,7 +70,6 @@ function checkHasHero(pathname) {
   if (HERO_PATHS.has(pathname)) return true;
   if (pathname.startsWith('/subcategory')) return true;
   if (pathname.startsWith('/collection/')) return true;
-  if (pathname.startsWith('/shop/')) return true;
   return false;
 }
 
@@ -135,8 +134,13 @@ export default function Header() {
   }, []);
 
   /* Search */
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [activeResultIdx, setActiveResultIdx] = useState(-1);
+  const resultRefs = useRef([]);
+
   const openSearch = useCallback(() => {
     setSearchOpen(true);
+    setActiveResultIdx(-1);
     setTimeout(() => searchInputRef.current?.focus(), 100);
   }, []);
 
@@ -144,31 +148,83 @@ export default function Header() {
     setSearchOpen(false);
     setSearchQuery('');
     setSearchResults([]);
+    setActiveResultIdx(-1);
+    setSearchFocused(false);
+  }, []);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setActiveResultIdx(-1);
+    searchInputRef.current?.focus();
+  }, []);
+
+  const searchFields = useCallback((q) => {
+    if (!q || q.length < 2) { setSearchResults([]); return; }
+    if (typeof window === 'undefined' || !window.TEAKLE_PRODUCTS) return;
+    const lower = q.toLowerCase().trim();
+    const results = window.TEAKLE_PRODUCTS.filter((p) => {
+      const haystack = [
+        p.name, p.material, p.category, p.categoryName,
+        p.subcategory, p.subcategoryName, p.shortDescription,
+        p.description, p.availability,
+        ...(Array.isArray(p.tags) ? p.tags : []),
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(lower);
+    }).slice(0, 8);
+    setSearchResults(results);
+    setActiveResultIdx(-1);
   }, []);
 
   const handleSearch = useCallback((q) => {
     setSearchQuery(q);
-    if (!q || q.length < 2) { setSearchResults([]); return; }
-    if (typeof window === 'undefined' || !window.TEAKLE_PRODUCTS) return;
-    const lower = q.toLowerCase();
-    const results = window.TEAKLE_PRODUCTS.filter(
-      (p) => p.name.toLowerCase().includes(lower) || p.material?.toLowerCase().includes(lower) || p.category?.toLowerCase().includes(lower) || p.shortDescription?.toLowerCase().includes(lower)
-    ).slice(0, 6);
-    setSearchResults(results);
+    searchFields(q);
+  }, [searchFields]);
+
+  const closeDrawer = useCallback(() => {
+    const navLinks = document.getElementById('navLinks');
+    const navToggle = document.getElementById('navToggle');
+    if (navLinks) navLinks.classList.remove('is-open');
+    if (navToggle) {
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+    document.body.classList.remove('nav-drawer-open');
+    const backdrop = document.querySelector('.nav-backdrop');
+    if (backdrop) backdrop.classList.remove('is-visible');
   }, []);
+
+  const navigateToSearchPage = useCallback(() => {
+    if (searchQuery && searchQuery.trim().length >= 2) {
+      closeSearch();
+      closeDrawer();
+      router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  }, [searchQuery, closeSearch, closeDrawer, router]);
 
   const handleSearchSubmit = useCallback((e) => {
     e.preventDefault();
-    if (searchQuery) {
-      closeSearch();
-      router.push(`/subcategory?cat=kitchen&sub=dining-serving&q=${encodeURIComponent(searchQuery)}`);
-    }
-  }, [searchQuery, closeSearch, router]);
+    navigateToSearchPage();
+  }, [navigateToSearchPage]);
 
   const handleSearchResultClick = useCallback((productId) => {
     closeSearch();
     router.push(`/shop/${productId}`);
   }, [closeSearch, router]);
+
+  const handleSearchKeyDown = useCallback((e) => {
+    if (!searchResults.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveResultIdx((prev) => (prev < searchResults.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveResultIdx((prev) => (prev > 0 ? prev - 1 : searchResults.length - 1));
+    } else if (e.key === 'Enter' && activeResultIdx >= 0 && searchResults[activeResultIdx]) {
+      e.preventDefault();
+      handleSearchResultClick(searchResults[activeResultIdx].id);
+    }
+  }, [searchResults, activeResultIdx, handleSearchResultClick]);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -178,6 +234,12 @@ export default function Header() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [searchOpen, closeSearch]);
+
+  useEffect(() => {
+    if (activeResultIdx >= 0 && resultRefs.current[activeResultIdx]) {
+      resultRefs.current[activeResultIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }, [activeResultIdx]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -220,9 +282,54 @@ export default function Header() {
           <img src={logoSrc} alt="Teakle" />
         </Link>
         <ul className="nav-links" id="navLinks">
+          <li className="nav-mobile-search-bar">
+            <form className="nav-mobile-search-form" onSubmit={(e) => { e.preventDefault(); if (searchQuery.trim().length >= 2) { closeDrawer(); setSearchQuery(''); setSearchResults([]); router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`); } }}>
+              <input
+                type="text"
+                className="nav-mobile-search-input"
+                placeholder="Search pieces, materials..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                aria-label="Search products"
+                autoComplete="off"
+              />
+              <button type="submit" className="nav-mobile-search-submit" aria-label="Submit search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </button>
+            </form>
+            {searchQuery.length >= 2 && searchResults.length > 0 && (
+              <div className="nav-mobile-search-results">
+                {searchResults.slice(0, 5).map((p) => (
+                  <button
+                    key={p.id}
+                    className="nav-mobile-search-result-item"
+                    onClick={() => { setSearchQuery(''); setSearchResults([]); closeDrawer(); router.push(`/shop/${p.id}`); }}
+                  >
+                    <img className="nav-mobile-search-result-img" src={p.images?.[0]} alt="" loading="lazy" />
+                    <div className="nav-mobile-search-result-info">
+                      <span className="nav-mobile-search-result-name">{p.name}</span>
+                      <span className="nav-mobile-search-result-meta">{p.priceFormatted}</span>
+                    </div>
+                  </button>
+                ))}
+                <button className="nav-mobile-search-view-all" onClick={() => { const q = searchQuery.trim(); setSearchQuery(''); setSearchResults([]); closeDrawer(); router.push(`/gallery?search=${encodeURIComponent(q)}`); }}>
+                  View all {searchResults.length} results for &ldquo;{searchQuery}&rdquo;
+                </button>
+              </div>
+            )}
+            {searchQuery.length >= 2 && searchResults.length === 0 && (
+              <div className="nav-mobile-search-results">
+                <p className="nav-mobile-search-empty">No pieces matched &ldquo;{searchQuery}&rdquo;</p>
+              </div>
+            )}
+          </li>
           <li className="nav-dropdown">
-            <Link href="/gallery" className="nav-dropdown-desktop-link">Gallery</Link>
-            <button className="nav-dropdown-toggle">Gallery</button>
+            <div className="nav-mobile-link-row">
+              <Link href="/gallery" className="nav-dropdown-desktop-link">Gallery</Link>
+              <button className="nav-dropdown-toggle" aria-label="Show Gallery categories" aria-expanded="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
             <ul className="nav-dropdown-menu">
               {galleryDropdown.map((cat) => (
                 <li key={cat.label} className="nav-subdropdown">
@@ -357,68 +464,96 @@ export default function Header() {
       {searchOpen && (
         <div
           ref={searchOverlayRef}
-          style={{
-            position: 'fixed', inset: 0, zIndex: 1000,
-            background: 'rgba(43,34,27,0.92)', backdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
-            paddingTop: '15vh', opacity: 1,
-            transition: 'opacity 300ms var(--ease)',
-          }}
+          className="search-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search products"
           onClick={(e) => { if (e.target === searchOverlayRef.current) closeSearch(); }}
         >
-          <div style={{ width: '100%', maxWidth: 560, padding: '0 var(--space-md)' }}>
-            <form onSubmit={handleSearchSubmit} style={{ position: 'relative', marginBottom: 'var(--space-md)' }}>
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                placeholder="Search for pieces, materials, rooms..."
-                style={{
-                  width: '100%', padding: '1rem 3rem 1rem 1rem',
-                  fontFamily: 'var(--font-body)', fontSize: 'var(--text-body)',
-                  background: 'rgba(255,255,255,0.95)', border: 'none',
-                  color: 'var(--text-primary)', outline: 'none',
-                }}
-              />
-              <button type="button" onClick={closeSearch} style={{
-                position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)',
-              }}>
+          <div className="search-panel">
+            <form onSubmit={handleSearchSubmit} className="search-form">
+              <div className="search-input-wrap">
+                <svg className="search-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  className="search-input"
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+                  placeholder="Search for pieces, materials, rooms..."
+                  role="combobox"
+                  aria-expanded={searchResults.length > 0}
+                  aria-haspopup="listbox"
+                  aria-autocomplete="list"
+                  aria-controls="search-results-list"
+                  aria-activedescendant={activeResultIdx >= 0 ? `search-result-${activeResultIdx}` : undefined}
+                  autoComplete="off"
+                />
+                {searchQuery.length > 0 && (
+                  <button type="button" className="search-clear-btn" onClick={clearSearch} aria-label="Clear search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                )}
+              </div>
+              <button type="button" className="search-close-btn" onClick={closeSearch} aria-label="Close search">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span className="search-close-label">ESC</span>
               </button>
             </form>
-            {searchResults.length > 0 && (
-              <div style={{ background: 'rgba(255,255,255,0.95)', maxHeight: '50vh', overflowY: 'auto' }}>
-                {searchResults.map((p) => (
+
+            {/* Results */}
+            {searchQuery.length >= 2 && searchResults.length > 0 && (
+              <div className="search-results" id="search-results-list" role="listbox" aria-label="Search results">
+                {searchResults.map((p, idx) => (
                   <button
                     key={p.id}
+                    ref={(el) => { resultRefs.current[idx] = el; }}
+                    id={`search-result-${idx}`}
+                    className={`search-result-item${idx === activeResultIdx ? ' is-active' : ''}`}
+                    role="option"
+                    aria-selected={idx === activeResultIdx}
                     onClick={() => handleSearchResultClick(p.id)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 'var(--space-sm)',
-                      width: '100%', padding: '0.75rem var(--space-sm)',
-                      background: 'none', border: 'none', borderBottom: 'var(--border-subtle)',
-                      cursor: 'pointer', textAlign: 'left', fontFamily: 'var(--font-body)',
-                    }}
+                    onMouseEnter={() => setActiveResultIdx(idx)}
                   >
-                    <img src={p.images[0]} alt="" style={{ width: 48, height: 48, objectFit: 'cover' }} />
-                    <div>
-                      <p style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--text-primary)', margin: 0 }}>{p.name}</p>
-                      <p style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', margin: 0 }}>{p.priceFormatted}</p>
+                    <img className="search-result-img" src={p.images?.[0]} alt="" loading="lazy" />
+                    <div className="search-result-info">
+                      <span className="search-result-name">{p.name}</span>
+                      <span className="search-result-meta">{p.priceFormatted}{p.categoryName ? ` \u00B7 ${p.categoryName}` : ''}</span>
                     </div>
                   </button>
                 ))}
+                <button className="search-view-all" onClick={navigateToSearchPage}>
+                  View all results for &ldquo;{searchQuery}&rdquo;
+                </button>
               </div>
             )}
+
+            {/* No Results */}
             {searchQuery.length >= 2 && searchResults.length === 0 && (
-              <div style={{ background: 'rgba(255,255,255,0.95)', padding: 'var(--space-lg)', textAlign: 'center' }}>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0 }}>No pieces found for &ldquo;{searchQuery}&rdquo;</p>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-caption)', marginTop: '0.5rem' }}>Try searching for a material or room type.</p>
+              <div className="search-empty">
+                <p className="search-empty-title">No pieces matched &ldquo;{searchQuery}&rdquo;</p>
+                <p className="search-empty-sub">Try a different material, room, or product name.</p>
+                <div className="search-empty-actions">
+                  <button className="search-empty-btn" onClick={clearSearch}>Clear search</button>
+                  <Link href="/gallery" className="search-empty-btn search-empty-btn--primary" onClick={closeSearch}>Browse Gallery</Link>
+                </div>
               </div>
             )}
+
+            {/* Empty / Initial State */}
             {searchQuery.length < 2 && (
-              <div style={{ background: 'rgba(255,255,255,0.95)', padding: 'var(--space-lg)', textAlign: 'center' }}>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0 }}>Start typing to search the collection.</p>
+              <div className="search-hints">
+                <p className="search-hints-label">Popular searches</p>
+                <div className="search-hints-list">
+                  {['Teak', 'Table', 'Bowl', 'Tray', 'Planter'].map((term) => (
+                    <button key={term} className="search-hint-pill" onMouseDown={(e) => { e.preventDefault(); setSearchQuery(term); searchFields(term); }}>
+                      {term}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>

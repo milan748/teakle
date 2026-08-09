@@ -14,8 +14,8 @@ var TEAKLE_PRODUCTS = [
     price: 185000,
     priceFormatted: "₹1,85,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "3–4 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Solid teak dining table, hand-finished from a single selected block.",
     description: "A dining table built from a single selected teak block, left to settle before any cutting begins. The grain runs the length of the top, unbroken, and the legs are joined by hand without metal fasteners. Finished in food-safe oil, reapplied by hand as it ages. Every table is unique — the timber and finish are chosen once you enquire.",
     material: "Solid Teak",
@@ -23,7 +23,6 @@ var TEAKLE_PRODUCTS = [
     weight: "42 kg",
     finish: "Food-safe oil",
     buildTime: "~18 hours",
-    leadTime: "3–4 weeks",
     seats: "6",
     images: [
       "https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -50,11 +49,10 @@ var TEAKLE_PRODUCTS = [
       { label: "Seating", value: "6" },
       { label: "Finish", value: "Food-safe oil" },
       { label: "Joinery", value: "Mortise & tenon" },
-      { label: "Build Time", value: "~18 hours" },
-      { label: "Lead Time", value: "3–4 weeks" }
+      { label: "Build Time", value: "~18 hours" }
     ],
     faqs: [
-      { q: "Can I request custom dimensions?", a: "Yes. We can adjust the length, width, and height to fit your space. Custom dimensions may affect the lead time and pricing." },
+      { q: "Can I request custom dimensions?", a: "Yes. We can adjust the length, width, and height to fit your space. Custom dimensions may affect pricing and availability." },
       { q: "Is the table suitable for outdoor use?", a: "Teak is naturally weather-resistant, but the food-safe oil finish is designed for indoor use. For outdoor dining, we recommend our outdoor collection with a different finishing process." },
       { q: "How do I maintain the surface?", a: "Wipe with a damp cloth and reapply food-safe oil every 12–18 months. The table will develop a natural patina over time, which adds character." }
     ],
@@ -72,8 +70,8 @@ var TEAKLE_PRODUCTS = [
     price: 68000,
     priceFormatted: "₹68,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Hand-carved dining chair from a single timber block.",
     description: "Carved from a single block of teak, the Bearing Chair follows the natural grain to create a seat that is both structurally sound and visually striking. The low back curves gently, shaped by hand to support the body without hardware or fasteners.",
     material: "Solid Teak",
@@ -81,7 +79,6 @@ var TEAKLE_PRODUCTS = [
     weight: "8 kg",
     finish: "Natural oil",
     buildTime: "~12 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -107,7 +104,7 @@ var TEAKLE_PRODUCTS = [
       { label: "Build Time", value: "~12 hours" }
     ],
     faqs: [
-      { q: "How many can I order?", a: "We can produce any quantity. For sets of 4 or more, please contact us for current lead times." },
+      { q: "How many can I order?", a: "We can produce any quantity. For sets of 4 or more, please contact us for availability." },
       { q: "Is it comfortable for long dinners?", a: "The curved back and shaped seat are designed for extended sitting. The natural give of solid teak adds comfort over time." }
     ],
     relatedProducts: ["anchor-table", "circle-table", "hollow-bench"],
@@ -124,8 +121,8 @@ var TEAKLE_PRODUCTS = [
     price: 72000,
     priceFormatted: "₹72,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Round coffee table, solid teak with hand-turned base.",
     description: "A round coffee table carved from solid teak, with a hand-turned pedestal base. The circular top showcases the grain radiating outward from the centre, while the base tapers to a single point of contact with the floor.",
     material: "Solid Teak",
@@ -133,7 +130,6 @@ var TEAKLE_PRODUCTS = [
     weight: "18 kg",
     finish: "Natural oil",
     buildTime: "~14 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -159,7 +155,7 @@ var TEAKLE_PRODUCTS = [
       { label: "Build Time", value: "~14 hours" }
     ],
     faqs: [
-      { q: "Can the base be定制?", a: "Yes, we can adjust the height and proportions of the base. Contact us with your requirements." },
+      { q: "Can the base be customized?", a: "Yes, we can adjust the height and proportions of the base. Contact us with your requirements." },
       { q: "How stable is the round top?", a: "The pedestal base is weighted and the joinery is designed for stability. It will not wobble on a level surface." }
     ],
     relatedProducts: ["anchor-table", "drift-sculpture", "hourglass-vase"],
@@ -176,8 +172,8 @@ var TEAKLE_PRODUCTS = [
     price: 54000,
     priceFormatted: "₹54,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Hand-jointed teak bench with visible through-tenon joinery.",
     description: "A bench built with traditional through-tenon joinery, where the leg joints are visible from the outside — a hallmark of honest craftsmanship. The seat is a single slab of teak, the legs joined by hand without metal.",
     material: "Solid Teak",
@@ -185,7 +181,6 @@ var TEAKLE_PRODUCTS = [
     weight: "15 kg",
     finish: "Natural oil",
     buildTime: "~10 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -237,7 +232,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3 kg",
     finish: "Food-safe oil",
     buildTime: "~4 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -287,7 +281,6 @@ var TEAKLE_PRODUCTS = [
     weight: "4.5 kg",
     finish: "Food-safe oil",
     buildTime: "~6 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -336,7 +329,6 @@ var TEAKLE_PRODUCTS = [
     weight: "5 kg",
     finish: "Food-safe mineral oil",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -385,7 +377,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3.5 kg",
     finish: "Food-safe oil",
     buildTime: "~5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -425,8 +416,8 @@ var TEAKLE_PRODUCTS = [
     price: 24000,
     priceFormatted: "₹24,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Hand-carved teak sculpture on stone base.",
     description: "An abstract sculpture carved from a single piece of teak, mounted on a rough-cut stone base. The form suggests movement frozen in wood — a study in balance and material.",
     material: "Solid Teak, Natural Stone",
@@ -434,7 +425,6 @@ var TEAKLE_PRODUCTS = [
     weight: "6 kg",
     finish: "Natural oil on teak, raw stone",
     buildTime: "~8 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -483,7 +473,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.5 kg",
     finish: "Natural oil",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -523,8 +512,8 @@ var TEAKLE_PRODUCTS = [
     price: 16000,
     priceFormatted: "₹16,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "1–2 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Leaning blanket ladder in solid teak, four rungs.",
     description: "A simple leaning ladder in solid teak, with four rungs for draping throws, blankets, or towels. The minimal form leans against the wall without hardware — gravity and geometry do the work.",
     material: "Solid Teak",
@@ -532,7 +521,6 @@ var TEAKLE_PRODUCTS = [
     weight: "7 kg",
     finish: "Natural oil",
     buildTime: "~5 hours",
-    leadTime: "1–2 weeks",
     images: [
       "https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -545,7 +533,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Each rung is joined to the rails with mortise and tenon joints, cut by hand. The ladder leans at a fixed angle determined by the length of the rear feet.",
     materials: "Solid plantation teak with natural oil finish.",
     careInstructions: "Dust with a soft cloth. Oil occasionally.",
-    shipping: "Ships in 1–2 weeks.",
+    shipping: "Carefully packed for transit.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak" },
@@ -581,7 +569,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.2 kg",
     finish: "Natural oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -605,7 +592,7 @@ var TEAKLE_PRODUCTS = [
     faqs: [
       { q: "Can it be used on a sofa arm?", a: "Yes, it works as a sofa tray as well." }
     ],
-    relatedProducts: ["jewellery-box", "frame-mirror", "bedside-lamp"],
+    relatedProducts: ["jewellery-box", "frame-mirror", "bedside-lamp-base"],
     tags: ["bedroom", "tray", "teak", "nightstand", "minimal"]
   },
   {
@@ -628,7 +615,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1 kg",
     finish: "Natural oil exterior, felt interior",
     buildTime: "~4 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -668,8 +654,8 @@ var TEAKLE_PRODUCTS = [
     price: 22000,
     priceFormatted: "₹22,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Round mirror in solid teak frame, wall-mountable.",
     description: "A circular mirror framed in solid teak, with a hand-joined frame that shows the end grain at the corners. The mirror is bevelled and set flush with the frame edge.",
     material: "Solid Teak, Bevelled Mirror Glass",
@@ -677,7 +663,6 @@ var TEAKLE_PRODUCTS = [
     weight: "4 kg",
     finish: "Natural oil on teak",
     buildTime: "~4 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -690,7 +675,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "The teak frame is steam-bent to achieve the circular form. The mirror glass is bevelled by hand and set into a routed channel in the frame.",
     materials: "Solid plantation teak frame with natural oil finish. Bevelled mirror glass.",
     careInstructions: "Clean the mirror with standard glass cleaner. Oil the teak frame annually.",
-    shipping: "Ships in 2–3 weeks. Packed in custom crate.",
+    shipping: "Carefully packed in custom crate. White-glove delivery available.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak, Mirror Glass" },
@@ -727,7 +712,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.5 kg",
     finish: "Natural oil",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -752,7 +736,7 @@ var TEAKLE_PRODUCTS = [
     faqs: [
       { q: "How many pens does it hold?", a: "The main compartment holds 6–8 pens or pencils comfortably." }
     ],
-    relatedProducts: ["pen-stand", "laptop-riser", "desk-lamp"],
+    relatedProducts: ["pen-stand", "laptop-riser", "desk-clock"],
     tags: ["office", "desk", "organizer", "teak", "carved"]
   },
   {
@@ -775,7 +759,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.8 kg",
     finish: "Natural oil",
     buildTime: "~1.5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -800,7 +783,7 @@ var TEAKLE_PRODUCTS = [
     faqs: [
       { q: "Can it hold multiple pens?", a: "The interior is sized for a single premium pen or stylus. For multiple pens, consider the Desk Caddy." }
     ],
-    relatedProducts: ["desk-caddy", "laptop-riser", "desk-lamp"],
+    relatedProducts: ["desk-caddy", "laptop-riser", "desk-clock"],
     tags: ["office", "pen-holder", "teak", "turned", "minimal"]
   },
   {
@@ -823,7 +806,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Natural oil",
     buildTime: "~4 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979598/pexels-photo-7979598.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -850,7 +832,7 @@ var TEAKLE_PRODUCTS = [
       { q: "What size laptop does it fit?", a: "It supports laptops up to 16 inches. The surface area is 35 × 25 cm." },
       { q: "Is it stable with a heavy laptop?", a: "Yes, the dovetail joints and weighted base provide stability for laptops up to 3 kg." }
     ],
-    relatedProducts: ["desk-caddy", "pen-stand", "desk-lamp"],
+    relatedProducts: ["desk-caddy", "pen-stand", "desk-clock"],
     tags: ["office", "laptop-stand", "teak", "dovetail", "desk"]
   },
   {
@@ -873,7 +855,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.2 kg",
     finish: "Teak oil",
     buildTime: "~2.5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -921,7 +902,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.3 kg",
     finish: "Teak oil",
     buildTime: "~1 hour",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -969,7 +949,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.5 kg",
     finish: "Teak oil",
     buildTime: "~1 hour",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1017,7 +996,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3 kg",
     finish: "Untreated (natural weathering)",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1043,7 +1021,7 @@ var TEAKLE_PRODUCTS = [
       { q: "Will the teak rot outdoors?", a: "No, teak is naturally resistant to rot, insects, and moisture. It's been used for boat-building for centuries." },
       { q: "Can I paint it?", a: "Teak is best left untreated. Paint will peel over time due to the wood's natural oils." }
     ],
-    relatedProducts: ["stone-lantern", "serving-plank", "herb-planter-large"],
+    relatedProducts: ["stone-lantern", "serving-plank", "plant-pot-stand"],
     tags: ["outdoor", "planter", "teak", "herbs", "weather-resistant"]
   },
   {
@@ -1057,8 +1035,8 @@ var TEAKLE_PRODUCTS = [
     price: 15000,
     priceFormatted: "₹15,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Teak and stone garden lantern, hand-assembled.",
     description: "A garden lantern combining a solid teak frame with a rough-cut stone base. The open sides allow light to cast patterns on surrounding surfaces, while the teak frame weathers naturally outdoors.",
     material: "Solid Teak, Natural Stone",
@@ -1066,7 +1044,6 @@ var TEAKLE_PRODUCTS = [
     weight: "5 kg",
     finish: "Untreated teak, raw stone",
     buildTime: "~5 hours",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1079,7 +1056,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "The teak frame is joined with mortise and tenon joints, then mounted on a rough-cut stone base. Each stone is unique in shape and colour.",
     materials: "Solid plantation teak (untreated) and natural stone. The stone is rough-cut and unpolished.",
     careInstructions: "No maintenance required. Both materials weather naturally.",
-    shipping: "Ships in 2–3 weeks. Heavy item — requires special handling.",
+    shipping: "Carefully packed for transit. White-glove delivery available.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak, Natural Stone" },
@@ -1115,7 +1092,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Food-safe oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1163,7 +1139,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.5 kg",
     finish: "Food-safe oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1211,7 +1186,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2.5 kg",
     finish: "Food-safe oil",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1259,7 +1233,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg (set)",
     finish: "Food-safe oil",
     buildTime: "~4 hours (set)",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1309,7 +1282,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.4 kg",
     finish: "Natural oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045074/pexels-photo-6045074.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1357,7 +1329,6 @@ var TEAKLE_PRODUCTS = [
     weight: "4 kg",
     finish: "Natural oil",
     buildTime: "~10 hours",
-    leadTime: "3–4 weeks",
     images: [
       "https://images.pexels.com/photos/6045070/pexels-photo-6045070.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045074/pexels-photo-6045074.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1370,7 +1341,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Carved entirely by hand from reclaimed teak. The maker's mark and edition number are burned into the base with a heated tool.",
     materials: "Reclaimed plantation teak, sourced from decommissioned buildings. Natural oil finish.",
     careInstructions: "Dust with a soft cloth. Display away from direct sunlight to preserve the patina.",
-    shipping: "Ships in 3–4 weeks. Each bowl is individually packed in a custom wooden box.",
+    shipping: "Individually packed in a custom wooden box.",
     returns: "Limited edition — final sale. Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Reclaimed Teak" },
@@ -1407,7 +1378,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3.5 kg",
     finish: "Food-safe oil",
     buildTime: "~5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6474482/pexels-photo-6474482.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1455,7 +1425,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.9 kg",
     finish: "Food-safe oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1479,7 +1448,7 @@ var TEAKLE_PRODUCTS = [
     faqs: [
       { q: "Is it heavy enough for stiff dough?", a: "At 0.9 kg, it has good weight for most doughs. For very stiff doughs, apply gentle pressure." }
     ],
-    relatedProducts: ["carving-board", "rolling-pin", "bread-box"],
+    relatedProducts: ["carving-board", "flour-dish", "bread-box"],
     tags: ["kitchen", "baking", "rolling-pin", "teak", "turned"]
   },
   {
@@ -1502,7 +1471,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.5 kg",
     finish: "Food-safe oil",
     buildTime: "~2.5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1549,7 +1517,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.8 kg",
     finish: "Exterior oil, interior untreated",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6474490/pexels-photo-6474490.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/5807555/pexels-photo-5807555.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1597,7 +1564,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.4 kg (set)",
     finish: "Food-safe oil",
     buildTime: "~1.5 hours (set)",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/4750272/pexels-photo-4750272.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1645,7 +1611,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.5 kg (set)",
     finish: "Natural oil",
     buildTime: "~1.5 hours (set)",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6474495/pexels-photo-6474495.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1684,8 +1649,8 @@ var TEAKLE_PRODUCTS = [
     price: 15000,
     priceFormatted: "₹15,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "1–2 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Large carved teak bowl for table centrepiece display.",
     description: "A large decorative bowl carved from a single block of teak, designed as a table centrepiece. Fill it with fruit, dried botanicals, or leave it empty as a sculptural object.",
     material: "Solid Teak",
@@ -1693,7 +1658,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3.5 kg",
     finish: "Natural oil",
     buildTime: "~6 hours",
-    leadTime: "1–2 weeks",
     images: [
       "https://images.pexels.com/photos/5591890/pexels-photo-5591890.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1706,7 +1670,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Carved from a single block of teak. The interior is hollowed by hand, following the grain to create a smooth, flowing surface.",
     materials: "Solid plantation teak with natural oil finish.",
     careInstructions: "Dust with a soft cloth. Oil occasionally.",
-    shipping: "Ships in 1–2 weeks.",
+    shipping: "Carefully packed for transit.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak" },
@@ -1741,7 +1705,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1 kg",
     finish: "Teak oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6996100/pexels-photo-6996100.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044808/pexels-photo-6044808.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1780,8 +1743,8 @@ var TEAKLE_PRODUCTS = [
     price: 19000,
     priceFormatted: "₹19,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "2–3 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Set of three abstract teak sculptural objects.",
     description: "A set of three abstract sculptural objects carved from solid teak, each with a different organic form. Grouped together, they create a curated display that celebrates the beauty of wood grain.",
     material: "Solid Teak",
@@ -1789,7 +1752,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2.5 kg (set)",
     finish: "Natural oil",
     buildTime: "~8 hours (set)",
-    leadTime: "2–3 weeks",
     images: [
       "https://images.pexels.com/photos/6044818/pexels-photo-6044818.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1802,7 +1764,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Each object is carved entirely by hand using gouges and chisels. No two sets are identical — each is shaped by the unique grain of its timber blocks.",
     materials: "Solid plantation teak with natural oil finish.",
     careInstructions: "Dust with a soft dry cloth. Oil occasionally.",
-    shipping: "Ships in 2–3 weeks.",
+    shipping: "Carefully packed for transit.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak" },
@@ -1828,8 +1790,8 @@ var TEAKLE_PRODUCTS = [
     price: 18000,
     priceFormatted: "₹18,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "1–2 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Set of two floating shelves in solid teak.",
     description: "A pair of floating shelves carved from solid teak, with concealed mounting hardware. The natural grain runs the length of each shelf, creating a warm display surface.",
     material: "Solid Teak",
@@ -1837,7 +1799,6 @@ var TEAKLE_PRODUCTS = [
     weight: "4 kg (set)",
     finish: "Natural oil",
     buildTime: "~4 hours (set)",
-    leadTime: "1–2 weeks",
     images: [
       "https://images.pexels.com/photos/6044812/pexels-photo-6044812.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1850,7 +1811,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Each shelf has a concealed mounting bracket routed into the back. The mounting hardware is included and pre-installed.",
     materials: "Solid plantation teak with natural oil finish.",
     careInstructions: "Dust with a soft cloth. Oil occasionally.",
-    shipping: "Ships in 1–2 weeks.",
+    shipping: "Carefully packed for transit.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak" },
@@ -1885,7 +1846,6 @@ var TEAKLE_PRODUCTS = [
     weight: "1.2 kg (set)",
     finish: "Natural oil",
     buildTime: "~3 hours (set)",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6044808/pexels-photo-6044808.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1934,7 +1894,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.3 kg",
     finish: "Natural oil",
     buildTime: "~1 hour",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045084/pexels-photo-6045084.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -1981,7 +1940,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.4 kg",
     finish: "Natural oil",
     buildTime: "~1.5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045078/pexels-photo-6045078.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045080/pexels-photo-6045080.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2019,8 +1977,8 @@ var TEAKLE_PRODUCTS = [
     price: 12000,
     priceFormatted: "₹12,000",
     currency: "INR",
-    availability: "Handcrafted",
-    availabilityNote: "1–2 weeks lead time",
+    availability: "In Stock",
+    availabilityNote: "In Stock",
     shortDescription: "Hand-turned teak lamp base, fits standard lampshade.",
     description: "A lamp base turned from solid teak, designed to fit standard lampshades. The natural grain and warm tone of the teak add a soft, organic feel to any bedroom.",
     material: "Solid Teak",
@@ -2028,7 +1986,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Natural oil",
     buildTime: "~4 hours",
-    leadTime: "1–2 weeks",
     images: [
       "https://images.pexels.com/photos/6045076/pexels-photo-6045076.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2041,7 +1998,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Hand-turned on a lathe. The interior is drilled for standard lamp wiring (bulb holder not included).",
     materials: "Solid plantation teak with natural oil finish.",
     careInstructions: "Dust with a soft cloth. Oil occasionally.",
-    shipping: "Ships in 1–2 weeks.",
+    shipping: "Carefully packed for transit.",
     returns: "Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Solid Teak" },
@@ -2076,7 +2033,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2.5 kg",
     finish: "Natural oil",
     buildTime: "~4 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979596/pexels-photo-7979596.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2124,7 +2080,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.5 kg",
     finish: "Natural oil",
     buildTime: "~2 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979594/pexels-photo-7979594.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2173,7 +2128,6 @@ var TEAKLE_PRODUCTS = [
     weight: "0.4 kg",
     finish: "Natural oil",
     buildTime: "~1.5 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/7979592/pexels-photo-7979592.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2221,7 +2175,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Teak oil",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/8005389/pexels-photo-8005389.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2269,7 +2222,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3 kg",
     finish: "Teak oil",
     buildTime: "~4 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/8005387/pexels-photo-8005387.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2317,7 +2269,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Untreated",
     buildTime: "~3 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6480202/pexels-photo-6480202.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2365,7 +2316,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3 kg",
     finish: "Natural oil on teak, oiled steel",
     buildTime: "~6 hours",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6480200/pexels-photo-6480200.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2413,7 +2363,6 @@ var TEAKLE_PRODUCTS = [
     weight: "3 kg",
     finish: "Natural oil",
     buildTime: "~8 hours",
-    leadTime: "3–4 weeks",
     images: [
       "https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2426,7 +2375,7 @@ var TEAKLE_PRODUCTS = [
     craftsmanship: "Carved entirely by hand from reclaimed teak. The maker's mark and edition number are burned into the base.",
     materials: "Reclaimed plantation teak. Natural oil finish.",
     careInstructions: "Dust with a soft cloth. Display away from direct sunlight.",
-    shipping: "Ships in 3–4 weeks in a custom wooden box.",
+    shipping: "Packed in a custom wooden box.",
     returns: "Limited edition — final sale. Returns accepted only for manufacturing defects.",
     specifications: [
       { label: "Material", value: "Reclaimed Teak" },
@@ -2462,7 +2411,6 @@ var TEAKLE_PRODUCTS = [
     weight: "2 kg",
     finish: "Food-safe oil",
     buildTime: "~6 hours (set)",
-    leadTime: "3–5 days",
     images: [
       "https://images.pexels.com/photos/6045068/pexels-photo-6045068.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6045074/pexels-photo-6045074.jpeg?auto=compress&cs=tinysrgb&w=1200"
@@ -2501,42 +2449,63 @@ var TEAKLE_CATEGORIES = {
     "coffee-tea-station": "Coffee & Tea Station",
     "cooking-essentials": "Cooking Essentials",
     "dining-serving": "Dining & Serving",
-    "storage-organization": "Storage & Organization"
+    "storage-organization": "Storage & Organization",
+    "kitchen-decor": "Kitchen Decor",
+    "baking-essentials": "Baking Essentials",
+    "pantry-organization": "Pantry Organization"
   }},
   living: { name: "Living Room", subcategories: {
     "coffee-table-decor": "Coffee Table Decor",
     "sculptures": "Sculptures",
     "vases": "Vases",
-    "storage-boxes": "Storage"
+    "storage-boxes": "Storage",
+    "decorative-objects": "Decorative Objects",
+    "shelving-decor": "Shelving Decor",
+    "candle-holders": "Candle Holders"
   }},
   bedroom: { name: "Bedroom", subcategories: {
     "nightstand-essentials": "Nightstand Essentials",
     "organizers": "Organizers",
-    "mirrors": "Mirrors"
+    "mirrors": "Mirrors",
+    "jewelry-storage": "Jewelry Storage",
+    "decorative-accents": "Decorative Accents",
+    "bedroom-decor": "Bedroom Decor"
   }},
   office: { name: "Office", subcategories: {
     "desk-organization": "Desk Organization",
     "pen-holders": "Pen Holders",
-    "laptop-stands": "Laptop Stands"
+    "laptop-stands": "Laptop Stands",
+    "document-storage": "Document Storage",
+    "office-decor": "Office Decor",
+    "accessories": "Accessories"
   }},
   bathroom: { name: "Bathroom", subcategories: {
     "vanity-organizers": "Vanity Organizers",
     "soap-dispensers": "Soap Dispensers",
-    "toothbrush-holders": "Toothbrush Holders"
+    "toothbrush-holders": "Toothbrush Holders",
+    "storage": "Storage",
+    "bathroom-decor": "Bathroom Decor"
   }},
   outdoor: { name: "Outdoor", subcategories: {
     "planters": "Planters",
     "garden-decor": "Garden Decor",
-    "outdoor-serving": "Outdoor Serving"
-  }},
-  seasonal: { name: "Seasonal Collections", subcategories: {
-    "festive-decor": "Festive Decor",
-    "limited-editions": "Limited Editions",
-    "collectors-series": "Collector's Series"
+    "outdoor-serving": "Outdoor Serving",
+    "patio-accessories": "Patio Accessories",
+    "storage": "Storage"
   }},
   dining: { name: "Dining", subcategories: {
     "serving-boards": "Serving Boards",
     "trays": "Trays",
-    "bowls": "Bowls"
+    "bowls": "Bowls",
+    "cutlery": "Cutlery",
+    "drinkware-accessories": "Drinkware Accessories",
+    "table-centerpieces": "Table Centerpieces",
+    "dining-decor": "Dining Decor"
+  }},
+  seasonal: { name: "Seasonal Collections", subcategories: {
+    "festive-decor": "Festive Decor",
+    "collectors-series": "Collector's Series",
+    "limited-editions": "Limited Editions",
+    "gift-collections": "Gift Collections"
   }}
 };

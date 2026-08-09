@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import ProductCard from '../../components/ProductCard';
 
 /* ============================================
    COLLECTION PAGE — Editorial Collection View
@@ -199,60 +200,6 @@ const collectionStyles = `
   gap: var(--space-md);
   padding-bottom: var(--space-2xl);
 }
-.col-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 400ms var(--ease);
-}
-.col-card:hover { transform: translateY(-4px); }
-.col-card-img {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  overflow: hidden;
-  background: var(--bg-secondary);
-  margin-bottom: 0.75rem;
-}
-.col-card-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--dur-slow) var(--ease);
-}
-.col-card:hover .col-card-img img { transform: scale(1.04); }
-.col-card-wishlist {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 44px;
-  height: 44px;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transform: scale(0.85);
-  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
-  z-index: 2;
-  color: var(--text-primary);
-}
-.col-card:hover .col-card-wishlist { opacity: 1; transform: scale(1); }
-.col-card-wishlist:hover { background: var(--bronze); color: #fff; }
-.col-card-wishlist svg { width: 14px; height: 14px; }
-.col-card-info h3 {
-  font-size: var(--text-body);
-  font-weight: 500;
-  margin-bottom: 0.15rem;
-  transition: color var(--dur-fast) var(--ease);
-}
-.col-card:hover .col-card-info h3 { color: var(--bronze); }
-.col-card-price {
-  font-size: var(--text-caption);
-  color: var(--text-secondary);
-}
 
 /* Empty State */
 .col-empty {
@@ -285,14 +232,11 @@ const collectionStyles = `
   .col-hero-content { padding: 0 var(--space-md) var(--space-md); }
   .col-hero-content h1 { font-size: var(--text-h2); }
   .col-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-  .col-card-wishlist { opacity: 1; transform: scale(1); }
   .col-toolbar { flex-wrap: wrap; gap: var(--space-xs); }
   .col-toolbar-controls { width: 100%; }
   .col-sort-select { flex: 1; }
 }
 @media (max-width: 430px) {
-  .col-card-info h3 { font-size: var(--text-caption); }
-  .col-card-price { font-size: 0.65rem; }
   .col-grid { gap: var(--space-xs); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -336,19 +280,6 @@ export default function CollectionPage() {
       default: return 0;
     }
   });
-
-  const handleWishlist = useCallback((e, product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (typeof window === 'undefined') return;
-    if (window.Teachle && window.Teachle.requireAuth && !window.Teachle.requireAuth()) return;
-    if (window.Teachle && window.Teachle.toggleWishlist) {
-      window.Teachle.toggleWishlist({
-        id: product.id, name: product.name,
-        price: product.priceFormatted, image: product.images[0],
-      });
-    }
-  }, []);
 
   if (!collection) {
     return (
@@ -430,18 +361,7 @@ export default function CollectionPage() {
               </div>
             ) : (
               sortedProducts.map((p) => (
-                <Link key={p.id} href={`/shop/${p.id}`} className="col-card">
-                  <div className="col-card-img">
-                    <img src={p.images[0]} alt={p.name} loading="lazy" />
-                    <button className="col-card-wishlist" aria-label={`Add ${p.name} to wishlist`} onClick={(e) => handleWishlist(e, p)}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    </button>
-                  </div>
-                  <div className="col-card-info">
-                    <h3>{p.name}</h3>
-                    <span className="col-card-price">{p.priceFormatted}</span>
-                  </div>
-                </Link>
+                <ProductCard key={p.id} product={p} />
               ))
             )}
           </div>

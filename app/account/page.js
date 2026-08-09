@@ -58,7 +58,7 @@ export default function AccountPage() {
       if (stored.length === 0) {
         setNotifications([
           { id: 1, title: 'Welcome to Teakle', desc: 'Your collection awaits. Explore handcrafted pieces made with care.', time: 'Just now', read: false },
-          { id: 2, title: 'Order Confirmed', desc: 'Your Anchor Table is now in production. Estimated delivery in 2–3 weeks.', time: '2 days ago', read: false },
+          { id: 2, title: 'Order Confirmed', desc: 'Your Anchor Table order has been confirmed. We\'ll share dispatch details soon.', time: '2 days ago', read: false },
           { id: 3, title: 'Craft Care Reminder', desc: 'Monthly care tips for your walnut pieces are available in your guide.', time: '1 week ago', read: true },
         ]);
       } else {
@@ -113,7 +113,7 @@ export default function AccountPage() {
   if (!user) return null;
 
   const orders = [
-    { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'In Production', delivery: '2–3 weeks', price: '₹1,85,000' },
+    { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Confirmed', delivery: 'Awaiting dispatch', price: '₹1,85,000' },
     { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Delivered', delivery: 'Delivered Jan 15', price: '₹4,200' },
   ];
 
@@ -444,14 +444,14 @@ export default function AccountPage() {
                 <input type="password" placeholder="Current password" />
                 <input type="password" placeholder="New password" />
                 <input type="password" placeholder="Confirm new password" />
-                <button onClick={() => setEditField(null)} className="acct-btn-sm">Update Password</button>
+                <button onClick={() => setEditField(null)} className="acct-btn-sm" disabled title="Requires Shopify customer accounts">Update Password</button>
               </div>
             )}
           </div>
           <div className="detail-row">
             <span className="detail-label">Newsletter</span>
             <label className="acct-toggle">
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" defaultChecked disabled title="Requires Shopify customer accounts" />
               <span className="toggle-slider"></span>
               <span className="toggle-text">Receive workshop updates</span>
             </label>
@@ -470,23 +470,24 @@ export default function AccountPage() {
             <span className="detail-label">Password</span>
             <div className="detail-value-row">
               <span className="detail-value">Last changed 30 days ago</span>
-              <button className="acct-link">Change</button>
+              <button className="acct-link" disabled title="Requires Shopify customer accounts">Change</button>
             </div>
           </div>
           <div className="detail-row">
             <span className="detail-label">Two-Factor Auth</span>
             <div className="detail-value-row">
               <span className="detail-value">Not enabled</span>
-              <button className="acct-link">Enable</button>
+              <button className="acct-link" disabled title="Requires Shopify customer accounts">Enable</button>
             </div>
           </div>
           <div className="detail-row">
             <span className="detail-label">Active Sessions</span>
             <div className="detail-value-row">
               <span className="detail-value">1 active session</span>
-              <button className="acct-link acct-link-danger">Sign Out All</button>
+              <button className="acct-link acct-link-danger" disabled title="Requires Shopify customer accounts">Sign Out All</button>
             </div>
           </div>
+          <p style={{ marginTop: '1rem', fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7 }}>Security features require Shopify customer account integration.</p>
         </div>
       </div>
     );

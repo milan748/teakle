@@ -19,7 +19,7 @@ export default function TradePage() {
       btn.disabled = true;
 
       setTimeout(() => {
-        status.textContent = 'Received. We will reply within a few days.';
+        status.textContent = 'Received. We will reply within a few days. (Demo mode — backend integration required.)';
         status.classList.add('is-visible');
         form.reset();
         btn.textContent = originalText;

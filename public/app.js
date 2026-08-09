@@ -56,12 +56,13 @@ var Teakle = (function () {
   function saveCart(c) { set('cart', c); }
 
   function addToCart(item) {
+    var qty = item.qty || 1;
     var cart = getCart();
     var idx = cart.findIndex(function (c) { return c.id === item.id; });
     if (idx > -1) {
-      cart[idx].qty = (cart[idx].qty || 1) + 1;
+      cart[idx].qty = (cart[idx].qty || 1) + qty;
     } else {
-      cart.push({ id: item.id, name: item.name, price: item.price || '', image: item.image || '', qty: 1 });
+      cart.push({ id: item.id, name: item.name, price: item.price || '', image: item.image || '', qty: qty });
     }
     saveCart(cart);
     updateCounts();

@@ -867,10 +867,12 @@ export default function LoginPage() {
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
+                    disabled
+                    title="Requires Shopify customer accounts"
                   />
                   <span>Remember me</span>
                 </label>
-                <a href="#" className="auth-forgot" onClick={(e) => e.preventDefault()}>
+                <a href="#" className="auth-forgot" onClick={(e) => e.preventDefault()} title="Requires Shopify customer accounts">
                   Forgot password?
                 </a>
               </div>

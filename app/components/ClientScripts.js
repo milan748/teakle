@@ -1,34 +1,49 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function ClientScripts() {
+  const cleanupRef = useRef(null);
+
   useEffect(() => {
-    /* Safety net: force reveal content visible after delay */
-    const safetyTimeout = setTimeout(() => {
-      document.querySelectorAll('.reveal, .piece-card').forEach((el) => {
-        el.classList.add('is-visible');
-      });
-    }, 1500);
-
-    /* Scroll reveal with Intersection Observer */
-    const reveals = document.querySelectorAll('.reveal, .piece-card, .product-card');
     let observer;
-    if ('IntersectionObserver' in window) {
-      observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-      reveals.forEach((el) => observer.observe(el));
-    } else {
-      reveals.forEach((el) => el.classList.add('is-visible'));
-    }
+    let safetyTimeout;
 
-    /* Mobile nav toggle */
+    /* Defer reveal DOM mutations past hydration with double rAF.
+       The first rAF fires after the current paint (where React 19
+       finishes its hydration commit). The second rAF guarantees
+       execution on the NEXT frame, well after reconciliation. */
+    const frameId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        /* Scroll reveal with Intersection Observer */
+        const reveals = document.querySelectorAll('.reveal, .piece-card, .product-card');
+        if ('IntersectionObserver' in window) {
+          observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.1 });
+          reveals.forEach((el) => observer.observe(el));
+        } else {
+          reveals.forEach((el) => el.classList.add('is-visible'));
+        }
+
+        /* Safety net: force reveal content visible after delay */
+        safetyTimeout = setTimeout(() => {
+          reveals.forEach((el) => el.classList.add('is-visible'));
+        }, 1500);
+
+        cleanupRef.current = () => {
+          clearTimeout(safetyTimeout);
+          if (observer) observer.disconnect();
+        };
+      });
+    });
+
+    /* Mobile nav toggle — runs immediately, no hydration conflict */
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.getElementById('navLinks');
     let backdrop;
@@ -41,7 +56,7 @@ export default function ClientScripts() {
         navLinks.classList.remove('is-open');
         navToggle.classList.remove('is-open');
         navToggle.setAttribute('aria-expanded', 'false');
-        backdrop.classList.remove('is-visible');
+        if (backdrop) backdrop.classList.remove('is-visible');
         document.body.classList.remove('nav-drawer-open');
         navLinks.querySelectorAll('.nav-dropdown.is-open, .nav-subdropdown.is-open').forEach((el) => {
           el.classList.remove('is-open');
@@ -123,7 +138,7 @@ export default function ClientScripts() {
         e.preventDefault();
         const btn = this.querySelector('button');
         const originalText = btn.textContent;
-        btn.textContent = 'Sent';
+        btn.textContent = 'Demo Only';
         btn.disabled = true;
         this.querySelector('input').value = '';
         setTimeout(() => {
@@ -134,8 +149,8 @@ export default function ClientScripts() {
     }
 
     return () => {
-      clearTimeout(safetyTimeout);
-      if (observer) observer.disconnect();
+      cancelAnimationFrame(frameId);
+      if (cleanupRef.current) cleanupRef.current();
     };
   }, []);
 
