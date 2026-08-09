@@ -792,7 +792,7 @@ export default function LoginPage() {
         <div className="auth-card">
           {/* Brand */}
           <div className="auth-brand">
-            <img src="/assets/logo-black.png" alt="Teakle" className="auth-logo" />
+            <img src="/assets/logo-black.webp" alt="Teakle" className="auth-logo" />
             <div className="auth-brand-line"></div>
           </div>
 

@@ -1512,7 +1512,7 @@ export default function AccountPage() {
         {/* Desktop Sidebar */}
         <aside className="acct-sidebar">
           <div className="acct-sidebar-brand">
-            <Link href="/"><img src="/assets/logo-black.png" alt="Teakle" /></Link>
+            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (
@@ -1553,7 +1553,7 @@ export default function AccountPage() {
         <div className={`acct-drawer-overlay ${drawerOpen ? 'is-open' : ''}`} onClick={() => setDrawerOpen(false)}></div>
         <div className={`acct-drawer ${drawerOpen ? 'is-open' : ''}`}>
           <div className="acct-drawer-brand">
-            <Link href="/"><img src="/assets/logo-black.png" alt="Teakle" /></Link>
+            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (

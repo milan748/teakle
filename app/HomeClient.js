@@ -740,7 +740,11 @@ export default function HomeClient() {
 
         {/* 1. Hero */}
         <section className="v2-hero" ref={heroRef}>
-          <img className="v2-hero-img" src="/assets/hero-luxury-entryway.png" alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchpriority="high" />
+          <picture>
+            <source srcSet="/assets/hero-luxury-entryway.avif" type="image/avif" />
+            <source srcSet="/assets/hero-luxury-entryway.webp" type="image/webp" />
+            <img className="v2-hero-img" src="/assets/hero-luxury-entryway.png" alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchpriority="high" />
+          </picture>
           <div className="v2-hero-content">
             <span className="eyebrow eyebrow-light v2-hero-eyebrow">An Indian Workshop</span>
             <h1>Where wood becomes<br />timeless art.</h1>

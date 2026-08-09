@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Link href="/" className="logo"><img src="/assets/logo-black.png" alt="Teakle" /></Link>
+            <Link href="/" className="logo"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
             <p>Made by hand in India, one piece at a time.</p>
             <div className="footer-social">
               <a href="https://www.instagram.com/teaklestudio" target="_blank" rel="noopener noreferrer" aria-label="Instagram">

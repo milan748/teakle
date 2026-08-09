@@ -75,7 +75,7 @@ function checkHasHero(pathname) {
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const [logoSrc, setLogoSrc] = useState('/assets/logo-black.png');
+  const [logoSrc, setLogoSrc] = useState('/assets/logo-black.webp');
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -101,7 +101,7 @@ export default function Header() {
       const scrolled = window.scrollY > 60;
       header.classList.toggle('is-scrolled', scrolled);
       if (hasHero) {
-        const newSrc = scrolled ? '/assets/logo-black.png' : '/assets/logo-white.png';
+        const newSrc = scrolled ? '/assets/logo-black.webp' : '/assets/logo-white.webp';
         setLogoSrc((prev) => prev === newSrc ? prev : newSrc);
       }
     }
