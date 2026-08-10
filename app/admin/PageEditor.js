@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import MediaLibrary from './MediaLibrary';
 
 const ALL_FIELDS = [
   'eyebrow', 'title', 'subtitle', 'body',
@@ -32,6 +33,7 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [mediaField, setMediaField] = useState(null);
 
   useEffect(() => {
     fetchSections();
@@ -125,6 +127,16 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
         </div>
       )}
 
+      {mediaField && (
+        <MediaLibrary
+          onSelect={(item) => {
+            setForm(f => ({ ...f, [mediaField]: item.url }));
+            setMediaField(null);
+          }}
+          onClose={() => setMediaField(null)}
+        />
+      )}
+
       {editing ? (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -167,6 +179,28 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
                   rows={field === 'body' ? 6 : 3}
                   style={{ width: '100%', padding: '8px 10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', fontFamily: 'inherit', resize: 'vertical', boxSizing: 'border-box' }}
                 />
+              ) : (field === 'image' || field === 'mobileImage') ? (
+                <div>
+                  {form[field] && (
+                    <div style={{ marginBottom: '8px', border: '1px solid #eee', borderRadius: '4px', padding: '8px', display: 'flex', alignItems: 'center', gap: '10px', background: '#fafafa' }}>
+                      <img src={form[field]} alt="" style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '3px', background: '#f0f0f0' }} />
+                      <span style={{ fontSize: '12px', color: '#666', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{form[field]}</span>
+                      <button type="button" onClick={() => setForm(f => ({ ...f, [field]: '' }))} style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer', fontSize: '16px' }}>&times;</button>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <input
+                      type="text"
+                      value={form[field] || ''}
+                      onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
+                      placeholder="Paste URL or select from media"
+                      style={{ flex: 1, padding: '8px 10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', boxSizing: 'border-box' }}
+                    />
+                    <button type="button" onClick={() => setMediaField(field)} style={{ background: '#f0f0f0', color: '#333', border: '1px solid #ddd', borderRadius: '4px', padding: '8px 12px', fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                      Select Media
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <input
                   type="text"

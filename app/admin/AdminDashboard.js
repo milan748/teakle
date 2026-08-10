@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import HomepageEditor from './HomepageEditor';
 import PageEditor from './PageEditor';
+import MediaLibrary from './MediaLibrary';
 
 const PAGES = {
   home: { label: 'Homepage', sections: { hero: 'Hero', philosophy: 'Philosophy', signature: 'Signature Collection', craftsmanship: 'Craftsmanship', 'workshop-story': 'Workshop Story', 'process-story': 'Process Story' } },
@@ -16,6 +16,7 @@ const PAGES = {
 
 export default function AdminDashboard({ admin }) {
   const [activePage, setActivePage] = useState('home');
+  const [showMedia, setShowMedia] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
@@ -32,6 +33,8 @@ export default function AdminDashboard({ admin }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f5f5', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      {showMedia && <MediaLibrary onClose={() => setShowMedia(false)} />}
+
       <div style={{ display: 'flex' }}>
         {/* Sidebar */}
         <div style={{ width: '220px', background: 'white', borderRight: '1px solid #eee', minHeight: '100vh', padding: '20px 0' }}>
@@ -47,7 +50,7 @@ export default function AdminDashboard({ admin }) {
             {Object.entries(PAGES).map(([key, cfg]) => (
               <button
                 key={key}
-                onClick={() => setActivePage(key)}
+                onClick={() => { setActivePage(key); setShowMedia(false); }}
                 style={{
                   display: 'block',
                   width: '100%',
@@ -55,15 +58,37 @@ export default function AdminDashboard({ admin }) {
                   padding: '8px 16px',
                   fontSize: '14px',
                   border: 'none',
-                  background: activePage === key ? '#f0f0f0' : 'transparent',
-                  color: activePage === key ? '#1a1a1a' : '#666',
-                  fontWeight: activePage === key ? 500 : 400,
+                  background: activePage === key && !showMedia ? '#f0f0f0' : 'transparent',
+                  color: activePage === key && !showMedia ? '#1a1a1a' : '#666',
+                  fontWeight: activePage === key && !showMedia ? 500 : 400,
                   cursor: 'pointer',
                 }}
               >
                 {cfg.label}
               </button>
             ))}
+          </div>
+
+          <div style={{ padding: '16px 0', borderTop: '1px solid #eee' }}>
+            <div style={{ padding: '0 16px 8px', fontSize: '11px', fontWeight: 600, color: '#999', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Media
+            </div>
+            <button
+              onClick={() => setShowMedia(true)}
+              style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
+                padding: '8px 16px',
+                fontSize: '14px',
+                border: 'none',
+                background: 'transparent',
+                color: '#666',
+                cursor: 'pointer',
+              }}
+            >
+              Media Library
+            </button>
           </div>
 
           <div style={{ padding: '16px 0', borderTop: '1px solid #eee' }}>
