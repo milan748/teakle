@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { customerOrders } from '@/lib/api';
 
 const STEPS = ['Shipping', 'Review', 'Payment'];
 
@@ -84,8 +85,22 @@ export default function CheckoutPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function handlePlaceOrder() {
+  async function handlePlaceOrder() {
     setIsProcessing(true);
+
+    if (isLoggedIn) {
+      const result = await customerOrders.create({
+        shipping,
+        billing: sameBilling ? {} : billing,
+        billingSameAsShipping: sameBilling,
+      });
+      if (result && result.ok) {
+        cartItems.forEach(item => window.Teakle && window.Teakle.removeFromCart && window.Teakle.removeFromCart(item.id));
+        setTimeout(() => router.push('/account'), 2000);
+        return;
+      }
+    }
+
     setTimeout(() => {
       window.Teakle && window.Teakle.updateCartQty && cartItems.forEach(item => window.Teakle.removeFromCart(item.id));
       router.push('/account');

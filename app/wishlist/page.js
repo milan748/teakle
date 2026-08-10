@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { customerWishlist, customerCart } from '@/lib/api';
 
 export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -12,9 +13,15 @@ export default function WishlistPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined' && window.Teakle) {
-      setIsLoggedIn(window.Teakle.isLoggedIn());
-      setWishlistItems(window.Teakle.getWishlist());
+    const t = window.Teakle;
+    const loggedIn = t && t.isLoggedIn();
+    setIsLoggedIn(!!loggedIn);
+    if (t) setWishlistItems(t.getWishlist());
+
+    if (loggedIn) {
+      customerWishlist.get().then(result => {
+        if (result && result.items) setWishlistItems(result.items);
+      });
     }
   }, []);
 
@@ -22,21 +29,37 @@ export default function WishlistPage() {
     if (window.Teakle) setWishlistItems(window.Teakle.getWishlist());
   }, []);
 
-  function addToCart(item) {
+  async function addToCart(item) {
     setAddedId(item.id);
     window.Teakle.addToCart({ id: item.id, name: item.name, price: item.price, image: item.image });
+    if (isLoggedIn) {
+      await customerCart.add(item.id, 1);
+    }
     setTimeout(() => {
       window.Teakle.toggleWishlist({ id: item.id, name: item.name, price: item.price, image: item.image });
       refresh();
+      if (isLoggedIn) {
+        customerWishlist.get().then(result => {
+          if (result && result.items) setWishlistItems(result.items);
+        });
+      }
       setAddedId(null);
     }, 600);
   }
 
-  function removeFromWishlist(id) {
+  async function removeFromWishlist(id) {
     setRemovingId(id);
+    window.Teakle.toggleWishlist({ id });
+    if (isLoggedIn) {
+      await customerWishlist.remove(id);
+    }
     setTimeout(() => {
-      window.Teakle.toggleWishlist({ id });
       refresh();
+      if (isLoggedIn) {
+        customerWishlist.get().then(result => {
+          if (result && result.items) setWishlistItems(result.items);
+        });
+      }
       setRemovingId(null);
     }, 300);
   }

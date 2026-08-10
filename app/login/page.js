@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { customerAuth } from '@/lib/api';
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
@@ -58,25 +59,32 @@ export default function LoginPage() {
     showOTP(pendingRef.current.email);
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     clearMessages();
     setIsLoading(true);
     const email = loginEmail.trim();
     const password = loginPassword;
+
+    const serverResult = await customerAuth.login(email, password);
+    if (serverResult && serverResult.ok) {
+      localStorage.setItem('teakle_currentUser', JSON.stringify(serverResult.customer));
+      showSuccess('Signed in successfully. Redirecting to your account...');
+      setTimeout(() => { window.location.href = '/account'; }, 1200);
+      return;
+    }
+
     const result = window.Teakle.login(email, password);
-    setTimeout(() => {
-      if (result.ok) {
-        showSuccess('Signed in successfully. Redirecting to your account...');
-        setTimeout(() => { window.location.href = '/account'; }, 1200);
-      } else {
-        setIsLoading(false);
-        showError(result.msg);
-      }
-    }, 800);
+    if (result.ok) {
+      showSuccess('Signed in successfully. Redirecting to your account...');
+      setTimeout(() => { window.location.href = '/account'; }, 1200);
+    } else {
+      setIsLoading(false);
+      showError(result.msg);
+    }
   }
 
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
     clearMessages();
     const name = regName.trim();
@@ -87,6 +95,20 @@ export default function LoginPage() {
       showError('Passwords do not match.');
       return;
     }
+
+    const serverResult = await customerAuth.register(name, email, password, confirm);
+    if (serverResult && serverResult.ok) {
+      localStorage.setItem('teakle_currentUser', JSON.stringify(serverResult.customer));
+      showSuccess('Account created. Welcome to Teakle.');
+      setTimeout(() => { window.location.href = '/account'; }, 1200);
+      return;
+    }
+
+    if (serverResult && serverResult.error) {
+      showError(serverResult.error);
+      return;
+    }
+
     pendingRef.current = { name, email, password };
     sendOTP();
   }

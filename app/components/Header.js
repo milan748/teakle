@@ -265,6 +265,7 @@ export default function Header() {
 
   function handleLogout() {
     closeDropdown();
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);

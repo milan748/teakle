@@ -96,6 +96,7 @@ export default function BottomNav() {
 
   function handleLogout() {
     closeSheet();
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);

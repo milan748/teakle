@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { customerAuth, customerOrders } from '@/lib/api';
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
@@ -39,6 +40,7 @@ export default function AccountPage() {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [greeting, setGreeting] = useState('Good Morning');
+  const [serverOrders, setServerOrders] = useState([]);
 
   useEffect(() => {
     const t = window.Teakle;
@@ -66,9 +68,14 @@ export default function AccountPage() {
         setNotifications(stored);
       }
     } catch { setNotifications([]); }
+
+    customerOrders.list().then(result => {
+      if (result && result.orders) setServerOrders(result.orders);
+    });
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await customerAuth.logout();
     if (window.Teakle) window.Teakle.logout();
     window.location.href = '/login';
   }, []);
@@ -113,10 +120,20 @@ export default function AccountPage() {
 
   if (!user) return null;
 
-  const orders = [
-    { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Confirmed', delivery: 'Awaiting dispatch', price: '₹1,85,000' },
-    { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Delivered', delivery: 'Delivered Jan 15', price: '₹4,200' },
-  ];
+  const displayOrders = serverOrders.length > 0
+    ? serverOrders.map(o => ({
+        id: o.orderNumber,
+        product: o.items?.[0]?.productName || 'Order',
+        image: o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300',
+        status: o.status === 'pending' ? 'Pending' : o.status === 'confirmed' ? 'Confirmed' : o.status === 'shipped' ? 'Shipped' : o.status === 'delivered' ? 'Delivered' : o.status === 'cancelled' ? 'Cancelled' : o.status,
+        delivery: o.status === 'delivered' ? 'Delivered' : 'Awaiting dispatch',
+        price: `₹${(o.totalAmount || 0).toLocaleString('en-IN')}`,
+      }))
+    : [
+        { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Confirmed', delivery: 'Awaiting dispatch', price: '₹1,85,000' },
+        { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Delivered', delivery: 'Delivered Jan 15', price: '₹4,200' },
+      ];
+  const orders = displayOrders;
 
   const stats = [
     { label: 'Current Orders', value: orders.filter(o => o.status !== 'Delivered').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },

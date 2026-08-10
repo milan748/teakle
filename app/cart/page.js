@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { customerCart } from '@/lib/api';
 
 export default function CartPage() {
   const router = useRouter();
@@ -10,11 +11,19 @@ export default function CartPage() {
   const [mounted, setMounted] = useState(false);
   const [removingId, setRemovingId] = useState(null);
   const [savingId, setSavingId] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined' && window.Teakle) {
-      setCartItems(window.Teakle.getCart());
+    const t = window.Teakle;
+    const loggedIn = t && t.isLoggedIn();
+    setIsLoggedIn(!!loggedIn);
+    if (t) setCartItems(t.getCart());
+
+    if (loggedIn) {
+      customerCart.get().then(result => {
+        if (result && result.items) setCartItems(result.items);
+      });
     }
   }, []);
 
@@ -22,22 +31,30 @@ export default function CartPage() {
     if (window.Teakle) setCartItems(window.Teakle.getCart());
   }, []);
 
-  function updateQty(id, newQty) {
+  async function updateQty(id, newQty) {
     if (newQty < 1) return;
     window.Teakle.updateCartQty(id, Math.min(10, newQty));
     refreshCart();
+    if (isLoggedIn) {
+      const result = await customerCart.update(id, Math.min(10, newQty));
+      if (result && result.items) setCartItems(result.items);
+    }
   }
 
-  function removeItem(id) {
+  async function removeItem(id) {
     setRemovingId(id);
-    setTimeout(() => {
+    setTimeout(async () => {
       window.Teakle.removeFromCart(id);
       refreshCart();
+      if (isLoggedIn) {
+        const result = await customerCart.remove(id);
+        if (result && result.items) setCartItems(result.items);
+      }
       setRemovingId(null);
     }, 300);
   }
 
-  function saveForLater(item) {
+  async function saveForLater(item) {
     setSavingId(item.id);
     window.Teakle.toggleWishlist({
       id: item.id,
@@ -45,9 +62,12 @@ export default function CartPage() {
       price: item.price,
       image: item.image,
     });
-    setTimeout(() => {
+    setTimeout(async () => {
       window.Teakle.removeFromCart(item.id);
       refreshCart();
+      if (isLoggedIn) {
+        await customerCart.remove(item.id);
+      }
       setSavingId(null);
     }, 400);
   }
