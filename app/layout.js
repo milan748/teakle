@@ -27,7 +27,7 @@ export const metadata = {
     description: 'An Indian workshop making solid wood objects, one piece at a time.',
     images: [
       {
-        url: '/assets/hero-luxury-entryway.png',
+        url: 'https://teakle.in/assets/hero-luxury-entryway.png',
         width: 1200,
         height: 630,
         alt: 'Teakle handcrafted wooden furniture',
@@ -38,7 +38,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Teakle — Objects for a Permanent Home',
     description: 'An Indian workshop making solid wood objects, one piece at a time.',
-    images: ['/assets/hero-luxury-entryway.png'],
+    images: ['https://teakle.in/assets/hero-luxury-entryway.png'],
   },
   robots: {
     index: true,
