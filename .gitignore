@@ -4,3 +4,6 @@ node_modules/
 .env.local
 dist/
 build/
+data/*.db
+data/*.db-wal
+data/*.db-shm
