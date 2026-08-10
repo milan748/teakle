@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { validateCustomOrder } from '@/lib/validate';
+import { requireAdmin } from '@/lib/auth';
 
 export async function POST(request) {
   try {
@@ -32,6 +33,9 @@ export async function POST(request) {
 
 export async function GET() {
   try {
+    const auth = await requireAdmin();
+    if (!auth.authorized) return auth.response;
+
     const db = getDb();
     const orders = db.prepare('SELECT id, name, email, status, createdAt FROM custom_orders ORDER BY createdAt DESC').all();
     return NextResponse.json({ success: true, data: orders });
