@@ -18,6 +18,9 @@ export async function GET() {
     const cmsDrafts = db.prepare("SELECT COUNT(*) as count FROM content_sections WHERE status = 'draft'").get().count;
     const cmsPublished = db.prepare("SELECT COUNT(*) as count FROM content_sections WHERE status = 'published'").get().count;
     const mediaCount = db.prepare("SELECT COUNT(*) as count FROM media").get().count;
+    const productOrders = db.prepare("SELECT COUNT(*) as count FROM orders").get().count;
+    const pendingProductOrders = db.prepare("SELECT COUNT(*) as count FROM orders WHERE status = 'PENDING'").get().count;
+    const customers = db.prepare("SELECT COUNT(*) as count FROM customers").get().count;
 
     return NextResponse.json({
       success: true,
@@ -31,6 +34,9 @@ export async function GET() {
         cmsDrafts,
         cmsPublished,
         mediaCount,
+        productOrders,
+        pendingProductOrders,
+        customers,
       },
     });
   } catch (error) {

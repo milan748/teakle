@@ -1,35 +1,48 @@
 import { getDb } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createCustomerSession } from '@/lib/customerSession';
+import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { log } from '@/lib/logger';
 
 export async function POST(req) {
   try {
+    const rl = rateLimit('auth:login', RATE_LIMITS.customerLogin);
+    if (!rl.allowed) {
+      return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const { email, password } = await req.json();
 
-    if (!email || !password) {
+    if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
       return Response.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
     const db = getDb();
-    const customer = db.prepare('SELECT * FROM customers WHERE email = ?').get(email.toLowerCase().trim());
+    const customer = db.prepare(
+      'SELECT id, email, passwordHash, name FROM customers WHERE email = ?'
+    ).get(normalizedEmail);
 
     if (!customer) {
+      log.customerLogin(normalizedEmail, false);
       return Response.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     const valid = await bcrypt.compare(password, customer.passwordHash);
     if (!valid) {
+      log.customerLogin(normalizedEmail, false);
       return Response.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     await createCustomerSession(customer);
+    log.customerLogin(normalizedEmail, true);
 
     return Response.json({
       ok: true,
       customer: { id: customer.id, email: customer.email, name: customer.name },
     });
   } catch (err) {
-    console.error('Login error:', err);
+    log.error('Customer login error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

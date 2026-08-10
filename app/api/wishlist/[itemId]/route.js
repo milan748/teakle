@@ -11,6 +11,24 @@ function getOrCreateWishlist(db, customerId) {
   return wl;
 }
 
+function formatWishlistItems(db, wishlistId) {
+  const rows = db.prepare(
+    'SELECT wi.id, wi.productId, wi.createdAt FROM wishlist_items wi WHERE wi.wishlistId = ?'
+  ).all(wishlistId);
+
+  return rows.map((row) => {
+    const product = getProductById(row.productId);
+    return {
+      id: row.productId,
+      wishlistItemId: row.id,
+      name: product?.name || row.productId,
+      price: product?.priceFormatted || '₹0',
+      priceRaw: product?.price || 0,
+      image: product?.images?.[0] || '',
+    };
+  });
+}
+
 export async function DELETE(_req, { params }) {
   try {
     const session = await getCustomerSession();
@@ -19,7 +37,7 @@ export async function DELETE(_req, { params }) {
     }
 
     const { itemId } = await params;
-    if (!itemId) {
+    if (!itemId || typeof itemId !== 'string') {
       return Response.json({ error: 'Item ID is required' }, { status: 400 });
     }
 
@@ -27,24 +45,9 @@ export async function DELETE(_req, { params }) {
     const wl = getOrCreateWishlist(db, session.customerId);
 
     db.prepare('DELETE FROM wishlist_items WHERE wishlistId = ? AND productId = ?')
-      .run(wl.id, itemId);
+      .run(wl.id, itemId.trim());
 
-    const rows = db.prepare(
-      'SELECT wi.id, wi.productId FROM wishlist_items wi WHERE wi.wishlistId = ?'
-    ).all(wl.id);
-
-    const items = rows.map((row) => {
-      const p = getProductById(row.productId);
-      return {
-        id: row.productId,
-        wishlistItemId: row.id,
-        name: p?.name || row.productId,
-        price: p?.priceFormatted || '₹0',
-        priceRaw: p?.price || 0,
-        image: p?.images?.[0] || '',
-      };
-    });
-
+    const items = formatWishlistItems(db, wl.id);
     return Response.json({ ok: true, items });
   } catch (err) {
     console.error('Wishlist DELETE error:', err);

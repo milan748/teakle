@@ -18,8 +18,11 @@ export default function DashboardOverview() {
   if (!data) return <div style={{ padding: '20px', color: '#c00' }}>Failed to load dashboard</div>;
 
   const cards = [
-    { label: 'New Orders', value: data.newOrders, color: '#0070f3' },
-    { label: 'Total Orders', value: data.totalOrders, color: '#333' },
+    { label: 'New Custom Orders', value: data.newOrders, color: '#0070f3' },
+    { label: 'Total Custom Orders', value: data.totalOrders, color: '#333' },
+    { label: 'Pending Product Orders', value: data.pendingProductOrders, color: data.pendingProductOrders > 0 ? '#f59e0b' : '#333' },
+    { label: 'Total Product Orders', value: data.productOrders, color: '#333' },
+    { label: 'Customers', value: data.customers, color: '#333' },
     { label: 'Contact Submissions', value: data.contactSubmissions, color: '#333' },
     { label: 'Unread Contacts', value: data.unreadContacts, color: data.unreadContacts > 0 ? '#f59e0b' : '#333' },
     { label: 'Trade Enquiries', value: data.tradeEnquiries, color: '#333' },

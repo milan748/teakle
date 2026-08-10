@@ -2,11 +2,6 @@ import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProductById } from '@/app/data/products';
 
-function parsePrice(priceStr) {
-  if (typeof priceStr === 'number') return priceStr;
-  return parseInt(String(priceStr).replace(/[^0-9]/g, ''), 10) || 0;
-}
-
 function getOrCreateCart(db, customerId) {
   let cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
   if (!cart) {
@@ -14,6 +9,31 @@ function getOrCreateCart(db, customerId) {
     cart = { id: result.lastInsertRowid };
   }
   return cart;
+}
+
+function sanitizeQty(qty) {
+  const n = Number(qty);
+  if (!Number.isInteger(n) || n < 1 || n > 10) return null;
+  return n;
+}
+
+function formatCartItems(db, cartId) {
+  const rows = db.prepare(
+    'SELECT ci.id, ci.productId, ci.quantity FROM cart_items ci WHERE ci.cartId = ?'
+  ).all(cartId);
+
+  return rows.map((row) => {
+    const product = getProductById(row.productId);
+    return {
+      id: row.productId,
+      cartItemId: row.id,
+      name: product?.name || row.productId,
+      price: product?.priceFormatted || '₹0',
+      priceRaw: product?.price || 0,
+      image: product?.images?.[0] || '',
+      qty: row.quantity,
+    };
+  });
 }
 
 export async function GET() {
@@ -25,23 +45,7 @@ export async function GET() {
 
     const db = getDb();
     const cart = getOrCreateCart(db, session.customerId);
-    const rows = db.prepare(
-      `SELECT ci.id, ci.productId, ci.quantity, ci.createdAt
-       FROM cart_items ci WHERE ci.cartId = ?`
-    ).all(cart.id);
-
-    const items = rows.map((row) => {
-      const product = getProductById(row.productId);
-      return {
-        id: row.productId,
-        cartItemId: row.id,
-        name: product?.name || row.productId,
-        price: product?.priceFormatted || '₹0',
-        priceRaw: product?.price || 0,
-        image: product?.images?.[0] || '',
-        qty: row.quantity,
-      };
-    });
+    const items = formatCartItems(db, cart.id);
 
     return Response.json({ items });
   } catch (err) {
@@ -57,23 +61,23 @@ export async function POST(req) {
       return Response.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const { productId, quantity = 1 } = await req.json();
+    const body = await req.json();
+    const productId = typeof body.productId === 'string' ? body.productId.trim() : '';
+    const qty = sanitizeQty(body.quantity ?? 1);
 
     if (!productId) {
       return Response.json({ error: 'Product ID is required' }, { status: 400 });
+    }
+    if (qty === null) {
+      return Response.json({ error: 'Quantity must be an integer between 1 and 10' }, { status: 400 });
     }
 
     const product = getProductById(productId);
     if (!product) {
       return Response.json({ error: 'Product not found' }, { status: 404 });
     }
-
-    if (product.isHero && quantity > 1) {
+    if (product.isHero && qty > 1) {
       return Response.json({ error: 'Hero product is limited to quantity 1' }, { status: 400 });
-    }
-
-    if (quantity < 1 || quantity > 10) {
-      return Response.json({ error: 'Quantity must be between 1 and 10' }, { status: 400 });
     }
 
     const db = getDb();
@@ -84,33 +88,16 @@ export async function POST(req) {
     ).get(cart.id, productId);
 
     if (existing) {
-      const newQty = product.isHero ? 1 : Math.min(10, existing.quantity + quantity);
+      const newQty = product.isHero ? 1 : Math.min(10, existing.quantity + qty);
       db.prepare('UPDATE cart_items SET quantity = ?, updatedAt = datetime(\'now\') WHERE id = ?')
         .run(newQty, existing.id);
     } else {
       db.prepare(
         'INSERT INTO cart_items (cartId, productId, quantity) VALUES (?, ?, ?)'
-      ).run(cart.id, productId, product.isHero ? 1 : Math.min(10, quantity));
+      ).run(cart.id, productId, product.isHero ? 1 : qty);
     }
 
-    const rows = db.prepare(
-      `SELECT ci.id, ci.productId, ci.quantity
-       FROM cart_items ci WHERE ci.cartId = ?`
-    ).all(cart.id);
-
-    const items = rows.map((row) => {
-      const p = getProductById(row.productId);
-      return {
-        id: row.productId,
-        cartItemId: row.id,
-        name: p?.name || row.productId,
-        price: p?.priceFormatted || '₹0',
-        priceRaw: p?.price || 0,
-        image: p?.images?.[0] || '',
-        qty: row.quantity,
-      };
-    });
-
+    const items = formatCartItems(db, cart.id);
     return Response.json({ ok: true, items });
   } catch (err) {
     console.error('Cart POST error:', err);
@@ -125,14 +112,15 @@ export async function PUT(req) {
       return Response.json({ error: 'Authentication required' }, { status: 401 });
     }
 
-    const { productId, quantity } = await req.json();
+    const body = await req.json();
+    const productId = typeof body.productId === 'string' ? body.productId.trim() : '';
+    const qty = body.quantity === 0 ? 0 : sanitizeQty(body.quantity);
 
-    if (!productId || quantity === undefined) {
-      return Response.json({ error: 'Product ID and quantity are required' }, { status: 400 });
+    if (!productId) {
+      return Response.json({ error: 'Product ID is required' }, { status: 400 });
     }
-
-    if (quantity < 0 || quantity > 10) {
-      return Response.json({ error: 'Quantity must be between 0 and 10' }, { status: 400 });
+    if (qty === null) {
+      return Response.json({ error: 'Quantity must be an integer between 1 and 10' }, { status: 400 });
     }
 
     const product = getProductById(productId);
@@ -143,34 +131,17 @@ export async function PUT(req) {
     const db = getDb();
     const cart = getOrCreateCart(db, session.customerId);
 
-    if (quantity === 0) {
+    if (qty === 0) {
       db.prepare('DELETE FROM cart_items WHERE cartId = ? AND productId = ?')
         .run(cart.id, productId);
     } else {
-      const finalQty = product.isHero ? 1 : quantity;
+      const finalQty = product.isHero ? 1 : qty;
       db.prepare(
         'UPDATE cart_items SET quantity = ?, updatedAt = datetime(\'now\') WHERE cartId = ? AND productId = ?'
       ).run(finalQty, cart.id, productId);
     }
 
-    const rows = db.prepare(
-      `SELECT ci.id, ci.productId, ci.quantity
-       FROM cart_items ci WHERE ci.cartId = ?`
-    ).all(cart.id);
-
-    const items = rows.map((row) => {
-      const p = getProductById(row.productId);
-      return {
-        id: row.productId,
-        cartItemId: row.id,
-        name: p?.name || row.productId,
-        price: p?.priceFormatted || '₹0',
-        priceRaw: p?.price || 0,
-        image: p?.images?.[0] || '',
-        qty: row.quantity,
-      };
-    });
-
+    const items = formatCartItems(db, cart.id);
     return Response.json({ ok: true, items });
   } catch (err) {
     console.error('Cart PUT error:', err);

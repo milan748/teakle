@@ -2,24 +2,36 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { createSession } from '@/lib/session';
 import bcrypt from 'bcryptjs';
+import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { log } from '@/lib/logger';
 
 export async function POST(request) {
   try {
+    const rl = rateLimit('admin:login', RATE_LIMITS.adminLogin);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
 
-    if (!body.email || !body.password) {
+    if (!body.email || typeof body.email !== 'string' || !body.password || typeof body.password !== 'string') {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
+    const normalizedEmail = body.email.trim().toLowerCase();
     const db = getDb();
     const admin = db.prepare('SELECT id, email, passwordHash, role FROM admins WHERE email = ?').get(
-      body.email.trim().toLowerCase()
+      normalizedEmail
     );
 
     if (!admin) {
+      log.adminLogin(normalizedEmail, false);
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
@@ -30,6 +42,7 @@ export async function POST(request) {
     try {
       valid = await bcrypt.compare(body.password, admin.passwordHash);
     } catch {
+      log.adminLogin(normalizedEmail, false);
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
@@ -37,6 +50,7 @@ export async function POST(request) {
     }
 
     if (!valid) {
+      log.adminLogin(normalizedEmail, false);
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
@@ -50,11 +64,14 @@ export async function POST(request) {
         role: admin.role,
       });
     } catch {
+      log.adminLogin(normalizedEmail, false);
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
+
+    log.adminLogin(normalizedEmail, true);
 
     return NextResponse.json({
       success: true,
