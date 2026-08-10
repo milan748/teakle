@@ -26,7 +26,15 @@ export async function POST(request) {
       );
     }
 
-    const valid = await bcrypt.compare(body.password, admin.passwordHash);
+    let valid;
+    try {
+      valid = await bcrypt.compare(body.password, admin.passwordHash);
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      );
+    }
 
     if (!valid) {
       return NextResponse.json(
@@ -35,11 +43,18 @@ export async function POST(request) {
       );
     }
 
-    await createSession({
-      id: admin.id,
-      email: admin.email,
-      role: admin.role,
-    });
+    try {
+      await createSession({
+        id: admin.id,
+        email: admin.email,
+        role: admin.role,
+      });
+    } catch {
+      return NextResponse.json(
+        { success: false, error: 'Invalid credentials' },
+        { status: 401 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
@@ -49,8 +64,7 @@ export async function POST(request) {
         role: admin.role,
       },
     });
-  } catch (error) {
-    console.error('Admin login error:', error);
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Invalid credentials' },
       { status: 401 }

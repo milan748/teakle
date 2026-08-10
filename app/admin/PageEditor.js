@@ -14,8 +14,8 @@ const FIELD_LABELS = {
   title: 'Title',
   subtitle: 'Subtitle',
   body: 'Body',
-  image: 'Desktop Image URL',
-  mobileImage: 'Mobile Image URL',
+  image: 'Desktop Image',
+  mobileImage: 'Mobile Image',
   buttonLabel: 'Button Label',
   buttonUrl: 'Button URL',
 };
@@ -285,7 +285,7 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
                       style={{ flex: 1, padding: '8px 10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', boxSizing: 'border-box' }}
                     />
                     <button type="button" onClick={() => setMediaField(field)} style={{ background: '#f0f0f0', color: '#333', border: '1px solid #ddd', borderRadius: '4px', padding: '8px 12px', fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                      Select Media
+                      Choose from Media Library
                     </button>
                   </div>
                 </div>

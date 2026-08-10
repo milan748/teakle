@@ -1,14 +1,15 @@
 /**
  * TEAKLE — Admin Initialization Script
  *
- * Creates the initial admin account in the SQLite database.
+ * Creates or resets the admin account in the SQLite database.
  *
  * Usage:
- *   ADMIN_EMAIL=admin@teakle.in ADMIN_PASSWORD=yourpassword node scripts/init-admin.js
+ *   node scripts/init-admin.js                              # create if absent
+ *   node scripts/init-admin.js --reset                      # also update password
  *
- * Environment variables:
- *   ADMIN_EMAIL    — Admin email address (required)
- *   ADMIN_PASSWORD — Admin password (required, min 8 characters)
+ * Environment variables (required):
+ *   ADMIN_EMAIL    — Admin email address
+ *   ADMIN_PASSWORD — Admin password (min 8 characters)
  *   DATABASE_PATH  — Database file path (optional, defaults to ./data/teakle.db)
  */
 
@@ -20,6 +21,7 @@ const fs = require('fs');
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const DB_PATH = process.env.DATABASE_PATH || path.join(process.cwd(), 'data', 'teakle.db');
+const RESET = process.argv.includes('--reset');
 
 function main() {
   if (!ADMIN_EMAIL) {
@@ -57,10 +59,23 @@ function main() {
     );
   `);
 
-  const existing = db.prepare('SELECT id FROM admins WHERE email = ?').get(ADMIN_EMAIL.toLowerCase());
+  const existing = db.prepare('SELECT id, passwordHash FROM admins WHERE email = ?').get(ADMIN_EMAIL.toLowerCase());
 
   if (existing) {
-    console.log('Admin account ' + ADMIN_EMAIL + ' already exists (ID: ' + existing.id + ')');
+    if (RESET) {
+      const currentValid = bcrypt.compareSync(ADMIN_PASSWORD, existing.passwordHash);
+      if (currentValid) {
+        console.log('Admin account ' + ADMIN_EMAIL + ' already exists (ID: ' + existing.id + ') with correct password. No reset needed.');
+        db.close();
+        process.exit(0);
+      }
+      const newHash = bcrypt.hashSync(ADMIN_PASSWORD, 12);
+      db.prepare('UPDATE admins SET passwordHash = ?, updatedAt = datetime(\'now\') WHERE id = ?').run(newHash, existing.id);
+      console.log('Admin account ' + ADMIN_EMAIL + ' (ID: ' + existing.id + ') password has been reset.');
+    } else {
+      console.log('Admin account ' + ADMIN_EMAIL + ' already exists (ID: ' + existing.id + ')');
+      console.log('  Use --reset flag to update the password if it does not match the current ADMIN_PASSWORD.');
+    }
     db.close();
     process.exit(0);
   }

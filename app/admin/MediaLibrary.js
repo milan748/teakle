@@ -9,6 +9,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
   const [message, setMessage] = useState('');
   const [editingAlt, setEditingAlt] = useState(null);
   const [altValue, setAltValue] = useState('');
+  const [copiedId, setCopiedId] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -88,6 +89,23 @@ export default function MediaLibrary({ onSelect, onClose }) {
     }
   }
 
+  async function copyUrl(url) {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedId(url);
+      setTimeout(() => setCopiedId(null), 1500);
+    } catch {
+      const input = document.createElement('input');
+      input.value = url;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      setCopiedId(url);
+      setTimeout(() => setCopiedId(null), 1500);
+    }
+  }
+
   function formatSize(bytes) {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -96,8 +114,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ background: 'white', borderRadius: '8px', width: '90vw', maxWidth: '900px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Header */}
+      <div style={{ background: 'white', borderRadius: '8px', width: '90vw', maxWidth: '960px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid #eee' }}>
           <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>Media Library</h2>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -111,28 +128,26 @@ export default function MediaLibrary({ onSelect, onClose }) {
           </div>
         </div>
 
-        {/* Message */}
         {message && (
-          <div style={{ padding: '10px 20px', background: message.includes('success') || message.includes('Uploaded') || message.includes('Deleted') ? '#d4edda' : '#f8d7da', color: message.includes('success') || message.includes('Uploaded') || message.includes('Deleted') ? '#155724' : '#721c24', fontSize: '13px' }}>
+          <div style={{ padding: '10px 20px', background: message.includes('success') || message.includes('Uploaded') || message.includes('Deleted') || message.includes('Copied') ? '#d4edda' : '#f8d7da', color: message.includes('success') || message.includes('Uploaded') || message.includes('Deleted') || message.includes('Copied') ? '#155724' : '#721c24', fontSize: '13px' }}>
             {message}
           </div>
         )}
 
-        {/* Content */}
         <div style={{ flex: 1, overflow: 'auto', padding: '16px 20px' }}>
           {loading ? (
             <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>Loading...</div>
           ) : media.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>No media uploaded yet</div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
               {media.map(item => (
                 <div key={item.id} style={{ border: '1px solid #eee', borderRadius: '6px', overflow: 'hidden' }}>
                   <div style={{ aspectRatio: '1', background: '#f5f5f5', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src={item.url} alt={item.altText || item.originalName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={item.url} alt={item.altText || item.originalName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                   <div style={{ padding: '8px 10px' }}>
-                    <div style={{ fontSize: '11px', color: '#666', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.originalName}>
+                    <div style={{ fontSize: '11px', color: '#666', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.originalName}>
                       {item.originalName}
                     </div>
                     <div style={{ fontSize: '11px', color: '#999', marginBottom: '6px' }}>
@@ -140,7 +155,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
                     </div>
 
                     {editingAlt === item.id ? (
-                      <div style={{ display: 'flex', gap: '4px' }}>
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
                         <input
                           type="text"
                           value={altValue}
@@ -150,21 +165,28 @@ export default function MediaLibrary({ onSelect, onClose }) {
                         />
                         <button onClick={() => saveAltText(item.id)} style={{ background: '#1a1a1a', color: 'white', border: 'none', borderRadius: '3px', padding: '3px 6px', fontSize: '11px', cursor: 'pointer' }}>Save</button>
                       </div>
-                    ) : (
-                      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                        {onSelect && (
-                          <button onClick={() => onSelect(item)} style={{ flex: 1, background: '#0070f3', color: 'white', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer', minWidth: '50px' }}>
-                            Select
-                          </button>
-                        )}
-                        <button onClick={() => { setEditingAlt(item.id); setAltValue(item.altText || ''); }} style={{ background: '#f0f0f0', color: '#333', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer' }}>
-                          Alt
+                    ) : null}
+
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {onSelect && (
+                        <button onClick={() => onSelect(item)} style={{ flex: 1, background: '#0070f3', color: 'white', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer', minWidth: '50px' }}>
+                          Select
                         </button>
-                        <button onClick={() => handleDelete(item.id)} style={{ background: '#fee', color: '#c00', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer' }}>
-                          Del
-                        </button>
-                      </div>
-                    )}
+                      )}
+                      <button
+                        onClick={() => copyUrl(item.url)}
+                        title="Copy URL"
+                        style={{ background: copiedId === item.url ? '#d4edda' : '#f0f0f0', color: '#333', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer' }}
+                      >
+                        {copiedId === item.url ? 'Copied' : 'Copy URL'}
+                      </button>
+                      <button onClick={() => { setEditingAlt(item.id); setAltValue(item.altText || ''); }} style={{ background: '#f0f0f0', color: '#333', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer' }}>
+                        Alt
+                      </button>
+                      <button onClick={() => handleDelete(item.id)} style={{ background: '#fee', color: '#c00', border: 'none', borderRadius: '3px', padding: '4px 6px', fontSize: '11px', cursor: 'pointer' }}>
+                        Del
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
