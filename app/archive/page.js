@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getPageSections } from '@/lib/cms'
 
 export const metadata = {
   title: 'Archive',
@@ -7,6 +8,13 @@ export const metadata = {
 };
 
 export default function ArchivePage() {
+  let sections = [];
+  try { sections = getPageSections('archive'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
+  const hero = cms.hero || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
   return (
     <>
       <style>{`
@@ -187,14 +195,16 @@ export default function ArchivePage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A sculptural wooden centrepiece on a plain floor." />
+        <img src={hero.image || "https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A sculptural wooden centrepiece on a plain floor." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Archive</span>
-          <h1>Editions that found their homes.</h1>
-          <p>Each season, one centrepiece — carved from a single reclaimed timber block. Once sold, it&apos;s never restocked. Here are the editions that came before.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Archive'}</span>
+          <h1>{hero.title || 'Editions that found their homes.'}</h1>
+          <p>{hero.subtitle || "Each season, one centrepiece \u2014 carved from a single reclaimed timber block. Once sold, it\u2019s never restocked. Here are the editions that came before."}</p>
         </div>
       </section>
+      )}
 
       <section className="past-collection">
         <div className="container">

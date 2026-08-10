@@ -1,4 +1,5 @@
 import TradeClient from './TradeClient';
+import { getPageSections } from '@/lib/cms'
 
 export const metadata = {
   title: 'Trade & Wholesale',
@@ -8,5 +9,10 @@ export const metadata = {
 };
 
 export default function TradePage() {
-  return <TradeClient />;
+  let sections = [];
+  try { sections = getPageSections('trade'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = Array.from(new Set(sections.map(s => s.sectionKey)));
+  return <TradeClient cms={cms} cmsKeys={cmsKeys} />;
 }

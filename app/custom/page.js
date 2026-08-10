@@ -1,4 +1,5 @@
 import CustomClient from './CustomClient';
+import { getPageSections } from '@/lib/cms'
 
 export const metadata = {
   title: 'Custom Orders',
@@ -8,5 +9,10 @@ export const metadata = {
 };
 
 export default function CustomPage() {
-  return <CustomClient />;
+  let sections = [];
+  try { sections = getPageSections('custom'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = Array.from(new Set(sections.map(s => s.sectionKey)));
+  return <CustomClient cms={cms} cmsKeys={cmsKeys} />;
 }

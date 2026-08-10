@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
-import { upsertSection, VALID_SECTIONS } from '@/lib/cms';
+import { upsertSection, VALID_SECTIONS, VALID_PAGES } from '@/lib/cms';
 
 const MAX_LENGTHS = {
   title: 200,
@@ -43,6 +43,10 @@ export async function PUT(request, { params }) {
 
   if (!VALID_SECTIONS.includes(sectionKey)) {
     return NextResponse.json({ success: false, error: 'Invalid section key' }, { status: 400 });
+  }
+
+  if (!VALID_PAGES.includes(page)) {
+    return NextResponse.json({ success: false, error: 'Invalid page' }, { status: 400 });
   }
 
   let body;

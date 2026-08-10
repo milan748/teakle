@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-export default function CustomClient() {
+export default function CustomClient({ cms = {}, cmsKeys = [] }) {
   const formRef = useRef(null);
   const fileInputRef = useRef(null);
   const fileUploadAreaRef = useRef(null);
@@ -12,6 +12,10 @@ export default function CustomClient() {
   const [formErrors, setFormErrors] = useState({});
   const [formStatus, setFormStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hero = cms.hero || {};
+  const intro = cms.introduction || {};
+  const heroDisabled = cmsKeys.includes('hero') && !cms.hero;
+  const introDisabled = cmsKeys.includes('introduction') && !cms.introduction;
 
   useEffect(() => {
     const sizeRadios = document.querySelectorAll('input[name="size"]');
@@ -292,22 +296,27 @@ export default function CustomClient() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/5974327/pexels-photo-5974327.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A craftsman hand-shaping a wooden surface in the workshop." />
+        <img src={hero.image || "https://images.pexels.com/photos/5974327/pexels-photo-5974327.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman hand-shaping a wooden surface in the workshop." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Custom Orders</span>
-          <h1>Custom Wooden Creations</h1>
-          <p>Have a unique idea? Upload a reference image or describe your vision. Our artisans will review your request and get back to you with feasibility, pricing, and estimated completion time.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Custom Orders'}</span>
+          <h1>{hero.title || 'Custom Wooden Creations'}</h1>
+          <p>{hero.subtitle || "Have a unique idea? Upload a reference image or describe your vision. Our artisans will review your request and get back to you with feasibility, pricing, and estimated completion time."}</p>
         </div>
       </section>
+      )}
 
+      {!introDisabled && (
       <section className="custom-section">
         <div className="container custom-grid">
           <div className="custom-text">
-            <span className="eyebrow reveal">How It Works</span>
-            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>Every piece starts with a conversation.</h2>
-            <p className="reveal">Tell us what you have in mind — whether it&apos;s a sculpture, a piece of furniture, a religious idol, a nameplate, or a gift item. You don&apos;t need perfect dimensions or technical drawings. A photo, a sketch, or a few sentences is enough to start.</p>
-            <p className="reveal">Our artisans will review your idea and respond with what&apos;s possible, what wood and finish would work best, and a realistic price and timeline.</p>
+            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
+            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'Every piece starts with a conversation.'}</h2>
+            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
+              "Tell us what you have in mind \u2014 whether it\u2019s a sculpture, a piece of furniture, a religious idol, a nameplate, or a gift item. You don\u2019t need perfect dimensions or technical drawings. A photo, a sketch, or a few sentences is enough to start.",
+              "Our artisans will review your idea and respond with what\u2019s possible, what wood and finish would work best, and a realistic price and timeline."
+            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
 
             <div className="custom-list reveal">
               <div className="custom-list-item"><strong>Architects</strong> — custom wooden elements for residential and commercial projects.</div>
@@ -381,6 +390,7 @@ export default function CustomClient() {
           </form>
         </div>
       </section>
+      )}
     </>
   );
 }

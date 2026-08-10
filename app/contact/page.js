@@ -1,4 +1,5 @@
 import ContactForm from '../components/ContactForm';
+import { getPageSections } from '@/lib/cms'
 
 export const metadata = {
   title: 'Contact',
@@ -7,6 +8,16 @@ export const metadata = {
 };
 
 export default function ContactPage() {
+  let sections = [];
+  try { sections = getPageSections('contact'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
+
+  const hero = cms.hero || {};
+  const intro = cms.introduction || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
+  const introDisabled = cmsKeys.has('introduction') && !cms.introduction;
   return (
     <>
       <style>{`
@@ -104,15 +115,18 @@ export default function ContactPage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A hand rubbing oil finish into a wooden surface." />
+        <img src={hero.image || "https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A hand rubbing oil finish into a wooden surface." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Contact</span>
-          <h1>Questions before you order are always welcome.</h1>
-          <p>Whether it&apos;s about a piece, timelines, or something you&apos;re not sure exists yet — write to us directly.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Contact'}</span>
+          <h1>{hero.title || 'Questions before you order are always welcome.'}</h1>
+          <p>{hero.subtitle || "Whether it\u2019s about a piece, timelines, or something you\u2019re not sure exists yet \u2014 write to us directly."}</p>
         </div>
       </section>
+      )}
 
+      {!introDisabled && (
       <section className="contact-section">
         <div className="container contact-grid">
           <div className="contact-details">
@@ -122,7 +136,7 @@ export default function ContactPage() {
             </div>
             <div className="contact-info-block reveal">
               <h3>Response Time</h3>
-              <p>Within two working days</p>
+              <p>{intro.subtitle || 'Within two working days'}</p>
             </div>
             <div className="contact-info-block reveal">
               <h3>Workshop</h3>
@@ -137,6 +151,7 @@ export default function ContactPage() {
           <ContactForm />
         </div>
       </section>
+      )}
     </>
   );
 }

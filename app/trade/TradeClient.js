@@ -2,9 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 
-export default function TradeClient() {
+export default function TradeClient({ cms = {}, cmsKeys = [] }) {
   const formRef = useRef(null);
   const statusRef = useRef(null);
+  const hero = cms.hero || {};
+  const intro = cms.introduction || {};
+  const heroDisabled = cmsKeys.includes('hero') && !cms.hero;
+  const introDisabled = cmsKeys.includes('introduction') && !cms.introduction;
 
   useEffect(() => {
     const form = formRef.current;
@@ -111,22 +115,27 @@ export default function TradeClient() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/12278576/pexels-photo-12278576.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Stacked timber boards drying in a workshop." />
+        <img src={hero.image || "https://images.pexels.com/photos/12278576/pexels-photo-12278576.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="Stacked timber boards drying in a workshop." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Trade &amp; Bulk Inquiries</span>
-          <h1>For projects that need more than one piece.</h1>
-          <p>If you&apos;re furnishing a project — a home, a studio, a hospitality space — and need multiple pieces or something built to a specific size, tell us about it below.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Trade & Bulk Inquiries'}</span>
+          <h1>{hero.title || 'For projects that need more than one piece.'}</h1>
+          <p>{hero.subtitle || "If you\u2019re furnishing a project \u2014 a home, a studio, a hospitality space \u2014 and need multiple pieces or something built to a specific size, tell us about it below."}</p>
         </div>
       </section>
+      )}
 
+      {!introDisabled && (
       <section className="trade-section">
         <div className="container trade-grid">
           <div className="trade-text">
-            <span className="eyebrow reveal">How It Works</span>
-            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>A short conversation before anything is quoted.</h2>
-            <p className="reveal">Every custom or bulk piece starts with understanding the space it&apos;s going into — dimensions, use, and timeline. We&apos; reply with what&apos;s realistic before any commitment is made on either side.</p>
-            <p className="reveal">We take on a limited number of these projects at a time, since each one is still built by the same small team.</p>
+            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
+            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'A short conversation before anything is quoted.'}</h2>
+            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
+              "Every custom or bulk piece starts with understanding the space it\u2019s going into \u2014 dimensions, use, and timeline. We\u2019ll reply with what\u2019s realistic before any commitment is made on either side.",
+              'We take on a limited number of these projects at a time, since each one is still built by the same small team.'
+            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
             <div className="trade-list reveal">
               <div className="trade-list-item"><strong>Architects &amp; Interior Designers</strong> — custom sizing, finish matching, and trade-friendly timelines.</div>
               <div className="trade-list-item"><strong>Hospitality</strong> — consistent pieces across multiple units, built in batches.</div>
@@ -165,6 +174,7 @@ export default function TradeClient() {
           </form>
         </div>
       </section>
+      )}
     </>
   );
 }

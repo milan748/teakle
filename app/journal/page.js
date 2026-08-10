@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { JOURNAL, getFeaturedArticle, getNonFeaturedArticles } from '../data/journal';
+import { getPageSections } from '@/lib/cms'
 
 export const metadata = {
   title: 'Journal',
@@ -11,6 +12,13 @@ export const metadata = {
 export default function JournalPage() {
   const FEATURED = getFeaturedArticle();
   const ARTICLES = getNonFeaturedArticles();
+  let sections = [];
+  try { sections = getPageSections('journal'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
+  const hero = cms.hero || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
 
   return (
     <>
@@ -130,14 +138,16 @@ export default function JournalPage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Hand tools arranged on a workshop bench." />
+        <img src={hero.image || "https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="Hand tools arranged on a workshop bench." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Journal</span>
-          <h1>Stories, wood facts, and how to care for your piece.</h1>
-          <p>Writing on materials, grain details, finishing techniques, and the seasonal routines that keep solid timber in good condition for decades.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Journal'}</span>
+          <h1>{hero.title || 'Stories, wood facts, and how to care for your piece.'}</h1>
+          <p>{hero.subtitle || 'Writing on materials, grain details, finishing techniques, and the seasonal routines that keep solid timber in good condition for decades.'}</p>
         </div>
       </section>
+      )}
 
       <section className="journal-featured">
         <div className="container">
