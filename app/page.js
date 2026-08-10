@@ -1,4 +1,5 @@
 import HomeClient from './HomeClient';
+import { getPageSections } from '@/lib/cms';
 
 export const metadata = {
   title: 'Handcrafted Teak Furniture',
@@ -8,5 +9,19 @@ export const metadata = {
 };
 
 export default function HomePage() {
-  return <HomeClient />;
+  let sections = [];
+  try {
+    sections = getPageSections('home');
+  } catch {
+    // CMS unavailable — use hardcoded fallback
+  }
+
+  const cms = {};
+  for (const s of sections) {
+    if (s.enabled) {
+      cms[s.sectionKey] = s;
+    }
+  }
+
+  return <HomeClient cms={cms} />;
 }

@@ -3,9 +3,16 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-export default function HomeClient() {
+export default function HomeClient({ cms = {} }) {
   const heroRef = useRef(null)
   const carouselTrackRef = useRef(null)
+
+  const hero = cms.hero || {}
+  const philosophy = cms.philosophy || {}
+  const signature = cms.signature || {}
+  const craftsmanship = cms.craftsmanship || {}
+  const workshopStory = cms['workshop-story'] || {}
+  const processStory = cms['process-story'] || {}
 
   /* ---- Hero parallax on scroll ---- */
   useEffect(() => {
@@ -743,13 +750,16 @@ export default function HomeClient() {
           <picture>
             <source srcSet="/assets/hero-luxury-entryway.avif" type="image/avif" />
             <source srcSet="/assets/hero-luxury-entryway.webp" type="image/webp" />
-            <img className="v2-hero-img" src="/assets/hero-luxury-entryway.png" alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" />
+            <img className="v2-hero-img" src={hero.image || '/assets/hero-luxury-entryway.png'} alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" />
           </picture>
           <div className="v2-hero-content">
-            <span className="eyebrow eyebrow-light v2-hero-eyebrow">An Indian Workshop</span>
-            <h1>Where wood becomes<br />timeless art.</h1>
+            <span className="eyebrow eyebrow-light v2-hero-eyebrow">{hero.eyebrow || 'An Indian Workshop'}</span>
+            <h1>{(hero.title || 'Where wood becomes<br />timeless art.').split('<br').length > 1
+              ? <>{hero.title?.split('<br />')[0] || 'Where wood becomes'}<br />{hero.title?.split('<br />')[1] || 'timeless art.'}</>
+              : hero.title || <>{'Where wood becomes'}<br />{'timeless art.'}</>
+            }</h1>
             <div className="v2-hero-actions">
-              <Link href="/gallery" className="btn-primary">View the Collection</Link>
+              <Link href={hero.buttonUrl || '/gallery'} className="btn-primary">{hero.buttonLabel || 'View the Collection'}</Link>
               <Link href="/studio" className="link-quiet">Our Studio</Link>
             </div>
           </div>
@@ -786,10 +796,11 @@ export default function HomeClient() {
         {/* 3. Philosophy */}
         <section className="v2-philosophy" id="philosophy">
           <div className="v2-philosophy-inner">
-            <span className="eyebrow reveal">Why We Exist</span>
-            <h2 className="reveal">We make objects that are not finished when they leave the workshop.</h2>
-            <p className="reveal">A piece of solid teak keeps changing long after it reaches your home &mdash; the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.</p>
-            <p className="reveal">This is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.</p>
+            <span className="eyebrow reveal">{philosophy.eyebrow || 'Why We Exist'}</span>
+            <h2 className="reveal">{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
+            {(philosophy.body || 'A piece of solid teak keeps changing long after it reaches your home \u2014 the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.\n\nThis is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.').split('\n\n').map((p, i) => (
+              <p key={i} className="reveal">{p}</p>
+            ))}
           </div>
         </section>
 
@@ -797,15 +808,15 @@ export default function HomeClient() {
         <section className="v2-signature">
           <div className="v2-sig-grid">
             <div className="v2-sig-img reveal">
-              <img src="https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="A single hand-shaped wooden stool, photographed on a plain neutral floor." loading="lazy" width="1200" height="800" />
+              <img src={signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="A single hand-shaped wooden stool, photographed on a plain neutral floor." loading="lazy" width="1200" height="800" />
             </div>
             <div className="v2-sig-text">
               <span className="v2-sig-tag reveal">{'Piece N\u00B0 04 \u2014 This Season'}</span>
-              <span className="eyebrow eyebrow-light reveal">The Hero Edition</span>
-              <h2 className="reveal">This season&apos;s hero.</h2>
-              <p className="reveal">One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted &mdash; once it&apos;s gone, the next edition begins.</p>
+              <span className="eyebrow eyebrow-light reveal">{signature.eyebrow || 'The Hero Edition'}</span>
+              <h2 className="reveal">{signature.title || 'This season\u2019s hero.'}</h2>
+              <p className="reveal">{signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
               <div className="v2-sig-actions reveal">
-                <Link href="/shop/anchor-table" className="btn-primary">View This Piece</Link>
+                <Link href={signature.buttonUrl || '/shop/anchor-table'} className="btn-primary">{signature.buttonLabel || 'View This Piece'}</Link>
                 <Link href="/journal" className="link-quiet">Watch It Being Made</Link>
               </div>
               <p className="v2-sig-past reveal">Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
@@ -817,14 +828,15 @@ export default function HomeClient() {
         <section className="v2-craft">
           <div className="v2-craft-grid">
             <div className="v2-craft-img reveal">
-              <img src="https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Close-up of hand-cut joinery on a solid teak furniture piece." loading="lazy" />
+              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." loading="lazy" />
             </div>
             <div className="v2-craft-text">
-              <span className="eyebrow reveal">Craftsmanship</span>
-              <h2 className="reveal">Every piece passes through one pair of hands, start to finish.</h2>
-              <p className="reveal">We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it &mdash; rushing this step is the most common way a piece fails early.</p>
-              <p className="reveal">Joints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece&apos;s life, not sealed under lacquer that traps moisture and cracks.</p>
-              <Link href="/studio" className="link-quiet reveal">Visit the Studio</Link>
+              <span className="eyebrow reveal">{craftsmanship.eyebrow || 'Craftsmanship'}</span>
+              <h2 className="reveal">{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
+              {(craftsmanship.body || 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.').split('\n\n').map((p, i) => (
+                <p key={i} className="reveal">{p}</p>
+              ))}
+              <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet reveal">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
             </div>
           </div>
         </section>
@@ -970,23 +982,23 @@ export default function HomeClient() {
 
         {/* 8. Story Block — Workshop */}
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src="https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A craftsman's weathered hands sanding a wooden surface in the workshop." loading="lazy" />
+          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." loading="lazy" />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal">The Workshop</span>
-            <h2 className="reveal">A family workshop, unchanged in method for three generations.</h2>
-            <p className="reveal">The tools are old. The hands are patient. Nothing here is made to a deadline &mdash; a piece is finished when it is ready, and not before.</p>
-            <Link href="/studio" className="link-quiet reveal">Read About Our Process</Link>
+            <span className="eyebrow eyebrow-light reveal">{workshopStory.eyebrow || 'The Workshop'}</span>
+            <h2 className="reveal">{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
+            <p className="reveal">{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
+            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet reveal">{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
           </div>
         </section>
 
         {/* 9. Story Block — Watch It Made */}
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="Timber being shaped by hand, filmed for a process video." loading="lazy" />
+          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." loading="lazy" />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal">Watch It Made</span>
-            <h2 className="reveal">Every piece is documented from timber to finish.</h2>
-            <p className="reveal">We don&apos;t ask you to imagine the process &mdash; we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you&apos;re buying before you buy it.</p>
-            <Link href="/journal" className="link-quiet reveal">Watch the Process</Link>
+            <span className="eyebrow eyebrow-light reveal">{processStory.eyebrow || 'Watch It Made'}</span>
+            <h2 className="reveal">{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
+            <p className="reveal">{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
+            <Link href={processStory.buttonUrl || '/journal'} className="link-quiet reveal">{processStory.buttonLabel || 'Watch the Process'}</Link>
           </div>
         </section>
 

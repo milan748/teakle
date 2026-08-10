@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import HomepageEditor from './HomepageEditor';
 
 export default function AdminDashboard({ admin }) {
   const [loggingOut, setLoggingOut] = useState(false);
@@ -23,80 +24,70 @@ export default function AdminDashboard({ admin }) {
       padding: '40px 20px',
     }}>
       <div style={{
-        maxWidth: '600px',
+        maxWidth: '700px',
         margin: '0 auto',
         background: 'white',
         borderRadius: '8px',
         padding: '32px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
       }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '8px' }}>
-          Teakle Admin
-        </h1>
-        <p style={{ color: '#666', marginBottom: '24px' }}>
-          Admin Dashboard
-        </p>
-
-        <div style={{
-          background: '#f8f9fa',
-          borderRadius: '6px',
-          padding: '16px',
-          marginBottom: '24px',
-        }}>
-          <p style={{ margin: '0 0 8px 0' }}>
-            <strong>Email:</strong> {admin.email}
-          </p>
-          <p style={{ margin: '0 0 8px 0' }}>
-            <strong>Role:</strong> {admin.role}
-          </p>
-          <p style={{ margin: '0', color: '#28a745' }}>
-            <strong>Status:</strong> Authenticated
-          </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <div>
+            <h1 style={{ fontSize: '24px', fontWeight: 600, marginBottom: '4px' }}>
+              Teakle Admin
+            </h1>
+            <p style={{ color: '#666', margin: 0, fontSize: '14px' }}>
+              {admin.email} &middot; {admin.role}
+            </p>
+          </div>
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            style={{
+              background: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '8px 16px',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: loggingOut ? 'not-allowed' : 'pointer',
+              opacity: loggingOut ? 0.7 : 1,
+            }}
+          >
+            {loggingOut ? 'Logging out...' : 'Logout'}
+          </button>
         </div>
 
-        <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '12px' }}>
-          Backend Sections
-        </h2>
-        <ul style={{
-          listStyle: 'none',
-          padding: 0,
-          margin: '0 0 24px 0',
-          color: '#666',
-        }}>
-          <li style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
-            Custom Orders
-          </li>
-          <li style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
-            Contact Submissions
-          </li>
-          <li style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
-            Trade Enquiries
-          </li>
-          <li style={{ padding: '8px 0', borderBottom: '1px solid #eee' }}>
-            Newsletter Subscribers
-          </li>
-          <li style={{ padding: '8px 0', color: '#999' }}>
-            Content Management <span style={{ fontSize: '12px' }}>(coming soon)</span>
-          </li>
-        </ul>
+        <div style={{ borderTop: '1px solid #eee', paddingTop: '24px' }}>
+          <HomepageEditor />
+        </div>
 
-        <button
-          onClick={handleLogout}
-          disabled={loggingOut}
-          style={{
-            background: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            padding: '10px 20px',
+        <div style={{ borderTop: '1px solid #eee', paddingTop: '20px', marginTop: '24px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '12px' }}>
+            Backend Sections
+          </h2>
+          <ul style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: 0,
+            color: '#666',
             fontSize: '14px',
-            fontWeight: 500,
-            cursor: loggingOut ? 'not-allowed' : 'pointer',
-            opacity: loggingOut ? 0.7 : 1,
-          }}
-        >
-          {loggingOut ? 'Logging out...' : 'Logout'}
-        </button>
+          }}>
+            <li style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
+              Custom Orders
+            </li>
+            <li style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
+              Contact Submissions
+            </li>
+            <li style={{ padding: '6px 0', borderBottom: '1px solid #f0f0f0' }}>
+              Trade Enquiries
+            </li>
+            <li style={{ padding: '6px 0' }}>
+              Newsletter Subscribers
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
