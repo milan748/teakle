@@ -17,11 +17,13 @@ export default function HomePage() {
   }
 
   const cms = {};
+  const cmsKeys = new Set();
   for (const s of sections) {
+    cmsKeys.add(s.sectionKey);
     if (s.enabled) {
       cms[s.sectionKey] = s;
     }
   }
 
-  return <HomeClient cms={cms} />;
+  return <HomeClient cms={cms} cmsKeys={cmsKeys} />;
 }

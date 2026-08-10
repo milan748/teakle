@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-export default function HomeClient({ cms = {} }) {
+export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
   const heroRef = useRef(null)
   const carouselTrackRef = useRef(null)
 
@@ -13,6 +13,13 @@ export default function HomeClient({ cms = {} }) {
   const craftsmanship = cms.craftsmanship || {}
   const workshopStory = cms['workshop-story'] || {}
   const processStory = cms['process-story'] || {}
+
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero
+  const philosophyDisabled = cmsKeys.has('philosophy') && !cms.philosophy
+  const signatureDisabled = cmsKeys.has('signature') && !cms.signature
+  const craftsmanshipDisabled = cmsKeys.has('craftsmanship') && !cms.craftsmanship
+  const workshopDisabled = cmsKeys.has('workshop-story') && !cms['workshop-story']
+  const processDisabled = cmsKeys.has('process-story') && !cms['process-story']
 
   /* ---- Hero parallax on scroll ---- */
   useEffect(() => {
@@ -746,6 +753,7 @@ export default function HomeClient({ cms = {} }) {
       <main id="main-content">
 
         {/* 1. Hero */}
+        {!heroDisabled && (
         <section className="v2-hero" ref={heroRef}>
           <picture>
             <source srcSet="/assets/hero-luxury-entryway.avif" type="image/avif" />
@@ -768,6 +776,7 @@ export default function HomeClient({ cms = {} }) {
             <span className="v2-scroll-line"></span>
           </a>
         </section>
+        )}
 
         {/* 2. Trust Bar */}
         <section className="v2-trust">
@@ -794,6 +803,7 @@ export default function HomeClient({ cms = {} }) {
         </section>
 
         {/* 3. Philosophy */}
+        {!philosophyDisabled && (
         <section className="v2-philosophy" id="philosophy">
           <div className="v2-philosophy-inner">
             <span className="eyebrow reveal">{philosophy.eyebrow || 'Why We Exist'}</span>
@@ -803,8 +813,10 @@ export default function HomeClient({ cms = {} }) {
             ))}
           </div>
         </section>
+        )}
 
         {/* 4. Signature Collection */}
+        {!signatureDisabled && (
         <section className="v2-signature">
           <div className="v2-sig-grid">
             <div className="v2-sig-img reveal">
@@ -823,8 +835,10 @@ export default function HomeClient({ cms = {} }) {
             </div>
           </div>
         </section>
+        )}
 
         {/* 5. Craftsmanship */}
+        {!craftsmanshipDisabled && (
         <section className="v2-craft">
           <div className="v2-craft-grid">
             <div className="v2-craft-img reveal">
@@ -840,6 +854,7 @@ export default function HomeClient({ cms = {} }) {
             </div>
           </div>
         </section>
+        )}
 
         {/* 6. Collection Carousel */}
         <section className="v2-carousel">
@@ -981,6 +996,7 @@ export default function HomeClient({ cms = {} }) {
         </section>
 
         {/* 8. Story Block — Workshop */}
+        {!workshopDisabled && (
         <section className="v2-lifestyle">
           <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." loading="lazy" />
           <div className="v2-lifestyle-content">
@@ -990,8 +1006,10 @@ export default function HomeClient({ cms = {} }) {
             <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet reveal">{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
           </div>
         </section>
+        )}
 
         {/* 9. Story Block — Watch It Made */}
+        {!processDisabled && (
         <section className="v2-lifestyle">
           <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." loading="lazy" />
           <div className="v2-lifestyle-content">
@@ -1001,6 +1019,7 @@ export default function HomeClient({ cms = {} }) {
             <Link href={processStory.buttonUrl || '/journal'} className="link-quiet reveal">{processStory.buttonLabel || 'Watch the Process'}</Link>
           </div>
         </section>
+        )}
 
       </main>
     </>

@@ -11,27 +11,28 @@ const SECTION_LABELS = {
   'process-story': 'Process Story',
 };
 
-const SECTION_FIELDS = {
-  hero: ['eyebrow', 'title', 'buttonLabel', 'buttonUrl', 'image'],
-  philosophy: ['eyebrow', 'title', 'body'],
-  signature: ['eyebrow', 'title', 'body', 'buttonLabel', 'buttonUrl', 'image'],
-  craftsmanship: ['eyebrow', 'title', 'body', 'buttonLabel', 'buttonUrl', 'image'],
-  'workshop-story': ['eyebrow', 'title', 'body', 'buttonLabel', 'buttonUrl', 'image'],
-  'process-story': ['eyebrow', 'title', 'body', 'buttonLabel', 'buttonUrl', 'image'],
-};
+const ALL_FIELDS = [
+  'eyebrow', 'title', 'subtitle', 'body',
+  'image', 'mobileImage',
+  'buttonLabel', 'buttonUrl',
+];
 
 const FIELD_LABELS = {
   eyebrow: 'Eyebrow',
   title: 'Title',
   subtitle: 'Subtitle',
   body: 'Body',
-  image: 'Image URL',
+  image: 'Desktop Image URL',
   mobileImage: 'Mobile Image URL',
   buttonLabel: 'Button Label',
   buttonUrl: 'Button URL',
-  sortOrder: 'Sort Order',
-  enabled: 'Enabled',
 };
+
+function getStatus(section) {
+  if (!section) return { label: 'Using fallback', color: '#6c757d' };
+  if (section.enabled) return { label: 'Published', color: '#28a745' };
+  return { label: 'Disabled', color: '#dc3545' };
+}
 
 export default function HomepageEditor({ page = 'home' }) {
   const [sections, setSections] = useState([]);
@@ -71,8 +72,7 @@ export default function HomepageEditor({ page = 'home' }) {
       mobileImage: existing?.mobileImage || '',
       buttonLabel: existing?.buttonLabel || '',
       buttonUrl: existing?.buttonUrl || '',
-      sortOrder: existing?.sortOrder || 0,
-      enabled: existing?.enabled === 1,
+      enabled: existing ? existing.enabled === 1 : true,
     });
     setMessage('');
   }
@@ -151,16 +151,27 @@ export default function HomepageEditor({ page = 'home' }) {
             </a>
           </div>
 
-          {(SECTION_FIELDS[editing] || []).map(field => (
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={form.enabled}
+                onChange={e => setForm(f => ({ ...f, enabled: e.target.checked }))}
+              />
+              <span style={{ fontSize: '14px', fontWeight: 500 }}>Enabled</span>
+            </label>
+          </div>
+
+          {ALL_FIELDS.map(field => (
             <div key={field} style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#333' }}>
                 {FIELD_LABELS[field]}
               </label>
-              {field === 'body' ? (
+              {field === 'body' || field === 'subtitle' ? (
                 <textarea
                   value={form[field] || ''}
                   onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
-                  rows={6}
+                  rows={field === 'body' ? 6 : 3}
                   style={{
                     width: '100%',
                     padding: '8px 10px',
@@ -170,28 +181,6 @@ export default function HomepageEditor({ page = 'home' }) {
                     fontFamily: 'inherit',
                     resize: 'vertical',
                     boxSizing: 'border-box',
-                  }}
-                />
-              ) : field === 'enabled' ? (
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={form.enabled}
-                    onChange={e => setForm(f => ({ ...f, enabled: e.target.checked }))}
-                  />
-                  <span style={{ fontSize: '14px' }}>Enabled</span>
-                </label>
-              ) : field === 'sortOrder' ? (
-                <input
-                  type="number"
-                  value={form.sortOrder || 0}
-                  onChange={e => setForm(f => ({ ...f, sortOrder: parseInt(e.target.value) || 0 }))}
-                  style={{
-                    width: '100px',
-                    padding: '8px 10px',
-                    border: '1px solid #ddd',
-                    borderRadius: '4px',
-                    fontSize: '14px',
                   }}
                 />
               ) : (
@@ -227,7 +216,7 @@ export default function HomepageEditor({ page = 'home' }) {
                 opacity: saving ? 0.7 : 1,
               }}
             >
-              {saving ? 'Saving...' : 'Save'}
+              {saving ? 'Saving...' : 'Save Changes'}
             </button>
             <button
               onClick={cancelEdit}
@@ -263,6 +252,7 @@ export default function HomepageEditor({ page = 'home' }) {
 
           {Object.entries(SECTION_LABELS).map(([key, label]) => {
             const section = sections.find(s => s.sectionKey === key);
+            const status = getStatus(section);
             return (
               <div
                 key={key}
@@ -274,13 +264,18 @@ export default function HomepageEditor({ page = 'home' }) {
                   borderBottom: '1px solid #eee',
                 }}
               >
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>{label}</span>
-                  {section && (
-                    <span style={{ fontSize: '12px', color: '#999', marginLeft: '8px' }}>
-                      {section.enabled ? 'Active' : 'Disabled'}
-                    </span>
-                  )}
+                  <span style={{
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    color: status.color,
+                    background: status.color + '15',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                  }}>
+                    {status.label}
+                  </span>
                 </div>
                 <button
                   onClick={() => startEdit(key)}
