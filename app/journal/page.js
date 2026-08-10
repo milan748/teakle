@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { JOURNAL, getFeaturedArticle, getNonFeaturedArticles } from '../data/journal';
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Journal',
@@ -13,7 +15,7 @@ export default function JournalPage() {
   const FEATURED = getFeaturedArticle();
   const ARTICLES = getNonFeaturedArticles();
   let sections = [];
-  try { sections = getPageSections('journal'); } catch {}
+  try { sections = getPublishedPageSections('journal'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));

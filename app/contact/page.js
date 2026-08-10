@@ -1,5 +1,7 @@
 import ContactForm from '../components/ContactForm';
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Contact',
@@ -9,7 +11,7 @@ export const metadata = {
 
 export default function ContactPage() {
   let sections = [];
-  try { sections = getPageSections('contact'); } catch {}
+  try { sections = getPublishedPageSections('contact'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));

@@ -21,9 +21,17 @@ const FIELD_LABELS = {
 };
 
 function getStatus(section) {
-  if (!section) return { label: 'Using fallback', color: '#6c757d' };
-  if (section.enabled) return { label: 'Published', color: '#28a745' };
-  return { label: 'Disabled', color: '#dc3545' };
+  if (!section) return { label: 'Using fallback', color: '#6c757d', dot: '#6c757d' };
+  const hasDraft = section.status === 'draft';
+  if (hasDraft && section.enabled) return { label: 'Published + draft', color: '#e67e22', dot: '#e67e22' };
+  if (hasDraft && !section.enabled) return { label: 'Draft changes', color: '#e67e22', dot: '#e67e22' };
+  if (section.enabled) return { label: 'Published', color: '#28a745', dot: '#28a745' };
+  return { label: 'Disabled', color: '#dc3545', dot: '#dc3545' };
+}
+
+function hasDraftChanges(section) {
+  if (!section) return false;
+  return section.status === 'draft';
 }
 
 export default function PageEditor({ page, sectionLabels, backLabel }) {
@@ -75,7 +83,7 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
     setMessage('');
   }
 
-  async function saveSection() {
+  async function saveDraft() {
     setSaving(true);
     setMessage('');
     try {
@@ -95,14 +103,85 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
           }
           return [...prev, data.data];
         });
-        setEditing(null);
-        setForm({});
-        setMessage('Section saved successfully');
+        setMessage('Draft saved.');
       } else {
         setMessage(data.error || 'Failed to save');
       }
     } catch {
-      setMessage('Failed to save section');
+      setMessage('Failed to save draft');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function publish() {
+    setSaving(true);
+    setMessage('');
+    try {
+      const res = await fetch(`/api/admin/content/${page}/${editing}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'publish' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSections(prev => {
+          const idx = prev.findIndex(s => s.sectionKey === editing);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = data.data;
+            return next;
+          }
+          return [...prev, data.data];
+        });
+        setMessage('Published successfully.');
+      } else {
+        setMessage(data.error || 'Failed to publish');
+      }
+    } catch {
+      setMessage('Failed to publish');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function discardDraft() {
+    setSaving(true);
+    setMessage('');
+    try {
+      const res = await fetch(`/api/admin/content/${page}/${editing}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'discard' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSections(prev => {
+          const idx = prev.findIndex(s => s.sectionKey === editing);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = data.data;
+            return next;
+          }
+          return [...prev, data.data];
+        });
+        setForm({
+          eyebrow: data.data.eyebrow || '',
+          title: data.data.title || '',
+          subtitle: data.data.subtitle || '',
+          body: data.data.body || '',
+          image: data.data.image || '',
+          mobileImage: data.data.mobileImage || '',
+          buttonLabel: data.data.buttonLabel || '',
+          buttonUrl: data.data.buttonUrl || '',
+          enabled: data.data.enabled === 1,
+        });
+        setMessage('Draft discarded.');
+      } else {
+        setMessage(data.error || 'Failed to discard');
+      }
+    } catch {
+      setMessage('Failed to discard draft');
     } finally {
       setSaving(false);
     }
@@ -119,8 +198,8 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
           padding: '12px',
           borderRadius: '6px',
           marginBottom: '16px',
-          background: message.includes('success') ? '#d4edda' : '#f8d7da',
-          color: message.includes('success') ? '#155724' : '#721c24',
+          background: message.includes('success') || message.includes('saved') || message.includes('discarded') ? '#d4edda' : '#f8d7da',
+          color: message.includes('success') || message.includes('saved') || message.includes('discarded') ? '#155724' : '#721c24',
           fontSize: '14px',
         }}>
           {message}
@@ -150,9 +229,18 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
               <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>
                 {sectionLabels[editing]}
               </h3>
+              {(() => {
+                const section = sections.find(s => s.sectionKey === editing);
+                const status = getStatus(section);
+                return (
+                  <span style={{ fontSize: '11px', fontWeight: 500, color: status.color, background: status.color + '15', padding: '2px 8px', borderRadius: '10px' }}>
+                    {status.label}
+                  </span>
+                );
+              })()}
             </div>
-            <a href="/" target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', color: '#0070f3', textDecoration: 'none' }}>
-              Preview
+            <a href={`/${page === 'home' ? '' : page}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', color: '#0070f3', textDecoration: 'none' }}>
+              View live
             </a>
           </div>
 
@@ -212,10 +300,18 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
             </div>
           ))}
 
-          <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-            <button onClick={saveSection} disabled={saving} style={{ background: '#1a1a1a', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 20px', fontSize: '14px', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
-              {saving ? 'Saving...' : 'Save Changes'}
+          <div style={{ display: 'flex', gap: '8px', marginTop: '20px', flexWrap: 'wrap' }}>
+            <button onClick={saveDraft} disabled={saving} style={{ background: '#1a1a1a', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 20px', fontSize: '14px', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              {saving ? 'Saving...' : 'Save Draft'}
             </button>
+            <button onClick={publish} disabled={saving} style={{ background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 20px', fontSize: '14px', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+              Publish
+            </button>
+            {hasDraftChanges(sections.find(s => s.sectionKey === editing)) && (
+              <button onClick={discardDraft} disabled={saving} style={{ background: '#fff', color: '#dc3545', border: '1px solid #dc3545', borderRadius: '4px', padding: '8px 20px', fontSize: '14px', cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.7 : 1 }}>
+                Discard Draft
+              </button>
+            )}
             <button onClick={cancelEdit} style={{ background: 'white', color: '#333', border: '1px solid #ddd', borderRadius: '4px', padding: '8px 20px', fontSize: '14px', cursor: 'pointer' }}>
               Cancel
             </button>
@@ -227,8 +323,8 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
             <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>
               {backLabel || page.charAt(0).toUpperCase() + page.slice(1)} Content
             </h3>
-            <a href={`/${page}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', color: '#0070f3', textDecoration: 'none' }}>
-              Preview
+            <a href={`/${page === 'home' ? '' : page}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '13px', color: '#0070f3', textDecoration: 'none' }}>
+              View live
             </a>
           </div>
 

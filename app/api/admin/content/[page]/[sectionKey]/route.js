@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
-import { upsertSection, VALID_SECTIONS, VALID_PAGES } from '@/lib/cms';
+import { saveDraftSection, publishSection, discardDraft, VALID_SECTIONS, VALID_PAGES } from '@/lib/cms';
 
 const MAX_LENGTHS = {
   title: 200,
@@ -31,6 +31,22 @@ function normalizeEnabled(value) {
   return undefined;
 }
 
+function validateBody(body) {
+  for (const [field, maxLen] of Object.entries(MAX_LENGTHS)) {
+    if (body[field] !== undefined && body[field] !== null && typeof body[field] === 'string') {
+      if (body[field].length > maxLen) {
+        return `${field} must be under ${maxLen} characters`;
+      }
+    }
+  }
+  if (body.image && !isSafeUrl(body.image)) return 'Invalid image URL';
+  if (body.mobileImage && !isSafeUrl(body.mobileImage)) return 'Invalid mobile image URL';
+  if (body.buttonUrl && !isSafeUrl(body.buttonUrl)) return 'Invalid button URL';
+  if (body.sortOrder !== undefined && (typeof body.sortOrder !== 'number' || body.sortOrder < 0)) return 'Invalid sort order';
+  return null;
+}
+
+// PUT — Save draft
 export async function PUT(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
@@ -56,37 +72,15 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
   }
 
-  for (const [field, maxLen] of Object.entries(MAX_LENGTHS)) {
-    if (body[field] !== undefined && body[field] !== null && typeof body[field] === 'string') {
-      if (body[field].length > maxLen) {
-        return NextResponse.json(
-          { success: false, error: `${field} must be under ${maxLen} characters` },
-          { status: 400 }
-        );
-      }
-    }
-  }
-
-  if (body.image && !isSafeUrl(body.image)) {
-    return NextResponse.json({ success: false, error: 'Invalid image URL' }, { status: 400 });
-  }
-
-  if (body.mobileImage && !isSafeUrl(body.mobileImage)) {
-    return NextResponse.json({ success: false, error: 'Invalid mobile image URL' }, { status: 400 });
-  }
-
-  if (body.buttonUrl && !isSafeUrl(body.buttonUrl)) {
-    return NextResponse.json({ success: false, error: 'Invalid button URL' }, { status: 400 });
-  }
-
-  if (body.sortOrder !== undefined && (typeof body.sortOrder !== 'number' || body.sortOrder < 0)) {
-    return NextResponse.json({ success: false, error: 'Invalid sort order' }, { status: 400 });
+  const validationError = validateBody(body);
+  if (validationError) {
+    return NextResponse.json({ success: false, error: validationError }, { status: 400 });
   }
 
   const enabled = normalizeEnabled(body.enabled);
 
   try {
-    const section = upsertSection(page, sectionKey, {
+    const section = saveDraftSection(page, sectionKey, {
       title: body.title,
       subtitle: body.subtitle,
       eyebrow: body.eyebrow,
@@ -102,6 +96,50 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ success: true, data: section });
   } catch (error) {
     console.error('CMS PUT error:', error);
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// POST — Publish or Discard
+export async function POST(request, { params }) {
+  const auth = await requireAdmin();
+  if (!auth.authorized) return auth.response;
+
+  const { page, sectionKey } = await params;
+
+  if (!page || !sectionKey) {
+    return NextResponse.json({ success: false, error: 'Invalid page or section' }, { status: 400 });
+  }
+
+  if (!VALID_SECTIONS.includes(sectionKey) || !VALID_PAGES.includes(page)) {
+    return NextResponse.json({ success: false, error: 'Invalid page or section' }, { status: 400 });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    body = {};
+  }
+
+  try {
+    let section;
+
+    if (body.action === 'publish') {
+      section = publishSection(page, sectionKey);
+    } else if (body.action === 'discard') {
+      section = discardDraft(page, sectionKey);
+    } else {
+      return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
+    }
+
+    if (!section) {
+      return NextResponse.json({ success: false, error: 'Section not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, data: section });
+  } catch (error) {
+    console.error('CMS POST error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

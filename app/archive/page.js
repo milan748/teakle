@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Archive',
@@ -9,7 +11,7 @@ export const metadata = {
 
 export default function ArchivePage() {
   let sections = [];
-  try { sections = getPageSections('archive'); } catch {}
+  try { sections = getPublishedPageSections('archive'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));

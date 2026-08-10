@@ -1,5 +1,7 @@
 import HomeClient from './HomeClient';
-import { getPageSections } from '@/lib/cms';
+import { getPublishedPageSections } from '@/lib/cms';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Handcrafted Teak Furniture',
@@ -11,7 +13,7 @@ export const metadata = {
 export default function HomePage() {
   let sections = [];
   try {
-    sections = getPageSections('home');
+    sections = getPublishedPageSections('home');
   } catch {
     // CMS unavailable — use hardcoded fallback
   }

@@ -1,5 +1,7 @@
 import CustomClient from './CustomClient';
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Custom Orders',
@@ -10,7 +12,7 @@ export const metadata = {
 
 export default function CustomPage() {
   let sections = [];
-  try { sections = getPageSections('custom'); } catch {}
+  try { sections = getPublishedPageSections('custom'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = Array.from(new Set(sections.map(s => s.sectionKey)));

@@ -1,5 +1,7 @@
 import StudioRoadmap from '../components/StudioRoadmap'
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Studio',
@@ -9,7 +11,7 @@ export const metadata = {
 
 export default function StudioPage() {
   let sections = [];
-  try { sections = getPageSections('studio'); } catch {}
+  try { sections = getPublishedPageSections('studio'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));

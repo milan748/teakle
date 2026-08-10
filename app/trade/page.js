@@ -1,5 +1,7 @@
 import TradeClient from './TradeClient';
-import { getPageSections } from '@/lib/cms'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Trade & Wholesale',
@@ -10,7 +12,7 @@ export const metadata = {
 
 export default function TradePage() {
   let sections = [];
-  try { sections = getPageSections('trade'); } catch {}
+  try { sections = getPublishedPageSections('trade'); } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = Array.from(new Set(sections.map(s => s.sectionKey)));
