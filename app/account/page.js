@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { customerAuth, customerOrders } from '@/lib/api';
+import { customerAuth, customerOrders, customerAddresses } from '@/lib/api';
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
@@ -44,6 +44,11 @@ export default function AccountPage() {
   const [selectedOrderDetail, setSelectedOrderDetail] = useState(null);
   const [orderDetailLoading, setOrderDetailLoading] = useState(false);
   const [cancellingOrder, setCancellingOrder] = useState(null);
+  const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [deactivating, setDeactivating] = useState(false);
 
   useEffect(() => {
     const t = window.Teakle;
@@ -58,7 +63,9 @@ export default function AccountPage() {
     setWishlist(t.getWishlist());
     setCart(t.getCart());
     try { setRecentlyViewed(JSON.parse(localStorage.getItem('teakle_recently_viewed') || '[]')); } catch { setRecentlyViewed([]); }
-    try { setAddresses(JSON.parse(localStorage.getItem('teakle_addresses') || '[]')); } catch { setAddresses([]); }
+    customerAddresses.list().then(result => {
+      if (result && result.addresses) setAddresses(result.addresses);
+    });
     try {
       const stored = JSON.parse(localStorage.getItem('teakle_notifications') || '[]');
       if (stored.length === 0) {
@@ -119,11 +126,6 @@ export default function AccountPage() {
     setCancellingOrder(null);
   }
 
-  function saveAddresses(addrs) {
-    setAddresses(addrs);
-    localStorage.setItem('teakle_addresses', JSON.stringify(addrs));
-  }
-
   function removeFromWishlist(id) {
     const t = window.Teakle;
     t.toggleWishlist({ id });
@@ -138,14 +140,16 @@ export default function AccountPage() {
     setCart(t.getCart());
   }
 
-  function saveProfile() {
-    const t = window.Teakle;
-    const u = t.getCurrentUser();
-    u.name = profileForm.name;
-    u.phone = profileForm.phone;
-    u.dob = profileForm.dob;
-    localStorage.setItem('teakle_currentUser', JSON.stringify(u));
-    setUser({ ...u });
+  async function saveProfile() {
+    const result = await customerAuth.updateProfile({ name: profileForm.name, phone: profileForm.phone });
+    if (result && result.ok) {
+      const t = window.Teakle;
+      const u = t.getCurrentUser();
+      u.name = result.customer.name;
+      u.phone = result.customer.phone;
+      localStorage.setItem('teakle_currentUser', JSON.stringify(u));
+      setUser({ ...u });
+    }
     setEditField(null);
   }
 
@@ -492,18 +496,37 @@ export default function AccountPage() {
   }
 
   function renderAddresses() {
-    function addAddress(e) {
+    async function addAddress(e) {
       e.preventDefault();
-      const addr = { ...newAddress, id: Date.now(), isDefault: addresses.length === 0 };
-      saveAddresses([...addresses, addr]);
+      const nameParts = [user.name?.split(' ')[0] || '', user.name?.split(' ').slice(1).join(' ') || ''].filter(Boolean).join(' ');
+      const result = await customerAddresses.create({
+        label: newAddress.label,
+        fullName: nameParts || user.name || '',
+        phone: newAddress.phone || user.phone || '',
+        addressLine1: newAddress.street,
+        city: newAddress.city,
+        state: newAddress.state,
+        postalCode: newAddress.pin,
+        country: 'India',
+        isDefault: addresses.length === 0,
+      });
+      if (result && result.ok) {
+        setAddresses(prev => [...prev, result.address]);
+      }
       setNewAddress({ label: '', street: '', city: '', state: '', pin: '', phone: '' });
       setShowAddressForm(false);
     }
-    function removeAddress(id) {
-      saveAddresses(addresses.filter(a => a.id !== id));
+    async function removeAddress(id) {
+      const result = await customerAddresses.remove(id);
+      if (result && result.ok) {
+        setAddresses(prev => prev.filter(a => a.id !== id));
+      }
     }
-    function setDefault(id) {
-      saveAddresses(addresses.map(a => ({ ...a, isDefault: a.id === id })));
+    async function setDefault(id) {
+      const result = await customerAddresses.update(id, { isDefault: true });
+      if (result && result.ok) {
+        setAddresses(prev => prev.map(a => ({ ...a, isDefault: a.id === id })));
+      }
     }
 
     return (
@@ -548,11 +571,10 @@ export default function AccountPage() {
             {addresses.map((a, i) => (
               <div className="acct-address-card" key={a.id} style={{ animationDelay: `${i * 80}ms` }}>
                 <div className="addr-header">
-                  <span className="addr-label">{a.label}</span>
-                  {a.isDefault && <span className="addr-default">Default</span>}
+                  <span className="addr-label">{a.label || 'Address'}</span>
+                  {a.isDefault ? <span className="addr-default">Default</span> : null}
                 </div>
-                <p className="addr-text">{a.street}<br/>{a.city}, {a.state} {a.pin}</p>
-                {a.phone && <p className="addr-phone">{a.phone}</p>}
+                <p className="addr-text">{a.fullName}{a.phone ? ` \u00B7 ${a.phone}` : ''}<br/>{a.addressLine1}{a.addressLine2 ? `, ${a.addressLine2}` : ''}<br/>{a.city}, {a.state} {a.postalCode}</p>
                 <div className="addr-actions">
                   {!a.isDefault && <button onClick={() => setDefault(a.id)} className="acct-link">Set Default</button>}
                   <button onClick={() => removeAddress(a.id)} className="acct-link acct-link-danger">Remove</button>
@@ -623,21 +645,6 @@ export default function AccountPage() {
             )}
           </div>
           <div className="detail-row">
-            <span className="detail-label">Password</span>
-            <div className="detail-value-row">
-              <span className="detail-value">{'•'.repeat(8)}</span>
-              <button onClick={() => setEditField(editField === 'password' ? null : 'password')} className="acct-link">Change</button>
-            </div>
-            {editField === 'password' && (
-              <div className="detail-edit detail-edit-stack">
-                <input type="password" placeholder="Current password" />
-                <input type="password" placeholder="New password" />
-                <input type="password" placeholder="Confirm new password" />
-                <button onClick={() => setEditField(null)} className="acct-btn-sm" disabled title="Requires Shopify customer accounts">Update Password</button>
-              </div>
-            )}
-          </div>
-          <div className="detail-row">
             <span className="detail-label">Newsletter</span>
             <label className="acct-toggle">
               <input type="checkbox" defaultChecked disabled title="Requires Shopify customer accounts" />
@@ -651,6 +658,46 @@ export default function AccountPage() {
   }
 
   function renderSecurity() {
+    async function handleChangePassword() {
+      setPasswordError('');
+      setPasswordSuccess('');
+      if (!passwordForm.current || !passwordForm.newPass || !passwordForm.confirm) {
+        setPasswordError('All fields are required');
+        return;
+      }
+      if (passwordForm.newPass.length < 8) {
+        setPasswordError('New password must be at least 8 characters');
+        return;
+      }
+      if (passwordForm.newPass !== passwordForm.confirm) {
+        setPasswordError('New passwords do not match');
+        return;
+      }
+      setChangingPassword(true);
+      const result = await customerAuth.changePassword(passwordForm.current, passwordForm.newPass);
+      if (result && result.ok) {
+        setPasswordSuccess('Password updated successfully');
+        setPasswordForm({ current: '', newPass: '', confirm: '' });
+      } else {
+        setPasswordError(result?.error || 'Failed to change password');
+      }
+      setChangingPassword(false);
+    }
+
+    async function handleDeactivate() {
+      const password = prompt('Enter your password to confirm account deactivation:');
+      if (!password) return;
+      setDeactivating(true);
+      const result = await customerAuth.deactivate(password);
+      if (result && result.ok) {
+        if (window.Teakle) window.Teakle.logout();
+        window.location.href = '/login';
+      } else {
+        alert(result?.error || 'Failed to deactivate account');
+      }
+      setDeactivating(false);
+    }
+
     return (
       <div className="acct-section" key="security">
         <h2 className="acct-section-title">Security</h2>
@@ -658,25 +705,37 @@ export default function AccountPage() {
           <div className="detail-row">
             <span className="detail-label">Password</span>
             <div className="detail-value-row">
-              <span className="detail-value">Last changed 30 days ago</span>
-              <button className="acct-link" disabled title="Requires Shopify customer accounts">Change</button>
+              <span className="detail-value">{'•'.repeat(8)}</span>
+              <button onClick={() => setEditField(editField === 'security-pass' ? null : 'security-pass')} className="acct-link">Change</button>
+            </div>
+            {editField === 'security-pass' && (
+              <div className="detail-edit detail-edit-stack">
+                {passwordError && <p style={{ color: '#c0392b', fontSize: '12px', margin: '0 0 8px' }}>{passwordError}</p>}
+                {passwordSuccess && <p style={{ color: '#2d8a56', fontSize: '12px', margin: '0 0 8px' }}>{passwordSuccess}</p>}
+                <input type="password" placeholder="Current password" value={passwordForm.current} onChange={e => setPasswordForm({ ...passwordForm, current: e.target.value })} />
+                <input type="password" placeholder="New password (min 8 characters)" value={passwordForm.newPass} onChange={e => setPasswordForm({ ...passwordForm, newPass: e.target.value })} />
+                <input type="password" placeholder="Confirm new password" value={passwordForm.confirm} onChange={e => setPasswordForm({ ...passwordForm, confirm: e.target.value })} />
+                <button onClick={handleChangePassword} className="acct-btn-sm" disabled={changingPassword}>
+                  {changingPassword ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Account Status</span>
+            <div className="detail-value-row">
+              <span className="detail-value">Active</span>
             </div>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Two-Factor Auth</span>
+            <span className="detail-label">Deactivate Account</span>
             <div className="detail-value-row">
-              <span className="detail-value">Not enabled</span>
-              <button className="acct-link" disabled title="Requires Shopify customer accounts">Enable</button>
+              <span className="detail-value" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Permanently deactivate your account</span>
+              <button onClick={handleDeactivate} className="acct-link acct-link-danger" disabled={deactivating}>
+                {deactivating ? 'Deactivating...' : 'Deactivate'}
+              </button>
             </div>
           </div>
-          <div className="detail-row">
-            <span className="detail-label">Active Sessions</span>
-            <div className="detail-value-row">
-              <span className="detail-value">1 active session</span>
-              <button className="acct-link acct-link-danger" disabled title="Requires Shopify customer accounts">Sign Out All</button>
-            </div>
-          </div>
-          <p style={{ marginTop: '1rem', fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7 }}>Security features require Shopify customer account integration.</p>
         </div>
       </div>
     );

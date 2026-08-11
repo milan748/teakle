@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { customerOrders } from '@/lib/api';
+import { customerOrders, customerAddresses } from '@/lib/api';
 
 const STEPS = ['Shipping', 'Review', 'Payment'];
 
@@ -27,6 +27,9 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderConfirmation, setOrderConfirmation] = useState(null);
   const [orderError, setOrderError] = useState(null);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [saveAddressChecked, setSaveAddressChecked] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -41,6 +44,11 @@ export default function CheckoutPage() {
         if (user) {
           setShipping(prev => ({ ...prev, firstName: user.name?.split(' ')[0] || '', lastName: user.name?.split(' ').slice(1).join(' ') || '', email: user.email || '', phone: user.phone || '' }));
         }
+        customerAddresses.list().then(result => {
+          if (result && result.addresses) {
+            setSavedAddresses(result.addresses);
+          }
+        });
       }
     }
   }, [router]);
@@ -62,6 +70,23 @@ export default function CheckoutPage() {
     setBilling(prev => ({ ...prev, [field]: val }));
     setErrors(prev => ({ ...prev, [field]: undefined }));
   }, []);
+
+  function selectSavedAddress(addr) {
+    setSelectedAddressId(addr.id);
+    setShipping({
+      firstName: addr.fullName?.split(' ')[0] || '',
+      lastName: addr.fullName?.split(' ').slice(1).join(' ') || '',
+      email: shipping.email,
+      phone: addr.phone || '',
+      address: addr.addressLine1 || '',
+      apartment: addr.addressLine2 || '',
+      city: addr.city || '',
+      state: addr.state || '',
+      pin: addr.postalCode || '',
+      country: addr.country || 'India',
+    });
+    setErrors({});
+  }
 
   function validateShipping() {
     const e = {};
@@ -100,6 +125,21 @@ export default function CheckoutPage() {
           billingSameAsShipping: sameBilling,
         });
         if (result && result.ok) {
+          if (saveAddressChecked && !selectedAddressId) {
+            const nameParts = [shipping.firstName, shipping.lastName].filter(Boolean).join(' ');
+            await customerAddresses.create({
+              label: 'Checkout',
+              fullName: nameParts,
+              phone: shipping.phone,
+              addressLine1: shipping.address,
+              addressLine2: shipping.apartment,
+              city: shipping.city,
+              state: shipping.state,
+              postalCode: shipping.pin,
+              country: shipping.country,
+              isDefault: false,
+            });
+          }
           cartItems.forEach(item => window.Teakle && window.Teakle.removeFromCart && window.Teakle.removeFromCart(item.id));
           setOrderConfirmation(result.order);
           setIsProcessing(false);
@@ -595,6 +635,40 @@ export default function CheckoutPage() {
                   {step === 0 && (
                     <div className="checkout-section">
                       <h2 className="checkout-section-title">Shipping Address</h2>
+
+                      {isLoggedIn && savedAddresses.length > 0 && (
+                        <div style={{ marginBottom: 'var(--space-sm)' }}>
+                          <p style={{ fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 500 }}>Saved Addresses</p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            {savedAddresses.map(addr => (
+                              <button
+                                key={addr.id}
+                                onClick={() => selectSavedAddress(addr)}
+                                style={{
+                                  display: 'flex', alignItems: 'flex-start', gap: '0.75rem',
+                                  padding: '0.75rem', background: selectedAddressId === addr.id ? 'rgba(167,134,89,0.06)' : 'var(--bg-primary)',
+                                  border: selectedAddressId === addr.id ? '1px solid var(--bronze)' : '1px solid var(--stone)',
+                                  cursor: 'pointer', textAlign: 'left', width: '100%', fontFamily: 'var(--font-body)',
+                                  transition: 'border-color 150ms var(--ease)',
+                                }}
+                              >
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <p style={{ margin: 0, fontSize: 'var(--text-caption)', fontWeight: 500 }}>
+                                    {addr.label || 'Address'} {addr.isDefault ? '(Default)' : ''}
+                                  </p>
+                                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.6rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                                    {addr.fullName}{addr.phone ? ` \u00B7 ${addr.phone}` : ''}<br/>
+                                    {addr.addressLine1}{addr.addressLine2 ? `, ${addr.addressLine2}` : ''}<br/>
+                                    {addr.city}, {addr.state} {addr.postalCode}
+                                  </p>
+                                </div>
+                                <span style={{ fontSize: '0.6rem', color: 'var(--bronze)', whiteSpace: 'nowrap', marginTop: '0.25rem' }}>Use</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="form-grid">
                         <div className="form-row">
                           <label style={labelStyle} htmlFor="ck-first">First Name *</label>
@@ -682,6 +756,13 @@ export default function CheckoutPage() {
                             </div>
                           </div>
                         </>
+                      )}
+
+                      {isLoggedIn && !selectedAddressId && (
+                        <label className="check-row">
+                          <input type="checkbox" checked={saveAddressChecked} onChange={e => setSaveAddressChecked(e.target.checked)} />
+                          <span>Save this address to my account</span>
+                        </label>
                       )}
 
                       <button className="checkout-next" onClick={nextStep}>
