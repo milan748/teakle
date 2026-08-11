@@ -159,18 +159,19 @@ export default function AccountPage() {
 
   if (!user) return null;
 
+  const statusLabels = { PENDING: 'Order Placed', CONFIRMED: 'Confirmed', PROCESSING: 'Being Crafted', COMPLETED: 'Completed', CANCELLED: 'Cancelled' };
   const displayOrders = serverOrders.length > 0
     ? serverOrders.map(o => ({
         id: o.orderNumber,
         product: o.items?.[0]?.productName || 'Order',
         image: o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300',
-        status: o.status === 'pending' ? 'Pending' : o.status === 'confirmed' ? 'Confirmed' : o.status === 'shipped' ? 'Shipped' : o.status === 'delivered' ? 'Delivered' : o.status === 'cancelled' ? 'Cancelled' : o.status,
-        delivery: o.status === 'delivered' ? 'Delivered' : 'Awaiting dispatch',
+        status: statusLabels[o.status] || o.status,
+        delivery: o.status === 'COMPLETED' ? 'Delivered' : 'Awaiting dispatch',
         price: `₹${(o.totalAmount || 0).toLocaleString('en-IN')}`,
       }))
     : [
         { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Confirmed', delivery: 'Awaiting dispatch', price: '₹1,85,000' },
-        { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Delivered', delivery: 'Delivered Jan 15', price: '₹4,200' },
+        { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Completed', delivery: 'Delivered Jan 15', price: '₹4,200' },
       ];
   const orders = displayOrders;
 
@@ -241,7 +242,7 @@ export default function AccountPage() {
                 <div className="order-info">
                   <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
                   <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
-                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{o.status}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{statusLabels[o.status] || o.status}</div>
                   <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">
@@ -268,23 +269,26 @@ export default function AccountPage() {
       const o = selectedOrderDetail;
       const canCancel = o.status === 'PENDING' || o.status === 'CONFIRMED';
       const statusColors = { PENDING: '#c28a2a', CONFIRMED: '#5a8dcc', PROCESSING: '#8b5cf6', COMPLETED: '#2d8a56', CANCELLED: '#c0392b' };
+      const statusLabels = { PENDING: 'Order Placed', CONFIRMED: 'Confirmed', PROCESSING: 'Being Crafted', COMPLETED: 'Completed', CANCELLED: 'Cancelled' };
+      const visibleNotes = (o.notes || []).filter(n => !n.isInternal);
+      const visibleHistory = o.history || [];
       return (
         <div className="acct-section" key="orders">
           <button onClick={() => setSelectedOrderDetail(null)} style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', cursor: 'pointer', fontSize: '13px', marginBottom: '16px', padding: 0 }}>
             &larr; Back to orders
           </button>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.orderNumber}</h2>
               <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>Placed on {new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
             </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: (statusColors[o.status] || '#666') + '18', color: statusColors[o.status] || '#666' }}>
-                {o.status}
+                {statusLabels[o.status] || o.status}
               </span>
               <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: o.paymentStatus === 'PAID' ? '#2d8a5618' : '#c0392b18', color: o.paymentStatus === 'PAID' ? '#2d8a56' : '#c0392b' }}>
-                {o.paymentStatus}
+                {o.paymentStatus === 'PAID' ? 'Paid' : 'Payment Pending'}
               </span>
             </div>
           </div>
@@ -313,7 +317,7 @@ export default function AccountPage() {
                 {item.productImage && <img src={item.productImage} alt={item.productNameSnapshot} style={{ width: '48px', height: '48px', objectFit: 'cover' }} />}
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{item.productNameSnapshot}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Qty: {item.quantity}{item.sku ? ` \u00B7 ${item.sku}` : ''}</div>
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{`\u20B9${(item.lineTotal || 0).toLocaleString('en-IN')}`}</div>
               </div>
@@ -341,6 +345,37 @@ export default function AccountPage() {
               <span>Total</span><span>{`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</span>
             </div>
           </div>
+
+          {visibleHistory.length > 0 && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 500 }}>Order Timeline</div>
+              <div style={{ position: 'relative', paddingLeft: '20px' }}>
+                {visibleHistory.map((h, i) => (
+                  <div key={i} style={{ position: 'relative', paddingBottom: i < visibleHistory.length - 1 ? '14px' : '0', borderLeft: i < visibleHistory.length - 1 ? '1px solid rgba(167,134,89,0.15)' : 'none', marginLeft: '0', paddingLeft: '16px' }}>
+                    <div style={{ position: 'absolute', left: '-4px', top: '2px', width: '7px', height: '7px', borderRadius: '50%', background: statusColors[h.newStatus] || 'var(--bronze)' }}></div>
+                    <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>
+                      {statusLabels[h.newStatus] || h.newStatus}
+                      {h.oldStatus && h.oldStatus !== h.newStatus && <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}> from {statusLabels[h.oldStatus] || h.oldStatus}</span>}
+                    </div>
+                    {h.note && <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{h.note}</div>}
+                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', opacity: 0.6, marginTop: '2px' }}>{new Date(h.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleNotes.length > 0 && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 500 }}>Notes</div>
+              {visibleNotes.map((n, i) => (
+                <div key={i} style={{ padding: '10px 12px', marginBottom: '8px', border: '1px solid rgba(167,134,89,0.08)', background: 'rgba(167,134,89,0.02)', fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px' }}>{n.author} \u00B7 {new Date(n.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                  {n.content}
+                </div>
+              ))}
+            </div>
+          )}
 
           {canCancel && (
             <button
@@ -376,7 +411,7 @@ export default function AccountPage() {
                 <div className="order-info">
                   <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
                   <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
-                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{o.status}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{statusLabels[o.status] || o.status}</div>
                   <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">

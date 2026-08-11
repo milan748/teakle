@@ -25,6 +25,8 @@ export default function CheckoutPage() {
   });
   const [errors, setErrors] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [orderConfirmation, setOrderConfirmation] = useState(null);
+  const [orderError, setOrderError] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -53,6 +55,7 @@ export default function CheckoutPage() {
   const updateShipping = useCallback((field, val) => {
     setShipping(prev => ({ ...prev, [field]: val }));
     setErrors(prev => ({ ...prev, [field]: undefined }));
+    setOrderError(null);
   }, []);
 
   const updateBilling = useCallback((field, val) => {
@@ -87,24 +90,36 @@ export default function CheckoutPage() {
 
   async function handlePlaceOrder() {
     setIsProcessing(true);
+    setOrderError(null);
 
     if (isLoggedIn) {
-      const result = await customerOrders.create({
-        shipping,
-        billing: sameBilling ? {} : billing,
-        billingSameAsShipping: sameBilling,
-      });
-      if (result && result.ok) {
-        cartItems.forEach(item => window.Teakle && window.Teakle.removeFromCart && window.Teakle.removeFromCart(item.id));
-        setTimeout(() => router.push('/account'), 2000);
+      try {
+        const result = await customerOrders.create({
+          shipping,
+          billing: sameBilling ? {} : billing,
+          billingSameAsShipping: sameBilling,
+        });
+        if (result && result.ok) {
+          cartItems.forEach(item => window.Teakle && window.Teakle.removeFromCart && window.Teakle.removeFromCart(item.id));
+          setOrderConfirmation(result.order);
+          setIsProcessing(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        setOrderError(result?.error || 'Failed to place order. Please try again.');
+        setIsProcessing(false);
+        return;
+      } catch (err) {
+        setOrderError('An unexpected error occurred. Please try again.');
+        setIsProcessing(false);
         return;
       }
     }
 
-    setTimeout(() => {
-      window.Teakle && window.Teakle.updateCartQty && cartItems.forEach(item => window.Teakle.removeFromCart(item.id));
-      router.push('/account');
-    }, 2000);
+    // Guest fallback — clear cart and redirect
+    cartItems.forEach(item => window.Teakle && window.Teakle.removeFromCart && window.Teakle.removeFromCart(item.id));
+    setOrderError('Guest checkout is not yet available. Please sign in to complete your order.');
+    setIsProcessing(false);
   }
 
   const inputStyle = (hasError) => ({
@@ -122,6 +137,120 @@ export default function CheckoutPage() {
   const errStyle = {
     fontSize: '0.6rem', color: '#8B6B4A', marginTop: '0.25rem', letterSpacing: '0.02em',
   };
+
+  // ─── Order Confirmation View ───
+  if (orderConfirmation) {
+    const o = orderConfirmation;
+    return (
+      <>
+        <title>Order Confirmed — Teakle</title>
+        <style>{`
+          .checkout-page { padding: calc(var(--space-2xl) + var(--space-xl)) 0 var(--space-xl); min-height: 70vh; }
+          .confirm-wrap { max-width: 640px; margin: 0 auto; text-align: center; }
+          .confirm-icon { width: 56px; height: 56px; border-radius: 50%; background: rgba(45,138,86,0.08); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-md); }
+          .confirm-icon svg { width: 28px; height: 28px; color: #2d8a56; }
+          .confirm-title { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, var(--text-h1)); font-weight: 500; color: var(--text-primary); margin: 0 0 0.5rem; max-width: none; letter-spacing: -0.01em; }
+          .confirm-subtitle { font-size: var(--text-body); color: var(--text-secondary); margin: 0 0 var(--space-md); max-width: none; }
+          .confirm-order-num { display: inline-block; font-family: var(--font-display); font-size: var(--text-body); font-weight: 500; letter-spacing: 0.04em; padding: 0.5rem 1.25rem; background: var(--bg-secondary); border: var(--border-subtle); margin-bottom: var(--space-md); }
+          .confirm-detail { text-align: left; background: var(--bg-secondary); border: var(--border-subtle); padding: var(--space-md); margin-bottom: var(--space-sm); }
+          .confirm-detail-title { font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 500; }
+          .confirm-item { display: flex; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(43,34,27,0.06); align-items: center; }
+          .confirm-item:last-child { border-bottom: none; }
+          .confirm-item-img { width: 48px; height: 48px; overflow: hidden; background: var(--stone); flex-shrink: 0; }
+          .confirm-item-img img { width: 100%; height: 100%; object-fit: cover; }
+          .confirm-item-info { flex: 1; min-width: 0; }
+          .confirm-item-name { font-size: var(--text-caption); font-weight: 500; color: var(--text-primary); margin: 0; max-width: none; }
+          .confirm-item-meta { font-size: 0.6rem; color: var(--text-secondary); opacity: 0.7; margin: 0; }
+          .confirm-item-price { font-size: var(--text-caption); font-weight: 500; white-space: nowrap; }
+          .confirm-summary-row { display: flex; justify-content: space-between; padding: 0.375rem 0; font-size: var(--text-body); }
+          .confirm-summary-row .label { color: var(--text-secondary); }
+          .confirm-summary-row .value { font-weight: 500; }
+          .confirm-total-row { display: flex; justify-content: space-between; padding: 0.75rem 0 0; border-top: 1px solid rgba(43,34,27,0.12); margin-top: 0.25rem; }
+          .confirm-total-row .label { font-family: var(--font-display); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+          .confirm-total-row .value { font-family: var(--font-display); font-size: var(--text-h2); font-weight: 500; }
+          .confirm-address { font-size: var(--text-body); color: var(--text-primary); line-height: 1.6; }
+          .confirm-cta { display: inline-block; font-family: var(--font-body); font-size: var(--text-caption); letter-spacing: 0.08em; text-transform: uppercase; color: var(--bg-primary); background: var(--walnut); border: 1px solid var(--walnut); padding: 0.875rem 2.5rem; text-decoration: none; transition: background 250ms var(--ease); margin-top: var(--space-sm); }
+          .confirm-cta:hover { background: #3d2e23; }
+          .confirm-note { font-size: var(--text-caption); color: var(--text-secondary); margin-top: var(--space-md); max-width: none; line-height: 1.6; }
+        `}</style>
+        <section className="checkout-page">
+          <div className="container">
+            <div className="confirm-wrap">
+              <div className="confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <h1 className="confirm-title">Order Placed</h1>
+              <p className="confirm-subtitle">Thank you for your order. We&apos;ll be in touch shortly with dispatch details.</p>
+              <div className="confirm-order-num">{o.orderNumber}</div>
+
+              <div className="confirm-detail">
+                <p className="confirm-detail-title">Items</p>
+                {(o.items || []).map((item, i) => (
+                  <div className="confirm-item" key={i}>
+                    {item.productImage && (
+                      <div className="confirm-item-img">
+                        <img src={item.productImage} alt={item.productNameSnapshot} />
+                      </div>
+                    )}
+                    <div className="confirm-item-info">
+                      <p className="confirm-item-name">{item.productNameSnapshot}</p>
+                      <p className="confirm-item-meta">Qty: {item.quantity}</p>
+                    </div>
+                    <span className="confirm-item-price">{`\u20B9${(item.lineTotal || 0).toLocaleString('en-IN')}`}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="confirm-detail">
+                <p className="confirm-detail-title">Pricing</p>
+                <div className="confirm-summary-row">
+                  <span className="label">Subtotal</span>
+                  <span className="value">{`\u20B9${(o.subtotal || 0).toLocaleString('en-IN')}`}</span>
+                </div>
+                <div className="confirm-summary-row">
+                  <span className="label">Shipping</span>
+                  <span className="value">{o.shippingAmount === 0 ? 'Free' : `\u20B9${(o.shippingAmount || 0).toLocaleString('en-IN')}`}</span>
+                </div>
+                {(o.taxAmount || 0) > 0 && (
+                  <div className="confirm-summary-row">
+                    <span className="label">Tax</span>
+                    <span className="value">{`\u20B9${(o.taxAmount || 0).toLocaleString('en-IN')}`}</span>
+                  </div>
+                )}
+                {(o.discountAmount || 0) > 0 && (
+                  <div className="confirm-summary-row">
+                    <span className="label" style={{ color: '#2d8a56' }}>Discount</span>
+                    <span className="value" style={{ color: '#2d8a56' }}>-\u20B9{(o.discountAmount || 0).toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+                <div className="confirm-total-row">
+                  <span className="label">Total</span>
+                  <span className="value">{`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</span>
+                </div>
+              </div>
+
+              <div className="confirm-detail">
+                <p className="confirm-detail-title">Shipping To</p>
+                <div className="confirm-address">
+                  {o.shippingFirstName} {o.shippingLastName}<br/>
+                  {o.shippingAddress}{o.shippingApartment ? `, ${o.shippingApartment}` : ''}<br/>
+                  {o.shippingCity}, {o.shippingState} {o.shippingPin}<br/>
+                  {o.shippingEmail}{o.shippingPhone ? ` \u00B7 ${o.shippingPhone}` : ''}
+                </div>
+              </div>
+
+              <p className="confirm-note">
+                Payment is pending. You will receive an email confirmation once payment is processed.
+                You can track your order status in your account.
+              </p>
+
+              <Link href="/account" className="confirm-cta">View My Orders</Link>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -239,6 +368,13 @@ export default function CheckoutPage() {
         }
         .checkout-back:hover { color: var(--text-primary); }
 
+        /* Error banner */
+        .checkout-error {
+          padding: 0.875rem 1rem; margin-bottom: var(--space-sm);
+          background: rgba(192,57,43,0.05); border: 1px solid rgba(192,57,43,0.15);
+          font-size: var(--text-caption); color: #c0392b; line-height: 1.5;
+        }
+
         /* Order sidebar */
         .checkout-sidebar {
           background: var(--bg-secondary); border: var(--border-subtle);
@@ -276,6 +412,9 @@ export default function CheckoutPage() {
         }
         .sidebar-summary .summary-row .label { color: var(--text-secondary); }
         .sidebar-summary .summary-row .value { font-weight: 500; }
+        .sidebar-summary .summary-note {
+          font-size: 0.6rem; color: var(--text-secondary); opacity: 0.7; margin-top: -0.25rem;
+        }
         .sidebar-summary .summary-total {
           display: flex; justify-content: space-between; align-items: center;
           padding: 0.75rem 0 0; border-top: 1px solid rgba(43,34,27,0.12); margin-top: 0.25rem;
@@ -388,7 +527,7 @@ export default function CheckoutPage() {
       {isProcessing && (
         <div className="processing-overlay" role="alert" aria-live="assertive">
           <div className="processing-spinner"></div>
-          <p className="processing-text">Demo mode — order not being processed</p>
+          <p className="processing-text">Placing your order...</p>
         </div>
       )}
 
@@ -434,6 +573,13 @@ export default function CheckoutPage() {
 
               <div className="checkout-layout">
                 <div className="checkout-form">
+                  {/* Error banner */}
+                  {orderError && (
+                    <div className="checkout-error" role="alert">
+                      {orderError}
+                    </div>
+                  )}
+
                   {/* Guest / Returning */}
                   {!isLoggedIn && step === 0 && (
                     <div className="guest-toggle">
@@ -604,11 +750,13 @@ export default function CheckoutPage() {
                           <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                           <line x1="1" y1="10" x2="23" y2="10"/>
                         </svg>
-                        <p>Secure payment integration will be available soon.</p>
-                        <p style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>Your order details have been saved.</p>
+                        <p>Payment integration will be available soon.</p>
+                        <p style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>
+                          Your order will be placed with payment pending. You can complete payment later from your account.
+                        </p>
                       </div>
-                      <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }}>
-                        Demo &mdash; Place Order &mdash; {formatPrice(subtotal)}
+                      <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }} disabled={isGuest}>
+                        Place Order &mdash; {formatPrice(subtotal)}
                       </button>
                       <button className="checkout-back" onClick={prevStep}>Back to Review</button>
                     </>
@@ -639,8 +787,9 @@ export default function CheckoutPage() {
                     </div>
                     <div className="summary-row">
                       <span className="label">Shipping</span>
-                      <span className="value" style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)' }}>Calculated next</span>
+                      <span className="value" style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)' }}>Calculated at confirmation</span>
                     </div>
+                    <p className="summary-note">Shipping &amp; tax calculated server-side when order is placed.</p>
                     <div className="summary-total">
                       <span className="label">Total</span>
                       <span className="value">{formatPrice(subtotal)}</span>
@@ -674,7 +823,7 @@ export default function CheckoutPage() {
                     className="checkout-mobile-btn"
                     onClick={step === 2 ? handlePlaceOrder : step === 1 ? () => setStep(2) : nextStep}
                   >
-                    {step === 2 ? 'Demo — Place Order' : 'Continue'}
+                    {step === 2 ? 'Place Order' : 'Continue'}
                   </button>
                 </div>
               </div>
