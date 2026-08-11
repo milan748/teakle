@@ -32,10 +32,18 @@ export async function GET(_request, { params }) {
     }
 
     const items = db.prepare(
-      'SELECT productId, productNameSnapshot, productImage, unitPrice, quantity, lineTotal FROM order_items WHERE orderId = ?'
+      'SELECT productId, productNameSnapshot, productImage, unitPrice, quantity, lineTotal, sku FROM order_items WHERE orderId = ?'
     ).all(orderId);
 
-    return NextResponse.json({ success: true, data: { ...order, items } });
+    const history = db.prepare(
+      'SELECT oldStatus, newStatus, changedBy, changedByType, note, createdAt FROM order_status_history WHERE orderId = ? ORDER BY createdAt ASC'
+    ).all(orderId);
+
+    const notes = db.prepare(
+      'SELECT id, author, authorType, content, isInternal, createdAt FROM order_notes WHERE orderId = ? ORDER BY createdAt ASC'
+    ).all(orderId);
+
+    return NextResponse.json({ success: true, data: { ...order, items, history, notes } });
   } catch (error) {
     console.error('Product order detail error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
@@ -83,8 +91,17 @@ export async function PATCH(request, { params }) {
       }, { status: 400 });
     }
 
-    db.prepare('UPDATE orders SET status = ?, updatedAt = datetime(\'now\') WHERE id = ?')
-      .run(normalizedStatus, orderId);
+    const updateStatus = db.transaction(() => {
+      db.prepare("UPDATE orders SET status = ?, updatedAt = datetime('now') WHERE id = ?")
+        .run(normalizedStatus, orderId);
+
+      db.prepare(
+        `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
+         VALUES (?, ?, ?, ?, 'admin', NULL)`
+      ).run(orderId, order.status, normalizedStatus, auth.admin.email);
+    });
+
+    updateStatus();
 
     log.orderStatusChange(order.orderNumber, order.status, normalizedStatus, auth.admin.email);
 

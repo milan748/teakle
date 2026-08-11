@@ -41,6 +41,9 @@ export default function AccountPage() {
   const [notifications, setNotifications] = useState([]);
   const [greeting, setGreeting] = useState('Good Morning');
   const [serverOrders, setServerOrders] = useState([]);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState(null);
+  const [orderDetailLoading, setOrderDetailLoading] = useState(false);
+  const [cancellingOrder, setCancellingOrder] = useState(null);
 
   useEffect(() => {
     const t = window.Teakle;
@@ -79,6 +82,42 @@ export default function AccountPage() {
     if (window.Teakle) window.Teakle.logout();
     window.location.href = '/login';
   }, []);
+
+  async function fetchOrderDetail(orderId) {
+    setOrderDetailLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`);
+      const data = await res.json();
+      if (data.order) setSelectedOrderDetail(data.order);
+    } catch (err) {
+      console.error('Failed to fetch order detail:', err);
+    }
+    setOrderDetailLoading(false);
+  }
+
+  async function cancelOrder(orderId) {
+    if (!confirm('Are you sure you want to cancel this order? This action cannot be undone.')) return;
+    setCancellingOrder(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel' }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setServerOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'CANCELLED' } : o));
+        if (selectedOrderDetail && selectedOrderDetail.id === orderId) {
+          setSelectedOrderDetail(prev => ({ ...prev, status: 'CANCELLED' }));
+        }
+      } else {
+        alert(data.error || 'Failed to cancel order');
+      }
+    } catch (err) {
+      console.error('Failed to cancel order:', err);
+    }
+    setCancellingOrder(null);
+  }
 
   function saveAddresses(addrs) {
     setAddresses(addrs);
@@ -136,7 +175,7 @@ export default function AccountPage() {
   const orders = displayOrders;
 
   const stats = [
-    { label: 'Current Orders', value: orders.filter(o => o.status !== 'Delivered').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+    { label: 'Current Orders', value: serverOrders.filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
     { label: 'Wishlist Items', value: wishlist.length, icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
     { label: 'Cart Items', value: cart.length, icon: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0' },
     { label: 'Saved Addresses', value: addresses.length, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
@@ -184,7 +223,7 @@ export default function AccountPage() {
         )}
 
         <h3 className="acct-subtitle">Recent Orders</h3>
-        {orders.length === 0 ? (
+        {serverOrders.length === 0 ? (
           <div className="acct-empty">
             <div className="empty-illustration">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="empty-icon"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -196,18 +235,17 @@ export default function AccountPage() {
           </div>
         ) : (
           <div className="acct-orders-list">
-            {orders.slice(0, 2).map((o, i) => (
+            {serverOrders.slice(0, 2).map((o, i) => (
               <div className="acct-order-card" key={o.id} style={{ animationDelay: `${(i + 4) * 80}ms` }}>
-                <img src={o.image} alt={o.product} className="order-img" loading="lazy" />
+                <img src={o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300'} alt="" className="order-img" loading="lazy" />
                 <div className="order-info">
-                  <div className="order-name">{o.product}</div>
-                  <div className="order-meta">{o.id} · {o.price}</div>
-                  <div className={`order-status ${o.status === 'Delivered' ? 'is-delivered' : ''}`}>{o.status}</div>
-                  <div className="order-delivery">{o.delivery}</div>
+                  <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
+                  <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{o.status}</div>
+                  <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">
-                  <button className="acct-btn-sm">View Details</button>
-                  {o.status !== 'Delivered' && <button className="acct-btn-sm acct-btn-outline">Track Order</button>}
+                  <button className="acct-btn-sm" onClick={() => { setActiveSection('orders'); fetchOrderDetail(o.id); }}>View Details</button>
                 </div>
               </div>
             ))}
@@ -218,6 +256,105 @@ export default function AccountPage() {
   }
 
   function renderOrders() {
+    if (orderDetailLoading) {
+      return (
+        <div className="acct-section" key="orders">
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading order details...</p>
+        </div>
+      );
+    }
+
+    if (selectedOrderDetail) {
+      const o = selectedOrderDetail;
+      const canCancel = o.status === 'PENDING' || o.status === 'CONFIRMED';
+      const statusColors = { PENDING: '#c28a2a', CONFIRMED: '#5a8dcc', PROCESSING: '#8b5cf6', COMPLETED: '#2d8a56', CANCELLED: '#c0392b' };
+      return (
+        <div className="acct-section" key="orders">
+          <button onClick={() => setSelectedOrderDetail(null)} style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', cursor: 'pointer', fontSize: '13px', marginBottom: '16px', padding: 0 }}>
+            &larr; Back to orders
+          </button>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.orderNumber}</h2>
+              <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>Placed on {new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: (statusColors[o.status] || '#666') + '18', color: statusColors[o.status] || '#666' }}>
+                {o.status}
+              </span>
+              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: o.paymentStatus === 'PAID' ? '#2d8a5618' : '#c0392b18', color: o.paymentStatus === 'PAID' ? '#2d8a56' : '#c0392b' }}>
+                {o.paymentStatus}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '6px' }}>Shipping Address</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                {o.shippingFirstName} {o.shippingLastName}<br/>
+                {o.shippingAddress}{o.shippingApartment ? `, ${o.shippingApartment}` : ''}<br/>
+                {o.shippingCity}, {o.shippingState} {o.shippingPin}
+              </div>
+            </div>
+            <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '6px' }}>Contact</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                {o.shippingEmail}<br/>
+                {o.shippingPhone || 'No phone provided'}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            {(o.items || []).map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: i < o.items.length - 1 ? '1px solid rgba(167,134,89,0.08)' : 'none', alignItems: 'center' }}>
+                {item.productImage && <img src={item.productImage} alt={item.productNameSnapshot} style={{ width: '48px', height: '48px', objectFit: 'cover' }} />}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{item.productNameSnapshot}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Qty: {item.quantity}</div>
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{`\u20B9${(item.lineTotal || 0).toLocaleString('en-IN')}`}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+              <span>Subtotal</span><span>{`\u20B9${(o.subtotal || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+              <span>Shipping</span><span>{o.shippingAmount === 0 ? 'Free' : `\u20B9${(o.shippingAmount || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+            {(o.taxAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+                <span>Tax</span><span>{`\u20B9${(o.taxAmount || 0).toLocaleString('en-IN')}`}</span>
+              </div>
+            )}
+            {(o.discountAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: '#2d8a56' }}>
+                <span>Discount</span><span>-\u20B9{(o.discountAmount || 0).toLocaleString('en-IN')}</span>
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 600, borderTop: '1px solid rgba(167,134,89,0.15)', paddingTop: '8px', marginTop: '8px', color: 'var(--text-primary)' }}>
+              <span>Total</span><span>{`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+          </div>
+
+          {canCancel && (
+            <button
+              onClick={() => cancelOrder(o.id)}
+              disabled={cancellingOrder === o.id}
+              style={{ padding: '8px 20px', fontSize: '12px', fontWeight: 500, background: 'transparent', border: '1px solid #c0392b', color: '#c0392b', cursor: cancellingOrder === o.id ? 'not-allowed' : 'pointer', opacity: cancellingOrder === o.id ? 0.5 : 1 }}
+            >
+              {cancellingOrder === o.id ? 'Cancelling...' : 'Cancel Order'}
+            </button>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="acct-section" key="orders">
         <h2 className="acct-section-title">My Orders</h2>
@@ -233,18 +370,17 @@ export default function AccountPage() {
           </div>
         ) : (
           <div className="acct-orders-list">
-            {orders.map((o, i) => (
+            {serverOrders.map((o, i) => (
               <div className="acct-order-card" key={o.id} style={{ animationDelay: `${i * 80}ms` }}>
-                <img src={o.image} alt={o.product} className="order-img" loading="lazy" />
+                <img src={o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300'} alt="" className="order-img" loading="lazy" />
                 <div className="order-info">
-                  <div className="order-name">{o.product}</div>
-                  <div className="order-meta">{o.id} · {o.price}</div>
-                  <div className={`order-status ${o.status === 'Delivered' ? 'is-delivered' : ''}`}>{o.status}</div>
-                  <div className="order-delivery">{o.delivery}</div>
+                  <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
+                  <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{o.status}</div>
+                  <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">
-                  <button className="acct-btn-sm">View Details</button>
-                  {o.status !== 'Delivered' && <button className="acct-btn-sm acct-btn-outline">Track Order</button>}
+                  <button className="acct-btn-sm" onClick={() => fetchOrderDetail(o.id)}>View Details</button>
                 </div>
               </div>
             ))}

@@ -33,8 +33,14 @@ export default function OrdersManager() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [paymentFilter, setPaymentFilter] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 0 });
   const [updating, setUpdating] = useState(false);
+  const [noteContent, setNoteContent] = useState('');
+  const [noteInternal, setNoteInternal] = useState(false);
+  const [submittingNote, setSubmittingNote] = useState(false);
 
   async function fetchOrders(page = 1) {
     setLoading(true);
@@ -42,6 +48,9 @@ export default function OrdersManager() {
       const params = new URLSearchParams({ page: String(page), limit: '20' });
       if (search) params.set('search', search);
       if (statusFilter) params.set('status', statusFilter);
+      if (paymentFilter) params.set('paymentStatus', paymentFilter);
+      if (dateFrom) params.set('dateFrom', dateFrom);
+      if (dateTo) params.set('dateTo', dateTo);
       const res = await fetch(`/api/admin/product-orders?${params}`);
       const data = await res.json();
       if (data.success) {
@@ -87,6 +96,38 @@ export default function OrdersManager() {
     setUpdating(false);
   }
 
+  async function addNote(orderId) {
+    if (!noteContent.trim()) return;
+    setSubmittingNote(true);
+    try {
+      const res = await fetch(`/api/admin/product-orders/${orderId}/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: noteContent.trim(), isInternal: noteInternal }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNoteContent('');
+        setNoteInternal(false);
+        await fetchOrderDetail(orderId);
+      } else {
+        alert(data.error || 'Failed to add note');
+      }
+    } catch (err) {
+      console.error('Failed to add note:', err);
+    }
+    setSubmittingNote(false);
+  }
+
+  function exportCSV() {
+    const params = new URLSearchParams();
+    if (statusFilter) params.set('status', statusFilter);
+    if (paymentFilter) params.set('paymentStatus', paymentFilter);
+    if (dateFrom) params.set('dateFrom', dateFrom);
+    if (dateTo) params.set('dateTo', dateTo);
+    window.open(`/api/admin/product-orders/export?${params}`, '_blank');
+  }
+
   useEffect(() => { fetchOrders(); }, []);
 
   function handleSearch(e) {
@@ -95,11 +136,11 @@ export default function OrdersManager() {
   }
 
   function formatPrice(n) {
-    return `₹${(n || 0).toLocaleString('en-IN')}`;
+    return `\u20B9${(n || 0).toLocaleString('en-IN')}`;
   }
 
   function formatDate(d) {
-    if (!d) return '—';
+    if (!d) return '\u2014';
     return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
@@ -108,7 +149,7 @@ export default function OrdersManager() {
     return (
       <div>
         <button onClick={() => setSelectedOrder(null)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: '14px', marginBottom: '16px', padding: 0 }}>
-          ← Back to orders
+          \u2190 Back to orders
         </button>
 
         <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '24px', marginBottom: '16px' }}>
@@ -127,17 +168,30 @@ export default function OrdersManager() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '13px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', fontSize: '13px' }}>
             <div>
               <div style={{ color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>Customer</div>
-              <div>{selectedOrder.customerName || '—'}</div>
-              <div style={{ color: '#666' }}>{selectedOrder.customerEmail || '—'}</div>
+              <div>{selectedOrder.customerName || '\u2014'}</div>
+              <div style={{ color: '#666' }}>{selectedOrder.customerEmail || '\u2014'}</div>
             </div>
             <div>
-              <div style={{ color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>Shipping</div>
+              <div style={{ color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>Shipping Address</div>
               <div>{selectedOrder.shippingFirstName} {selectedOrder.shippingLastName}</div>
               <div style={{ color: '#666' }}>{selectedOrder.shippingAddress}</div>
               <div style={{ color: '#666' }}>{selectedOrder.shippingCity}, {selectedOrder.shippingState} {selectedOrder.shippingPin}</div>
+              {selectedOrder.shippingPhone && <div style={{ color: '#666' }}>{selectedOrder.shippingPhone}</div>}
+            </div>
+            <div>
+              <div style={{ color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px' }}>Billing Address</div>
+              {selectedOrder.billingSameAsShipping ? (
+                <div style={{ color: '#666', fontStyle: 'italic' }}>Same as shipping</div>
+              ) : (
+                <>
+                  <div>{selectedOrder.billingFirstName} {selectedOrder.billingLastName}</div>
+                  <div style={{ color: '#666' }}>{selectedOrder.billingAddress}</div>
+                  <div style={{ color: '#666' }}>{selectedOrder.billingCity}, {selectedOrder.billingState} {selectedOrder.billingPin}</div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -147,6 +201,7 @@ export default function OrdersManager() {
             <thead>
               <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                 <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: '#666' }}>Product</th>
+                <th style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 500, color: '#666' }}>SKU</th>
                 <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: '#666' }}>Price</th>
                 <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: '#666' }}>Qty</th>
                 <th style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500, color: '#666' }}>Total</th>
@@ -164,6 +219,7 @@ export default function OrdersManager() {
                       </div>
                     </div>
                   </td>
+                  <td style={{ padding: '12px 16px', color: '#999', fontSize: '12px', fontFamily: 'monospace' }}>{item.sku || '\u2014'}</td>
                   <td style={{ textAlign: 'right', padding: '12px 16px' }}>{formatPrice(item.unitPrice)}</td>
                   <td style={{ textAlign: 'right', padding: '12px 16px' }}>{item.quantity}</td>
                   <td style={{ textAlign: 'right', padding: '12px 16px', fontWeight: 500 }}>{formatPrice(item.lineTotal)}</td>
@@ -182,6 +238,16 @@ export default function OrdersManager() {
             <span style={{ color: '#666' }}>Shipping</span>
             <span>{formatPrice(selectedOrder.shippingAmount)}</span>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
+            <span style={{ color: '#666' }}>Tax</span>
+            <span>{formatPrice(selectedOrder.taxAmount || 0)}</span>
+          </div>
+          {(selectedOrder.discountAmount || 0) > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px', color: '#10b981' }}>
+              <span>Discount</span>
+              <span>-{formatPrice(selectedOrder.discountAmount)}</span>
+            </div>
+          )}
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 600, borderTop: '1px solid #e5e7eb', paddingTop: '8px', marginTop: '8px' }}>
             <span>Total</span>
             <span>{formatPrice(selectedOrder.totalAmount)}</span>
@@ -189,7 +255,7 @@ export default function OrdersManager() {
         </div>
 
         {allowedTransitions.length > 0 && (
-          <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px' }}>
+          <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px', marginBottom: '16px' }}>
             <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Update Status</div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {allowedTransitions.map(s => (
@@ -208,6 +274,63 @@ export default function OrdersManager() {
             </div>
           </div>
         )}
+
+        {(selectedOrder.history || []).length > 0 && (
+          <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Status History</div>
+            <div style={{ fontSize: '12px' }}>
+              {selectedOrder.history.map((h, i) => (
+                <div key={i} style={{ display: 'flex', gap: '12px', padding: '8px 0', borderBottom: i < selectedOrder.history.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
+                  <span style={{ color: '#999', minWidth: '140px' }}>{formatDate(h.createdAt)}</span>
+                  <span style={{ color: '#666' }}>
+                    {h.oldStatus ? `${h.oldStatus} \u2192 ` : ''}{h.newStatus}
+                  </span>
+                  <span style={{ color: '#999', fontSize: '11px' }}>by {h.changedByType}: {h.changedBy}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Add Note</div>
+          <textarea
+            value={noteContent}
+            onChange={e => setNoteContent(e.target.value)}
+            placeholder="Write a note about this order..."
+            rows={3}
+            style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px', resize: 'vertical', boxSizing: 'border-box' }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+            <label style={{ fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+              <input type="checkbox" checked={noteInternal} onChange={e => setNoteInternal(e.target.checked)} />
+              Internal note (not visible to customer)
+            </label>
+            <button
+              onClick={() => addNote(selectedOrder.id)}
+              disabled={submittingNote || !noteContent.trim()}
+              style={{ padding: '6px 14px', fontSize: '12px', background: '#374151', color: 'white', border: 'none', cursor: submittingNote || !noteContent.trim() ? 'not-allowed' : 'pointer', opacity: submittingNote || !noteContent.trim() ? 0.5 : 1 }}
+            >
+              {submittingNote ? 'Adding...' : 'Add Note'}
+            </button>
+          </div>
+        </div>
+
+        {(selectedOrder.notes || []).length > 0 && (
+          <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Notes</div>
+            {selectedOrder.notes.map((n, i) => (
+              <div key={i} style={{ padding: '10px 12px', background: n.isInternal ? '#fffbeb' : '#f9fafb', border: '1px solid ' + (n.isInternal ? '#fde68a' : '#e5e7eb'), marginBottom: '8px', fontSize: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <span style={{ fontWeight: 500 }}>{n.author}</span>
+                  <span style={{ color: '#999' }}>{formatDate(n.createdAt)}</span>
+                </div>
+                <div style={{ color: '#374151', whiteSpace: 'pre-wrap' }}>{n.content}</div>
+                {n.isInternal ? <div style={{ color: '#92400e', fontSize: '11px', marginTop: '4px', fontStyle: 'italic' }}>Internal</div> : null}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -216,16 +339,21 @@ export default function OrdersManager() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>Product Orders</h2>
-        <span style={{ color: '#666', fontSize: '13px' }}>{pagination.total} total</span>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span style={{ color: '#666', fontSize: '13px' }}>{pagination.total} total</span>
+          <button onClick={exportCSV} style={{ padding: '6px 14px', fontSize: '12px', background: 'white', border: '1px solid #d1d5db', color: '#374151', cursor: 'pointer' }}>
+            Export CSV
+          </button>
+        </div>
       </div>
 
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+      <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
         <input
           type="text"
           placeholder="Search orders..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ flex: 1, padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }}
+          style={{ flex: 1, minWidth: '200px', padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }}
         />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }}>
           <option value="">All statuses</option>
@@ -235,6 +363,13 @@ export default function OrdersManager() {
           <option value="COMPLETED">Completed</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
+        <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }}>
+          <option value="">All payments</option>
+          <option value="UNPAID">Unpaid</option>
+          <option value="PAID">Paid</option>
+        </select>
+        <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }} />
+        <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }} />
         <button type="submit" style={{ padding: '8px 16px', background: '#374151', color: 'white', border: 'none', fontSize: '13px', cursor: 'pointer' }}>Search</button>
       </form>
 
@@ -268,7 +403,7 @@ export default function OrdersManager() {
                   >
                     <td style={{ padding: '10px 12px', fontWeight: 500, fontFamily: 'monospace', fontSize: '12px' }}>{order.orderNumber}</td>
                     <td style={{ padding: '10px 12px' }}>
-                      <div>{order.customerName || '—'}</div>
+                      <div>{order.customerName || '\u2014'}</div>
                       <div style={{ color: '#999', fontSize: '11px' }}>{order.customerEmail}</div>
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center' }}>

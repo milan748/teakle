@@ -10,6 +10,7 @@ import TradeManager from './TradeManager';
 import NewsletterManager from './NewsletterManager';
 import SiteSettingsEditor from './SiteSettingsEditor';
 import OrdersManager from './OrdersManager';
+import ProductsManager from './ProductsManager';
 
 const PAGES = {
   home: { label: 'Homepage', sections: { hero: 'Hero', philosophy: 'Philosophy', signature: 'Signature Collection', craftsmanship: 'Craftsmanship', 'workshop-story': 'Workshop Story', 'process-story': 'Process Story' } },
@@ -105,6 +106,7 @@ export default function AdminDashboard({ admin }) {
 
           <div style={{ padding: '16px 0', borderTop: '1px solid #eee' }}>
             <SectionLabel text="Data" />
+            <NavButton label="Products" isActive={activePage === 'data-products'} onClick={() => { setActivePage('data-products'); setShowMedia(false); }} />
             <NavButton label="Product Orders" isActive={activePage === 'data-product-orders'} onClick={() => { setActivePage('data-product-orders'); setShowMedia(false); }} />
             <NavButton label="Custom Orders" isActive={activePage === 'data-orders'} onClick={() => { setActivePage('data-orders'); setShowMedia(false); }} />
             <NavButton label="Contact" isActive={activePage === 'data-contact'} onClick={() => { setActivePage('data-contact'); setShowMedia(false); }} />
@@ -133,6 +135,7 @@ export default function AdminDashboard({ admin }) {
               backLabel={pageConfig.label}
             />
           )}
+          {activePage === 'data-products' && <ProductsManager />}
           {activePage === 'data-product-orders' && <OrdersManager />}
           {activePage === 'data-orders' && <CustomOrdersManager />}
           {activePage === 'data-contact' && <ContactManager />}

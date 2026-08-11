@@ -11,6 +11,19 @@ const VALID_KEYS = [
   'workshopLocation',
   'responseTime',
   'siteName',
+  'supportEmail',
+  'supportPhone',
+  'legalEntityName',
+  'businessAddress',
+  'gstin',
+  'pan',
+  'tax_enabled',
+  'tax_rate',
+  'tax_label',
+  'shipping_enabled',
+  'shipping_rate',
+  'shipping_method',
+  'free_shipping_threshold',
 ];
 
 export async function GET() {

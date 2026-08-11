@@ -1,6 +1,6 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
-import { getProductById } from '@/app/data/products';
+import { getProduct } from '@/lib/products';
 
 function getOrCreateCart(db, customerId) {
   let cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
@@ -23,7 +23,7 @@ function formatCartItems(db, cartId) {
   ).all(cartId);
 
   return rows.map((row) => {
-    const product = getProductById(row.productId);
+    const product = getProduct(row.productId, db);
     return {
       id: row.productId,
       cartItemId: row.id,
@@ -32,6 +32,7 @@ function formatCartItems(db, cartId) {
       priceRaw: product?.price || 0,
       image: product?.images?.[0] || '',
       qty: row.quantity,
+      active: product?.active ?? true,
     };
   });
 }
@@ -72,15 +73,19 @@ export async function POST(req) {
       return Response.json({ error: 'Quantity must be an integer between 1 and 10' }, { status: 400 });
     }
 
-    const product = getProductById(productId);
+    const db = getDb();
+
+    const product = getProduct(productId, db);
     if (!product) {
       return Response.json({ error: 'Product not found' }, { status: 404 });
+    }
+    if (!product.active) {
+      return Response.json({ error: 'Product is no longer available' }, { status: 400 });
     }
     if (product.isHero && qty > 1) {
       return Response.json({ error: 'Hero product is limited to quantity 1' }, { status: 400 });
     }
 
-    const db = getDb();
     const cart = getOrCreateCart(db, session.customerId);
 
     const existing = db.prepare(
@@ -123,12 +128,12 @@ export async function PUT(req) {
       return Response.json({ error: 'Quantity must be an integer between 1 and 10' }, { status: 400 });
     }
 
-    const product = getProductById(productId);
+    const db = getDb();
+    const product = getProduct(productId, db);
     if (!product) {
       return Response.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    const db = getDb();
     const cart = getOrCreateCart(db, session.customerId);
 
     if (qty === 0) {

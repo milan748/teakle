@@ -1,8 +1,10 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
-import { getProductById } from '@/app/data/products';
+import { getProduct } from '@/lib/products';
 import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { validateCheckoutAddresses } from '@/lib/validateAddress';
+import { calculateOrderTotal } from '@/lib/orderPricing';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 const VALID_PAYMENT_STATUSES = ['UNPAID', 'PAID'];
@@ -33,14 +35,14 @@ export async function GET() {
 
     const db = getDb();
     const orders = db.prepare(
-      `SELECT id, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
+      `SELECT id, orderNumber, status, paymentStatus, subtotal, shippingAmount, taxAmount, discountAmount, totalAmount,
               shippingFirstName, shippingLastName, shippingEmail, createdAt, updatedAt
        FROM orders WHERE customerId = ? ORDER BY createdAt DESC`
     ).all(session.customerId);
 
     const ordersWithItems = orders.map((order) => {
       const items = db.prepare(
-        'SELECT productId, productNameSnapshot, unitPrice, quantity, lineTotal FROM order_items WHERE orderId = ?'
+        'SELECT productId, productNameSnapshot, unitPrice, quantity, lineTotal, sku FROM order_items WHERE orderId = ?'
       ).all(order.id);
       return { ...order, items };
     });
@@ -67,11 +69,15 @@ export async function POST(req) {
     const body = await req.json();
     const { shipping = {}, billing = {}, billingSameAsShipping = true, notes = '' } = body;
 
-    if (!shipping.firstName || !shipping.lastName || !shipping.email || !shipping.address || !shipping.city || !shipping.state || !shipping.pin) {
-      return Response.json({ error: 'All required shipping fields must be filled' }, { status: 400 });
+    // 1. Validate addresses
+    const addressValidation = validateCheckoutAddresses(shipping, billing, billingSameAsShipping);
+    if (!addressValidation.valid) {
+      return Response.json({ error: 'Invalid address', details: addressValidation.errors }, { status: 400 });
     }
 
     const db = getDb();
+
+    // 2. Load cart
     const cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(session.customerId);
     if (!cart) {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
@@ -82,71 +88,60 @@ export async function POST(req) {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
     }
 
-    let subtotal = 0;
-    const orderItems = [];
+    // 3. Calculate order total (server-side)
+    const pricing = calculateOrderTotal({
+      cartItems: cartRows,
+      getProductById: (id) => getProduct(id, db),
+      shippingAddress: addressValidation.shipping,
+    });
 
-    for (const ci of cartRows) {
-      const product = getProductById(ci.productId);
-      if (!product) {
-        log.orderFailed(`Product not found: ${ci.productId}`);
-        return Response.json({ error: `Product "${ci.productId}" is no longer available` }, { status: 400 });
-      }
-      const price = product.price || 0;
-      const qty = ci.quantity;
-      const lineTotal = price * qty;
-      subtotal += lineTotal;
-      orderItems.push({
-        productId: ci.productId,
-        productNameSnapshot: product.name,
-        productImage: product.images?.[0] || '',
-        unitPrice: price,
-        quantity: qty,
-        lineTotal,
-      });
+    if (pricing.error) {
+      log.orderFailed(pricing.error);
+      return Response.json({ error: pricing.error }, { status: 400 });
     }
 
-    const shippingAmount = 0;
-    const totalAmount = subtotal + shippingAmount;
+    // 4. Create order transactionally
+    const shippingData = addressValidation.shipping;
+    const billingData = billingSameAsShipping ? addressValidation.shipping : addressValidation.billing;
 
     const createOrder = db.transaction(() => {
       const orderNumber = generateOrderNumber();
       const result = db.prepare(`
         INSERT INTO orders (
           customerId, orderNumber, status, paymentStatus,
-          subtotal, shippingAmount, totalAmount,
+          subtotal, shippingAmount, taxAmount, discountAmount, totalAmount,
           shippingFirstName, shippingLastName, shippingEmail, shippingPhone,
           shippingAddress, shippingApartment, shippingCity, shippingState, shippingPin, shippingCountry,
           billingSameAsShipping, billingFirstName, billingLastName,
           billingAddress, billingApartment, billingCity, billingState, billingPin,
+          billingPhone, billingEmail, billingCountry,
           notes
-        ) VALUES (?, ?, 'PENDING', 'UNPAID', ?, ?, ?,
+        ) VALUES (?, ?, 'PENDING', 'UNPAID', ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?, ?, ?, ?,
           ?, ?, ?,
           ?, ?, ?, ?, ?,
+          ?, ?, ?,
           ?)
       `).run(
-        session.customerId, orderNumber, subtotal, shippingAmount, totalAmount,
-        shipping.firstName || '', shipping.lastName || '', shipping.email || '', shipping.phone || '',
-        shipping.address || '', shipping.apartment || '', shipping.city || '', shipping.state || '', shipping.pin || '', shipping.country || 'India',
+        session.customerId, orderNumber,
+        pricing.subtotal, pricing.shippingAmount, pricing.taxAmount, pricing.discountAmount, pricing.total,
+        shippingData.firstName, shippingData.lastName, shippingData.email, shippingData.phone,
+        shippingData.address, shippingData.apartment, shippingData.city, shippingData.state, shippingData.pin, shippingData.country,
         billingSameAsShipping ? 1 : 0,
-        billingSameAsShipping ? '' : (billing.firstName || ''),
-        billingSameAsShipping ? '' : (billing.lastName || ''),
-        billingSameAsShipping ? '' : (billing.address || ''),
-        billingSameAsShipping ? '' : (billing.apartment || ''),
-        billingSameAsShipping ? '' : (billing.city || ''),
-        billingSameAsShipping ? '' : (billing.state || ''),
-        billingSameAsShipping ? '' : (billing.pin || ''),
+        billingData.firstName, billingData.lastName,
+        billingData.address, billingData.apartment, billingData.city, billingData.state, billingData.pin,
+        billingData.phone, billingData.email, billingData.country,
         notes ? String(notes).slice(0, 2000) : ''
       );
 
       const orderId = result.lastInsertRowid;
 
-      for (const item of orderItems) {
+      for (const item of pricing.orderItems) {
         db.prepare(
-          `INSERT INTO order_items (orderId, productId, productNameSnapshot, productImage, unitPrice, quantity, lineTotal, productName, price)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        ).run(orderId, item.productId, item.productNameSnapshot, item.productImage, item.unitPrice, item.quantity, item.lineTotal, item.productNameSnapshot, item.unitPrice);
+          `INSERT INTO order_items (orderId, productId, productNameSnapshot, productImage, unitPrice, quantity, lineTotal, productName, price, sku)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ).run(orderId, item.productId, item.productNameSnapshot, item.productImage, item.unitPrice, item.quantity, item.lineTotal, item.productNameSnapshot, item.unitPrice, item.sku);
       }
 
       db.prepare('DELETE FROM cart_items WHERE cartId = ?').run(cart.id);
@@ -158,12 +153,12 @@ export async function POST(req) {
 
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
     const items = db.prepare(
-      'SELECT productId, productNameSnapshot, unitPrice, quantity, lineTotal, productImage FROM order_items WHERE orderId = ?'
+      'SELECT productId, productNameSnapshot, unitPrice, quantity, lineTotal, productImage, sku FROM order_items WHERE orderId = ?'
     ).all(orderId);
 
-    log.orderCreated(orderNumber, session.customerId, totalAmount);
+    log.orderCreated(orderNumber, session.customerId, pricing.total);
 
-    return Response.json({ ok: true, order: { ...order, items } });
+    return Response.json({ ok: true, order: { ...order, items }, messages: pricing.messages });
   } catch (err) {
     log.error('Order creation failed', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });

@@ -11,6 +11,9 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
+    const paymentStatus = searchParams.get('paymentStatus') || '';
+    const dateFrom = searchParams.get('dateFrom') || '';
+    const dateTo = searchParams.get('dateTo') || '';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
     const offset = (page - 1) * limit;
@@ -36,6 +39,18 @@ export async function GET(request) {
       conditions.push("o.status = ?");
       params.push(status);
     }
+    if (paymentStatus) {
+      conditions.push("o.paymentStatus = ?");
+      params.push(paymentStatus);
+    }
+    if (dateFrom) {
+      conditions.push("o.createdAt >= ?");
+      params.push(dateFrom);
+    }
+    if (dateTo) {
+      conditions.push("o.createdAt <= ?");
+      params.push(dateTo + ' 23:59:59');
+    }
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -55,6 +70,18 @@ export async function GET(request) {
     if (status) {
       countConditions.push("o.status = ?");
       countParams.push(status);
+    }
+    if (paymentStatus) {
+      countConditions.push("o.paymentStatus = ?");
+      countParams.push(paymentStatus);
+    }
+    if (dateFrom) {
+      countConditions.push("o.createdAt >= ?");
+      countParams.push(dateFrom);
+    }
+    if (dateTo) {
+      countConditions.push("o.createdAt <= ?");
+      countParams.push(dateTo + ' 23:59:59');
     }
     if (countConditions.length > 0) {
       countQuery += ' WHERE ' + countConditions.join(' AND ');
