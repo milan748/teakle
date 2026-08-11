@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
 
 export async function GET(request) {
   const auth = await requireAdmin();
@@ -33,7 +34,7 @@ export async function GET(request) {
     const orders = db.prepare(query).all(...params);
     return NextResponse.json({ success: true, data: orders });
   } catch (error) {
-    console.error('Custom orders GET error:', error);
+    log.error('Custom orders GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

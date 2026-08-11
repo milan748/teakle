@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { deleteSession } from '@/lib/session';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST() {
+export const POST = withCsrf(async function POST() {
   try {
     await deleteSession();
 
@@ -10,10 +12,10 @@ export async function POST() {
       message: 'Logged out successfully',
     });
   } catch (error) {
-    console.error('Admin logout error:', error);
+    log.error('Admin logout error:', error);
     return NextResponse.json({
       success: true,
       message: 'Logged out successfully',
     });
   }
-}
+});

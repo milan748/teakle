@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function DashboardOverview() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/dashboard')
-      .then(r => r.json())
+    adminFetch('/api/admin/dashboard')
       .then(d => { if (d.success) setData(d.data); })
       .catch(() => {})
       .finally(() => setLoading(false));

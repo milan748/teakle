@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { getProduct, clearMetadataCache } from '@/lib/products';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const MAX_SKU_LENGTH = 50;
 
@@ -58,12 +60,12 @@ export async function GET(_request, { params }) {
       },
     });
   } catch (error) {
-    console.error('Admin product detail error:', error);
+    log.error('Admin product detail error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PATCH(request, { params }) {
+export const PATCH = withCsrf(async function PATCH(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -151,7 +153,7 @@ export async function PATCH(request, { params }) {
       },
     });
   } catch (error) {
-    console.error('Admin product PATCH error:', error);
+    log.error('Admin product PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

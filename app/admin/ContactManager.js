@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function ContactManager() {
   const [submissions, setSubmissions] = useState([]);
@@ -17,8 +18,7 @@ export default function ContactManager() {
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
-      const res = await fetch(`/api/admin/contact?${params}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/contact?${params}`);
       if (data.success) setSubmissions(data.data);
     } catch {}
     setLoading(false);
@@ -26,8 +26,7 @@ export default function ContactManager() {
 
   async function loadDetail(id) {
     try {
-      const res = await fetch(`/api/admin/contact/${id}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/contact/${id}`);
       if (data.success) {
         setSelected(data.data);
         setSubmissions(prev => prev.map(s => s.id === id ? { ...s, read: 1 } : s));
@@ -38,12 +37,10 @@ export default function ContactManager() {
   async function toggleRead(id, currentRead) {
     const newRead = currentRead ? 0 : 1;
     try {
-      const res = await fetch(`/api/admin/contact/${id}`, {
+      const data = await adminFetch(`/api/admin/contact/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ read: newRead }),
       });
-      const data = await res.json();
       if (data.success) {
         setSubmissions(prev => prev.map(s => s.id === id ? { ...s, read: newRead } : s));
         if (selected?.id === id) setSelected(prev => ({ ...prev, read: newRead }));

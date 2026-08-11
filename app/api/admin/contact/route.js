@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
 
 export async function GET(request) {
   const auth = await requireAdmin();
@@ -23,7 +24,7 @@ export async function GET(request) {
     const submissions = db.prepare(query).all(...params);
     return NextResponse.json({ success: true, data: submissions });
   } catch (error) {
-    console.error('Contact GET error:', error);
+    log.error('Contact GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

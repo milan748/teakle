@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function MediaLibrary({ onSelect, onClose }) {
   const [media, setMedia] = useState([]);
@@ -19,8 +20,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
   async function loadMedia() {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/media');
-      const data = await res.json();
+      const data = await adminFetch('/api/admin/media');
       if (data.success) setMedia(data.data);
     } catch {
       setMessage('Failed to load media');
@@ -40,8 +40,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
       formData.append('file', file);
       formData.append('altText', '');
 
-      const res = await fetch('/api/admin/media', { method: 'POST', body: formData });
-      const data = await res.json();
+      const data = await adminFetch('/api/admin/media', { method: 'POST', body: formData });
       if (data.success) {
         setMedia(prev => [data.data, ...prev]);
         setMessage('Uploaded successfully');
@@ -59,8 +58,7 @@ export default function MediaLibrary({ onSelect, onClose }) {
   async function handleDelete(id) {
     if (!confirm('Delete this media?')) return;
     try {
-      const res = await fetch(`/api/admin/media/${id}`, { method: 'DELETE' });
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/media/${id}`, { method: 'DELETE' });
       if (data.success) {
         setMedia(prev => prev.filter(m => m.id !== id));
         setMessage('Deleted');
@@ -74,12 +72,10 @@ export default function MediaLibrary({ onSelect, onClose }) {
 
   async function saveAltText(id) {
     try {
-      const res = await fetch(`/api/admin/media/${id}`, {
+      const data = await adminFetch(`/api/admin/media/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ altText: altValue }),
       });
-      const data = await res.json();
       if (data.success) {
         setMedia(prev => prev.map(m => m.id === id ? { ...m, altText: altValue } : m));
         setEditingAlt(null);

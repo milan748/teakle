@@ -1,5 +1,6 @@
 import { getCustomerSession } from '@/lib/customerSession';
 import { getDb } from '@/lib/db';
+import { log } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -18,7 +19,7 @@ export async function GET() {
 
     return Response.json({ customer });
   } catch (err) {
-    console.error('Get customer error:', err);
+    log.error('Get customer error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

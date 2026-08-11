@@ -4,8 +4,9 @@ import { createSession } from '@/lib/session';
 import bcrypt from 'bcryptjs';
 import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST(request) {
+export const POST = withCsrf(async function POST(request) {
   try {
     const rl = rateLimit('admin:login', RATE_LIMITS.adminLogin);
     if (!rl.allowed) {
@@ -87,4 +88,4 @@ export async function POST(request) {
       { status: 401 }
     );
   }
-}
+});

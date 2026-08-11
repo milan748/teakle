@@ -2,9 +2,17 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { validateCustomOrder } from '@/lib/validate';
 import { requireAdmin } from '@/lib/auth';
+import { rateLimit } from '@/lib/rateLimit';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST(request) {
+export const POST = withCsrf(async function POST(request) {
   try {
+    const rl = rateLimit('form:custom-order', { limit: 5, windowMs: 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const body = await request.json();
 
     const validation = validateCustomOrder(body);
@@ -26,10 +34,10 @@ export async function POST(request) {
       message: 'Custom order submitted successfully',
     }, { status: 201 });
   } catch (error) {
-    console.error('Custom order API error:', error);
+    log.error('Custom order API error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
 export async function GET() {
   try {
@@ -40,7 +48,7 @@ export async function GET() {
     const orders = db.prepare('SELECT id, name, email, status, createdAt FROM custom_orders ORDER BY createdAt DESC').all();
     return NextResponse.json({ success: true, data: orders });
   } catch (error) {
-    console.error('Custom order GET error:', error);
+    log.error('Custom order GET error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

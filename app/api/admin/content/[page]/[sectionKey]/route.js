@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { saveDraftSection, publishSection, discardDraft, VALID_SECTIONS, VALID_PAGES } from '@/lib/cms';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const MAX_LENGTHS = {
   title: 200,
@@ -47,7 +49,7 @@ function validateBody(body) {
 }
 
 // PUT — Save draft
-export async function PUT(request, { params }) {
+export const PUT = withCsrf(async function PUT(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -95,13 +97,13 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ success: true, data: section });
   } catch (error) {
-    console.error('CMS PUT error:', error);
+    log.error('CMS PUT error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
 // POST — Publish or Discard
-export async function POST(request, { params }) {
+export const POST = withCsrf(async function POST(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -139,7 +141,7 @@ export async function POST(request, { params }) {
 
     return NextResponse.json({ success: true, data: section });
   } catch (error) {
-    console.error('CMS POST error:', error);
+    log.error('CMS POST error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

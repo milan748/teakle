@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { VALID_ORDER_STATUSES, VALID_TRANSITIONS, isValidStatusTransition } from '@/app/api/orders/route';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 export async function GET(_request, { params }) {
   const auth = await requireAdmin();
@@ -45,12 +46,12 @@ export async function GET(_request, { params }) {
 
     return NextResponse.json({ success: true, data: { ...order, items, history, notes } });
   } catch (error) {
-    console.error('Product order detail error:', error);
+    log.error('Product order detail error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PATCH(request, { params }) {
+export const PATCH = withCsrf(async function PATCH(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -107,7 +108,7 @@ export async function PATCH(request, { params }) {
 
     return NextResponse.json({ success: true, data: { id: orderId, status: normalizedStatus } });
   } catch (error) {
-    console.error('Product order status update error:', error);
+    log.error('Product order status update error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST(request, { params }) {
+export const POST = withCsrf(async function POST(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -50,7 +51,7 @@ export async function POST(request, { params }) {
       },
     });
   } catch (error) {
-    console.error('Order notes POST error:', error);
+    log.error('Order notes POST error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

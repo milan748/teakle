@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[\d\s\-()]{7,20}$/;
@@ -30,7 +31,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(req) {
+export const PUT = withCsrf(async function PUT(req) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -102,4 +103,4 @@ export async function PUT(req) {
     log.error('Profile PUT error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

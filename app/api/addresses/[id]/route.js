@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { log } from '@/lib/logger';
 import { validateAddress } from '@/lib/validateAddress';
+import { withCsrf } from '@/lib/csrf';
 
 export async function GET(req, { params }) {
   try {
@@ -27,7 +28,7 @@ export async function GET(req, { params }) {
   }
 }
 
-export async function PUT(req, { params }) {
+export const PUT = withCsrf(async function PUT(req, { params }) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -105,9 +106,9 @@ export async function PUT(req, { params }) {
     log.error('Address PUT error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(req, { params }) {
+export const DELETE = withCsrf(async function DELETE(req, { params }) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -143,4 +144,4 @@ export async function DELETE(req, { params }) {
     log.error('Address DELETE error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

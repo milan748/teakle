@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { getSiteSettings, updateSiteSetting } from '@/lib/cms';
+import { withCsrf } from '@/lib/csrf';
 
 const VALID_KEYS = [
   'footerDescription',
@@ -42,7 +43,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(request) {
+export const PUT = withCsrf(async function PUT(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -64,4 +65,4 @@ export async function PUT(request) {
   } catch {
     return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
   }
-}
+});

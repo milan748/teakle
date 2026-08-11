@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const VALID_STATUSES = ['NEW', 'CONTACTED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
@@ -17,12 +19,12 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ success: true, data: enquiry });
   } catch (error) {
-    console.error('Trade GET error:', error);
+    log.error('Trade GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PATCH(request, { params }) {
+export const PATCH = withCsrf(async function PATCH(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -45,7 +47,7 @@ export async function PATCH(request, { params }) {
     const enquiry = db.prepare('SELECT * FROM trade_enquiries WHERE id = ?').get(id);
     return NextResponse.json({ success: true, data: enquiry });
   } catch (error) {
-    console.error('Trade PATCH error:', error);
+    log.error('Trade PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

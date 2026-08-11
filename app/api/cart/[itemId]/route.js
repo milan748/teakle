@@ -1,6 +1,8 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProductById } from '@/app/data/products';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 function getOrCreateCart(db, customerId) {
   let cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
@@ -30,7 +32,7 @@ function formatCartItems(db, cartId) {
   });
 }
 
-export async function DELETE(_req, { params }) {
+export const DELETE = withCsrf(async function DELETE(_req, { params }) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -51,7 +53,7 @@ export async function DELETE(_req, { params }) {
     const items = formatCartItems(db, cart.id);
     return Response.json({ ok: true, items });
   } catch (err) {
-    console.error('Cart DELETE error:', err);
+    log.error('Cart DELETE error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

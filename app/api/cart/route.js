@@ -1,6 +1,8 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProduct } from '@/lib/products';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 function getOrCreateCart(db, customerId) {
   let cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
@@ -50,12 +52,12 @@ export async function GET() {
 
     return Response.json({ items });
   } catch (err) {
-    console.error('Cart GET error:', err);
+    log.error('Cart GET error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -105,12 +107,12 @@ export async function POST(req) {
     const items = formatCartItems(db, cart.id);
     return Response.json({ ok: true, items });
   } catch (err) {
-    console.error('Cart POST error:', err);
+    log.error('Cart POST error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
-export async function PUT(req) {
+export const PUT = withCsrf(async function PUT(req) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -149,7 +151,7 @@ export async function PUT(req) {
     const items = formatCartItems(db, cart.id);
     return Response.json({ ok: true, items });
   } catch (err) {
-    console.error('Cart PUT error:', err);
+    log.error('Cart PUT error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

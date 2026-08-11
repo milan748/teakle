@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function ProductsManager() {
   const [products, setProducts] = useState([]);
@@ -21,8 +22,7 @@ export default function ProductsManager() {
       if (search) params.set('search', search);
       if (category) params.set('category', category);
       if (status) params.set('status', status);
-      const res = await fetch(`/api/admin/products?${params}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/products?${params}`);
       if (data.success) {
         setProducts(data.data);
         setCategories(data.categories);
@@ -39,8 +39,7 @@ export default function ProductsManager() {
 
   async function fetchProductDetail(id) {
     try {
-      const res = await fetch(`/api/admin/products/${id}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/products/${id}`);
       if (data.success) setSelectedProduct(data.data);
     } catch (err) {
       console.error('Failed to fetch product:', err);
@@ -52,16 +51,14 @@ export default function ProductsManager() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch(`/api/admin/products/${selectedProduct.id}`, {
+      const data = await adminFetch(`/api/admin/products/${selectedProduct.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sku: selectedProduct.sku || null,
           active: selectedProduct.active,
           inventoryQuantity: selectedProduct.inventoryQuantity,
         }),
       });
-      const data = await res.json();
       if (data.success) {
         setMessage({ type: 'success', text: 'Product updated' });
         setSelectedProduct(prev => ({ ...prev, ...data.data }));

@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { validateContact } from '@/lib/validate';
+import { rateLimit } from '@/lib/rateLimit';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST(request) {
+export const POST = withCsrf(async function POST(request) {
   try {
+    const rl = rateLimit('form:contact', { limit: 10, windowMs: 60 * 1000 });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
     const body = await request.json();
 
     const validation = validateContact(body);
@@ -25,7 +33,7 @@ export async function POST(request) {
       message: 'Contact form submitted successfully',
     }, { status: 201 });
   } catch (error) {
-    console.error('Contact API error:', error);
+    log.error('Contact API error', { message: error.message });
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

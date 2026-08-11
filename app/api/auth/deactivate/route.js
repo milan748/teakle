@@ -3,10 +3,11 @@ import { getCustomerSession, deleteCustomerSession } from '@/lib/customerSession
 import bcrypt from 'bcryptjs';
 import { rateLimit } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const DEACTIVATE_RATE_LIMIT = { limit: 2, windowMs: 60 * 60 * 1000 };
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const rl = rateLimit('auth:deactivate', DEACTIVATE_RATE_LIMIT);
     if (!rl.allowed) {
@@ -69,4 +70,4 @@ export async function POST(req) {
     log.error('Account deactivation error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

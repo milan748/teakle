@@ -11,6 +11,7 @@ import NewsletterManager from './NewsletterManager';
 import SiteSettingsEditor from './SiteSettingsEditor';
 import OrdersManager from './OrdersManager';
 import ProductsManager from './ProductsManager';
+import { adminFetch } from '@/lib/adminApi';
 
 const PAGES = {
   home: { label: 'Homepage', sections: { hero: 'Hero', philosophy: 'Philosophy', signature: 'Signature Collection', craftsmanship: 'Craftsmanship', 'workshop-story': 'Workshop Story', 'process-story': 'Process Story' } },
@@ -30,7 +31,7 @@ export default function AdminDashboard({ admin }) {
   async function handleLogout() {
     setLoggingOut(true);
     try {
-      await fetch('/api/admin/logout', { method: 'POST' });
+      await adminFetch('/api/admin/logout', { method: 'POST' });
       window.location.href = '/admin/login';
     } catch {
       setLoggingOut(false);

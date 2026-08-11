@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { deleteMedia, updateMediaAlt, getMediaById } from '@/lib/media';
+import { withCsrf } from '@/lib/csrf';
 
-export async function DELETE(_request, { params }) {
+export const DELETE = withCsrf(async function DELETE(_request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -24,9 +25,9 @@ export async function DELETE(_request, { params }) {
     const status = message.includes('currently used') ? 409 : 500;
     return NextResponse.json({ error: message }, { status });
   }
-}
+});
 
-export async function PUT(request, { params }) {
+export const PUT = withCsrf(async function PUT(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -49,4 +50,4 @@ export async function PUT(request, { params }) {
   } catch (err) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });
   }
-}
+});

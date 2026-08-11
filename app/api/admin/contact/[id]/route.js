@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 export async function GET(request, { params }) {
   const auth = await requireAdmin();
@@ -20,12 +22,12 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ success: true, data: submission });
   } catch (error) {
-    console.error('Contact GET error:', error);
+    log.error('Contact GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PATCH(request, { params }) {
+export const PATCH = withCsrf(async function PATCH(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -48,7 +50,7 @@ export async function PATCH(request, { params }) {
     const submission = db.prepare('SELECT id, name, email, subject, message, status, read, createdAt FROM contact_submissions WHERE id = ?').get(id);
     return NextResponse.json({ success: true, data: submission });
   } catch (error) {
-    console.error('Contact PATCH error:', error);
+    log.error('Contact PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

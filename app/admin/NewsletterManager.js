@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function NewsletterManager() {
   const [subscribers, setSubscribers] = useState([]);
@@ -16,8 +17,7 @@ export default function NewsletterManager() {
     try {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
-      const res = await fetch(`/api/admin/newsletter?${params}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/newsletter?${params}`);
       if (data.success) setSubscribers(data.data);
     } catch {}
     setLoading(false);

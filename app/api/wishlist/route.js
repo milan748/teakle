@@ -1,6 +1,8 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProductById } from '@/app/data/products';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 function getOrCreateWishlist(db, customerId) {
   let wl = db.prepare('SELECT id FROM wishlists WHERE customerId = ?').get(customerId);
@@ -42,12 +44,12 @@ export async function GET() {
 
     return Response.json({ items });
   } catch (err) {
-    console.error('Wishlist GET error:', err);
+    log.error('Wishlist GET error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -85,7 +87,7 @@ export async function POST(req) {
     const items = formatWishlistItems(db, wl.id);
     return Response.json({ ok: true, added, items });
   } catch (err) {
-    console.error('Wishlist POST error:', err);
+    log.error('Wishlist POST error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { getAllMedia, createMedia } from '@/lib/media';
+import { withCsrf } from '@/lib/csrf';
 
 export async function GET() {
   const auth = await requireAdmin();
@@ -14,7 +15,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request) {
+export const POST = withCsrf(async function POST(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -34,4 +35,4 @@ export async function POST(request) {
     const status = message.includes('Invalid file type') || message.includes('too large') || message.includes('Empty') ? 400 : 500;
     return NextResponse.json({ error: message }, { status });
   }
-}
+});

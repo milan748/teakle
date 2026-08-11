@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
 
 export async function GET() {
   const auth = await requireAdmin();
@@ -40,7 +41,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Dashboard API error:', error);
+    log.error('Dashboard API error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

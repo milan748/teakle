@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { log } from '@/lib/logger';
 import { validateAddress } from '@/lib/validateAddress';
+import { withCsrf } from '@/lib/csrf';
 
 export async function GET() {
   try {
@@ -22,7 +23,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -92,4 +93,4 @@ export async function POST(req) {
     log.error('Addresses POST error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

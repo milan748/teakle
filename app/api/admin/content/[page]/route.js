@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { getPageSections } from '@/lib/cms';
+import { log } from '@/lib/logger';
 
 export async function GET(request, { params }) {
   const auth = await requireAdmin();
@@ -16,7 +17,7 @@ export async function GET(request, { params }) {
     const sections = getPageSections(page);
     return NextResponse.json({ success: true, data: sections });
   } catch (error) {
-    console.error('CMS GET error:', error);
+    log.error('CMS GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

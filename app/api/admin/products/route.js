@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { getAllProducts, clearMetadataCache } from '@/lib/products';
+import { log } from '@/lib/logger';
 
 export async function GET(request) {
   const auth = await requireAdmin();
@@ -63,7 +64,7 @@ export async function GET(request) {
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error('Admin products GET error:', error);
+    log.error('Admin products GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }

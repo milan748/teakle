@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -14,13 +15,10 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const data = await adminFetch('/api/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await res.json();
 
       if (data.success) {
         window.location.href = '/admin';

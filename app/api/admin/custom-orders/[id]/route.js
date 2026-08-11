@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const VALID_STATUSES = ['NEW', 'CONTACTED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 
@@ -17,12 +19,12 @@ export async function GET(request, { params }) {
     }
     return NextResponse.json({ success: true, data: order });
   } catch (error) {
-    console.error('Custom order GET error:', error);
+    log.error('Custom order GET error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function PATCH(request, { params }) {
+export const PATCH = withCsrf(async function PATCH(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -45,7 +47,7 @@ export async function PATCH(request, { params }) {
     const order = db.prepare('SELECT * FROM custom_orders WHERE id = ?').get(id);
     return NextResponse.json({ success: true, data: order });
   } catch (error) {
-    console.error('Custom order PATCH error:', error);
+    log.error('Custom order PATCH error:', error);
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
-}
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 const STATUS_COLORS = {
   PENDING: '#f59e0b',
@@ -51,8 +52,7 @@ export default function OrdersManager() {
       if (paymentFilter) params.set('paymentStatus', paymentFilter);
       if (dateFrom) params.set('dateFrom', dateFrom);
       if (dateTo) params.set('dateTo', dateTo);
-      const res = await fetch(`/api/admin/product-orders?${params}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/product-orders?${params}`);
       if (data.success) {
         setOrders(data.data);
         setPagination(data.pagination);
@@ -66,8 +66,7 @@ export default function OrdersManager() {
   async function fetchOrderDetail(id) {
     setDetailLoading(true);
     try {
-      const res = await fetch(`/api/admin/product-orders/${id}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/product-orders/${id}`);
       if (data.success) setSelectedOrder(data.data);
     } catch (err) {
       console.error('Failed to fetch order:', err);
@@ -78,12 +77,10 @@ export default function OrdersManager() {
   async function updateStatus(id, newStatus) {
     setUpdating(true);
     try {
-      const res = await fetch(`/api/admin/product-orders/${id}`, {
+      const data = await adminFetch(`/api/admin/product-orders/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
-      const data = await res.json();
       if (data.success) {
         await fetchOrderDetail(id);
         await fetchOrders(pagination.page);
@@ -100,12 +97,10 @@ export default function OrdersManager() {
     if (!noteContent.trim()) return;
     setSubmittingNote(true);
     try {
-      const res = await fetch(`/api/admin/product-orders/${orderId}/notes`, {
+      const data = await adminFetch(`/api/admin/product-orders/${orderId}/notes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: noteContent.trim(), isInternal: noteInternal }),
       });
-      const data = await res.json();
       if (data.success) {
         setNoteContent('');
         setNoteInternal(false);

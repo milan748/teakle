@@ -104,7 +104,7 @@ function testProfileAPI() {
 
   test('profile route exists', () => assert(profileSource.length > 0));
   test('exports GET function', () => assert(profileSource.includes('export async function GET')));
-  test('exports PUT function', () => assert(profileSource.includes('export async function PUT')));
+  test('exports PUT function', () => assert(profileSource.includes('export async function PUT') || profileSource.includes('export const PUT = withCsrf')));
   test('uses getCustomerSession', () => assert(profileSource.includes('getCustomerSession')));
   test('GET returns customer without passwordHash', () => assert(profileSource.includes('SELECT id, email, name, phone, isActive, createdAt, updatedAt')));
   test('PUT validates name length', () => assert(profileSource.includes('MAX_NAME')));
@@ -129,7 +129,7 @@ function testPasswordAPI() {
   }
 
   test('password route exists', () => assert(passwordSource.length > 0));
-  test('exports PUT function', () => assert(passwordSource.includes('export async function PUT')));
+  test('exports PUT function', () => assert(passwordSource.includes('export async function PUT') || passwordSource.includes('export const PUT = withCsrf')));
   test('uses bcrypt for hashing', () => assert(passwordSource.includes('bcrypt.hash') || passwordSource.includes("from 'bcryptjs'")));
   test('uses bcrypt for comparison', () => assert(passwordSource.includes('bcrypt.compare')));
   test('validates MIN_PASSWORD', () => assert(passwordSource.includes('MIN_PASSWORD')));
@@ -156,7 +156,7 @@ function testForgotPassword() {
   }
 
   test('forgot-password route exists', () => assert(forgotSource.length > 0));
-  test('exports POST function', () => assert(forgotSource.includes('export async function POST')));
+  test('exports POST function', () => assert(forgotSource.includes('export async function POST') || forgotSource.includes('export const POST = withCsrf')));
   test('uses SHA-256 for token hashing', () => assert(forgotSource.includes('sha256') || forgotSource.includes('SHA-256')));
   test('generates random token', () => assert(forgotSource.includes('generateToken') || forgotSource.includes('randomBytes')));
   test('deletes old unused tokens before creating new', () => assert(forgotSource.includes('DELETE FROM password_resets')));
@@ -201,7 +201,7 @@ function testAddressesAPI() {
 
   test('addresses route exists', () => assert(listSource.length > 0));
   test('exports GET function', () => assert(listSource.includes('export async function GET')));
-  test('exports POST function', () => assert(listSource.includes('export async function POST')));
+  test('exports POST function', () => assert(listSource.includes('export async function POST') || listSource.includes('export const POST = withCsrf')));
   test('GET requires authentication', () => assert(listSource.includes('getCustomerSession')));
   test('GET orders by isDefault DESC', () => assert(listSource.includes('isDefault DESC')));
   test('POST validates with validateAddress', () => assert(listSource.includes('validateAddress')));
@@ -223,8 +223,8 @@ function testAddressesAPI() {
 
   test('address [id] route exists', () => assert(crudSource.length > 0));
   test('exports GET function', () => assert(crudSource.includes('export async function GET')));
-  test('exports PUT function', () => assert(crudSource.includes('export async function PUT')));
-  test('exports DELETE function', () => assert(crudSource.includes('export async function DELETE')));
+  test('exports PUT function', () => assert(crudSource.includes('export async function PUT') || crudSource.includes('export const PUT = withCsrf')));
+  test('exports DELETE function', () => assert(crudSource.includes('export async function DELETE') || crudSource.includes('export const DELETE = withCsrf')));
   test('GET checks customer ownership', () => assert(crudSource.includes('customerId')));
   test('PUT validates address', () => assert(crudSource.includes('validateAddress')));
   test('PUT updates address', () => assert(crudSource.includes('UPDATE customer_addresses')));
@@ -245,7 +245,7 @@ function testDeactivation() {
   }
 
   test('deactivate route exists', () => assert(deactivateSource.length > 0));
-  test('exports POST function', () => assert(deactivateSource.includes('export async function POST')));
+  test('exports POST function', () => assert(deactivateSource.includes('export async function POST') || deactivateSource.includes('export const POST = withCsrf')));
   test('requires password confirmation', () => assert(deactivateSource.includes('Password confirmation is required')));
   test('validates password with bcrypt', () => assert(deactivateSource.includes('bcrypt.compare')));
   test('checks for active orders', () => assert(deactivateSource.includes('active orders') || deactivateSource.includes('NOT IN')));

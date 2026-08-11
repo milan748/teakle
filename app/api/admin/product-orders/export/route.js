@@ -1,5 +1,6 @@
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
+import { log } from '@/lib/logger';
 
 export async function GET(request) {
   const auth = await requireAdmin();
@@ -88,7 +89,7 @@ export async function GET(request) {
       },
     });
   } catch (error) {
-    console.error('Orders export error:', error);
+    log.error('Orders export error:', error);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

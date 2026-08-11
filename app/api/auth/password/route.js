@@ -3,11 +3,12 @@ import { getCustomerSession } from '@/lib/customerSession';
 import bcrypt from 'bcryptjs';
 import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 const MIN_PASSWORD = 8;
 const MAX_PASSWORD = 128;
 
-export async function PUT(req) {
+export const PUT = withCsrf(async function PUT(req) {
   try {
     const rl = rateLimit('auth:password', { limit: 5, windowMs: 15 * 60 * 1000 });
     if (!rl.allowed) {
@@ -61,4 +62,4 @@ export async function PUT(req) {
     log.error('Password change error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 const GENERAL_SETTINGS = [
   { key: 'siteName', label: 'Site Name', placeholder: 'Teakle' },
@@ -95,8 +96,7 @@ export default function SiteSettingsEditor() {
   async function loadSettings() {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/settings');
-      const data = await res.json();
+      const data = await adminFetch('/api/admin/settings');
       if (data.success) setSettings(data.data);
     } catch {
       setMessage('Failed to load settings');
@@ -113,12 +113,10 @@ export default function SiteSettingsEditor() {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch('/api/admin/settings', {
+      const data = await adminFetch('/api/admin/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),
       });
-      const data = await res.json();
       if (data.success) {
         setMessage('Settings saved successfully.');
       } else {

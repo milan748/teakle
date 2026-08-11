@@ -1,6 +1,8 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProductById } from '@/app/data/products';
+import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
 function getOrCreateWishlist(db, customerId) {
   let wl = db.prepare('SELECT id FROM wishlists WHERE customerId = ?').get(customerId);
@@ -29,7 +31,7 @@ function formatWishlistItems(db, wishlistId) {
   });
 }
 
-export async function DELETE(_req, { params }) {
+export const DELETE = withCsrf(async function DELETE(_req, { params }) {
   try {
     const session = await getCustomerSession();
     if (!session) {
@@ -50,7 +52,7 @@ export async function DELETE(_req, { params }) {
     const items = formatWishlistItems(db, wl.id);
     return Response.json({ ok: true, items });
   } catch (err) {
-    console.error('Wishlist DELETE error:', err);
+    log.error('Wishlist DELETE error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

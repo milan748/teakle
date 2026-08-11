@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import MediaLibrary from './MediaLibrary';
+import { adminFetch } from '@/lib/adminApi';
 
 const ALL_FIELDS = [
   'eyebrow', 'title', 'subtitle', 'body',
@@ -50,8 +51,7 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
   async function fetchSections() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/content/${page}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/content/${page}`);
       if (data.success) setSections(data.data);
     } catch {
       setMessage('Failed to load sections');
@@ -87,12 +87,10 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch(`/api/admin/content/${page}/${editing}`, {
+      const data = await adminFetch(`/api/admin/content/${page}/${editing}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      const data = await res.json();
       if (data.success) {
         setSections(prev => {
           const idx = prev.findIndex(s => s.sectionKey === editing);
@@ -118,12 +116,10 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch(`/api/admin/content/${page}/${editing}`, {
+      const data = await adminFetch(`/api/admin/content/${page}/${editing}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'publish' }),
       });
-      const data = await res.json();
       if (data.success) {
         setSections(prev => {
           const idx = prev.findIndex(s => s.sectionKey === editing);
@@ -149,12 +145,10 @@ export default function PageEditor({ page, sectionLabels, backLabel }) {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch(`/api/admin/content/${page}/${editing}`, {
+      const data = await adminFetch(`/api/admin/content/${page}/${editing}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'discard' }),
       });
-      const data = await res.json();
       if (data.success) {
         setSections(prev => {
           const idx = prev.findIndex(s => s.sectionKey === editing);

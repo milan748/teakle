@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { adminFetch } from '@/lib/adminApi';
 
 const STATUSES = ['NEW', 'CONTACTED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
 const STATUS_COLORS = {
@@ -29,8 +30,7 @@ export default function CustomOrdersManager() {
       const params = new URLSearchParams();
       if (search) params.set('search', search);
       if (filterStatus) params.set('status', filterStatus);
-      const res = await fetch(`/api/admin/custom-orders?${params}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/custom-orders?${params}`);
       if (data.success) setOrders(data.data);
     } catch {}
     setLoading(false);
@@ -38,8 +38,7 @@ export default function CustomOrdersManager() {
 
   async function loadDetail(id) {
     try {
-      const res = await fetch(`/api/admin/custom-orders/${id}`);
-      const data = await res.json();
+      const data = await adminFetch(`/api/admin/custom-orders/${id}`);
       if (data.success) setSelected(data.data);
     } catch {}
   }
@@ -47,12 +46,10 @@ export default function CustomOrdersManager() {
   async function updateStatus(id, status) {
     setUpdating(true);
     try {
-      const res = await fetch(`/api/admin/custom-orders/${id}`, {
+      const data = await adminFetch(`/api/admin/custom-orders/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
-      const data = await res.json();
       if (data.success) {
         setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
         if (selected?.id === id) setSelected(prev => ({ ...prev, status }));

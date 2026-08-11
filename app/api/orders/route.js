@@ -5,6 +5,7 @@ import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { validateCheckoutAddresses } from '@/lib/validateAddress';
 import { calculateOrderTotal } from '@/lib/orderPricing';
+import { withCsrf } from '@/lib/csrf';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 const VALID_PAYMENT_STATUSES = ['UNPAID', 'PAID'];
@@ -49,12 +50,12 @@ export async function GET() {
 
     return Response.json({ orders: ordersWithItems });
   } catch (err) {
-    console.error('Orders GET error:', err);
+    log.error('Orders GET error:', err);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const rl = rateLimit('order:create', RATE_LIMITS.orderCreate);
     if (!rl.allowed) {
@@ -163,6 +164,6 @@ export async function POST(req) {
     log.error('Order creation failed', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});
 
 export { VALID_ORDER_STATUSES, VALID_PAYMENT_STATUSES, VALID_TRANSITIONS, isValidStatusTransition };
