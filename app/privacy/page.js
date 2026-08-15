@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         <h1>Privacy Policy</h1>
         <p>Last updated: August 2026</p>
       </div>
-      <main className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
+      <div className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
         <section style={{ marginBottom: 'var(--space-xl)' }}>
           <h2>1. Information We Collect</h2>
           <p>When you use the Teakle website, we may collect the following types of information:</p>
@@ -107,7 +107,7 @@ export default function PrivacyPage() {
           </ul>
           <p><em>INSUFFICIENT DATA — Physical address, phone number, and legal entity name to be provided before launch.</em></p>
         </section>
-      </main>
+      </div>
     </>
   );
 }

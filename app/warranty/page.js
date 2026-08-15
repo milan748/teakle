@@ -13,7 +13,7 @@ export default function WarrantyPage() {
         <h1>Warranty Policy</h1>
         <p>Last updated: August 2026</p>
       </div>
-      <main className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
+      <div className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
         <section style={{ marginBottom: 'var(--space-xl)' }}>
           <h2>1. Warranty Duration</h2>
           <p><em>INSUFFICIENT DATA — BUSINESS DECISION REQUIRED — Warranty duration to be determined before launch.</em></p>
@@ -73,7 +73,7 @@ export default function WarrantyPage() {
             <li>Instagram: <a href="https://www.instagram.com/teaklestudio" target="_blank" rel="noopener noreferrer">@teaklestudio</a></li>
           </ul>
         </section>
-      </main>
+      </div>
     </>
   );
 }

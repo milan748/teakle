@@ -74,6 +74,12 @@ export const POST = withCsrf(async function POST(request) {
 
     log.adminLogin(normalizedEmail, true);
 
+    try {
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        admin.id, 'login', 'admin', admin.id, JSON.stringify({ email: admin.email })
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     return NextResponse.json({
       success: true,
       message: 'Login successful',

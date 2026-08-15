@@ -13,7 +13,7 @@ export default function TermsPage() {
         <h1>Terms &amp; Conditions</h1>
         <p>Last updated: August 2026</p>
       </div>
-      <main className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
+      <div className="container" style={{ maxWidth: 720, margin: '0 auto', padding: 'var(--space-xl) var(--space-md)' }}>
         <section style={{ marginBottom: 'var(--space-xl)' }}>
           <h2>1. Acceptance of Terms</h2>
           <p>By accessing or using the Teakle website (teakle.in), you agree to be bound by these Terms &amp; Conditions. If you do not agree, please do not use this website.</p>
@@ -123,7 +123,7 @@ export default function TermsPage() {
           </ul>
           <p><em>INSUFFICIENT DATA — Physical address and legal entity name to be provided before launch.</em></p>
         </section>
-      </main>
+      </div>
     </>
   );
 }
