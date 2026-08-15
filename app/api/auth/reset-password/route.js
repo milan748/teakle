@@ -1,6 +1,6 @@
 import { getDb } from '@/lib/db';
 import bcrypt from 'bcryptjs';
-import { rateLimit } from '@/lib/rateLimit';
+import { rateLimitIp } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { createHash } from 'crypto';
 
@@ -15,7 +15,7 @@ function sha256(str) {
 
 export async function POST(req) {
   try {
-    const rl = rateLimit('auth:reset-password', { limit: MAX_RESET_REQUESTS, windowMs: RESET_WINDOW_MS });
+    const rl = rateLimitIp('auth:reset-password', { limit: MAX_RESET_REQUESTS, windowMs: RESET_WINDOW_MS }, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
@@ -58,7 +58,7 @@ export async function POST(req) {
     }
 
     const newHash = await bcrypt.hash(password, 12);
-    db.prepare("UPDATE customers SET passwordHash = ?, updatedAt = datetime('now') WHERE id = ?")
+    db.prepare("UPDATE customers SET passwordHash = ?, sessionVersion = sessionVersion + 1, updatedAt = datetime('now') WHERE id = ?")
       .run(newHash, reset.customerId);
 
     db.prepare("UPDATE password_resets SET used = 1 WHERE id = ?")

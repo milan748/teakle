@@ -1,7 +1,7 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession, deleteCustomerSession } from '@/lib/customerSession';
 import bcrypt from 'bcryptjs';
-import { rateLimit } from '@/lib/rateLimit';
+import { rateLimitIp } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
 
@@ -9,7 +9,7 @@ const DEACTIVATE_RATE_LIMIT = { limit: 2, windowMs: 60 * 60 * 1000 };
 
 export const POST = withCsrf(async function POST(req) {
   try {
-    const rl = rateLimit('auth:deactivate', DEACTIVATE_RATE_LIMIT);
+    const rl = rateLimitIp('auth:deactivate', DEACTIVATE_RATE_LIMIT, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }

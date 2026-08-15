@@ -1,7 +1,7 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import bcrypt from 'bcryptjs';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
 
@@ -10,7 +10,7 @@ const MAX_PASSWORD = 128;
 
 export const PUT = withCsrf(async function PUT(req) {
   try {
-    const rl = rateLimit('auth:password', { limit: 5, windowMs: 15 * 60 * 1000 });
+    const rl = rateLimitIp('auth:password', { limit: 5, windowMs: 15 * 60 * 1000 }, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
@@ -52,7 +52,7 @@ export const PUT = withCsrf(async function PUT(req) {
     }
 
     const newHash = await bcrypt.hash(newPassword, 12);
-    db.prepare("UPDATE customers SET passwordHash = ?, updatedAt = datetime('now') WHERE id = ?")
+    db.prepare("UPDATE customers SET passwordHash = ?, sessionVersion = sessionVersion + 1, updatedAt = datetime('now') WHERE id = ?")
       .run(newHash, session.customerId);
 
     log.info('Password changed successfully', { customerId: session.customerId });

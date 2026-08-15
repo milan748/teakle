@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { VALID_ORDER_STATUSES, VALID_TRANSITIONS, isValidStatusTransition } from '@/app/api/orders/route';
 import { log } from '@/lib/logger';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { withCsrf } from '@/lib/csrf';
 
 export const PATCH = withCsrf(async function PATCH(request) {
@@ -11,7 +11,7 @@ export const PATCH = withCsrf(async function PATCH(request) {
   if (!auth.authorized) return auth.response;
 
   try {
-    const rl = rateLimit('admin:bulk', RATE_LIMITS.adminBulkAction);
+    const rl = rateLimitIp('admin:bulk', RATE_LIMITS.adminBulkAction, request.headers);
     if (!rl.allowed) {
       return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 });
     }

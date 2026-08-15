@@ -53,6 +53,8 @@ const optional = {
   NODE_ENV: 'development',
   ALLOW_INSECURE_SESSION: 'false',
   BACKUP_DIR: './backups',
+  ADMIN_SESSION_SECRET: '',
+  CUSTOMER_SESSION_SECRET: '',
   EMAIL_PROVIDER: 'none',
   EMAIL_FROM: '',
   EMAIL_API_KEY: '',
@@ -82,6 +84,22 @@ if (!secret) {
   pass_(`${secret.length} chars — hex string with sufficient entropy`);
 } else {
   pass_(`${secret.length} chars — meets minimum length`);
+}
+
+// ─── Separate Session Secrets ──────────────────────────────────────────────
+console.log('\nSESSION ISOLATION');
+const adminSecret = process.env.ADMIN_SESSION_SECRET;
+const customerSecret = process.env.CUSTOMER_SESSION_SECRET;
+if (adminSecret && customerSecret) {
+  if (adminSecret === customerSecret) {
+    warn_('ADMIN_SESSION_SECRET and CUSTOMER_SESSION_SECRET are identical — set different values for isolation');
+  } else {
+    pass_('Separate admin/customer session secrets configured');
+  }
+} else if (adminSecret || customerSecret) {
+  warn_('Only one of ADMIN_SESSION_SECRET/CUSTOMER_SESSION_SECRET set — set both for full isolation');
+} else {
+  warn_('Neither ADMIN_SESSION_SECRET nor CUSTOMER_SESSION_SECRET set — using shared SESSION_SECRET (less secure)');
 }
 
 // ─── NODE_ENV ──────────────────────────────────────────────────────────────

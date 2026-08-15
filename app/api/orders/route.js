@@ -1,7 +1,7 @@
 import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { getProduct } from '@/lib/products';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { validateCheckoutAddresses } from '@/lib/validateAddress';
 import { calculateOrderTotal } from '@/lib/orderPricing';
@@ -59,7 +59,7 @@ export async function GET() {
 
 export const POST = withCsrf(async function POST(req) {
   try {
-    const rl = rateLimit('order:create', RATE_LIMITS.orderCreate);
+    const rl = rateLimitIp('order:create', RATE_LIMITS.orderCreate, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }

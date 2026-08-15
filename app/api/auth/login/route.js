@@ -1,12 +1,12 @@
 import { getDb } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createCustomerSession } from '@/lib/customerSession';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 
 export async function POST(req) {
   try {
-    const rl = rateLimit('auth:login', RATE_LIMITS.customerLogin);
+    const rl = rateLimitIp('auth:login', RATE_LIMITS.customerLogin, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }

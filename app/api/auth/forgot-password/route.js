@@ -1,5 +1,5 @@
 import { getDb } from '@/lib/db';
-import { rateLimit } from '@/lib/rateLimit';
+import { rateLimitIp } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { createHash, randomBytes } from 'crypto';
 import { sendPasswordReset } from '@/lib/email';
@@ -18,7 +18,7 @@ function generateToken() {
 
 export async function POST(req) {
   try {
-    const rl = rateLimit('auth:forgot-password', { limit: MAX_RESET_REQUESTS, windowMs: RESET_WINDOW_MS });
+    const rl = rateLimitIp('auth:forgot-password', { limit: MAX_RESET_REQUESTS, windowMs: RESET_WINDOW_MS }, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }

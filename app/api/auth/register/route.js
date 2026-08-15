@@ -1,7 +1,7 @@
 import { getDb } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { createCustomerSession } from '@/lib/customerSession';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { sendWelcomeEmail } from '@/lib/email';
 
@@ -13,7 +13,7 @@ const MAX_PASSWORD = 128;
 
 export async function POST(req) {
   try {
-    const rl = rateLimit('auth:register', RATE_LIMITS.customerRegister);
+    const rl = rateLimitIp('auth:register', RATE_LIMITS.customerRegister, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
     }
@@ -60,7 +60,7 @@ export async function POST(req) {
       'INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)'
     ).run(normalizedEmail, passwordHash, name.trim());
 
-    const customer = { id: result.lastInsertRowid, email: normalizedEmail, name: name.trim() };
+    const customer = { id: result.lastInsertRowid, email: normalizedEmail, name: name.trim(), sessionVersion: 0 };
 
     db.prepare('INSERT INTO carts (customerId) VALUES (?)').run(customer.id);
     db.prepare('INSERT INTO wishlists (customerId) VALUES (?)').run(customer.id);

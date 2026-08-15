@@ -102,9 +102,22 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
         `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
          VALUES (?, ?, ?, ?, 'admin', NULL)`
       ).run(orderId, order.status, normalizedStatus, auth.admin.email);
+
+      db.prepare(
+        `INSERT INTO order_activity (orderId, actorType, actorId, action, oldValue, newValue, note, isCustomerVisible)
+         VALUES (?, 'admin', ?, 'status_changed', ?, ?, NULL, 1)`
+      ).run(orderId, auth.admin.email, order.status, normalizedStatus);
     });
 
     updateStatus();
+
+    // Audit log
+    try {
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'order_status_change', 'order', orderId,
+        JSON.stringify({ orderNumber: order.orderNumber, from: order.status, to: normalizedStatus })
+      );
+    } catch { /* audit log failure is non-blocking */ }
 
     // Update payment status when order is cancelled
     if (normalizedStatus === 'CANCELLED') {

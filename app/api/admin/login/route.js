@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { createSession } from '@/lib/session';
 import bcrypt from 'bcryptjs';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
 
 export const POST = withCsrf(async function POST(request) {
   try {
-    const rl = rateLimit('admin:login', RATE_LIMITS.adminLogin);
+    const rl = rateLimitIp('admin:login', RATE_LIMITS.adminLogin, request.headers);
     if (!rl.allowed) {
       return NextResponse.json(
         { success: false, error: 'Too many requests. Please try again later.' },

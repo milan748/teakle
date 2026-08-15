@@ -76,8 +76,7 @@
 ## Post-Deployment
 
 - [ ] `node scripts/preflight-production.js` — all PASS
-- [ ] `node scripts/test-sprint21.js` — all tests pass
-- [ ] `node scripts/runtime-client.js` — all runtime tests pass
-- [ ] `node scripts/regression-frontend.js` — all regression tests pass
+- [ ] `node scripts/test-sprint28.js` — all tests pass
+- [ ] `node scripts/runtime-sprint28.js` — all runtime tests pass
 - [ ] Smoke test: complete purchase flow on production
 - [ ] Backup verified on production

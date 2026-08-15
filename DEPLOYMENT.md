@@ -21,7 +21,9 @@ Copy `.env.example` to `.env.local` and configure:
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `SESSION_SECRET` | Yes | JWT signing secret (min 32 chars, random) |
+| `SESSION_SECRET` | Yes | JWT signing secret (min 32 chars, random). Used for admin sessions. |
+| `ADMIN_SESSION_SECRET` | No | Separate admin JWT secret. Falls back to `SESSION_SECRET` if not set. Recommended for production. |
+| `CUSTOMER_SESSION_SECRET` | No | Separate customer JWT secret. Falls back to `SESSION_SECRET` if not set. Recommended for production. |
 | `ADMIN_EMAIL` | Yes | Admin login email |
 | `ADMIN_PASSWORD` | Yes | Admin password (min 8 chars) |
 | `DATABASE_PATH` | No | SQLite path (default: `./data/teakle.db`) |
@@ -87,7 +89,7 @@ After=network.target
 Type=simple
 User=www-data
 WorkingDirectory=/path/to/teakle
-ExecStart=/usr/bin/node node_modules/.bin/next start
+ExecStart=/usr/bin/env npx next start
 Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production

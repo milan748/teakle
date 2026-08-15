@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { getSiteSettings, updateSiteSetting } from '@/lib/cms';
 import { withCsrf } from '@/lib/csrf';
+import { getDb } from '@/lib/db';
 
 const VALID_KEYS = [
   'footerDescription',
@@ -60,6 +61,15 @@ export const PUT = withCsrf(async function PUT(request) {
       updateSiteSetting(key, value || '');
       updated[key] = value || '';
     }
+
+    // Audit log
+    try {
+      const db = getDb();
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'settings_update', 'settings', null,
+        JSON.stringify({ keys: Object.keys(updated) })
+      );
+    } catch { /* audit log failure is non-blocking */ }
 
     return NextResponse.json({ success: true, data: updated });
   } catch {

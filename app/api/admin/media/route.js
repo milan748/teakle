@@ -2,14 +2,25 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { getAllMedia, createMedia } from '@/lib/media';
 import { withCsrf } from '@/lib/csrf';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
-export async function GET() {
+export async function GET(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
+  const rl = rateLimitIp('media', RATE_LIMITS.media, request.headers);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+  }
+
   try {
-    const media = getAllMedia();
-    return NextResponse.json({ success: true, data: media });
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search') || '';
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10)));
+
+    const result = getAllMedia({ page, limit, search });
+    return NextResponse.json({ success: true, ...result });
   } catch (err) {
     return NextResponse.json({ error: 'Failed to load media' }, { status: 500 });
   }

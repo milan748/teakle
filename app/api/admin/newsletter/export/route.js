@@ -1,13 +1,13 @@
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { log } from '@/lib/logger';
-import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 export async function GET(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
-  const rl = rateLimit('admin:export', RATE_LIMITS.adminExport);
+  const rl = rateLimitIp('admin:export', RATE_LIMITS.adminExport, request.headers);
   if (!rl.allowed) {
     return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
   }
@@ -57,6 +57,14 @@ export async function GET(request) {
     ].map(escapeCSV).join(','));
 
     const csv = [headers.join(','), ...rows].join('\n');
+
+    // Audit log
+    try {
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'export', 'newsletter', null,
+        JSON.stringify({ format: 'csv', rowCount: subscribers.length })
+      );
+    } catch { /* audit log failure is non-blocking */ }
 
     return new Response(csv, {
       status: 200,
