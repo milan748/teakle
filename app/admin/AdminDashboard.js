@@ -11,6 +11,7 @@ import NewsletterManager from './NewsletterManager';
 import SiteSettingsEditor from './SiteSettingsEditor';
 import OrdersManager from './OrdersManager';
 import ProductsManager from './ProductsManager';
+import AuditLogManager from './AuditLogManager';
 import { adminFetch } from '@/lib/adminApi';
 
 const PAGES = {
@@ -113,6 +114,7 @@ export default function AdminDashboard({ admin }) {
             <NavButton label="Contact" isActive={activePage === 'data-contact'} onClick={() => { setActivePage('data-contact'); setShowMedia(false); }} />
             <NavButton label="Trade Enquiries" isActive={activePage === 'data-trade'} onClick={() => { setActivePage('data-trade'); setShowMedia(false); }} />
             <NavButton label="Newsletter" isActive={activePage === 'data-newsletter'} onClick={() => { setActivePage('data-newsletter'); setShowMedia(false); }} />
+            <NavButton label="Audit Log" isActive={activePage === 'audit-log'} onClick={() => { setActivePage('audit-log'); setShowMedia(false); }} />
           </div>
 
           <div style={{ padding: '16px', borderTop: '1px solid #eee' }}>
@@ -143,6 +145,7 @@ export default function AdminDashboard({ admin }) {
           {activePage === 'data-trade' && <TradeManager />}
           {activePage === 'data-newsletter' && <NewsletterManager />}
           {activePage === 'site-settings' && <SiteSettingsEditor />}
+          {activePage === 'audit-log' && <AuditLogManager />}
         </div>
       </div>
     </div>

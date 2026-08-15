@@ -9,10 +9,15 @@ export async function GET(request) {
   try {
     const db = getDb();
     const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search') || '';
     const status = searchParams.get('status') || '';
     const paymentStatus = searchParams.get('paymentStatus') || '';
     const dateFrom = searchParams.get('dateFrom') || '';
     const dateTo = searchParams.get('dateTo') || '';
+    const minTotal = searchParams.get('minTotal') || '';
+    const maxTotal = searchParams.get('maxTotal') || '';
+    const customer = searchParams.get('customer') || '';
+    const orderNumber = searchParams.get('orderNumber') || '';
 
     let query = `
       SELECT o.orderNumber, o.status, o.paymentStatus,
@@ -27,6 +32,10 @@ export async function GET(request) {
     const conditions = [];
     const params = [];
 
+    if (search) {
+      conditions.push("(o.orderNumber LIKE ? OR c.email LIKE ? OR c.name LIKE ?)");
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+    }
     if (status) {
       conditions.push("o.status = ?");
       params.push(status);
@@ -43,6 +52,22 @@ export async function GET(request) {
       conditions.push("o.createdAt <= ?");
       params.push(dateTo + ' 23:59:59');
     }
+    if (customer) {
+      conditions.push("(c.email LIKE ? OR c.name LIKE ?)");
+      params.push(`%${customer}%`, `%${customer}%`);
+    }
+    if (orderNumber) {
+      conditions.push("o.orderNumber LIKE ?");
+      params.push(`%${orderNumber}%`);
+    }
+    if (minTotal) {
+      conditions.push("o.totalAmount >= ?");
+      params.push(parseInt(minTotal, 10));
+    }
+    if (maxTotal) {
+      conditions.push("o.totalAmount <= ?");
+      params.push(parseInt(maxTotal, 10));
+    }
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -54,6 +79,9 @@ export async function GET(request) {
     const escapeCSV = (val) => {
       if (val == null) return '';
       const str = String(val);
+      if (/[=+\-@]/.test(str.charAt(0))) {
+        return "'" + str;
+      }
       if (str.includes(',') || str.includes('"') || str.includes('\n')) {
         return '"' + str.replace(/"/g, '""') + '"';
       }

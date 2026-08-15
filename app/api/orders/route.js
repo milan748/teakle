@@ -8,7 +8,7 @@ import { calculateOrderTotal } from '@/lib/orderPricing';
 import { withCsrf } from '@/lib/csrf';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
-const VALID_PAYMENT_STATUSES = ['UNPAID', 'PAID'];
+const VALID_PAYMENT_STATUSES = ['UNPAID', 'PENDING', 'PAID', 'FAILED', 'REFUNDED', 'CANCELLED'];
 const VALID_TRANSITIONS = {
   PENDING: ['CONFIRMED', 'CANCELLED'],
   CONFIRMED: ['PROCESSING', 'CANCELLED'],

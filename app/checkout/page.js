@@ -280,8 +280,8 @@ export default function CheckoutPage() {
               </div>
 
               <p className="confirm-note">
-                Payment is pending. You will receive an email confirmation once payment is processed.
-                You can track your order status in your account.
+                Payment processing is not currently configured. Your order has been placed with payment pending.
+                You can track your order status in your account. Payment will be available once a payment provider is connected.
               </p>
 
               <Link href="/account" className="confirm-cta">View My Orders</Link>
@@ -831,9 +831,9 @@ export default function CheckoutPage() {
                           <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                           <line x1="1" y1="10" x2="23" y2="10"/>
                         </svg>
-                        <p>Payment integration will be available soon.</p>
+                        <p>Payment processing is not currently configured.</p>
                         <p style={{ fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7, marginTop: '0.5rem' }}>
-                          Your order will be placed with payment pending. You can complete payment later from your account.
+                          Your order will be placed with payment pending. A payment provider will be connected in a future update.
                         </p>
                       </div>
                       <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }} disabled={isGuest}>

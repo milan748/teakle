@@ -15,6 +15,10 @@ export async function GET(request) {
     const paymentStatus = searchParams.get('paymentStatus') || '';
     const dateFrom = searchParams.get('dateFrom') || '';
     const dateTo = searchParams.get('dateTo') || '';
+    const minTotal = searchParams.get('minTotal') || '';
+    const maxTotal = searchParams.get('maxTotal') || '';
+    const customer = searchParams.get('customer') || '';
+    const orderNumber = searchParams.get('orderNumber') || '';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
     const offset = (page - 1) * limit;
@@ -52,6 +56,22 @@ export async function GET(request) {
       conditions.push("o.createdAt <= ?");
       params.push(dateTo + ' 23:59:59');
     }
+    if (customer) {
+      conditions.push("(c.email LIKE ? OR c.name LIKE ?)");
+      params.push(`%${customer}%`, `%${customer}%`);
+    }
+    if (orderNumber) {
+      conditions.push("o.orderNumber LIKE ?");
+      params.push(`%${orderNumber}%`);
+    }
+    if (minTotal) {
+      conditions.push("o.totalAmount >= ?");
+      params.push(parseInt(minTotal, 10));
+    }
+    if (maxTotal) {
+      conditions.push("o.totalAmount <= ?");
+      params.push(parseInt(maxTotal, 10));
+    }
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -83,6 +103,22 @@ export async function GET(request) {
     if (dateTo) {
       countConditions.push("o.createdAt <= ?");
       countParams.push(dateTo + ' 23:59:59');
+    }
+    if (customer) {
+      countConditions.push("(c.email LIKE ? OR c.name LIKE ?)");
+      countParams.push(`%${customer}%`, `%${customer}%`);
+    }
+    if (orderNumber) {
+      countConditions.push("o.orderNumber LIKE ?");
+      countParams.push(`%${orderNumber}%`);
+    }
+    if (minTotal) {
+      countConditions.push("o.totalAmount >= ?");
+      countParams.push(parseInt(minTotal, 10));
+    }
+    if (maxTotal) {
+      countConditions.push("o.totalAmount <= ?");
+      countParams.push(parseInt(maxTotal, 10));
     }
     if (countConditions.length > 0) {
       countQuery += ' WHERE ' + countConditions.join(' AND ');

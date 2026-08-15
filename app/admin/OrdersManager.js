@@ -13,7 +13,11 @@ const STATUS_COLORS = {
 
 const PAYMENT_COLORS = {
   UNPAID: '#ef4444',
+  PENDING: '#f59e0b',
   PAID: '#10b981',
+  FAILED: '#ef4444',
+  REFUNDED: '#8b5cf6',
+  CANCELLED: '#6b7280',
 };
 
 function statusBg(color) { return color + '15'; }
@@ -32,16 +36,23 @@ export default function OrdersManager() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailTab, setDetailTab] = useState('details');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [paymentFilter, setPaymentFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [minTotal, setMinTotal] = useState('');
+  const [maxTotal, setMaxTotal] = useState('');
+  const [customerFilter, setCustomerFilter] = useState('');
+  const [orderNumberFilter, setOrderNumberFilter] = useState('');
   const [pagination, setPagination] = useState({ page: 1, total: 0, totalPages: 0 });
   const [updating, setUpdating] = useState(false);
   const [noteContent, setNoteContent] = useState('');
   const [noteInternal, setNoteInternal] = useState(false);
   const [submittingNote, setSubmittingNote] = useState(false);
+  const [selectedOrderIds, setSelectedOrderIds] = useState(new Set());
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
   async function fetchOrders(page = 1) {
     setLoading(true);
@@ -52,6 +63,10 @@ export default function OrdersManager() {
       if (paymentFilter) params.set('paymentStatus', paymentFilter);
       if (dateFrom) params.set('dateFrom', dateFrom);
       if (dateTo) params.set('dateTo', dateTo);
+      if (minTotal) params.set('minTotal', minTotal);
+      if (maxTotal) params.set('maxTotal', maxTotal);
+      if (customerFilter) params.set('customer', customerFilter);
+      if (orderNumberFilter) params.set('orderNumber', orderNumberFilter);
       const data = await adminFetch(`/api/admin/product-orders?${params}`);
       if (data.success) {
         setOrders(data.data);
@@ -63,11 +78,27 @@ export default function OrdersManager() {
     setLoading(false);
   }
 
+  async function fetchOrderActivity(id) {
+    try {
+      const data = await adminFetch(`/api/admin/product-orders/${id}/activity`);
+      if (data.success) {
+        if (selectedOrder) {
+          setSelectedOrder({ ...selectedOrder, activity: data.data });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch order activity:', err);
+    }
+  }
+
   async function fetchOrderDetail(id) {
     setDetailLoading(true);
     try {
       const data = await adminFetch(`/api/admin/product-orders/${id}`);
-      if (data.success) setSelectedOrder(data.data);
+      if (data.success) {
+        setSelectedOrder(data.data);
+        setDetailTab('details');
+      }
     } catch (err) {
       console.error('Failed to fetch order:', err);
     }
@@ -114,6 +145,39 @@ export default function OrdersManager() {
     setSubmittingNote(false);
   }
 
+  async function handleBulkAction(action) {
+    if (selectedOrderIds.size === 0) return;
+    setBulkActionLoading(true);
+    try {
+      if (action === 'cancel') {
+        for (const orderId of selectedOrderIds) {
+          const order = orders.find(o => o.id === orderId);
+          if (order && ['PENDING', 'CONFIRMED'].includes(order.status)) {
+            await adminFetch(`/api/admin/product-orders/${orderId}`, {
+              method: 'PATCH',
+              body: JSON.stringify({ status: 'CANCELLED' }),
+            });
+          }
+        }
+      } else if (VALID_TRANSITIONS[orders.find(o => o.id === Array.from(selectedOrderIds)[0])?.status]?.includes(action)) {
+        const orderIds = Array.from(selectedOrderIds);
+        await adminFetch('/api/admin/product-orders/bulk', {
+          method: 'PATCH',
+          body: JSON.stringify({ orderIds, status: action }),
+        });
+      }
+      setSelectedOrderIds(new Set());
+      await fetchOrders(pagination.page);
+      if (selectedOrder && selectedOrderIds.has(selectedOrder.id)) {
+        setSelectedOrder(null);
+      }
+    } catch (err) {
+      console.error('Bulk action failed:', err);
+      alert('Bulk action failed');
+    }
+    setBulkActionLoading(false);
+  }
+
   function exportCSV() {
     const params = new URLSearchParams();
     if (statusFilter) params.set('status', statusFilter);
@@ -141,11 +205,20 @@ export default function OrdersManager() {
 
   if (selectedOrder) {
     const allowedTransitions = VALID_TRANSITIONS[selectedOrder.status] || [];
+    const activity = selectedOrder.activity || [];
     return (
       <div>
         <button onClick={() => setSelectedOrder(null)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: '14px', marginBottom: '16px', padding: 0 }}>
           \u2190 Back to orders
         </button>
+
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', borderBottom: '1px solid #e5e7eb', paddingBottom: '8px' }}>
+          <button onClick={() => setDetailTab('details')} style={{ padding: '8px 16px', fontSize: '13px', background: detailTab === 'details' ? '#374151' : 'white', color: detailTab === 'details' ? 'white' : '#374151', border: '1px solid #d1d5db', cursor: 'pointer' }}>Details</button>
+          <button onClick={() => { setDetailTab('activity'); fetchOrderActivity(selectedOrder.id); }} style={{ padding: '8px 16px', fontSize: '13px', background: detailTab === 'activity' ? '#374151' : 'white', color: detailTab === 'activity' ? 'white' : '#374151', border: '1px solid #d1d5db', cursor: 'pointer' }}>Activity ({activity.length})</button>
+        </div>
+
+        {detailTab === 'details' && (
+        <>
 
         <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '24px', marginBottom: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
@@ -326,6 +399,38 @@ export default function OrdersManager() {
             ))}
           </div>
         )}
+      </>
+      )}
+
+      {detailTab === 'activity' && (
+        <div>
+          <button onClick={() => setSelectedOrder(null)} style={{ background: 'none', border: 'none', color: '#3b82f6', cursor: 'pointer', fontSize: '14px', marginBottom: '16px', padding: 0 }}>
+            \u2190 Back to orders
+          </button>
+          <div style={{ background: 'white', border: '1px solid #e5e7eb', padding: '16px', marginBottom: '16px' }}>
+            <div style={{ fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>Order Activity</div>
+            {activity.length === 0 ? (
+              <p style={{ color: '#999', fontSize: '13px' }}>No activity recorded</p>
+            ) : (
+              <div style={{ fontSize: '12px' }}>
+                {activity.map((a, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '12px', padding: '8px 0', borderBottom: i < activity.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
+                    <span style={{ color: '#999', minWidth: '140px' }}>{formatDate(a.createdAt)}</span>
+                    <span style={{ color: a.isInternal ? '#f59e0b' : '#22c55e', fontWeight: 500, fontSize: '11px' }}>
+                      {a.isInternal ? 'Internal' : 'Customer Visible'}
+                    </span>
+                    <span style={{ color: '#666' }}>
+                      {a.action === 'status_changed' ? `${a.oldValue} \u2192 ${a.newValue}` : a.action === 'note_added' ? 'Note added' : a.action}
+                    </span>
+                    <span style={{ color: '#999', fontSize: '11px' }}>by {a.actorType}: {a.actorId}</span>
+                    {a.note && <span style={{ color: '#666', fontSize: '11px', marginLeft: '12px' }}>{a.note}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       </div>
     );
   }
@@ -361,10 +466,18 @@ export default function OrdersManager() {
         <select value={paymentFilter} onChange={e => setPaymentFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }}>
           <option value="">All payments</option>
           <option value="UNPAID">Unpaid</option>
+          <option value="PENDING">Pending</option>
           <option value="PAID">Paid</option>
+          <option value="FAILED">Failed</option>
+          <option value="REFUNDED">Refunded</option>
+          <option value="CANCELLED">Cancelled</option>
         </select>
         <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }} />
         <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px' }} />
+        <input type="text" placeholder="Customer" value={customerFilter} onChange={e => setCustomerFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px', minWidth: '150px' }} />
+        <input type="text" placeholder="Order #" value={orderNumberFilter} onChange={e => setOrderNumberFilter(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px', minWidth: '150px' }} />
+        <input type="number" placeholder="Min Total" value={minTotal} onChange={e => setMinTotal(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px', width: '120px' }} />
+        <input type="number" placeholder="Max Total" value={maxTotal} onChange={e => setMaxTotal(e.target.value)} style={{ padding: '8px 12px', border: '1px solid #d1d5db', fontSize: '13px', width: '120px' }} />
         <button type="submit" style={{ padding: '8px 16px', background: '#374151', color: 'white', border: 'none', fontSize: '13px', cursor: 'pointer' }}>Search</button>
       </form>
 
@@ -374,10 +487,29 @@ export default function OrdersManager() {
         <p style={{ color: '#666', fontSize: '13px', textAlign: 'center', padding: '40px' }}>No orders found.</p>
       ) : (
         <>
+          {selectedOrderIds.size > 0 && (
+            <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '12px', marginBottom: '12px', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '13px', color: '#92400e' }}>{selectedOrderIds.size} order(s) selected</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {(() => {
+                  const firstOrder = orders.find(o => selectedOrderIds.has(o.id));
+                  if (!firstOrder) return null;
+                  const transitions = VALID_TRANSITIONS[firstOrder.status] || [];
+                  return transitions.map(s => (
+                    <button key={s} onClick={() => handleBulkAction(s)} disabled={bulkActionLoading} style={{ padding: '4px 10px', fontSize: '11px', border: '1px solid #d1d5db', background: s === 'CANCELLED' ? '#fef2f2' : 'white', color: s === 'CANCELLED' ? '#dc2626' : '#374151', cursor: bulkActionLoading ? 'not-allowed' : 'pointer' }}>
+                      {s}
+                    </button>
+                  ));
+                })()}
+                <button onClick={() => setSelectedOrderIds(new Set())} style={{ padding: '4px 10px', fontSize: '11px', border: '1px solid #d1d5db', background: 'white', color: '#666', cursor: 'pointer' }}>Clear</button>
+              </div>
+            </div>
+          )}
           <div style={{ background: 'white', border: '1px solid #e5e7eb' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                  <th style={{ textAlign: 'center', padding: '10px 12px', fontWeight: 500, color: '#666', width: '40px' }}><input type="checkbox" checked={orders.length > 0 && orders.every(o => selectedOrderIds.has(o.id))} onChange={e => { if (e.target.checked) { setSelectedOrderIds(new Set(orders.map(o => o.id))); } else { setSelectedOrderIds(new Set()); } }} /></th>
                   <th style={{ textAlign: 'left', padding: '10px 12px', fontWeight: 500, color: '#666' }}>Order</th>
                   <th style={{ textAlign: 'left', padding: '10px 12px', fontWeight: 500, color: '#666' }}>Customer</th>
                   <th style={{ textAlign: 'center', padding: '10px 12px', fontWeight: 500, color: '#666' }}>Status</th>
@@ -391,11 +523,14 @@ export default function OrdersManager() {
                 {orders.map(order => (
                   <tr
                     key={order.id}
-                    onClick={() => fetchOrderDetail(order.id)}
+                    onClick={(e) => { if (e.target.type !== 'checkbox') fetchOrderDetail(order.id); }}
                     style={{ borderBottom: '1px solid #f3f4f6', cursor: 'pointer' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
                     onMouseLeave={e => e.currentTarget.style.background = 'white'}
                   >
+                    <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                      <input type="checkbox" checked={selectedOrderIds.has(order.id)} onChange={e => { const next = new Set(selectedOrderIds); if (e.target.checked) next.add(order.id); else next.delete(order.id); setSelectedOrderIds(next); }} onClick={e => e.stopPropagation()} />
+                    </td>
                     <td style={{ padding: '10px 12px', fontWeight: 500, fontFamily: 'monospace', fontSize: '12px' }}>{order.orderNumber}</td>
                     <td style={{ padding: '10px 12px' }}>
                       <div>{order.customerName || '\u2014'}</div>

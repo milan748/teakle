@@ -291,8 +291,8 @@ export default function AccountPage() {
               <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: (statusColors[o.status] || '#666') + '18', color: statusColors[o.status] || '#666' }}>
                 {statusLabels[o.status] || o.status}
               </span>
-              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: o.paymentStatus === 'PAID' ? '#2d8a5618' : '#c0392b18', color: o.paymentStatus === 'PAID' ? '#2d8a56' : '#c0392b' }}>
-                {o.paymentStatus === 'PAID' ? 'Paid' : 'Payment Pending'}
+              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: o.paymentStatus === 'PAID' ? '#2d8a5618' : o.paymentStatus === 'REFUNDED' ? '#8b5cf618' : o.paymentStatus === 'FAILED' ? '#c0392b18' : o.paymentStatus === 'CANCELLED' ? '#6b728018' : '#c0392b18', color: o.paymentStatus === 'PAID' ? '#2d8a56' : o.paymentStatus === 'REFUNDED' ? '#8b5cf6' : o.paymentStatus === 'FAILED' ? '#c0392b' : o.paymentStatus === 'CANCELLED' ? '#6b7280' : '#c0392b' }}>
+                {({ PAID: 'Paid', PENDING: 'Payment Pending', FAILED: 'Payment Failed', REFUNDED: 'Refunded', CANCELLED: 'Payment Cancelled' })[o.paymentStatus] || 'Payment Pending'}
               </span>
             </div>
           </div>
