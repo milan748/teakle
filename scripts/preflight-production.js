@@ -53,6 +53,13 @@ const optional = {
   NODE_ENV: 'development',
   ALLOW_INSECURE_SESSION: 'false',
   BACKUP_DIR: './backups',
+  EMAIL_PROVIDER: 'none',
+  EMAIL_FROM: '',
+  EMAIL_API_KEY: '',
+  PAYMENT_PROVIDER: 'none',
+  PAYMENT_KEY_ID: '',
+  PAYMENT_KEY_SECRET: '',
+  PAYMENT_WEBHOOK_SECRET: '',
 };
 
 for (const [key, defaultVal] of Object.entries(optional)) {
@@ -72,7 +79,7 @@ if (!secret) {
 } else if (secret.length < 32) {
   fail_(`Too short: ${secret.length} chars (minimum 32)`);
 } else if (/^[a-f0-9]+$/.test(secret) && secret.length === 64) {
-  warn_('Hex string — consider using a mixed-character random secret');
+  pass_(`${secret.length} chars — hex string with sufficient entropy`);
 } else {
   pass_(`${secret.length} chars — meets minimum length`);
 }

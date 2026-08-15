@@ -67,8 +67,8 @@ export default function AdminError({ error, reset }) {
           <p className="adm-err-desc">
             An error occurred in the admin panel. Please try again.
           </p>
-          {error?.message && (
-            <p className="adm-err-code">{error.message}</p>
+          {error?.digest && (
+            <p className="adm-err-code">{error.digest}</p>
           )}
           <button className="adm-err-btn" onClick={() => reset()}>
             Try Again

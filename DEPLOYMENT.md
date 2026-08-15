@@ -30,10 +30,17 @@ Copy `.env.example` to `.env.local` and configure:
 | `NODE_ENV` | No | Set to `production` for deployment |
 | `ALLOW_INSECURE_SESSION` | No | Set `true` only for HTTP local testing |
 | `BACKUP_DIR` | No | Backup directory (default: `./backups`) |
+| `EMAIL_PROVIDER` | No | Email provider: `none`, `resend`, `sendgrid` (default: `none`) |
+| `EMAIL_FROM` | No | Sender email address |
+| `EMAIL_API_KEY` | No | Email provider API key |
+| `PAYMENT_PROVIDER` | No | Payment provider: `none`, `razorpay`, `stripe` (default: `none`) |
+| `PAYMENT_KEY_ID` | No | Payment provider public key |
+| `PAYMENT_KEY_SECRET` | No | Payment provider secret key |
+| `PAYMENT_WEBHOOK_SECRET` | No | Webhook signature verification secret |
 
 Generate a secure session secret:
 ```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
 ## 4. Database Location
@@ -64,7 +71,63 @@ npm run start
 
 By default listens on port 3000. Override with `PORT` env var.
 
-## 8. HTTPS Requirements
+## 8. Process Management
+
+For production, use a process manager to keep the app running and restart on crashes.
+
+### systemd (Linux)
+
+Create `/etc/systemd/system/teakle.service`:
+```ini
+[Unit]
+Description=Teakle E-commerce
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/teakle
+ExecStart=/usr/bin/node node_modules/.bin/next start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+EnvironmentFile=/path/to/teakle/.env.local
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl enable teakle
+sudo systemctl start teakle
+sudo systemctl status teakle
+```
+
+### PM2 (Node.js)
+
+```bash
+npm install -g pm2
+pm2 start npm --name "teakle" -- start
+pm2 save
+pm2 startup
+```
+
+### Docker
+
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+**Important:** This is a single-instance application. Do NOT scale to multiple replicas — SQLite and in-memory rate limiting do not support it.
+
+## 9. HTTPS Requirements
 
 The application expects a **reverse proxy** (nginx, Caddy, Cloudflare, etc.) to handle HTTPS termination.
 
@@ -92,7 +155,7 @@ server {
 }
 ```
 
-## 9. Cookie Behavior
+## 10. Cookie Behavior
 
 In production behind HTTPS reverse proxy:
 - **Admin session cookie**: `HttpOnly`, `Secure`, `SameSite=Lax`, 24h expiry
@@ -101,7 +164,7 @@ In production behind HTTPS reverse proxy:
 
 `Secure` flag is automatically enabled when `X-Forwarded-Proto: https` is detected.
 
-## 10. Backups
+## 11. Backups
 
 ```bash
 # Create backup
@@ -125,14 +188,14 @@ Schedule daily backups via cron:
 0 2 * * * cd /path/to/teakle && node scripts/backup-db.js --max-backups 30
 ```
 
-## 11. Restore Procedure
+## 12. Restore Procedure
 
 1. Stop the application
 2. Run `node scripts/backup-db.js --restore <backup-path>`
 3. Verify with `node scripts/backup-db.js --verify <backup-path>`
 4. Restart the application
 
-## 12. Health Check
+## 13. Health Check
 
 ```bash
 curl http://localhost:3000/api/health
@@ -140,24 +203,24 @@ curl http://localhost:3000/api/health
 
 Returns `{ "status": "healthy" }` or `{ "status": "degraded" }`.
 
-## 13. Admin Setup
+## 14. Admin Setup
 
 ```bash
 # Create or update admin account
 ADMIN_EMAIL=admin@teakle.in ADMIN_PASSWORD=your-password node scripts/init-admin.js
 ```
 
-## 14. Production Verification
+## 15. Production Verification
 
 ```bash
 # Run preflight checks
 node scripts/preflight-production.js
 
 # Run test suite
-node scripts/test-sprint21.js
+node scripts/test-sprint26.js
 ```
 
-## 15. Known Limitations
+## 16. Known Limitations
 
 ### SQLite Requires Persistent Local Filesystem
 - **NOT safe** for serverless deployments (Vercel, AWS Lambda, Cloudflare Workers)
