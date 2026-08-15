@@ -1,10 +1,16 @@
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { log } from '@/lib/logger';
+import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 
 export async function GET(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
+
+  const rl = rateLimit('admin:export', RATE_LIMITS.adminExport);
+  if (!rl.allowed) {
+    return Response.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+  }
 
   try {
     const db = getDb();

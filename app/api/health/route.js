@@ -23,7 +23,6 @@ export async function GET() {
         tableCount: db.tableCount,
         size: db.size,
         integrity: db.integrity,
-        error: db.error,
       },
       system: {
         nodeVersion: sys.nodeVersion,
@@ -47,7 +46,6 @@ export async function GET() {
     return Response.json({
       status: 'error',
       timestamp: new Date().toISOString(),
-      error: e.message,
     }, { status: 503 });
   }
 }

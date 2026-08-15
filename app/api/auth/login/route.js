@@ -20,10 +20,15 @@ export async function POST(req) {
     const normalizedEmail = email.toLowerCase().trim();
     const db = getDb();
     const customer = db.prepare(
-      'SELECT id, email, passwordHash, name FROM customers WHERE email = ?'
+      'SELECT id, email, passwordHash, name, isActive FROM customers WHERE email = ?'
     ).get(normalizedEmail);
 
     if (!customer) {
+      log.customerLogin(normalizedEmail, false);
+      return Response.json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+
+    if (!customer.isActive) {
       log.customerLogin(normalizedEmail, false);
       return Response.json({ error: 'Invalid email or password' }, { status: 401 });
     }

@@ -95,6 +95,16 @@ function verifyBackup(backupPath) {
     const foreignKeys = db.pragma('foreign_keys', { simple: true });
     console.log(`  Foreign keys: ${foreignKeys === 1 ? 'ON' : 'OFF'}`);
 
+    const fkViolations = db.prepare('PRAGMA foreign_key_check').all();
+    if (fkViolations.length === 0) {
+      console.log('  Foreign key check: OK (no violations)');
+    } else {
+      console.error(`  Foreign key check: FAILED (${fkViolations.length} violations)`);
+      fkViolations.forEach(v => console.error(`    Table ${v.table}, row ${v.rowid}, FK ${v.from_table}.${v.from_column} -> ${v.target_table}.${v.target_column}`));
+      db.close();
+      return false;
+    }
+
     const walMode = db.pragma('journal_mode', { simple: true });
     console.log(`  Journal mode: ${walMode}`);
 

@@ -5,11 +5,8 @@ const { log } = require('@/lib/logger');
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    await requireAdmin();
-  } catch (e) {
-    return Response.json({ error: e.message }, { status: e.status || 401 });
-  }
+  const auth = await requireAdmin();
+  if (!auth.authorized) return auth.response;
 
   try {
     const db = checkDatabase();

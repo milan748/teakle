@@ -52,9 +52,17 @@ export const POST = withCsrf(async function POST(req) {
       db.prepare("UPDATE customers SET name = 'Deleted User', email = ?, phone = '', passwordHash = '', isActive = 0, updatedAt = datetime('now') WHERE id = ?")
         .run(`deactivated_${session.customerId}@deleted.local`, session.customerId);
 
-      db.prepare("UPDATE carts SET updatedAt = datetime('now') WHERE customerId = ?").run(session.customerId);
+      const cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(session.customerId);
+      if (cart) {
+        db.prepare('DELETE FROM cart_items WHERE cartId = ?').run(cart.id);
+        db.prepare('DELETE FROM carts WHERE id = ?').run(cart.id);
+      }
 
-      db.prepare("UPDATE wishlists SET updatedAt = datetime('now') WHERE customerId = ?").run(session.customerId);
+      const wishlist = db.prepare('SELECT id FROM wishlists WHERE customerId = ?').get(session.customerId);
+      if (wishlist) {
+        db.prepare('DELETE FROM wishlist_items WHERE wishlistId = ?').run(wishlist.id);
+        db.prepare('DELETE FROM wishlists WHERE id = ?').run(wishlist.id);
+      }
 
       db.prepare('DELETE FROM password_resets WHERE customerId = ?').run(session.customerId);
 

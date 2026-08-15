@@ -140,7 +140,8 @@ if (!fs.existsSync(dbPath)) {
       'admins', 'customers', 'orders', 'order_items', 'carts', 'cart_items',
       'wishlists', 'wishlist_items', 'content_sections', 'site_settings',
       'media', 'custom_orders', 'contact_submissions', 'trade_enquiries',
-      'newsletter_subscribers', 'payments', 'admin_audit_logs', 'order_activity',
+      'newsletter_subscribers', 'payments', 'payment_webhook_events',
+      'admin_audit_logs', 'order_activity',
       'order_status_history', 'order_notes', 'product_metadata',
       'customer_addresses', 'password_resets',
     ];
