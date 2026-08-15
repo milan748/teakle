@@ -2,6 +2,8 @@ import { getDb } from '@/lib/db';
 import { getCustomerSession } from '@/lib/customerSession';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
+import { sendOrderCancellation } from '@/lib/email';
+import { updatePaymentStatus, getPaymentByOrderId } from '@/lib/payment';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 const CUSTOMER_CANCEL_STATUSES = ['PENDING', 'CONFIRMED'];
@@ -90,7 +92,7 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
     }
 
     const cancelOrder = db.transaction(() => {
-      db.prepare("UPDATE orders SET status = 'CANCELLED', updatedAt = datetime('now') WHERE id = ?")
+      db.prepare("UPDATE orders SET status = 'CANCELLED', paymentStatus = 'CANCELLED', updatedAt = datetime('now') WHERE id = ?")
         .run(orderId);
 
       db.prepare(
@@ -101,7 +103,20 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
 
     cancelOrder();
 
+    // Cancel any existing payment record
+    const existingPayment = getPaymentByOrderId(orderId);
+    if (existingPayment && existingPayment.status !== 'CANCELLED') {
+      updatePaymentStatus(existingPayment.id, 'CANCELLED');
+    }
+
     log.orderCancelled(order.orderNumber, session.customerId);
+
+    // Send cancellation email (non-blocking)
+    sendOrderCancellation({
+      to: session.email,
+      orderNumber: order.orderNumber,
+      reason: 'Customer requested cancellation',
+    }).catch(err => log.error('Order cancellation email failed', { message: err.message }));
 
     return Response.json({ ok: true, status: 'CANCELLED' });
   } catch (err) {

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { createCustomerSession } from '@/lib/customerSession';
 import { rateLimit, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { sendWelcomeEmail } from '@/lib/email';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NAME = 100;
@@ -66,6 +67,10 @@ export async function POST(req) {
 
     await createCustomerSession(customer);
     log.customerRegister(normalizedEmail);
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail({ to: normalizedEmail, name: name.trim() })
+      .catch(err => log.error('Welcome email failed', { message: err.message }));
 
     return Response.json({
       ok: true,

@@ -4,6 +4,8 @@ import { requireAdmin } from '@/lib/auth';
 import { VALID_ORDER_STATUSES, VALID_TRANSITIONS, isValidStatusTransition } from '@/app/api/orders/route';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
+import { sendOrderStatusUpdate } from '@/lib/email';
+import { getPaymentByOrderId, updatePaymentStatus } from '@/lib/payment';
 
 export async function GET(_request, { params }) {
   const auth = await requireAdmin();
@@ -79,7 +81,7 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
     }
 
     const db = getDb();
-    const order = db.prepare('SELECT id, status, orderNumber FROM orders WHERE id = ?').get(orderId);
+    const order = db.prepare('SELECT id, status, orderNumber, shippingEmail FROM orders WHERE id = ?').get(orderId);
 
     if (!order) {
       return NextResponse.json({ success: false, error: 'Order not found' }, { status: 404 });
@@ -104,7 +106,25 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
 
     updateStatus();
 
+    // Update payment status when order is cancelled
+    if (normalizedStatus === 'CANCELLED') {
+      const existingPayment = getPaymentByOrderId(orderId);
+      if (existingPayment && existingPayment.status !== 'CANCELLED' && existingPayment.status !== 'REFUNDED') {
+        updatePaymentStatus(existingPayment.id, 'CANCELLED');
+      }
+    }
+
     log.orderStatusChange(order.orderNumber, order.status, normalizedStatus, auth.admin.email);
+
+    // Send status update email (non-blocking)
+    if (order.shippingEmail) {
+      sendOrderStatusUpdate({
+        to: order.shippingEmail,
+        orderNumber: order.orderNumber,
+        oldStatus: order.status,
+        newStatus: normalizedStatus,
+      }).catch(err => log.error('Order status email failed', { message: err.message }));
+    }
 
     return NextResponse.json({ success: true, data: { id: orderId, status: normalizedStatus } });
   } catch (error) {

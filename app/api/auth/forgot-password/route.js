@@ -2,6 +2,7 @@ import { getDb } from '@/lib/db';
 import { rateLimit } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { createHash, randomBytes } from 'crypto';
+import { sendPasswordReset } from '@/lib/email';
 
 const RESET_EXPIRY_HOURS = 1;
 const MAX_RESET_REQUESTS = 5;
@@ -52,6 +53,10 @@ export async function POST(req) {
     ).run(customer.id, tokenHash, `+${RESET_EXPIRY_HOURS} hours`);
 
     log.info('Password reset token created', { customerId: customer.id });
+
+    // Send password reset email (non-blocking)
+    sendPasswordReset({ to: email.trim().toLowerCase(), resetToken: token })
+      .catch(err => log.error('Password reset email failed', { message: err.message }));
 
     return Response.json({
       ok: true,

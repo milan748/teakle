@@ -6,6 +6,8 @@ import { log } from '@/lib/logger';
 import { validateCheckoutAddresses } from '@/lib/validateAddress';
 import { calculateOrderTotal } from '@/lib/orderPricing';
 import { withCsrf } from '@/lib/csrf';
+import { createPaymentRecord } from '@/lib/payment';
+import { sendOrderConfirmation } from '@/lib/email';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 const VALID_PAYMENT_STATUSES = ['UNPAID', 'PENDING', 'PAID', 'FAILED', 'REFUNDED', 'CANCELLED'];
@@ -152,12 +154,24 @@ export const POST = withCsrf(async function POST(req) {
 
     const { orderId, orderNumber } = createOrder();
 
+    // Create payment record (idempotent — same order won't create duplicate)
+    createPaymentRecord({ orderId, provider: 'none' });
+
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
     const items = db.prepare(
       'SELECT productId, productNameSnapshot, unitPrice, quantity, lineTotal, productImage, sku FROM order_items WHERE orderId = ?'
     ).all(orderId);
 
     log.orderCreated(orderNumber, session.customerId, pricing.total);
+
+    // Send confirmation email (non-blocking — email failure must not roll back order)
+    sendOrderConfirmation({
+      to: shippingData.email,
+      orderNumber,
+      total: pricing.total,
+      items,
+      shippingAddress: shippingData,
+    }).catch(err => log.error('Order confirmation email failed', { message: err.message }));
 
     return Response.json({ ok: true, order: { ...order, items }, messages: pricing.messages });
   } catch (err) {

@@ -1,10 +1,14 @@
 const { checkDatabase, checkSystem } = require('@/lib/health');
 const { log } = require('@/lib/logger');
+const { getPaymentConfig } = require('@/lib/payment');
+const { getEmailConfig } = require('@/lib/email');
 
 export async function GET() {
   try {
     const db = checkDatabase();
     const sys = checkSystem();
+    const payment = getPaymentConfig();
+    const email = getEmailConfig();
 
     const status = db.status === 'ok' ? 200 : 503;
 
@@ -27,6 +31,15 @@ export async function GET() {
         arch: sys.arch,
         memoryMB: Math.round(sys.memoryUsage.rss / 1024 / 1024),
         uptimeSeconds: Math.round(sys.uptime),
+      },
+      payment: {
+        provider: payment.provider,
+        configured: payment.configured,
+      },
+      email: {
+        provider: email.provider,
+        configured: email.configured,
+        from: email.from,
       },
     }, { status });
   } catch (e) {
