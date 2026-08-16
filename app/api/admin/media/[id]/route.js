@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { deleteMedia, updateMediaAlt, getMediaById } from '@/lib/media';
 import { withCsrf } from '@/lib/csrf';
 import { getDb } from '@/lib/db';
+import { isValidUUID } from '@/lib/validate';
 
 export const DELETE = withCsrf(async function DELETE(_request, { params }) {
   const auth = await requireAdmin();
@@ -11,6 +12,9 @@ export const DELETE = withCsrf(async function DELETE(_request, { params }) {
   const { id } = params;
   if (!id) {
     return NextResponse.json({ error: 'Missing media ID' }, { status: 400 });
+  }
+  if (!isValidUUID(id)) {
+    return NextResponse.json({ error: 'Invalid media ID' }, { status: 400 });
   }
 
   try {
@@ -45,6 +49,9 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
   const { id } = params;
   if (!id) {
     return NextResponse.json({ error: 'Missing media ID' }, { status: 400 });
+  }
+  if (!isValidUUID(id)) {
+    return NextResponse.json({ error: 'Invalid media ID' }, { status: 400 });
   }
 
   try {

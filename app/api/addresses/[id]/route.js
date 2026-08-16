@@ -12,10 +12,14 @@ export async function GET(req, { params }) {
     }
 
     const { id } = await params;
+    const addressId = parseInt(id, 10);
+    if (!Number.isInteger(addressId)) {
+      return Response.json({ error: 'Invalid address ID' }, { status: 400 });
+    }
     const db = getDb();
     const address = db.prepare(
       'SELECT * FROM customer_addresses WHERE id = ? AND customerId = ?'
-    ).get(id, session.customerId);
+    ).get(addressId, session.customerId);
 
     if (!address) {
       return Response.json({ error: 'Address not found' }, { status: 404 });
@@ -36,10 +40,14 @@ export const PUT = withCsrf(async function PUT(req, { params }) {
     }
 
     const { id } = await params;
+    const addressId = parseInt(id, 10);
+    if (!Number.isInteger(addressId)) {
+      return Response.json({ error: 'Invalid address ID' }, { status: 400 });
+    }
     const db = getDb();
     const existing = db.prepare(
       'SELECT * FROM customer_addresses WHERE id = ? AND customerId = ?'
-    ).get(id, session.customerId);
+    ).get(addressId, session.customerId);
 
     if (!existing) {
       return Response.json({ error: 'Address not found' }, { status: 404 });
@@ -71,7 +79,7 @@ export const PUT = withCsrf(async function PUT(req, { params }) {
     if (setDefault) {
       db.prepare(
         'UPDATE customer_addresses SET isDefault = 0 WHERE customerId = ? AND id != ?'
-      ).run(session.customerId, id);
+      ).run(session.customerId, addressId);
     }
 
     db.prepare(`
@@ -91,15 +99,15 @@ export const PUT = withCsrf(async function PUT(req, { params }) {
       postalCode,
       country || 'India',
       setDefault ? 1 : (isDefault === false ? 0 : existing.isDefault),
-      id,
+      addressId,
       session.customerId
     );
 
     const updated = db.prepare(
       'SELECT * FROM customer_addresses WHERE id = ? AND customerId = ?'
-    ).get(id, session.customerId);
+    ).get(addressId, session.customerId);
 
-    log.info('Address updated', { customerId: session.customerId, addressId: id });
+    log.info('Address updated', { customerId: session.customerId, addressId: addressId });
 
     return Response.json({ ok: true, address: updated });
   } catch (err) {
@@ -116,17 +124,21 @@ export const DELETE = withCsrf(async function DELETE(req, { params }) {
     }
 
     const { id } = await params;
+    const addressId = parseInt(id, 10);
+    if (!Number.isInteger(addressId)) {
+      return Response.json({ error: 'Invalid address ID' }, { status: 400 });
+    }
     const db = getDb();
     const existing = db.prepare(
       'SELECT * FROM customer_addresses WHERE id = ? AND customerId = ?'
-    ).get(id, session.customerId);
+    ).get(addressId, session.customerId);
 
     if (!existing) {
       return Response.json({ error: 'Address not found' }, { status: 404 });
     }
 
     db.prepare('DELETE FROM customer_addresses WHERE id = ? AND customerId = ?')
-      .run(id, session.customerId);
+      .run(addressId, session.customerId);
 
     if (existing.isDefault) {
       const next = db.prepare(

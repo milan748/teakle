@@ -3,8 +3,9 @@ import bcrypt from 'bcryptjs';
 import { createCustomerSession } from '@/lib/customerSession';
 import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
+import { withCsrf } from '@/lib/csrf';
 
-export async function POST(req) {
+export const POST = withCsrf(async function POST(req) {
   try {
     const rl = rateLimitIp('auth:login', RATE_LIMITS.customerLogin, req.headers);
     if (!rl.allowed) {
@@ -20,7 +21,7 @@ export async function POST(req) {
     const normalizedEmail = email.toLowerCase().trim();
     const db = getDb();
     const customer = db.prepare(
-      'SELECT id, email, passwordHash, name, isActive FROM customers WHERE email = ?'
+      'SELECT id, email, passwordHash, name, isActive, sessionVersion FROM customers WHERE email = ?'
     ).get(normalizedEmail);
 
     if (!customer) {
@@ -50,4 +51,4 @@ export async function POST(req) {
     log.error('Customer login error', { message: err.message });
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+});

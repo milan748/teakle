@@ -48,3 +48,14 @@ npm notice run next start
   isCustomerVisible: 1
 }
 [2026-08-16T17:18:29.083Z] INFO  Customer login: FAILURE — nope@test.com 
+[2026-08-16T18:18:04.468Z] INFO  Customer registered — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:04.468Z] INFO  Email (not configured): Welcome email { to: 'sprint30_1786904283913@example.com', name: 'Sprint Thirty' }
+[2026-08-16T18:18:04.741Z] INFO  Customer login: SUCCESS — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:05.277Z] INFO  Password changed successfully { customerId: 26 }
+[2026-08-16T18:18:05.574Z] INFO  Customer login: SUCCESS — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:05.911Z] INFO  Admin login: SUCCESS — testadmin@teakle.in 
+[2026-08-16T18:18:06.018Z] INFO  Password reset requested for non-existent email { email: 'definitely-not-real-1786904286016@example.com' }
+[2026-08-16T18:18:38.135Z] INFO  Customer registered — dbg_1786904317741@example.com 
+[2026-08-16T18:18:38.135Z] INFO  Email (not configured): Welcome email { to: 'dbg_1786904317741@example.com', name: 'Dbg' }
+[2026-08-16T18:18:38.792Z] INFO  Password changed successfully { customerId: 27 }
+[2026-08-16T18:18:39.135Z] INFO  Customer login: SUCCESS — dbg_1786904317741@example.com 

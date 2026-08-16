@@ -45,6 +45,17 @@ Generate a secure session secret:
 node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```
 
+### Startup validation
+
+On `NODE_ENV=production`, the server enforces required environment variables at
+startup via `instrumentation.ts` (which calls `requireEnv()` from `lib/env`). If
+`SESSION_SECRET`, `ADMIN_EMAIL`, or `ADMIN_PASSWORD` is missing or too short, the
+server **fails to start with a clear error** listing the missing variable *names*
+only — secret *values* are never printed. Development and test environments are not
+enforced, and the build phase (`next build`) is skipped so builds are not blocked.
+Set all required variables via `EnvironmentFile` (see §7) before starting the
+service.
+
 ## 4. Database Location
 
 The SQLite database lives at the path specified by `DATABASE_PATH` (default: `./data/teakle.db`).
