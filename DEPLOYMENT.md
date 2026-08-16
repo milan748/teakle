@@ -89,21 +89,44 @@ After=network.target
 Type=simple
 User=www-data
 WorkingDirectory=/path/to/teakle
-ExecStart=/usr/bin/env npx next start
+# The process ultimately runs `npm run start` (= `next start`).
+# PATH is set explicitly because the systemd environment is minimal.
+Environment=NODE_ENV=production
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/path/to/teakle/.env.local
+ExecStart=/usr/bin/npm --prefix /path/to/teakle run start
 Restart=on-failure
 RestartSec=5
-Environment=NODE_ENV=production
-EnvironmentFile=/path/to/teakle/.env.local
+# Graceful shutdown: allow in-flight requests to finish.
+TimeoutStopSec=30
 
 [Install]
 WantedBy=multi-user.target
 ```
 
 ```bash
+# Reload systemd after editing the unit file
+sudo systemctl daemon-reload
 sudo systemctl enable teakle
 sudo systemctl start teakle
 sudo systemctl status teakle
+
+# View logs
+sudo journalctl -u teakle -f
 ```
+
+**Filesystem permissions:** The service user (`www-data`) must be able to **read and write** the following directories. Create them and set ownership before starting the service:
+
+```bash
+sudo mkdir -p /path/to/teakle/data
+sudo mkdir -p /path/to/teakle/public/uploads/media
+sudo mkdir -p /path/to/teakle/backups
+sudo chown -R www-data:www-data /path/to/teakle/data
+sudo chown -R www-data:www-data /path/to/teakle/public/uploads
+sudo chown -R www-data:www-data /path/to/teakle/backups
+```
+
+The application also creates these directories automatically on first run if they are missing, but the parent paths must be writable by the service user.
 
 ### PM2 (Node.js)
 
@@ -112,6 +135,16 @@ npm install -g pm2
 pm2 start npm --name "teakle" -- start
 pm2 save
 pm2 startup
+```
+
+View logs:
+```bash
+pm2 logs teakle
+```
+
+**Important:** Configure log rotation to avoid unbounded disk usage:
+```bash
+pm2 install pm2-logrotate
 ```
 
 ### Docker
@@ -125,6 +158,18 @@ COPY . .
 RUN npm run build
 EXPOSE 3000
 CMD ["npm", "start"]
+```
+
+Run with persistent volumes so the database and uploads survive container restarts:
+```bash
+docker run -d \
+  -p 3000:3000 \
+  -e NODE_ENV=production \
+  --name teakle \
+  -v teakle-data:/app/data \
+  -v teakle-uploads:/app/public/uploads/media \
+  -v teakle-backups:/app/backups \
+  teakle:latest
 ```
 
 **Important:** This is a single-instance application. Do NOT scale to multiple replicas — SQLite and in-memory rate limiting do not support it.
@@ -197,32 +242,94 @@ Schedule daily backups via cron:
 3. Verify with `node scripts/backup-db.js --verify <backup-path>`
 4. Restart the application
 
-## 13. Health Check
+A pre-restore safety backup (`teakle_pre_restore_*.db`) is created automatically in `BACKUP_DIR` before any restore, and the restore is rolled back if it fails.
+
+## 13. Rollback Procedure
+
+TEAKLE is a stateful, single-instance application. A safe rollback covers code, database, media, and environment.
+
+### Code / Git rollback
+```bash
+cd /path/to/teakle
+# Stop the running service
+sudo systemctl stop teakle        # (or: pm2 stop teakle)
+
+# Restore the previous commit
+git fetch --all
+git checkout <previous-release-tag>
+
+# Rebuild with the rolled-back source
+npm install
+npm run build
+```
+
+### Database rollback
+```bash
+# 1. Always take a fresh backup BEFORE restoring an old database
+node scripts/backup-db.js
+
+# 2. Restore the matching pre-migration backup (schema must match the rolled-back code)
+node scripts/backup-db.js --restore ./backups/teakle_backup_YYYYMMDD_HHMMSS.db
+node scripts/backup-db.js --verify ./backups/teakle_backup_YYYYMMDD_HHMMSS.db
+```
+
+> Database migrations are additive and idempotent. Rolling *forward* to the latest code after a DB restore is safe. Rolling *back* the code while keeping a newer database with extra columns is also safe (old code ignores unknown columns). Only restore an older database if you specifically need to undo data changes.
+
+### Media preservation
+Uploaded media in `MEDIA_UPLOAD_DIR` is **not** affected by code or database rollbacks. Do not delete `public/uploads/media` during a rollback.
+
+### Environment preservation
+`.env.local` is outside version control and is **not** changed by `git checkout`. Keep it intact across rollbacks. Only update it if a release explicitly requires new variables.
+
+### Restart
+```bash
+sudo systemctl start teakle       # (or: pm2 start teakle)
+```
+
+## 14. Health Check
 
 ```bash
 curl http://localhost:3000/api/health
 ```
 
-Returns `{ "status": "healthy" }` or `{ "status": "degraded" }`.
+Returns `{ "status": "healthy" }` or `{ "status": "degraded" }` (HTTP 503 when degraded).
 
-## 14. Admin Setup
+For monitoring, poll this endpoint. It reports database status, table counts, and provider configuration **without exposing secrets or filesystem paths**.
+
+Admin-only diagnostics (per-table row counts, filesystem DB path, recent activity) are available at:
+```bash
+curl -H "Authorization: Bearer <admin-jwt>" http://localhost:3000/api/admin/diagnostics
+```
+
+## 15. Logging
+
+The application uses structured logging to `stdout`/`stderr` (no log files are written by the app itself).
+
+- **systemd:** logs are captured by `journald`. View with `sudo journalctl -u teakle -f`. Configure rotation via `/etc/systemd/journald.conf` (`SystemMaxUse`, `SystemKeepFree`).
+- **PM2:** logs are written to `~/.pm2/logs/teakle-*.log`. Enable `pm2-logrotate` to bound disk usage.
+- **Docker:** `docker logs teakle`.
+
+Sensitive values (passwords, tokens, secrets, API keys) are redacted automatically in all log output.
+
+## 16. Admin Setup
 
 ```bash
 # Create or update admin account
 ADMIN_EMAIL=admin@teakle.in ADMIN_PASSWORD=your-password node scripts/init-admin.js
 ```
 
-## 15. Production Verification
+## 17. Production Verification
 
 ```bash
 # Run preflight checks
 node scripts/preflight-production.js
 
-# Run test suite
+# Run test suites
 node scripts/test-sprint26.js
+node scripts/test-sprint29.js
 ```
 
-## 16. Known Limitations
+## 18. Known Limitations
 
 ### SQLite Requires Persistent Local Filesystem
 - **NOT safe** for serverless deployments (Vercel, AWS Lambda, Cloudflare Workers)

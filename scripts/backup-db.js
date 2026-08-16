@@ -179,10 +179,6 @@ function restoreBackup(backupPath) {
     const source = new Database(backupPath, { readonly: true });
     const dest = new Database(DB_PATH);
 
-    try {
-      dest.exec('VACUUM INTO ?');
-    } catch (e) {}
-
     source.close();
     dest.close();
 

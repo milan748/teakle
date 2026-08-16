@@ -78,5 +78,24 @@
 - [ ] `node scripts/preflight-production.js` — all PASS
 - [ ] `node scripts/test-sprint28.js` — all tests pass
 - [ ] `node scripts/runtime-sprint28.js` — all runtime tests pass
+- [ ] `node scripts/test-sprint29.js` — all tests pass
+- [ ] `node scripts/runtime-sprint29.js` — all runtime tests pass
 - [ ] Smoke test: complete purchase flow on production
 - [ ] Backup verified on production
+
+## Rollback Readiness
+
+- [ ] Previous release tag / commit recorded
+- [ ] Rollback (git checkout + rebuild) procedure documented
+- [ ] Fresh backup taken before any database restore
+- [ ] Media directory preserved during rollback
+- [ ] `.env.local` preserved during rollback
+- [ ] `node scripts/backup-db.js --restore` tested in staging
+
+## Logging & Monitoring
+
+- [ ] systemd journald rotation configured (or `pm2-logrotate` installed)
+- [ ] Log access verified (`journalctl -u teakle` / `pm2 logs`)
+- [ ] `/api/health` polled by external monitor
+- [ ] Alerts configured for `degraded`/`unhealthy` status (HTTP 503)
+

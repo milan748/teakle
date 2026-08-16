@@ -33,21 +33,34 @@ export const POST = withCsrf(async function POST(req) {
     const body = await req.json();
     const { label, fullName, phone, addressLine1, addressLine2, city, state, postalCode, country, isDefault } = body;
 
-    const validation = validateAddress(body, { requireEmail: false });
+    // Map the stored address shape (fullName/addressLine1/postalCode) to the
+    // validateAddress field names (firstName/address/pin) for validation only.
+    const validation = validateAddress({
+      firstName: fullName,
+      lastName: fullName,
+      email: '',
+      phone,
+      address: addressLine1,
+      apartment: addressLine2,
+      city,
+      state,
+      pin: postalCode,
+      country: country || 'India',
+    }, { requireEmail: false });
     if (!validation.valid) {
       return Response.json({ error: 'Validation failed', details: validation.errors }, { status: 400 });
     }
 
-    if (typeof label !== 'string' || label.length > 100) {
+    if (label !== undefined && (typeof label !== 'string' || label.length > 100)) {
       return Response.json({ error: 'Label must be under 100 characters' }, { status: 400 });
     }
     if (typeof fullName !== 'string' || fullName.length > 100) {
       return Response.json({ error: 'Full name must be under 100 characters' }, { status: 400 });
     }
-    if (typeof phone !== 'string' || phone.length > 20) {
+    if (phone !== undefined && (typeof phone !== 'string' || phone.length > 20)) {
       return Response.json({ error: 'Phone must be under 20 characters' }, { status: 400 });
     }
-    if (typeof addressLine2 !== 'string' || addressLine2.length > 200) {
+    if (addressLine2 !== undefined && (typeof addressLine2 !== 'string' || addressLine2.length > 200)) {
       return Response.json({ error: 'Address line 2 must be under 200 characters' }, { status: 400 });
     }
 
