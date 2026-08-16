@@ -56,6 +56,15 @@ export const POST = withCsrf(async function POST(request) {
         adminEmail: auth.admin.email,
       });
 
+      try {
+        const { getDb } = await import('@/lib/db');
+        const db = getDb();
+        db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+          auth.admin.id, 'refund', 'payment', paymentId,
+          JSON.stringify({ orderId: payment.orderId, amount: payment.amount, reason: reason || 'Admin initiated refund' })
+        );
+      } catch { /* audit log failure is non-blocking */ }
+
       return NextResponse.json({
         success: true,
         data: {

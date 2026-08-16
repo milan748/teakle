@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { customerAuth } from '@/lib/api';
 
 const galleryDropdown = [
   { label: 'Kitchen & Dining', items: [
@@ -265,7 +266,7 @@ export default function Header() {
 
   function handleLogout() {
     closeDropdown();
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    customerAuth.logout().catch(() => {});
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);

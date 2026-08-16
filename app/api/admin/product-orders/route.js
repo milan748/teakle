@@ -65,12 +65,20 @@ export async function GET(request) {
       params.push(`%${orderNumber}%`);
     }
     if (minTotal) {
+      const v = parseInt(minTotal, 10);
+      if (Number.isNaN(v)) {
+        return NextResponse.json({ success: false, error: 'minTotal must be a number' }, { status: 400 });
+      }
       conditions.push("o.totalAmount >= ?");
-      params.push(parseInt(minTotal, 10));
+      params.push(v);
     }
     if (maxTotal) {
+      const v = parseInt(maxTotal, 10);
+      if (Number.isNaN(v)) {
+        return NextResponse.json({ success: false, error: 'maxTotal must be a number' }, { status: 400 });
+      }
       conditions.push("o.totalAmount <= ?");
-      params.push(parseInt(maxTotal, 10));
+      params.push(v);
     }
 
     if (conditions.length > 0) {
@@ -113,12 +121,18 @@ export async function GET(request) {
       countParams.push(`%${orderNumber}%`);
     }
     if (minTotal) {
-      countConditions.push("o.totalAmount >= ?");
-      countParams.push(parseInt(minTotal, 10));
+      const v = parseInt(minTotal, 10);
+      if (!Number.isNaN(v)) {
+        countConditions.push("o.totalAmount >= ?");
+        countParams.push(v);
+      }
     }
     if (maxTotal) {
-      countConditions.push("o.totalAmount <= ?");
-      countParams.push(parseInt(maxTotal, 10));
+      const v = parseInt(maxTotal, 10);
+      if (!Number.isNaN(v)) {
+        countConditions.push("o.totalAmount <= ?");
+        countParams.push(v);
+      }
     }
     if (countConditions.length > 0) {
       countQuery += ' WHERE ' + countConditions.join(' AND ');

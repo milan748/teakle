@@ -36,9 +36,11 @@ export const DELETE = withCsrf(async function DELETE(_request, { params }) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    const message = err.message || 'Delete failed';
-    const status = message.includes('currently used') ? 409 : 500;
-    return NextResponse.json({ error: message }, { status });
+    const message = err.message || '';
+    if (message.includes('currently used')) {
+      return NextResponse.json({ error: message }, { status: 409 });
+    }
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
   }
 });
 

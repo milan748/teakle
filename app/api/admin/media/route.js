@@ -42,8 +42,10 @@ export const POST = withCsrf(async function POST(request) {
     const media = await createMedia(file, altText);
     return NextResponse.json({ success: true, data: media }, { status: 201 });
   } catch (err) {
-    const message = err.message || 'Upload failed';
-    const status = message.includes('Invalid file type') || message.includes('too large') || message.includes('Empty') ? 400 : 500;
-    return NextResponse.json({ error: message }, { status });
+    const message = err.message || '';
+    if (message.includes('Invalid file type') || message.includes('too large') || message.includes('Empty')) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 });

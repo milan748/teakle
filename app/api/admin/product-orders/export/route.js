@@ -67,12 +67,20 @@ export async function GET(request) {
       params.push(`%${orderNumber}%`);
     }
     if (minTotal) {
+      const v = parseInt(minTotal, 10);
+      if (Number.isNaN(v)) {
+        return Response.json({ error: 'minTotal must be a number' }, { status: 400 });
+      }
       conditions.push("o.totalAmount >= ?");
-      params.push(parseInt(minTotal, 10));
+      params.push(v);
     }
     if (maxTotal) {
+      const v = parseInt(maxTotal, 10);
+      if (Number.isNaN(v)) {
+        return Response.json({ error: 'maxTotal must be a number' }, { status: 400 });
+      }
       conditions.push("o.totalAmount <= ?");
-      params.push(parseInt(maxTotal, 10));
+      params.push(v);
     }
 
     if (conditions.length > 0) {

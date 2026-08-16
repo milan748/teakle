@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { customerAuth } from '@/lib/api';
 
 function getInitials(name) {
   if (!name) return 'U';
@@ -96,7 +97,7 @@ export default function BottomNav() {
 
   function handleLogout() {
     closeSheet();
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    customerAuth.logout().catch(() => {});
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);
