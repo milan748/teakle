@@ -1,6 +1,7 @@
 const { requireAdmin } = require('@/lib/auth');
 const { checkDatabase, checkSystem, getTablesInfo, getTableSizes, getRecentActivity } = require('@/lib/health');
 const { log } = require('@/lib/logger');
+const { getDb } = require('@/lib/db');
 
 export const dynamic = 'force-dynamic';
 
@@ -20,11 +21,18 @@ export async function GET() {
       sizeMap[s.name] = s.size;
     }
 
+    // Audit log
+    try {
+      const db = getDb();
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'diagnostics_view', 'system', null, null
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     return Response.json({
       database: {
         status: db.status,
         exists: db.exists,
-        path: db.path,
         size: db.size,
         lastModified: db.lastModified,
         walMode: db.walMode,
@@ -35,7 +43,6 @@ export async function GET() {
           name: t.name,
           rowCount: t.rowCount,
           approximateSize: sizeMap[t.name] || null,
-          columns: t.columns,
         })),
       },
       system: {
@@ -47,7 +54,6 @@ export async function GET() {
         heapTotalMB: Math.round(sys.memoryUsage.heapTotal / 1024 / 1024),
         externalMB: Math.round(sys.memoryUsage.external / 1024 / 1024),
         uptimeSeconds: Math.round(sys.uptime),
-        pid: sys.pid,
       },
       activity,
       timestamp: new Date().toISOString(),

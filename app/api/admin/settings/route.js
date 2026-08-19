@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { getSiteSettings, updateSiteSetting } from '@/lib/cms';
 import { withCsrf } from '@/lib/csrf';
 import { getDb } from '@/lib/db';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 const VALID_KEYS = [
   'footerDescription',
@@ -47,6 +48,11 @@ export async function GET() {
 export const PUT = withCsrf(async function PUT(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
+
+  const rl = rateLimitIp('admin:settings', RATE_LIMITS.adminSettings, request.headers);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 });
+  }
 
   try {
     const body = await request.json();

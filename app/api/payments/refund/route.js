@@ -4,10 +4,16 @@ import { requireAdmin } from '@/lib/auth';
 import { withCsrf } from '@/lib/csrf';
 import { getPaymentById, updatePaymentStatus, processRefund, getPaymentConfig } from '@/lib/payment';
 import { log } from '@/lib/logger';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 export const POST = withCsrf(async function POST(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
+
+  const rl = rateLimitIp('admin:refund', RATE_LIMITS.adminRefund, request.headers);
+  if (!rl.allowed) {
+    return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 });
+  }
 
   try {
     const body = await request.json();

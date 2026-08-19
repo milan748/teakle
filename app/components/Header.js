@@ -5,51 +5,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { customerAuth } from '@/lib/api';
 
-const galleryDropdown = [
-  { label: 'Kitchen & Dining', items: [
-    { label: 'Countertop Essentials', href: '/subcategory?cat=kitchen&sub=countertop-essentials' },
-    { label: 'Cooking Essentials', href: '/subcategory?cat=kitchen&sub=cooking-essentials' },
-    { label: 'Baking Essentials', href: '/subcategory?cat=kitchen&sub=baking-essentials' },
-    { label: 'Dining & Serving', href: '/subcategory?cat=kitchen&sub=dining-serving' },
-    { label: 'Serving Boards', href: '/subcategory?cat=dining&sub=serving-boards' },
-    { label: 'Bowls', href: '/subcategory?cat=dining&sub=bowls' },
-    { label: 'Trays', href: '/subcategory?cat=dining&sub=trays' },
-  ]},
-  { label: 'Coffee & Tea', items: [
-    { label: 'Coffee & Tea Station', href: '/subcategory?cat=kitchen&sub=coffee-tea-station' },
-    { label: 'Pantry Organization', href: '/subcategory?cat=kitchen&sub=pantry-organization' },
-  ]},
-  { label: 'Storage & Organization', items: [
-    { label: 'Kitchen Storage', href: '/subcategory?cat=kitchen&sub=storage-organization' },
-    { label: 'Desk Organization', href: '/subcategory?cat=office&sub=desk-organization' },
-    { label: 'Document Storage', href: '/subcategory?cat=office&sub=document-storage' },
-    { label: 'Pen Holders', href: '/subcategory?cat=office&sub=pen-holders' },
-    { label: 'Laptop Stands', href: '/subcategory?cat=office&sub=laptop-stands' },
-    { label: 'Shelving', href: '/subcategory?cat=living&sub=shelving-decor' },
-  ]},
-  { label: 'Home Décor', items: [
-    { label: 'Sculptures', href: '/subcategory?cat=living&sub=sculptures' },
-    { label: 'Vases', href: '/subcategory?cat=living&sub=vases' },
-    { label: 'Coffee Table Decor', href: '/subcategory?cat=living&sub=coffee-table-decor' },
-    { label: 'Candle Holders', href: '/subcategory?cat=living&sub=candle-holders' },
-    { label: 'Decorative Objects', href: '/subcategory?cat=living&sub=decorative-objects' },
-    { label: 'Mirrors', href: '/subcategory?cat=bedroom&sub=mirrors' },
-  ]},
-  { label: 'Bathroom', items: [
-    { label: 'Vanity Organizers', href: '/subcategory?cat=bathroom&sub=vanity-organizers' },
-    { label: 'Soap Dispensers', href: '/subcategory?cat=bathroom&sub=soap-dispensers' },
-    { label: 'Toothbrush Holders', href: '/subcategory?cat=bathroom&sub=toothbrush-holders' },
-  ]},
-  { label: 'Everyday Living', items: [
-    { label: 'Planters', href: '/subcategory?cat=outdoor&sub=planters' },
-    { label: 'Garden Decor', href: '/subcategory?cat=outdoor&sub=garden-decor' },
-    { label: 'Outdoor Serving', href: '/subcategory?cat=outdoor&sub=outdoor-serving' },
-    { label: 'Festive Decor', href: '/subcategory?cat=seasonal&sub=festive-decor' },
-    { label: "Collector's Series", href: '/subcategory?cat=seasonal&sub=collectors-series' },
-    { label: 'Limited Editions', href: '/subcategory?cat=seasonal&sub=limited-editions' },
-  ]},
-];
-
 function getInitials(name) {
   if (!name) return 'U';
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -83,6 +38,7 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -193,6 +149,7 @@ export default function Header() {
     document.body.classList.remove('nav-drawer-open');
     const backdrop = document.querySelector('.nav-backdrop');
     if (backdrop) backdrop.classList.remove('is-visible');
+    setGalleryOpen(false);
   }, []);
 
   const navigateToSearchPage = useCallback(() => {
@@ -277,28 +234,56 @@ export default function Header() {
     setAccountOpen(prev => !prev);
   }
 
+  function toggleGallery() {
+    setGalleryOpen(prev => !prev);
+  }
+
+  useEffect(() => {
+    function onNavClosed() {
+      setGalleryOpen(false);
+    }
+    window.addEventListener('teakle-nav-closed', onNavClosed);
+    return () => window.removeEventListener('teakle-nav-closed', onNavClosed);
+  }, []);
+
   return (
     <header className={`site-header${hasHero ? '' : ' is-solid'}`} id="siteHeader">
       <div className="header-inner">
+        <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
         <Link href="/" className="logo" aria-label="Teakle Home">
           <img src={logoSrc} alt="Teakle" />
         </Link>
+        <div className="header-mobile-actions">
+          <Link href="/login" className="header-icon" aria-label="Account">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </Link>
+          <Link href="/cart" className="header-icon" aria-label="Cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </Link>
+        </div>
         <ul className="nav-links" id="navLinks">
           <li className="nav-mobile-search-bar">
-            <form className="nav-mobile-search-form" onSubmit={(e) => { e.preventDefault(); if (searchQuery.trim().length >= 2) { closeDrawer(); setSearchQuery(''); setSearchResults([]); router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`); } }}>
-              <input
-                type="text"
-                className="nav-mobile-search-input"
-                placeholder="Search pieces, materials..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                aria-label="Search products"
-                autoComplete="off"
-              />
-              <button type="submit" className="nav-mobile-search-submit" aria-label="Submit search">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div className="nav-mobile-search-row">
+              <form className="nav-mobile-search-form" onSubmit={(e) => { e.preventDefault(); if (searchQuery.trim().length >= 2) { closeDrawer(); setSearchQuery(''); setSearchResults([]); router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`); } }}>
+                <input
+                  type="text"
+                  className="nav-mobile-search-input"
+                  placeholder="Search pieces, materials..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  aria-label="Search products"
+                  autoComplete="off"
+                />
+                <button type="submit" className="nav-mobile-search-submit" aria-label="Submit search">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+              </form>
+              <button className="nav-mobile-close-btn" aria-label="Close menu" onClick={closeDrawer}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
-            </form>
+            </div>
             {searchQuery.length >= 2 && searchResults.length > 0 && (
               <div className="nav-mobile-search-results">
                 {searchResults.slice(0, 5).map((p) => (
@@ -325,35 +310,32 @@ export default function Header() {
               </div>
             )}
           </li>
-          <li className="nav-dropdown">
+          <li className={`nav-dropdown${galleryOpen ? ' is-open' : ''}`}>
             <div className="nav-mobile-link-row">
-              <Link href="/gallery" className="nav-dropdown-desktop-link">Gallery</Link>
-              <button className="nav-dropdown-toggle" aria-label="Show Gallery categories" aria-expanded="false" aria-controls="gallery-dropdown-menu">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+              <Link href="/gallery" className="nav-dropdown-desktop-link" onClick={closeDrawer}>Gallery</Link>
+              <button className="nav-dropdown-mobile-link" aria-label="Toggle Gallery submenu" aria-expanded={galleryOpen} aria-controls="gallery-dropdown-menu" onClick={(e) => { e.preventDefault(); toggleGallery(); }}>
+                <svg className="nav-dropdown-mobile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </div>
             <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
-              {galleryDropdown.map((cat) => {
-                const subId = `subdropdown-${cat.label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
-                return (
-                <li key={cat.label} className="nav-subdropdown">
-                  <button className="nav-subdropdown-toggle" aria-label={`${cat.label} categories`} aria-expanded="false" aria-controls={subId}>
-                    {cat.label}
-                  </button>
-                  <ul className="nav-subdropdown-menu" id={subId}>
-                    {cat.items.map((item) => (
-                      <li key={item.href}><Link href={item.href}>{item.label}</Link></li>
-                    ))}
-                  </ul>
-                </li>
-                );
-              })}
+              <li className="nav-dropdown-featured">
+                <Link href="/shop/anchor-table" className="nav-dropdown-featured-link" onClick={closeDrawer}>
+                  <span className="nav-dropdown-featured-label">Hero Edition</span>
+                </Link>
+              </li>
+              <li className="nav-dropdown-featured">
+                <Link href="/gallery?availability=Limited+Edition" className="nav-dropdown-featured-link" onClick={closeDrawer}>
+                  <span className="nav-dropdown-featured-label">Limited Edition</span>
+                </Link>
+              </li>
             </ul>
           </li>
-          <li><Link href="/archive">Archive</Link></li>
-          <li><Link href="/studio">Studio</Link></li>
-          <li><Link href="/journal">Journal</Link></li>
-          <li><Link href="/custom">Customize</Link></li>
+          <li><Link href="/archive" onClick={closeDrawer}>Archive</Link></li>
+          <li><Link href="/studio" onClick={closeDrawer}>Studio</Link></li>
+          <li><Link href="/journal" onClick={closeDrawer}>Journal</Link></li>
+          <li><Link href="/custom" onClick={closeDrawer}>Customize</Link></li>
+          <li><Link href="/login" onClick={closeDrawer}>Account</Link></li>
+          <li><Link href="/cart" onClick={closeDrawer}>Cart</Link></li>
         </ul>
         <div className="header-actions">
           <button className="header-icon" aria-label="Search" onClick={openSearch}>
@@ -461,9 +443,6 @@ export default function Header() {
             </div>
           </div>
         </div>
-        <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
-          <span></span><span></span><span></span>
-        </button>
       </div>
 
       {/* Search Overlay */}

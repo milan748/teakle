@@ -56,14 +56,20 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     const prev = track.parentElement.querySelector('.v2-cprev')
     const next = track.parentElement.querySelector('.v2-cnext')
     const items = track.querySelectorAll('.v2-citem')
+    const dots = track.parentElement.querySelectorAll('.v2cdot')
     if (!items.length) return
 
     let idx = 0, hovered = false, userPause = false, pauseTimer = null
+
+    function updateDots(i) {
+      dots.forEach((d, j) => { d.classList.toggle('active', j === i) })
+    }
 
     function go(i) {
       const w = items[0].offsetWidth + 32
       track.scrollTo({ left: i * w, behavior: 'smooth' })
       idx = i
+      updateDots(i)
     }
 
     function tick() {
@@ -103,6 +109,16 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     track.addEventListener('touchmove', tm, { passive: false })
     track.addEventListener('touchend', te)
 
+    function onScroll() {
+      const w = items[0].offsetWidth + 32
+      const si = Math.round(track.scrollLeft / w)
+      if (si !== idx && si >= 0 && si < items.length) {
+        idx = si
+        updateDots(idx)
+      }
+    }
+    track.addEventListener('scroll', onScroll, { passive: true })
+
     return () => {
       clearInterval(timer)
       clearTimeout(pauseTimer)
@@ -111,6 +127,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
       track.removeEventListener('touchstart', ts)
       track.removeEventListener('touchmove', tm)
       track.removeEventListener('touchend', te)
+      track.removeEventListener('scroll', onScroll)
     }
   }, [])
 
@@ -136,15 +153,16 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     position: absolute;
     inset: 0;
     width: 100%;
-    height: 120%;
+    height: 115%;
     object-fit: cover;
-    opacity: 0.9;
+    object-position: center 30%;
+    opacity: 0.95;
     will-change: transform, opacity;
-    transform: scale(1.12);
+    transform: scale(1.04);
     animation: v2heroZoom 14s var(--ease) forwards;
   }
   @keyframes v2heroZoom {
-    from { transform: scale(1.12); }
+    from { transform: scale(1.04); }
     to { transform: scale(1); }
   }
   .v2-hero::after {
@@ -152,10 +170,10 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg,
-      rgba(51,38,29,0.10) 0%,
-      rgba(51,38,29,0.25) 40%,
-      rgba(51,38,29,0.70) 75%,
-      rgba(51,38,29,0.88) 100%);
+      rgba(51,38,29,0.08) 0%,
+      rgba(51,38,29,0.22) 35%,
+      rgba(51,38,29,0.55) 65%,
+      rgba(51,38,29,0.82) 100%);
     z-index: 1;
   }
   .v2-hero-content {
@@ -637,111 +655,162 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
      ================================================================ */
 
   @media (max-width: 860px) {
-    .v2-hero { min-height: 0; height: 65vh; }
-    .v2-hero-content { padding: 0 var(--space-lg) var(--space-lg); padding-bottom: calc(var(--space-lg) + 56px); margin-left: 0; margin-top: 0; max-width: 100%; }
-    .v2-hero h1 { font-size: var(--text-h1); margin-bottom: var(--space-md); line-height: 1.1; }
-    .v2-hero-actions { gap: var(--space-md); }
-    .v2-hero-actions .btn-primary { min-height: 50px; padding: 0.85rem calc(var(--space-lg) + var(--space-sm)); font-size: var(--text-caption); letter-spacing: 0.12em; }
+    .v2-hero { min-height: 0; height: 100svh; }
+    .v2-hero-content { padding: 0 var(--space-lg) var(--space-2xl); padding-bottom: calc(var(--space-2xl) + 56px); margin-left: 0; margin-top: 0; max-width: 100%; }
+    .v2-hero h1 { font-size: clamp(1.75rem, 7vw, 2.25rem); margin-bottom: var(--space-lg); line-height: 1.1; }
+    .v2-hero-actions { gap: var(--space-sm); }
+    .v2-hero-actions .btn-primary { min-height: 38px; padding: 0.4rem calc(var(--space-md) + var(--space-xs)); font-size: var(--text-caption); letter-spacing: 0.1em; }
+    .v2-hero-eyebrow { font-size: 0.5rem; letter-spacing: 0.18em; margin-bottom: var(--space-sm); font-weight: 500; }
     .v2-scroll { display: none; }
 
     .v2-trust-inner { gap: var(--space-md); }
-    .v2-trust-item { font-size: 0.65rem; }
+    .v2-trust-item { font-size: 0.5625rem; }
 
-    .v2-signature { padding: var(--space-xl) 0; }
-    .v2-sig-grid { grid-template-columns: 1fr; gap: var(--space-md); }
-    .v2-sig-img { max-height: 420px; }
+    .v2-philosophy { padding: var(--space-2xl) 0 var(--space-xl); }
+    .v2-philosophy-inner { padding: 0 var(--space-lg); max-width: 100%; text-align: center; }
+    .v2-philosophy .eyebrow { justify-content: center; margin-bottom: var(--space-sm); }
+    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); line-height: 1.3; max-width: none; }
+    .v2-philosophy p { display: none; }
+
+    .v2-signature { padding: var(--space-xl) 0; background: var(--bg-primary); }
+    .v2-sig-grid { grid-template-columns: 1fr; gap: 0; }
+    .v2-sig-img { max-height: none; aspect-ratio: 3/4; }
+    .v2-sig-text { padding: var(--space-lg) var(--space-lg) 0; }
+    .v2-sig-text h2 { font-size: var(--text-h2); color: var(--text-primary); line-height: 1.2; }
+    .v2-sig-text p { color: var(--text-secondary); max-width: none; font-size: var(--text-body); display: none; }
+    .v2-sig-text .eyebrow { color: var(--bronze); }
+    .v2-sig-tag { display: none; }
+    .v2-sig-actions .link-quiet { color: var(--text-primary); border-color: var(--stone); }
+    .v2-sig-past { display: none; }
 
     .v2-craft { padding: var(--space-xl) 0; }
-    .v2-craft-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
-    .v2-craft-img img { aspect-ratio: 16 / 9; }
+    .v2-craft-grid { grid-template-columns: 1fr; gap: 0; }
+    .v2-craft-img { order: -1; }
+    .v2-craft-img img { aspect-ratio: 4/3; }
+    .v2-craft-text { padding: var(--space-lg) var(--space-lg) 0; }
+    .v2-craft-text h2 { font-size: var(--text-h2); line-height: 1.25; }
+    .v2-craft-text p { display: none; }
+    .v2-craft-text .link-quiet { margin-top: var(--space-sm); }
 
-    .v2-citem { flex: 0 0 150px; }
+    .v2-citem { flex: 0 0 140px; }
+    .v2-ctrack { gap: var(--space-sm); }
 
     .v2-lifestyle {
+      position: relative;
       display: block;
       height: auto;
       min-height: 0;
-      background: var(--bg-primary);
+      background: transparent;
       overflow: hidden;
+      padding: 0 var(--space-lg) var(--space-lg);
     }
-    .v2-lifestyle + .v2-lifestyle { margin-top: var(--space-xl); }
+    .v2-lifestyle + .v2-lifestyle { margin-top: 0; padding-top: 0; }
     .v2-lifestyle-bg {
       position: relative;
       width: 100%;
       height: 380px;
       object-fit: cover;
       transform: none;
+      border-radius: var(--radius-sm);
+      display: block;
     }
     .v2-lifestyle:hover .v2-lifestyle-bg { transform: none; }
-    .v2-lifestyle::after { display: none; }
+    .v2-lifestyle::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: var(--space-lg);
+      right: var(--space-lg);
+      bottom: var(--space-lg);
+      top: auto;
+      height: 260px;
+      background: linear-gradient(0deg, rgba(51,38,29,0.6) 0%, rgba(51,38,29,0.05) 55%, transparent 100%);
+      border-radius: var(--radius-sm);
+      z-index: 1;
+      pointer-events: none;
+    }
     .v2-lifestyle-content {
-      position: relative;
+      position: absolute;
+      bottom: var(--space-lg);
+      left: var(--space-lg);
+      right: var(--space-lg);
       z-index: 2;
-      padding: var(--space-lg);
+      padding: 0;
       max-width: 100%;
     }
-    .v2-lifestyle .eyebrow { color: var(--bronze); font-size: var(--text-caption); }
-    .v2-lifestyle h2 { color: var(--text-primary); font-size: var(--text-h2); line-height: 1.25; }
-    .v2-lifestyle p { color: var(--text-secondary); max-width: none; }
-    .v2-lifestyle .link-quiet { color: var(--bronze); border-color: var(--bronze); font-size: var(--text-caption); }
+    .v2-lifestyle .eyebrow { color: rgba(247,244,238,0.85); font-size: var(--text-caption); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; }
+    .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h2); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 32ch; font-weight: 600; }
+    .v2-lifestyle p { display: none; }
+    .v2-lifestyle .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); font-size: var(--text-caption); letter-spacing: 0.08em; }
 
     .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
     .v2-pcard { padding-bottom: 0; }
-    .v2-pimg { margin-bottom: var(--space-sm); }
-    .v2-pinfo { flex-direction: column; align-items: flex-start; gap: var(--space-xs); }
+    .v2-pimg { margin-bottom: var(--space-xs); }
+    .v2-pinfo { flex-direction: column; align-items: flex-start; gap: var(--space-2xs); }
+    .v2-pinfo h3 { font-size: var(--text-body); }
+    .v2-pcat { font-size: var(--text-caption); }
 
-    .v2-philosophy { padding: var(--space-xl) 0; }
-    .v2-philosophy-inner { padding: 0 calc(var(--space-lg) + var(--space-sm)); max-width: 100%; text-align: center; }
-    .v2-philosophy .eyebrow { justify-content: center; margin-bottom: var(--space-md); }
-    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-md); line-height: 1.3; max-width: none; }
-    .v2-philosophy p { font-size: var(--text-body); line-height: var(--lh-relaxed); max-width: 52ch; margin-left: auto; margin-right: auto; }
+    .v2-products { padding: var(--space-xl) 0 var(--space-lg); }
+    .v2-products-head { margin-bottom: var(--space-lg); }
+    .v2-products-head h2 { font-size: var(--text-h2); }
   }
 
   @media (max-width: 560px) {
-    .v2-hero { height: 62vh; min-height: 380px; }
-    .v2-hero-content { padding: 0 var(--space-lg) var(--space-md); padding-bottom: calc(var(--space-md) + 52px); }
-    .v2-hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-sm); letter-spacing: -0.02em; line-height: 1.1; }
-    .v2-hero-actions { flex-direction: column; gap: var(--space-sm); width: 100%; }
-    .v2-hero-actions .btn-primary { width: 100%; min-height: 50px; font-size: var(--text-caption); }
-    .v2-hero-actions .link-quiet { align-self: center; font-size: var(--text-caption); }
+    .v2-hero { height: 100svh; min-height: 340px; }
+    .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 52px); }
+    .v2-hero h1 { font-size: clamp(1.5rem, 7vw, 1.875rem); margin-bottom: var(--space-md); letter-spacing: -0.02em; line-height: 1.08; }
+    .v2-hero-actions { flex-direction: row; gap: var(--space-sm); align-items: center; }
+    .v2-hero-actions .btn-primary { flex: 1; min-height: 36px; font-size: 0.5625rem; width: auto; padding: 0.35rem var(--space-sm); }
+    .v2-hero-actions .link-quiet { font-size: 0.5rem; white-space: nowrap; }
 
-    .v2-signature { padding: var(--space-xl) 0; }
-    .v2-sig-img { max-height: 380px; }
-    .v2-sig-text { padding: var(--space-md) 0 0; }
+    .v2-signature { padding: var(--space-lg) 0; }
+    .v2-sig-img { max-height: none; aspect-ratio: 3/4; }
+    .v2-sig-text { padding: var(--space-md) var(--space-md) 0; }
+    .v2-sig-text h2 { font-size: var(--text-h2); }
+    .v2-sig-actions { flex-direction: column; gap: var(--space-xs); }
+    .v2-sig-actions .btn-primary { width: 100%; text-align: center; min-height: 40px; }
 
-    .v2-craft { padding: var(--space-xl) 0; }
+    .v2-craft { padding: var(--space-lg) 0; }
+    .v2-craft-text { padding: var(--space-md) var(--space-md) 0; }
 
-    .v2-carousel { padding: var(--space-xl) var(--space-sm) var(--space-md); }
-    .v2-citem { flex: 0 0 130px; }
+    .v2-carousel { padding: var(--space-lg) var(--space-xs) var(--space-md); }
+    .v2-citem { flex: 0 0 120px; }
+    .v2-clabel { font-size: var(--text-caption); }
+    .v2-cbtn { font-size: 0.5rem; padding: 0.3em 1em; }
 
-    .v2-lifestyle-bg { height: 320px; }
-    .v2-lifestyle-content { padding: var(--space-lg); }
-    .v2-lifestyle h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); }
+    .v2-lifestyle { padding: 0 var(--space-md) var(--space-md); }
+    .v2-lifestyle-bg { height: 300px; }
+    .v2-lifestyle::after { left: var(--space-md); right: var(--space-md); bottom: var(--space-md); height: 200px; }
+    .v2-lifestyle-content { bottom: var(--space-md); left: var(--space-md); right: var(--space-md); padding: 0; }
+    .v2-lifestyle h2 { font-size: var(--text-h3); margin-bottom: var(--space-xs); max-width: 26ch; }
 
-    .v2-products { padding: var(--space-xl) 0; }
-    .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
-    .v2-pimg { aspect-ratio: 4 / 5; margin-bottom: var(--space-sm); }
-    .v2-pinfo { gap: 2px; }
-    .v2-pinfo h3 { font-size: var(--text-subhead); }
-    .v2-pcat { font-size: var(--text-caption); }
+    .v2-products { padding: var(--space-lg) 0; }
+    .v2-products-head { margin-bottom: var(--space-md); }
+    .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+    .v2-pimg { aspect-ratio: 4 / 5; margin-bottom: var(--space-2xs); }
+    .v2-pinfo { gap: 1px; }
+    .v2-pinfo h3 { font-size: var(--text-body); }
+    .v2-pcat { font-size: 0.5rem; }
 
-    .v2-philosophy { padding: var(--space-lg) 0; }
-    .v2-philosophy-inner { padding: 0 var(--space-lg); }
-    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); }
+    .v2-philosophy { padding: var(--space-xl) 0; }
+    .v2-philosophy-inner { padding: 0 var(--space-md); }
+    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-xs); }
+
+    .v2-pcta { margin-top: var(--space-md); }
   }
 
   @media (max-width: 430px) {
-    .v2-hero h1 { font-size: var(--text-h2); margin-bottom: var(--space-md); }
-    .v2-hero-content { padding: 0 var(--space-md) var(--space-md); padding-bottom: calc(var(--space-md) + 48px); }
-    .v2-hero-actions .btn-primary { min-height: 44px; font-size: var(--text-caption); }
-    .v2-hero-actions .link-quiet { font-size: var(--text-caption); }
-    .v2-pgrid { gap: var(--space-sm); }
-    .v2-pinfo h3 { font-size: var(--text-body); }
-    .v2-lifestyle h2 { font-size: var(--text-subhead); }
-    .v2-lifestyle p { font-size: var(--text-caption); }
-    .v2-philosophy h2 { font-size: var(--text-subhead); }
-    .v2-philosophy p { font-size: var(--text-caption); }
-    .v2-citem { flex: 0 0 110px; }
+    .v2-hero h1 { font-size: 1.625rem; margin-bottom: var(--space-md); }
+    .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 48px); }
+    .v2-hero-actions .btn-primary { min-height: 34px; font-size: 0.5rem; }
+    .v2-hero-actions .link-quiet { font-size: 0.5rem; }
+    .v2-pgrid { gap: var(--space-xs); }
+    .v2-pinfo h3 { font-size: 0.8125rem; }
+    .v2-lifestyle h2 { font-size: var(--text-h3); max-width: 28ch; }
+    .v2-lifestyle-bg { height: 300px; }
+    .v2-lifestyle::after { height: 200px; }
+    .v2-philosophy h2 { font-size: var(--text-h3); }
+    .v2-citem { flex: 0 0 120px; }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -536,8 +536,8 @@ test('requires admin authentication', () => {
   assertIncludes(diagCode, 'requireAdmin');
 });
 
-test('returns 401/403 for unauthenticated', () => {
-  assertIncludes(diagCode, '401');
+test('returns 401/403 for unauthenticated (handled by requireAdmin)', () => {
+  assertIncludes(diagCode, 'requireAdmin');
 });
 
 test('returns database info', () => {
@@ -572,8 +572,8 @@ test('returns table row counts', () => {
   assertIncludes(diagCode, 'rowCount');
 });
 
-test('returns table column info', () => {
-  assertIncludes(diagCode, 'columns');
+test('does NOT return table column info (security)', () => {
+  assertNotIncludes(diagCode, 'columns: t.columns', 'columns should be removed from diagnostics response for security');
 });
 
 test('returns approximate table sizes', () => {

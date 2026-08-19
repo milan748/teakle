@@ -76,9 +76,17 @@ export const PATCH = withCsrf(async function PATCH(request) {
         results.success++;
       } catch (e) {
         results.failed++;
-        results.errors.push({ orderId: order.id, orderNumber: order.orderNumber, error: e.message });
+        results.errors.push({ orderId: order.id, orderNumber: order.orderNumber, error: 'Update failed' });
       }
     }
+
+    // Audit log for bulk operation
+    try {
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'bulk_status_change', 'order', null,
+        JSON.stringify({ status: normalizedStatus, successCount: results.success, failedCount: results.failed, orderIds })
+      );
+    } catch { /* audit log failure is non-blocking */ }
 
     return NextResponse.json({ success: true, data: results });
   } catch (error) {

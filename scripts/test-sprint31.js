@@ -177,8 +177,8 @@ section('ERROR DISCLOSURE SANITIZATION');
 
   await test('Admin diagnostics route does not expose filesystem path to client', () => {
     const src = read('app/api/admin/diagnostics/route.js');
-    assert.ok(src.includes('db.path'), 'diagnostics accesses db.path');
-    assert.ok(src.includes('admin_only') || src.includes('requireAdmin'), 'diagnostics must require admin auth');
+    assert.ok(!src.includes('path: db.path'), 'diagnostics leaks db.path in response');
+    assert.ok(src.includes('requireAdmin'), 'diagnostics must require admin auth');
   });
 
   await test('Bulk order route does not leak raw SQL errors to client', () => {

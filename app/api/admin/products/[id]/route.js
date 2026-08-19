@@ -141,6 +141,15 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
 
     clearMetadataCache();
 
+    // Audit log
+    try {
+      const auditDb = getDb();
+      auditDb.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'product_update', 'product', id,
+        JSON.stringify({ updates: Object.keys(updates) })
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     const updated = getProduct(id, db);
     return NextResponse.json({
       success: true,

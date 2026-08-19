@@ -75,7 +75,7 @@ export async function POST(req) {
           "UPDATE payment_webhook_events SET processingError = ?, processed = 0 WHERE provider = ? AND eventId = ?"
         ).run(result.error, provider, eventIdStr);
         log.paymentWebhookRejected(provider, result.error);
-        return NextResponse.json({ error: result.error }, { status: result.status || 400 });
+        return NextResponse.json({ error: 'Webhook processing failed' }, { status: result.status || 400 });
       }
 
       db.prepare(

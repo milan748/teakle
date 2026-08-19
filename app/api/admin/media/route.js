@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { getAllMedia, createMedia } from '@/lib/media';
 import { withCsrf } from '@/lib/csrf';
 import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
+import { getDb } from '@/lib/db';
 
 export async function GET(request) {
   const auth = await requireAdmin();
@@ -40,6 +41,16 @@ export const POST = withCsrf(async function POST(request) {
     }
 
     const media = await createMedia(file, altText);
+
+    // Audit log
+    try {
+      const db = getDb();
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'media_upload', 'media', media.id,
+        JSON.stringify({ filename: media.filename, originalName: media.originalName })
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     return NextResponse.json({ success: true, data: media }, { status: 201 });
   } catch (err) {
     const message = err.message || '';

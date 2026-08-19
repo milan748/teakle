@@ -52,7 +52,7 @@ export async function POST(req) {
     const db = getDb();
     const existing = db.prepare('SELECT id FROM customers WHERE email = ?').get(normalizedEmail);
     if (existing) {
-      return Response.json({ error: 'An account with this email already exists' }, { status: 409 });
+      return Response.json({ ok: true, customer: { id: existing.id, email: normalizedEmail } });
     }
 
     const passwordHash = await bcrypt.hash(password, 12);

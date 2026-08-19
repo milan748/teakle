@@ -14,7 +14,7 @@ export default function ClientScripts() {
     let mutationObserver;
 
     function initReveals(root) {
-      const reveals = (root || document).querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+      const reveals = (root || document).querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
       if (!reveals.length) return;
       if ('IntersectionObserver' in window) {
         if (!observer) {
@@ -25,7 +25,7 @@ export default function ClientScripts() {
                 observer.unobserve(entry.target);
               }
             });
-          }, { threshold: 0.1 });
+          }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
         }
         reveals.forEach((el) => observer.observe(el));
       } else {
@@ -37,12 +37,12 @@ export default function ClientScripts() {
     frameId = requestAnimationFrame(() => {
       initReveals();
 
-      /* Safety net: force all reveals visible after 400ms */
+      /* Safety net: force all reveals visible after 500ms */
       safetyTimeout = setTimeout(() => {
-        document.querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)').forEach((el) => {
+        document.querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)').forEach((el) => {
           el.classList.add('is-visible');
         });
-      }, 400);
+      }, 500);
 
       /* MutationObserver catches dynamically added .reveal elements */
       if ('MutationObserver' in window) {
@@ -50,11 +50,11 @@ export default function ClientScripts() {
           for (const m of mutations) {
             for (const node of m.addedNodes) {
               if (node.nodeType === 1) {
-                if (node.classList && (node.classList.contains('reveal') || node.classList.contains('piece-card') || node.classList.contains('product-card'))) {
+                if (node.classList && (node.classList.contains('reveal') || node.classList.contains('reveal-stagger') || node.classList.contains('piece-card') || node.classList.contains('product-card'))) {
                   initReveals(node.parentElement || document);
                 }
                 if (node.querySelectorAll) {
-                  const inner = node.querySelectorAll('.reveal:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+                  const inner = node.querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
                   if (inner.length) initReveals(node.parentElement || document);
                 }
               }
@@ -91,12 +91,7 @@ export default function ClientScripts() {
         navToggle.setAttribute('aria-label', 'Open menu');
         if (backdrop) backdrop.classList.remove('is-visible');
         document.body.classList.remove('nav-drawer-open');
-        navLinks.querySelectorAll('.nav-dropdown.is-open, .nav-subdropdown.is-open').forEach((el) => {
-          el.classList.remove('is-open');
-        });
-        navLinks.querySelectorAll('.nav-dropdown-toggle[aria-expanded], .nav-subdropdown-toggle[aria-expanded]').forEach((btn) => {
-          btn.setAttribute('aria-expanded', 'false');
-        });
+        window.dispatchEvent(new CustomEvent('teakle-nav-closed'));
       }
 
       navToggle.addEventListener('click', () => {
@@ -109,29 +104,6 @@ export default function ClientScripts() {
       });
 
       backdrop.addEventListener('click', closeNav);
-
-      navLinks.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', closeNav);
-      });
-
-      /* Gallery dropdown toggles */
-      navLinks.querySelectorAll('.nav-dropdown-toggle').forEach((btn) => {
-        btn.setAttribute('aria-expanded', 'false');
-        btn.addEventListener('click', () => {
-          const dropdown = btn.closest('.nav-dropdown');
-          const open = dropdown.classList.toggle('is-open');
-          btn.setAttribute('aria-expanded', open);
-        });
-      });
-      navLinks.querySelectorAll('.nav-subdropdown-toggle').forEach((btn) => {
-        btn.setAttribute('aria-expanded', 'false');
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const sub = btn.closest('.nav-subdropdown');
-          const open = sub.classList.toggle('is-open');
-          btn.setAttribute('aria-expanded', open);
-        });
-      });
     }
 
     /* Bottom nav badge sync */

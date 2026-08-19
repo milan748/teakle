@@ -44,6 +44,14 @@ export const PATCH = withCsrf(async function PATCH(request, { params }) {
       return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
     }
 
+    // Audit log
+    try {
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'trade_status', 'trade_enquiry', id,
+        JSON.stringify({ status })
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     const enquiry = db.prepare('SELECT * FROM trade_enquiries WHERE id = ?').get(id);
     return NextResponse.json({ success: true, data: enquiry });
   } catch (error) {

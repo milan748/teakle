@@ -2,7 +2,6 @@ import './globals.css';
 import Script from 'next/script';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import BottomNav from './components/BottomNav';
 import ScrollTopBtn from './components/ScrollTopBtn';
 import ClientScripts from './components/ClientScripts';
 import StructuredData from './components/StructuredData';
@@ -99,7 +98,6 @@ export default function RootLayout({ children }) {
         </main>
         <Footer />
         <ScrollTopBtn />
-        <BottomNav />
         <ClientScripts />
         <Script src="/app.js" strategy="beforeInteractive" />
         <Script src="/products-browser.js" strategy="beforeInteractive" />

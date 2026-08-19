@@ -3,6 +3,7 @@ import { requireAdmin } from '@/lib/auth';
 import { saveDraftSection, publishSection, discardDraft, VALID_SECTIONS, VALID_PAGES } from '@/lib/cms';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
+import { getDb } from '@/lib/db';
 
 const MAX_LENGTHS = {
   title: 200,
@@ -95,6 +96,14 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
       enabled: enabled,
     });
 
+    try {
+      const db = getDb();
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, 'cms_draft_save', 'cms_section', `${page}/${sectionKey}`,
+        JSON.stringify({ page, sectionKey })
+      );
+    } catch { /* audit log failure is non-blocking */ }
+
     return NextResponse.json({ success: true, data: section });
   } catch (error) {
     log.error('CMS PUT error:', error);
@@ -138,6 +147,14 @@ export const POST = withCsrf(async function POST(request, { params }) {
     if (!section) {
       return NextResponse.json({ success: false, error: 'Section not found' }, { status: 404 });
     }
+
+    try {
+      const db = getDb();
+      db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+        auth.admin.id, `cms_${body.action}`, 'cms_section', `${page}/${sectionKey}`,
+        JSON.stringify({ page, sectionKey, action: body.action })
+      );
+    } catch { /* audit log failure is non-blocking */ }
 
     return NextResponse.json({ success: true, data: section });
   } catch (error) {

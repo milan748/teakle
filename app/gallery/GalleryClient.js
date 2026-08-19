@@ -466,13 +466,14 @@ export default function GalleryClient({ products: serverProducts }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const urlSearch = searchParams.get('search') || '';
+  const urlAvailability = searchParams.get('availability') || 'all';
   const [products, setProducts] = useState(serverProducts || []);
   const [activeCategory, setActiveCategory] = useState('all');
   const [sortBy, setSortBy] = useState('featured');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [priceMin, setPriceMin] = useState(PRICE_bounds.min);
   const [priceMax, setPriceMax] = useState(PRICE_bounds.max);
-  const [availability, setAvailability] = useState('all');
+  const [availability, setAvailability] = useState(urlAvailability);
 
   const searchQuery = urlSearch.trim();
 
@@ -482,6 +483,15 @@ export default function GalleryClient({ products: serverProducts }) {
       setProducts(window.TEAKLE_PRODUCTS);
     }
   }, [searchQuery, serverProducts]);
+
+  useEffect(() => {
+    const av = searchParams.get('availability');
+    if (av && AVAILABILITY_OPTIONS.some((o) => o.value === av)) {
+      setAvailability(av);
+    } else if (!av) {
+      setAvailability('all');
+    }
+  }, [searchParams]);
 
   const categoryCounts = useMemo(() => {
     let base = [...products];
@@ -553,11 +563,13 @@ export default function GalleryClient({ products: serverProducts }) {
   const hasActiveFilters = priceMin > PRICE_bounds.min || priceMax < PRICE_bounds.max || availability !== 'all';
 
   const clearFilters = useCallback(() => {
+    setActiveCategory('all');
     setPriceMin(PRICE_bounds.min);
     setPriceMax(PRICE_bounds.max);
     setAvailability('all');
-    if (urlSearch) router.push('/gallery');
-  }, [urlSearch, router]);
+    setSortBy('featured');
+    router.push('/gallery');
+  }, [router]);
 
   const removeFilter = useCallback((type) => {
     if (type === 'price') {
@@ -683,6 +695,19 @@ export default function GalleryClient({ products: serverProducts }) {
             </button>
           </div>
         </div>
+
+        {hasActiveFilters && !searchQuery && (
+          <div className="gal-search-banner">
+            <div className="gal-search-banner-inner">
+              <span className="gal-search-banner-label">Filtered results</span>
+              <span className="gal-search-banner-count">{filteredProducts.length} piece{filteredProducts.length !== 1 ? 's' : ''}</span>
+            </div>
+            <button className="gal-search-reset-btn" onClick={clearFilters}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Show all products
+            </button>
+          </div>
+        )}
 
         {hasActiveFilters && (
           <div className="gal-active-filters">
