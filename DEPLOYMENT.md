@@ -185,6 +185,42 @@ docker run -d \
 
 **Important:** This is a single-instance application. Do NOT scale to multiple replicas — SQLite and in-memory rate limiting do not support it.
 
+### Vercel
+
+TEAKLE can deploy to Vercel as a Next.js application, but Vercel serverless hosting has significant limitations for this app (see §18). If you proceed:
+
+**Required: set environment variables in the Vercel dashboard under Settings → Environment Variables → Production.**
+
+The build will succeed without these, but every request will fail with `500: An error occurred while loading instrumentation hook` because the instrumentation hook enforces required variables at runtime.
+
+**Required Production environment variables:**
+
+| Variable | Value |
+|----------|-------|
+| `SESSION_SECRET` | Unique random secret, **32+ characters** (generate: `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`) |
+| `ADMIN_EMAIL` | Real production admin email address |
+| `ADMIN_PASSWORD` | Real production admin password, **8+ characters** |
+
+**Recommended Production environment variables (separate session isolation):**
+
+| Variable | Value |
+|----------|-------|
+| `ADMIN_SESSION_SECRET` | Different random secret (32+ chars), separate from `SESSION_SECRET` |
+| `CUSTOMER_SESSION_SECRET` | Different random secret (32+ chars), separate from `SESSION_SECRET` |
+| `NEXT_PUBLIC_SITE_URL` | Your production domain (e.g. `https://teakle.in`) |
+
+**Optional:**
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `DATABASE_PATH` | `./data/teakle.db` | SQLite path |
+| `MEDIA_UPLOAD_DIR` | `./public/uploads/media` | Upload directory |
+| `BACKUP_DIR` | `./backups` | Backup directory |
+
+**Never write real secret values into source code, Git, documentation, or test files.**
+
+> **Vercel filesystem limitation:** Vercel serverless functions use ephemeral storage. The SQLite database, media uploads, and backups **will be lost** on each deployment or cold start. For persistent storage, use a VPS, Docker with volume mounts, or integrate external storage (S3, Turso, etc.) before deploying to Vercel.
+
 ## 9. HTTPS Requirements
 
 The application expects a **reverse proxy** (nginx, Caddy, Cloudflare, etc.) to handle HTTPS termination.
