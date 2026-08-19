@@ -2,5 +2,12 @@ node_modules/
 .next/
 .env
 .env.local
+.env.*
+!.env.example
 dist/
 build/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+public/uploads/
+backups/

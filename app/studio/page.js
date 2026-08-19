@@ -1,6 +1,27 @@
 import StudioRoadmap from '../components/StudioRoadmap'
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: 'Studio',
+  description: 'Inside the Teakle workshop. How our objects are designed, crafted, and finished by hand.',
+  openGraph: { title: 'Studio — Teakle', description: 'Inside the Teakle workshop.' },
+};
 
 export default function StudioPage() {
+  let sections = [];
+  try { sections = getPublishedPageSections('studio'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
+
+  const hero = cms.hero || {};
+  const origin = cms.origin || {};
+  const gallery = cms.gallery || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
+  const originDisabled = cmsKeys.has('origin') && !cms.origin;
+  const galleryDisabled = cmsKeys.has('gallery') && !cms.gallery;
   return (
     <>
       <StudioRoadmap />
@@ -313,28 +334,34 @@ export default function StudioPage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A craftsman planing a wooden board in natural light." />
+        <img src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Studio</span>
-          <h1>Why we work in solid wood, and why it takes as long as it does.</h1>
-          <p>The materials, the process, and the workshop behind every Teakle piece.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Studio'}</span>
+          <h1>{hero.title || 'Why we work in solid wood, and why it takes as long as it does.'}</h1>
+          <p>{hero.subtitle || 'The materials, the process, and the workshop behind every Teakle piece.'}</p>
         </div>
       </section>
+      )}
 
+      {!originDisabled && (
       <section className="origin">
         <div className="container origin-grid">
           <div className="origin-image reveal">
-            <img loading="lazy" src="https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900" alt="An older craftsman examining a piece of raw timber in a workshop." />
+            <img loading="lazy" src={origin.image || "https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900"} alt="An older craftsman examining a piece of raw timber in a workshop." />
           </div>
           <div className="origin-text">
-            <span className="eyebrow reveal">Where We Started</span>
-            <h2 className="reveal">A carpentry practice that became a workshop, over three generations.</h2>
-            <p className="reveal">Teakle began as a small carpentry practice in India, taking on furniture repair and custom joinery for houses in the area. Over three generations, the same practice narrowed into something more deliberate — fewer commissions, more time per piece, and a refusal to use materials that would not hold up over decades.</p>
-            <p className="reveal">We still work the way the workshop always has. A piece is planned by hand, built by hand, and finished by hand. Nothing here is automated because nothing here needed to be.</p>
+            <span className="eyebrow reveal">{origin.eyebrow || 'Where We Started'}</span>
+            <h2 className="reveal">{origin.title || 'A carpentry practice that became a workshop, over three generations.'}</h2>
+            {(origin.body ? origin.body.split('\n').filter(Boolean) : [
+              'Teakle began as a small carpentry practice in India, taking on furniture repair and custom joinery for houses in the area. Over three generations, the same practice narrowed into something more deliberate — fewer commissions, more time per piece, and a refusal to use materials that would not hold up over decades.',
+              'We still work the way the workshop always has. A piece is planned by hand, built by hand, and finished by hand. Nothing here is automated because nothing here needed to be.'
+            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
           </div>
         </div>
       </section>
+      )}
 
       <section className="materials">
         <div className="container">
@@ -450,25 +477,27 @@ export default function StudioPage() {
         </div>
       </section>
 
+      {!galleryDisabled && (
       <section className="gallery">
         <div className="container">
           <div className="gallery-header">
-            <span className="eyebrow reveal">The Workshop</span>
-            <h2 className="reveal">The people and tools behind every piece.</h2>
+            <span className="eyebrow reveal">{gallery.eyebrow || 'The Workshop'}</span>
+            <h2 className="reveal">{gallery.title || 'The people and tools behind every piece.'}</h2>
           </div>
           <div className="gallery-grid">
-            <a href="#" className="gallery-item img-zoom reveal">
-              <img loading="lazy" src="https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="A craftsman planing a wooden board in natural light." />
-            </a>
-            <a href="#" className="gallery-item img-zoom reveal">
+            <div className="gallery-item img-zoom reveal">
+              <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." />
+            </div>
+            <div className="gallery-item img-zoom reveal">
               <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." />
-            </a>
-            <a href="#" className="gallery-item img-zoom reveal">
+            </div>
+            <div className="gallery-item img-zoom reveal">
               <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." />
-            </a>
+            </div>
           </div>
         </div>
       </section>
+      )}
     </>
   )
 }

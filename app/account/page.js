@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import { customerAuth, customerOrders, customerAddresses } from '@/lib/api';
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
@@ -15,8 +16,7 @@ const NAV_ITEMS = [
   { id: 'support', label: 'Support', icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
 ];
 
-function getGreeting() {
-  const h = new Date().getHours();
+function getGreeting(h) {
   if (h < 12) return 'Good Morning';
   if (h < 17) return 'Good Afternoon';
   return 'Good Evening';
@@ -39,6 +39,16 @@ export default function AccountPage() {
   const [newAddress, setNewAddress] = useState({ label: '', street: '', city: '', state: '', pin: '', phone: '' });
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [greeting, setGreeting] = useState('Good Morning');
+  const [serverOrders, setServerOrders] = useState([]);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState(null);
+  const [orderDetailLoading, setOrderDetailLoading] = useState(false);
+  const [cancellingOrder, setCancellingOrder] = useState(null);
+  const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' });
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [deactivating, setDeactivating] = useState(false);
 
   useEffect(() => {
     const t = window.Teakle;
@@ -48,33 +58,72 @@ export default function AccountPage() {
     }
     const u = t.getCurrentUser();
     setUser(u);
+    setGreeting(getGreeting(new Date().getHours()));
     setProfileForm({ name: u.name || '', email: u.email || '', phone: u.phone || '', dob: u.dob || '' });
     setWishlist(t.getWishlist());
     setCart(t.getCart());
     try { setRecentlyViewed(JSON.parse(localStorage.getItem('teakle_recently_viewed') || '[]')); } catch { setRecentlyViewed([]); }
-    try { setAddresses(JSON.parse(localStorage.getItem('teakle_addresses') || '[]')); } catch { setAddresses([]); }
+    customerAddresses.list().then(result => {
+      if (result && result.addresses) setAddresses(result.addresses);
+    });
     try {
       const stored = JSON.parse(localStorage.getItem('teakle_notifications') || '[]');
       if (stored.length === 0) {
         setNotifications([
           { id: 1, title: 'Welcome to Teakle', desc: 'Your collection awaits. Explore handcrafted pieces made with care.', time: 'Just now', read: false },
-          { id: 2, title: 'Order Confirmed', desc: 'Your Anchor Table is now in production. Estimated delivery in 2–3 weeks.', time: '2 days ago', read: false },
+          { id: 2, title: 'Order Confirmed', desc: 'Your Anchor Table order has been confirmed. We\'ll share dispatch details soon.', time: '2 days ago', read: false },
           { id: 3, title: 'Craft Care Reminder', desc: 'Monthly care tips for your walnut pieces are available in your guide.', time: '1 week ago', read: true },
         ]);
       } else {
         setNotifications(stored);
       }
     } catch { setNotifications([]); }
+
+    customerOrders.list().then(result => {
+      if (result && result.orders) setServerOrders(result.orders);
+    });
   }, []);
 
-  const logout = useCallback(() => {
-    window.Teakle.logout();
-    window.location.href = '/';
+  const logout = useCallback(async () => {
+    await customerAuth.logout();
+    if (window.Teakle) window.Teakle.logout();
+    window.location.href = '/login';
   }, []);
 
-  function saveAddresses(addrs) {
-    setAddresses(addrs);
-    localStorage.setItem('teakle_addresses', JSON.stringify(addrs));
+  async function fetchOrderDetail(orderId) {
+    setOrderDetailLoading(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`);
+      const data = await res.json();
+      if (data.order) setSelectedOrderDetail(data.order);
+    } catch (err) {
+      console.error('Failed to fetch order detail:', err);
+    }
+    setOrderDetailLoading(false);
+  }
+
+  async function cancelOrder(orderId) {
+    if (!confirm('Are you sure you want to cancel this order? This action cannot be undone.')) return;
+    setCancellingOrder(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'cancel' }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setServerOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'CANCELLED' } : o));
+        if (selectedOrderDetail && selectedOrderDetail.id === orderId) {
+          setSelectedOrderDetail(prev => ({ ...prev, status: 'CANCELLED' }));
+        }
+      } else {
+        alert(data.error || 'Failed to cancel order');
+      }
+    } catch (err) {
+      console.error('Failed to cancel order:', err);
+    }
+    setCancellingOrder(null);
   }
 
   function removeFromWishlist(id) {
@@ -91,14 +140,16 @@ export default function AccountPage() {
     setCart(t.getCart());
   }
 
-  function saveProfile() {
-    const t = window.Teakle;
-    const u = t.getCurrentUser();
-    u.name = profileForm.name;
-    u.phone = profileForm.phone;
-    u.dob = profileForm.dob;
-    localStorage.setItem('teakle_currentUser', JSON.stringify(u));
-    setUser({ ...u });
+  async function saveProfile() {
+    const result = await customerAuth.updateProfile({ name: profileForm.name, phone: profileForm.phone });
+    if (result && result.ok) {
+      const t = window.Teakle;
+      const u = t.getCurrentUser();
+      u.name = result.customer.name;
+      u.phone = result.customer.phone;
+      localStorage.setItem('teakle_currentUser', JSON.stringify(u));
+      setUser({ ...u });
+    }
     setEditField(null);
   }
 
@@ -112,16 +163,27 @@ export default function AccountPage() {
 
   if (!user) return null;
 
-  const orders = [
-    { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'In Production', delivery: '2–3 weeks', price: '₹1,85,000' },
-    { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Delivered', delivery: 'Delivered Jan 15', price: '₹4,200' },
-  ];
+  const statusLabels = { PENDING: 'Order Placed', CONFIRMED: 'Confirmed', PROCESSING: 'Being Crafted', COMPLETED: 'Completed', CANCELLED: 'Cancelled' };
+  const displayOrders = serverOrders.length > 0
+    ? serverOrders.map(o => ({
+        id: o.orderNumber,
+        product: o.items?.[0]?.productName || 'Order',
+        image: o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300',
+        status: statusLabels[o.status] || o.status,
+        delivery: o.status === 'COMPLETED' ? 'Delivered' : 'Awaiting dispatch',
+        price: `₹${(o.totalAmount || 0).toLocaleString('en-IN')}`,
+      }))
+    : [
+        { id: 'TK-2026-001', product: 'The Anchor Table', image: 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Confirmed', delivery: 'Awaiting dispatch', price: '₹1,85,000' },
+        { id: 'TK-2026-002', product: 'Walnut Serving Board', image: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300', status: 'Completed', delivery: 'Delivered Jan 15', price: '₹4,200' },
+      ];
+  const orders = displayOrders;
 
   const stats = [
-    { label: 'Current Orders', value: orders.filter(o => o.status !== 'Delivered').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
+    { label: 'Current Orders', value: serverOrders.filter(o => o.status !== 'COMPLETED' && o.status !== 'CANCELLED').length, icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
     { label: 'Wishlist Items', value: wishlist.length, icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
-    { label: 'Saved Addresses', value: addresses.length, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' },
-    { label: 'Reward Points', value: '—', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' },
+    { label: 'Cart Items', value: cart.length, icon: 'M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0' },
+    { label: 'Saved Addresses', value: addresses.length, icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z' },
   ];
 
   function renderContent() {
@@ -155,8 +217,18 @@ export default function AccountPage() {
           ))}
         </div>
 
+        {cart.length > 0 && (
+          <div style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid rgba(167,134,89,0.15)', background: 'rgba(167,134,89,0.03)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <div>
+              <p style={{ margin: 0, fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--text-primary)' }}>You have {cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart</p>
+              <p style={{ margin: '0.25rem 0 0', fontSize: 'var(--text-caption)', color: 'var(--text-secondary)', opacity: 0.7 }}>Complete your purchase before these pieces are reserved.</p>
+            </div>
+            <Link href="/cart" className="acct-btn-sm" style={{ textDecoration: 'none' }}>View Cart</Link>
+          </div>
+        )}
+
         <h3 className="acct-subtitle">Recent Orders</h3>
-        {orders.length === 0 ? (
+        {serverOrders.length === 0 ? (
           <div className="acct-empty">
             <div className="empty-illustration">
               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="empty-icon"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
@@ -164,22 +236,21 @@ export default function AccountPage() {
             </div>
             <p className="empty-heading">No orders yet</p>
             <p className="empty-desc">Your collection begins with a single piece.</p>
-            <Link href="/gallery" className="acct-cta">Explore the Gallery</Link>
+            <Link href="/gallery" className="acct-cta">Explore the Collection</Link>
           </div>
         ) : (
           <div className="acct-orders-list">
-            {orders.slice(0, 2).map((o, i) => (
+            {serverOrders.slice(0, 2).map((o, i) => (
               <div className="acct-order-card" key={o.id} style={{ animationDelay: `${(i + 4) * 80}ms` }}>
-                <img src={o.image} alt={o.product} className="order-img" loading="lazy" />
+                <img src={o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300'} alt="" className="order-img" loading="lazy" />
                 <div className="order-info">
-                  <div className="order-name">{o.product}</div>
-                  <div className="order-meta">{o.id} · {o.price}</div>
-                  <div className={`order-status ${o.status === 'Delivered' ? 'is-delivered' : ''}`}>{o.status}</div>
-                  <div className="order-delivery">{o.delivery}</div>
+                  <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
+                  <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{statusLabels[o.status] || o.status}</div>
+                  <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">
-                  <button className="acct-btn-sm">View Details</button>
-                  {o.status !== 'Delivered' && <button className="acct-btn-sm acct-btn-outline">Track Order</button>}
+                  <button className="acct-btn-sm" onClick={() => { setActiveSection('orders'); fetchOrderDetail(o.id); }}>View Details</button>
                 </div>
               </div>
             ))}
@@ -190,6 +261,139 @@ export default function AccountPage() {
   }
 
   function renderOrders() {
+    if (orderDetailLoading) {
+      return (
+        <div className="acct-section" key="orders">
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Loading order details...</p>
+        </div>
+      );
+    }
+
+    if (selectedOrderDetail) {
+      const o = selectedOrderDetail;
+      const canCancel = o.status === 'PENDING' || o.status === 'CONFIRMED';
+      const statusColors = { PENDING: '#c28a2a', CONFIRMED: '#5a8dcc', PROCESSING: '#8b5cf6', COMPLETED: '#2d8a56', CANCELLED: '#c0392b' };
+      const statusLabels = { PENDING: 'Order Placed', CONFIRMED: 'Confirmed', PROCESSING: 'Being Crafted', COMPLETED: 'Completed', CANCELLED: 'Cancelled' };
+      const visibleNotes = (o.notes || []).filter(n => !n.isInternal);
+      const visibleHistory = o.history || [];
+      return (
+        <div className="acct-section" key="orders">
+          <button onClick={() => setSelectedOrderDetail(null)} style={{ background: 'none', border: 'none', color: 'var(--accent-gold)', cursor: 'pointer', fontSize: '13px', marginBottom: '16px', padding: 0 }}>
+            &larr; Back to orders
+          </button>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>{o.orderNumber}</h2>
+              <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '12px' }}>Placed on {new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: (statusColors[o.status] || '#666') + '18', color: statusColors[o.status] || '#666' }}>
+                {statusLabels[o.status] || o.status}
+              </span>
+              <span style={{ padding: '4px 12px', fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', background: o.paymentStatus === 'PAID' ? '#2d8a5618' : o.paymentStatus === 'REFUNDED' ? '#8b5cf618' : o.paymentStatus === 'FAILED' ? '#c0392b18' : o.paymentStatus === 'CANCELLED' ? '#6b728018' : '#c0392b18', color: o.paymentStatus === 'PAID' ? '#2d8a56' : o.paymentStatus === 'REFUNDED' ? '#8b5cf6' : o.paymentStatus === 'FAILED' ? '#c0392b' : o.paymentStatus === 'CANCELLED' ? '#6b7280' : '#c0392b' }}>
+                {({ PAID: 'Paid', PENDING: 'Payment Pending', FAILED: 'Payment Failed', REFUNDED: 'Refunded', CANCELLED: 'Payment Cancelled' })[o.paymentStatus] || 'Payment Pending'}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '6px' }}>Shipping Address</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                {o.shippingFirstName} {o.shippingLastName}<br/>
+                {o.shippingAddress}{o.shippingApartment ? `, ${o.shippingApartment}` : ''}<br/>
+                {o.shippingCity}, {o.shippingState} {o.shippingPin}
+              </div>
+            </div>
+            <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '6px' }}>Contact</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                {o.shippingEmail}<br/>
+                {o.shippingPhone || 'No phone provided'}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            {(o.items || []).map((item, i) => (
+              <div key={i} style={{ display: 'flex', gap: '12px', padding: '12px 0', borderBottom: i < o.items.length - 1 ? '1px solid rgba(167,134,89,0.08)' : 'none', alignItems: 'center' }}>
+                {item.productImage && <img src={item.productImage} alt={item.productNameSnapshot} style={{ width: '48px', height: '48px', objectFit: 'cover' }} />}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{item.productNameSnapshot}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Qty: {item.quantity}{item.sku ? ` \u00B7 ${item.sku}` : ''}</div>
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)' }}>{`\u20B9${(item.lineTotal || 0).toLocaleString('en-IN')}`}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: '12px', border: '1px solid rgba(167,134,89,0.12)', background: 'rgba(167,134,89,0.02)', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+              <span>Subtotal</span><span>{`\u20B9${(o.subtotal || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+              <span>Shipping</span><span>{o.shippingAmount === 0 ? 'Free' : `\u20B9${(o.shippingAmount || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+            {(o.taxAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: 'var(--text-secondary)' }}>
+                <span>Tax</span><span>{`\u20B9${(o.taxAmount || 0).toLocaleString('en-IN')}`}</span>
+              </div>
+            )}
+            {(o.discountAmount || 0) > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px', color: '#2d8a56' }}>
+                <span>Discount</span><span>-\u20B9{(o.discountAmount || 0).toLocaleString('en-IN')}</span>
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: 600, borderTop: '1px solid rgba(167,134,89,0.15)', paddingTop: '8px', marginTop: '8px', color: 'var(--text-primary)' }}>
+              <span>Total</span><span>{`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</span>
+            </div>
+          </div>
+
+          {visibleHistory.length > 0 && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 500 }}>Order Timeline</div>
+              <div style={{ position: 'relative', paddingLeft: '20px' }}>
+                {visibleHistory.map((h, i) => (
+                  <div key={i} style={{ position: 'relative', paddingBottom: i < visibleHistory.length - 1 ? '14px' : '0', borderLeft: i < visibleHistory.length - 1 ? '1px solid rgba(167,134,89,0.15)' : 'none', marginLeft: '0', paddingLeft: '16px' }}>
+                    <div style={{ position: 'absolute', left: '-4px', top: '2px', width: '7px', height: '7px', borderRadius: '50%', background: statusColors[h.newStatus] || 'var(--bronze)' }}></div>
+                    <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-primary)' }}>
+                      {statusLabels[h.newStatus] || h.newStatus}
+                      {h.oldStatus && h.oldStatus !== h.newStatus && <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}> from {statusLabels[h.oldStatus] || h.oldStatus}</span>}
+                    </div>
+                    {h.note && <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>{h.note}</div>}
+                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', opacity: 0.6, marginTop: '2px' }}>{new Date(h.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {visibleNotes.length > 0 && (
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 500 }}>Notes</div>
+              {visibleNotes.map((n, i) => (
+                <div key={i} style={{ padding: '10px 12px', marginBottom: '8px', border: '1px solid rgba(167,134,89,0.08)', background: 'rgba(167,134,89,0.02)', fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px' }}>{n.author} \u00B7 {new Date(n.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                  {n.content}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {canCancel && (
+            <button
+              onClick={() => cancelOrder(o.id)}
+              disabled={cancellingOrder === o.id}
+              style={{ padding: '8px 20px', fontSize: '12px', fontWeight: 500, background: 'transparent', border: '1px solid #c0392b', color: '#c0392b', cursor: cancellingOrder === o.id ? 'not-allowed' : 'pointer', opacity: cancellingOrder === o.id ? 0.5 : 1 }}
+            >
+              {cancellingOrder === o.id ? 'Cancelling...' : 'Cancel Order'}
+            </button>
+          )}
+        </div>
+      );
+    }
+
     return (
       <div className="acct-section" key="orders">
         <h2 className="acct-section-title">My Orders</h2>
@@ -205,18 +409,17 @@ export default function AccountPage() {
           </div>
         ) : (
           <div className="acct-orders-list">
-            {orders.map((o, i) => (
+            {serverOrders.map((o, i) => (
               <div className="acct-order-card" key={o.id} style={{ animationDelay: `${i * 80}ms` }}>
-                <img src={o.image} alt={o.product} className="order-img" loading="lazy" />
+                <img src={o.items?.[0]?.productImage || 'https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300'} alt="" className="order-img" loading="lazy" />
                 <div className="order-info">
-                  <div className="order-name">{o.product}</div>
-                  <div className="order-meta">{o.id} · {o.price}</div>
-                  <div className={`order-status ${o.status === 'Delivered' ? 'is-delivered' : ''}`}>{o.status}</div>
-                  <div className="order-delivery">{o.delivery}</div>
+                  <div className="order-name">{o.items?.[0]?.productName || `Order ${o.orderNumber}`}</div>
+                  <div className="order-meta">{o.orderNumber} &middot; {`\u20B9${(o.totalAmount || 0).toLocaleString('en-IN')}`}</div>
+                  <div className={`order-status ${o.status === 'COMPLETED' ? 'is-delivered' : ''}`}>{statusLabels[o.status] || o.status}</div>
+                  <div className="order-delivery">{o.items?.length || 0} {(o.items?.length || 0) === 1 ? 'item' : 'items'}</div>
                 </div>
                 <div className="order-actions">
-                  <button className="acct-btn-sm">View Details</button>
-                  {o.status !== 'Delivered' && <button className="acct-btn-sm acct-btn-outline">Track Order</button>}
+                  <button className="acct-btn-sm" onClick={() => fetchOrderDetail(o.id)}>View Details</button>
                 </div>
               </div>
             ))}
@@ -275,7 +478,7 @@ export default function AccountPage() {
             </div>
             <p className="empty-heading">Nothing viewed yet</p>
             <p className="empty-desc">Begin discovering pieces that speak to you.</p>
-            <Link href="/gallery" className="acct-cta">Browse the Gallery</Link>
+            <Link href="/gallery" className="acct-cta">Browse the Collection</Link>
           </div>
         ) : (
           <div className="acct-scroll-row">
@@ -293,18 +496,37 @@ export default function AccountPage() {
   }
 
   function renderAddresses() {
-    function addAddress(e) {
+    async function addAddress(e) {
       e.preventDefault();
-      const addr = { ...newAddress, id: Date.now(), isDefault: addresses.length === 0 };
-      saveAddresses([...addresses, addr]);
+      const nameParts = [user.name?.split(' ')[0] || '', user.name?.split(' ').slice(1).join(' ') || ''].filter(Boolean).join(' ');
+      const result = await customerAddresses.create({
+        label: newAddress.label,
+        fullName: nameParts || user.name || '',
+        phone: newAddress.phone || user.phone || '',
+        addressLine1: newAddress.street,
+        city: newAddress.city,
+        state: newAddress.state,
+        postalCode: newAddress.pin,
+        country: 'India',
+        isDefault: addresses.length === 0,
+      });
+      if (result && result.ok) {
+        setAddresses(prev => [...prev, result.address]);
+      }
       setNewAddress({ label: '', street: '', city: '', state: '', pin: '', phone: '' });
       setShowAddressForm(false);
     }
-    function removeAddress(id) {
-      saveAddresses(addresses.filter(a => a.id !== id));
+    async function removeAddress(id) {
+      const result = await customerAddresses.remove(id);
+      if (result && result.ok) {
+        setAddresses(prev => prev.filter(a => a.id !== id));
+      }
     }
-    function setDefault(id) {
-      saveAddresses(addresses.map(a => ({ ...a, isDefault: a.id === id })));
+    async function setDefault(id) {
+      const result = await customerAddresses.update(id, { isDefault: true });
+      if (result && result.ok) {
+        setAddresses(prev => prev.map(a => ({ ...a, isDefault: a.id === id })));
+      }
     }
 
     return (
@@ -349,11 +571,10 @@ export default function AccountPage() {
             {addresses.map((a, i) => (
               <div className="acct-address-card" key={a.id} style={{ animationDelay: `${i * 80}ms` }}>
                 <div className="addr-header">
-                  <span className="addr-label">{a.label}</span>
-                  {a.isDefault && <span className="addr-default">Default</span>}
+                  <span className="addr-label">{a.label || 'Address'}</span>
+                  {a.isDefault ? <span className="addr-default">Default</span> : null}
                 </div>
-                <p className="addr-text">{a.street}<br/>{a.city}, {a.state} {a.pin}</p>
-                {a.phone && <p className="addr-phone">{a.phone}</p>}
+                <p className="addr-text">{a.fullName}{a.phone ? ` \u00B7 ${a.phone}` : ''}<br/>{a.addressLine1}{a.addressLine2 ? `, ${a.addressLine2}` : ''}<br/>{a.city}, {a.state} {a.postalCode}</p>
                 <div className="addr-actions">
                   {!a.isDefault && <button onClick={() => setDefault(a.id)} className="acct-link">Set Default</button>}
                   <button onClick={() => removeAddress(a.id)} className="acct-link acct-link-danger">Remove</button>
@@ -424,24 +645,9 @@ export default function AccountPage() {
             )}
           </div>
           <div className="detail-row">
-            <span className="detail-label">Password</span>
-            <div className="detail-value-row">
-              <span className="detail-value">{'•'.repeat(8)}</span>
-              <button onClick={() => setEditField(editField === 'password' ? null : 'password')} className="acct-link">Change</button>
-            </div>
-            {editField === 'password' && (
-              <div className="detail-edit detail-edit-stack">
-                <input type="password" placeholder="Current password" />
-                <input type="password" placeholder="New password" />
-                <input type="password" placeholder="Confirm new password" />
-                <button onClick={() => setEditField(null)} className="acct-btn-sm">Update Password</button>
-              </div>
-            )}
-          </div>
-          <div className="detail-row">
             <span className="detail-label">Newsletter</span>
             <label className="acct-toggle">
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" defaultChecked disabled title="Requires Shopify customer accounts" />
               <span className="toggle-slider"></span>
               <span className="toggle-text">Receive workshop updates</span>
             </label>
@@ -452,6 +658,46 @@ export default function AccountPage() {
   }
 
   function renderSecurity() {
+    async function handleChangePassword() {
+      setPasswordError('');
+      setPasswordSuccess('');
+      if (!passwordForm.current || !passwordForm.newPass || !passwordForm.confirm) {
+        setPasswordError('All fields are required');
+        return;
+      }
+      if (passwordForm.newPass.length < 8) {
+        setPasswordError('New password must be at least 8 characters');
+        return;
+      }
+      if (passwordForm.newPass !== passwordForm.confirm) {
+        setPasswordError('New passwords do not match');
+        return;
+      }
+      setChangingPassword(true);
+      const result = await customerAuth.changePassword(passwordForm.current, passwordForm.newPass);
+      if (result && result.ok) {
+        setPasswordSuccess('Password updated successfully');
+        setPasswordForm({ current: '', newPass: '', confirm: '' });
+      } else {
+        setPasswordError(result?.error || 'Failed to change password');
+      }
+      setChangingPassword(false);
+    }
+
+    async function handleDeactivate() {
+      const password = prompt('Enter your password to confirm account deactivation:');
+      if (!password) return;
+      setDeactivating(true);
+      const result = await customerAuth.deactivate(password);
+      if (result && result.ok) {
+        if (window.Teakle) window.Teakle.logout();
+        window.location.href = '/login';
+      } else {
+        alert(result?.error || 'Failed to deactivate account');
+      }
+      setDeactivating(false);
+    }
+
     return (
       <div className="acct-section" key="security">
         <h2 className="acct-section-title">Security</h2>
@@ -459,22 +705,35 @@ export default function AccountPage() {
           <div className="detail-row">
             <span className="detail-label">Password</span>
             <div className="detail-value-row">
-              <span className="detail-value">Last changed 30 days ago</span>
-              <button className="acct-link">Change</button>
+              <span className="detail-value">{'•'.repeat(8)}</span>
+              <button onClick={() => setEditField(editField === 'security-pass' ? null : 'security-pass')} className="acct-link">Change</button>
+            </div>
+            {editField === 'security-pass' && (
+              <div className="detail-edit detail-edit-stack">
+                {passwordError && <p style={{ color: '#c0392b', fontSize: '12px', margin: '0 0 8px' }}>{passwordError}</p>}
+                {passwordSuccess && <p style={{ color: '#2d8a56', fontSize: '12px', margin: '0 0 8px' }}>{passwordSuccess}</p>}
+                <input type="password" placeholder="Current password" value={passwordForm.current} onChange={e => setPasswordForm({ ...passwordForm, current: e.target.value })} />
+                <input type="password" placeholder="New password (min 8 characters)" value={passwordForm.newPass} onChange={e => setPasswordForm({ ...passwordForm, newPass: e.target.value })} />
+                <input type="password" placeholder="Confirm new password" value={passwordForm.confirm} onChange={e => setPasswordForm({ ...passwordForm, confirm: e.target.value })} />
+                <button onClick={handleChangePassword} className="acct-btn-sm" disabled={changingPassword}>
+                  {changingPassword ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Account Status</span>
+            <div className="detail-value-row">
+              <span className="detail-value">Active</span>
             </div>
           </div>
           <div className="detail-row">
-            <span className="detail-label">Two-Factor Auth</span>
+            <span className="detail-label">Deactivate Account</span>
             <div className="detail-value-row">
-              <span className="detail-value">Not enabled</span>
-              <button className="acct-link">Enable</button>
-            </div>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Active Sessions</span>
-            <div className="detail-value-row">
-              <span className="detail-value">1 active session</span>
-              <button className="acct-link acct-link-danger">Sign Out All</button>
+              <span className="detail-value" style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Permanently deactivate your account</span>
+              <button onClick={handleDeactivate} className="acct-link acct-link-danger" disabled={deactivating}>
+                {deactivating ? 'Deactivating...' : 'Deactivate'}
+              </button>
             </div>
           </div>
         </div>
@@ -525,9 +784,9 @@ export default function AccountPage() {
   function renderSupport() {
     const items = [
       { id: 'contact', title: 'Contact Support', desc: 'Reach our team directly for any questions.', href: '/contact' },
-      { id: 'faq', title: 'FAQ', desc: 'Answers to common questions about orders, shipping, and care.' },
-      { id: 'shipping', title: 'Shipping Information', desc: 'Details on delivery timelines, packaging, and international shipping.' },
-      { id: 'returns', title: 'Returns & Exchanges', desc: 'Our policy on returns, exchanges, and manufacturing defects.' },
+      { id: 'shipping', title: 'Shipping Information', desc: 'Details on delivery timelines, packaging, and international shipping.', href: '/shipping' },
+      { id: 'returns', title: 'Returns & Exchanges', desc: 'Our policy on returns, exchanges, and manufacturing defects.', href: '/returns-and-refunds' },
+      { id: 'warranty', title: 'Warranty', desc: 'Warranty coverage for your Teakle products.', href: '/warranty' },
       { id: 'care', title: 'Craft Care Guide', desc: 'How to maintain your Teakle pieces for generations.' },
     ];
 
@@ -557,6 +816,7 @@ export default function AccountPage() {
 
   return (
     <>
+      <title>My Account — Teakle</title>
       <style>{`
         /* ============================================
            ACCOUNT — Private Members' Lounge
@@ -1404,7 +1664,7 @@ export default function AccountPage() {
         .acct-mobile-toggle {
           display: none;
           position: fixed;
-          bottom: 60px;
+          bottom: 76px;
           right: 1rem;
           width: 44px;
           height: 44px;
@@ -1499,7 +1759,7 @@ export default function AccountPage() {
         {/* Desktop Sidebar */}
         <aside className="acct-sidebar">
           <div className="acct-sidebar-brand">
-            <Link href="/"><img src="/assets/logo-black.png" alt="Teakle" /></Link>
+            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (
@@ -1522,7 +1782,7 @@ export default function AccountPage() {
         {/* Main Content */}
         <div className="acct-main">
           <div className="acct-header">
-            <p className="acct-greeting">{getGreeting()},</p>
+            <p className="acct-greeting">{greeting},</p>
             <div className="acct-header-row">
               <div className="acct-avatar">{getInitials(user.name || 'U')}</div>
               <h1 className="acct-member-name">{user.name}</h1>
@@ -1540,7 +1800,7 @@ export default function AccountPage() {
         <div className={`acct-drawer-overlay ${drawerOpen ? 'is-open' : ''}`} onClick={() => setDrawerOpen(false)}></div>
         <div className={`acct-drawer ${drawerOpen ? 'is-open' : ''}`}>
           <div className="acct-drawer-brand">
-            <Link href="/"><img src="/assets/logo-black.png" alt="Teakle" /></Link>
+            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (

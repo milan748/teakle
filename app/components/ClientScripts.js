@@ -1,33 +1,80 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function ClientScripts() {
-  useEffect(() => {
-    /* Safety net: force reveal content visible after delay */
-    const safetyTimeout = setTimeout(() => {
-      document.querySelectorAll('.reveal, .piece-card').forEach((el) => {
-        el.classList.add('is-visible');
-      });
-    }, 1500);
+  const pathname = usePathname();
 
-    /* Scroll reveal with Intersection Observer */
-    const reveals = document.querySelectorAll('.reveal, .piece-card, .product-card');
+  /* ---- Scroll reveal — re-initializes on every route change ---- */
+  useEffect(() => {
     let observer;
-    if ('IntersectionObserver' in window) {
-      observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-      reveals.forEach((el) => observer.observe(el));
-    } else {
-      reveals.forEach((el) => el.classList.add('is-visible'));
+    let safetyTimeout;
+    let frameId;
+    let mutationObserver;
+
+    function initReveals(root) {
+      const reveals = (root || document).querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+      if (!reveals.length) return;
+      if ('IntersectionObserver' in window) {
+        if (!observer) {
+          observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        }
+        reveals.forEach((el) => observer.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('is-visible'));
+      }
     }
 
+    /* Single rAF — defer past React 19 hydration commit */
+    frameId = requestAnimationFrame(() => {
+      initReveals();
+
+      /* Safety net: force all reveals visible after 500ms */
+      safetyTimeout = setTimeout(() => {
+        document.querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)').forEach((el) => {
+          el.classList.add('is-visible');
+        });
+      }, 500);
+
+      /* MutationObserver catches dynamically added .reveal elements */
+      if ('MutationObserver' in window) {
+        mutationObserver = new MutationObserver((mutations) => {
+          for (const m of mutations) {
+            for (const node of m.addedNodes) {
+              if (node.nodeType === 1) {
+                if (node.classList && (node.classList.contains('reveal') || node.classList.contains('reveal-stagger') || node.classList.contains('piece-card') || node.classList.contains('product-card'))) {
+                  initReveals(node.parentElement || document);
+                }
+                if (node.querySelectorAll) {
+                  const inner = node.querySelectorAll('.reveal:not(.is-visible), .reveal-stagger:not(.is-visible), .piece-card:not(.is-visible), .product-card:not(.is-visible)');
+                  if (inner.length) initReveals(node.parentElement || document);
+                }
+              }
+            }
+          }
+        });
+        mutationObserver.observe(document.body, { childList: true, subtree: true });
+      }
+    });
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(safetyTimeout);
+      if (observer) { observer.disconnect(); observer = null; }
+      if (mutationObserver) { mutationObserver.disconnect(); mutationObserver = null; }
+    };
+  }, [pathname]);
+
+  /* ---- One-time initialization (nav, badges, Teakle, newsletter) ---- */
+  useEffect(() => {
     /* Mobile nav toggle */
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.getElementById('navLinks');
@@ -41,48 +88,22 @@ export default function ClientScripts() {
         navLinks.classList.remove('is-open');
         navToggle.classList.remove('is-open');
         navToggle.setAttribute('aria-expanded', 'false');
-        backdrop.classList.remove('is-visible');
+        navToggle.setAttribute('aria-label', 'Open menu');
+        if (backdrop) backdrop.classList.remove('is-visible');
         document.body.classList.remove('nav-drawer-open');
-        navLinks.querySelectorAll('.nav-dropdown.is-open, .nav-subdropdown.is-open').forEach((el) => {
-          el.classList.remove('is-open');
-        });
-        navLinks.querySelectorAll('.nav-dropdown-toggle[aria-expanded], .nav-subdropdown-toggle[aria-expanded]').forEach((btn) => {
-          btn.setAttribute('aria-expanded', 'false');
-        });
+        window.dispatchEvent(new CustomEvent('teakle-nav-closed'));
       }
 
       navToggle.addEventListener('click', () => {
         const open = navLinks.classList.toggle('is-open');
         navToggle.classList.toggle('is-open', navLinks.classList.contains('is-open'));
         navToggle.setAttribute('aria-expanded', navLinks.classList.contains('is-open'));
+        navToggle.setAttribute('aria-label', navLinks.classList.contains('is-open') ? 'Close menu' : 'Open menu');
         backdrop.classList.toggle('is-visible', navLinks.classList.contains('is-open'));
         document.body.classList.toggle('nav-drawer-open', navLinks.classList.contains('is-open'));
       });
 
       backdrop.addEventListener('click', closeNav);
-
-      navLinks.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', closeNav);
-      });
-
-      /* Gallery dropdown toggles */
-      navLinks.querySelectorAll('.nav-dropdown-toggle').forEach((btn) => {
-        btn.setAttribute('aria-expanded', 'false');
-        btn.addEventListener('click', () => {
-          const dropdown = btn.closest('.nav-dropdown');
-          const open = dropdown.classList.toggle('is-open');
-          btn.setAttribute('aria-expanded', open);
-        });
-      });
-      navLinks.querySelectorAll('.nav-subdropdown-toggle').forEach((btn) => {
-        btn.setAttribute('aria-expanded', 'false');
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const sub = btn.closest('.nav-subdropdown');
-          const open = sub.classList.toggle('is-open');
-          btn.setAttribute('aria-expanded', open);
-        });
-      });
     }
 
     /* Bottom nav badge sync */
@@ -111,9 +132,18 @@ export default function ClientScripts() {
       syncBottomBadges();
     };
 
-    /* Teakle module init (from app.js) */
-    if (typeof window !== 'undefined' && window.Teachle) {
-      window.Teachle.init();
+    /* Teakle module init (from app.js) — retry if scripts load late */
+    function initTeakle() {
+      if (typeof window !== 'undefined' && window.Teakle) {
+        window.Teakle.init();
+        return true;
+      }
+      return false;
+    }
+    if (!initTeakle()) {
+      const retryTimer = setTimeout(initTeakle, 200);
+      const retryTimer2 = setTimeout(initTeakle, 600);
+      var _teakleCleanup = () => { clearTimeout(retryTimer); clearTimeout(retryTimer2); };
     }
 
     /* Footer newsletter form */
@@ -123,7 +153,7 @@ export default function ClientScripts() {
         e.preventDefault();
         const btn = this.querySelector('button');
         const originalText = btn.textContent;
-        btn.textContent = 'Sent';
+        btn.textContent = 'Demo Only';
         btn.disabled = true;
         this.querySelector('input').value = '';
         setTimeout(() => {
@@ -134,8 +164,7 @@ export default function ClientScripts() {
     }
 
     return () => {
-      clearTimeout(safetyTimeout);
-      if (observer) observer.disconnect();
+      if (typeof _teakleCleanup === 'function') _teakleCleanup();
     };
   }, []);
 

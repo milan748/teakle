@@ -1,0 +1,61 @@
+npm notice run teakle@1.0.0 start
+npm notice run next start
+   ▲ Next.js 15.5.22
+   - Local:        http://localhost:3099
+   - Network:      http://192.168.0.122:3099
+
+ ✓ Starting...
+ ✓ Ready in 766ms
+[2026-08-16T17:12:10.818Z] INFO  Customer registered — sprint29_1786900330203@example.com 
+[2026-08-16T17:12:10.818Z] INFO  Email (not configured): Welcome email { to: 'sprint29_1786900330203@example.com', name: 'Sprint TwentyNine' }
+[2026-08-16T17:12:11.118Z] INFO  Customer login: SUCCESS — sprint29_1786900330203@example.com 
+[2026-08-16T17:12:11.423Z] INFO  Customer login: FAILURE — sprint29_1786900330203@example.com 
+[2026-08-16T17:12:11.572Z] INFO  Address created { customerId: 24, addressId: 1 }
+[2026-08-16T17:12:11.605Z] INFO  Payment created — payment 12 for order 15, amount 185000 
+[2026-08-16T17:12:11.605Z] INFO  Order created — TK-MSW2BK2C-VBB2 by customer 24, total 185000 
+[2026-08-16T17:12:11.605Z] INFO  Email (not configured): Order confirmation {
+  to: 'sprint29_1786900330203@example.com',
+  orderNumber: 'TK-MSW2BK2C-VBB2',
+  total: 185000,
+  itemCount: 1,
+  recipientName: 'Sprint 29'
+}
+[2026-08-16T17:12:11.919Z] INFO  Admin login: SUCCESS — testadmin@teakle.in 
+[2026-08-16T17:12:12.304Z] INFO  Password reset requested for non-existent email { email: 'definitely-not-real-1786900332286@example.com' }
+[2026-08-16T17:13:14.208Z] INFO  Customer registered — sprint29_1786900393647@example.com 
+[2026-08-16T17:13:14.208Z] INFO  Email (not configured): Welcome email { to: 'sprint29_1786900393647@example.com', name: 'Sprint TwentyNine' }
+[2026-08-16T17:13:14.515Z] INFO  Customer login: SUCCESS — sprint29_1786900393647@example.com 
+[2026-08-16T17:13:14.813Z] INFO  Customer login: FAILURE — sprint29_1786900393647@example.com 
+[2026-08-16T17:13:14.951Z] INFO  Address created { customerId: 25, addressId: 2 }
+[2026-08-16T17:13:14.984Z] INFO  Payment created — payment 13 for order 16, amount 185000 
+[2026-08-16T17:13:14.984Z] INFO  Order created — TK-MSW2CWYV-VMHN by customer 25, total 185000 
+[2026-08-16T17:13:14.984Z] INFO  Email (not configured): Order confirmation {
+  to: 'sprint29_1786900393647@example.com',
+  orderNumber: 'TK-MSW2CWYV-VMHN',
+  total: 185000,
+  itemCount: 1,
+  recipientName: 'Sprint 29'
+}
+[2026-08-16T17:13:15.314Z] INFO  Admin login: SUCCESS — testadmin@teakle.in 
+[2026-08-16T17:13:15.671Z] INFO  Password reset requested for non-existent email { email: 'definitely-not-real-1786900395655@example.com' }
+[2026-08-16T17:18:28.562Z] INFO  Admin login: FAILURE — testadmin@teakle.in 
+[2026-08-16T17:18:28.835Z] INFO  Admin login: SUCCESS — testadmin@teakle.in 
+[2026-08-16T17:18:28.993Z] INFO  Admin audit — admin undefined: bulk_status_change on order 16 { oldStatus: 'PENDING', newStatus: 'CONFIRMED' }
+[2026-08-16T17:18:28.993Z] INFO  Order activity — order 16: status_changed by admin:testadmin@teakle.in {
+  oldValue: 'PENDING',
+  newValue: 'CONFIRMED',
+  note: 'Bulk status update',
+  isCustomerVisible: 1
+}
+[2026-08-16T17:18:29.083Z] INFO  Customer login: FAILURE — nope@test.com 
+[2026-08-16T18:18:04.468Z] INFO  Customer registered — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:04.468Z] INFO  Email (not configured): Welcome email { to: 'sprint30_1786904283913@example.com', name: 'Sprint Thirty' }
+[2026-08-16T18:18:04.741Z] INFO  Customer login: SUCCESS — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:05.277Z] INFO  Password changed successfully { customerId: 26 }
+[2026-08-16T18:18:05.574Z] INFO  Customer login: SUCCESS — sprint30_1786904283913@example.com 
+[2026-08-16T18:18:05.911Z] INFO  Admin login: SUCCESS — testadmin@teakle.in 
+[2026-08-16T18:18:06.018Z] INFO  Password reset requested for non-existent email { email: 'definitely-not-real-1786904286016@example.com' }
+[2026-08-16T18:18:38.135Z] INFO  Customer registered — dbg_1786904317741@example.com 
+[2026-08-16T18:18:38.135Z] INFO  Email (not configured): Welcome email { to: 'dbg_1786904317741@example.com', name: 'Dbg' }
+[2026-08-16T18:18:38.792Z] INFO  Password changed successfully { customerId: 27 }
+[2026-08-16T18:18:39.135Z] INFO  Customer login: SUCCESS — dbg_1786904317741@example.com 

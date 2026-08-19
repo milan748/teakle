@@ -1,37 +1,25 @@
-'use client';
+import ContactForm from '../components/ContactForm';
+import { getPublishedPageSections } from '@/lib/cms'
 
-import { useEffect, useRef } from 'react';
+export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: 'Contact',
+  description: 'Questions before you order are always welcome. Get in touch with the Teakle workshop.',
+  openGraph: { title: 'Contact — Teakle', description: 'Questions before you order are always welcome.' },
+};
 
 export default function ContactPage() {
-  const formRef = useRef(null);
-  const statusRef = useRef(null);
+  let sections = [];
+  try { sections = getPublishedPageSections('contact'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
 
-  useEffect(() => {
-    const form = formRef.current;
-    const status = statusRef.current;
-    if (!form || !status) return;
-
-    function handleSubmit(e) {
-      e.preventDefault();
-      const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn.textContent;
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      setTimeout(() => {
-        status.textContent = 'Message received. We will reply within two working days.';
-        status.classList.add('is-visible');
-        form.reset();
-        btn.textContent = originalText;
-        btn.disabled = false;
-        setTimeout(() => status.classList.remove('is-visible'), 5000);
-      }, 1000);
-    }
-
-    form.addEventListener('submit', handleSubmit);
-    return () => form.removeEventListener('submit', handleSubmit);
-  }, []);
-
+  const hero = cms.hero || {};
+  const intro = cms.introduction || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
+  const introDisabled = cmsKeys.has('introduction') && !cms.introduction;
   return (
     <>
       <style>{`
@@ -95,10 +83,22 @@ export default function ContactPage() {
           outline: none;
           border-color: var(--bronze);
         }
+        .form-row input[aria-invalid="true"],
+        .form-row textarea[aria-invalid="true"] {
+          border-color: #c0392b;
+        }
+        .form-error {
+          display: block;
+          font-size: 12px;
+          color: #c0392b;
+          margin-top: 0.3rem;
+        }
+        .required { color: #c0392b; }
         .form-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; }
         .contact-submit { margin-top: 0.5rem; }
         .contact-submit:active { transform: scale(0.97); }
         .contact-submit:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+        .contact-submit:disabled { opacity: 0.6; cursor: not-allowed; }
         .contact-form-status {
           font-size: var(--text-caption);
           color: var(--forest);
@@ -117,15 +117,18 @@ export default function ContactPage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A hand rubbing oil finish into a wooden surface." />
+        <img src={hero.image || "https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A hand rubbing oil finish into a wooden surface." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Contact</span>
-          <h1>Questions before you order are always welcome.</h1>
-          <p>Whether it&apos;s about a piece, timelines, or something you&apos;re not sure exists yet — write to us directly.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Contact'}</span>
+          <h1>{hero.title || 'Questions before you order are always welcome.'}</h1>
+          <p>{hero.subtitle || "Whether it\u2019s about a piece, timelines, or something you\u2019re not sure exists yet \u2014 write to us directly."}</p>
         </div>
       </section>
+      )}
 
+      {!introDisabled && (
       <section className="contact-section">
         <div className="container contact-grid">
           <div className="contact-details">
@@ -135,7 +138,7 @@ export default function ContactPage() {
             </div>
             <div className="contact-info-block reveal">
               <h3>Response Time</h3>
-              <p>Within two working days</p>
+              <p>{intro.subtitle || 'Within two working days'}</p>
             </div>
             <div className="contact-info-block reveal">
               <h3>Workshop</h3>
@@ -147,30 +150,10 @@ export default function ContactPage() {
             </div>
           </div>
 
-          <form ref={formRef} className="contact-form reveal" id="contactForm">
-            <div className="form-two-col">
-              <div className="form-row">
-                <label htmlFor="contactName">Name</label>
-                <input type="text" id="contactName" name="name" required />
-              </div>
-              <div className="form-row">
-                <label htmlFor="contactEmail">Email</label>
-                <input type="email" id="contactEmail" name="email" required />
-              </div>
-            </div>
-            <div className="form-row">
-              <label htmlFor="contactSubject">Subject</label>
-              <input type="text" id="contactSubject" name="subject" required />
-            </div>
-            <div className="form-row">
-              <label htmlFor="contactMessage">Message</label>
-              <textarea id="contactMessage" name="message" required></textarea>
-            </div>
-            <button type="submit" className="btn-primary contact-submit">Send Message</button>
-            <p ref={statusRef} className="contact-form-status" id="contactFormStatus" role="status"></p>
-          </form>
+          <ContactForm />
         </div>
       </section>
+      )}
     </>
   );
 }

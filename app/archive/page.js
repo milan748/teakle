@@ -1,4 +1,22 @@
+import Link from 'next/link';
+import { getPublishedPageSections } from '@/lib/cms'
+
+export const dynamic = 'force-dynamic';
+
+export const metadata = {
+  title: 'Archive',
+  description: 'Past collections from Teakle. A record of objects made, editions released, and craft explored.',
+  openGraph: { title: 'Archive — Teakle', description: 'Past collections from Teakle.' },
+};
+
 export default function ArchivePage() {
+  let sections = [];
+  try { sections = getPublishedPageSections('archive'); } catch {}
+  const cms = {};
+  for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
+  const cmsKeys = new Set(sections.map(s => s.sectionKey));
+  const hero = cms.hero || {};
+  const heroDisabled = cmsKeys.has('hero') && !cms.hero;
   return (
     <>
       <style>{`
@@ -179,14 +197,16 @@ export default function ArchivePage() {
         }
       `}</style>
 
+      {!heroDisabled && (
       <section className="page-hero">
-        <img src="https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A sculptural wooden centrepiece on a plain floor." />
+        <img src={hero.image || "https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A sculptural wooden centrepiece on a plain floor." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">Archive</span>
-          <h1>Editions that found their homes.</h1>
-          <p>Each season, one centrepiece — carved from a single reclaimed timber block. Once sold, it&apos;s never restocked. Here are the editions that came before.</p>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Archive'}</span>
+          <h1>{hero.title || 'Editions that found their homes.'}</h1>
+          <p>{hero.subtitle || "Each season, one centrepiece \u2014 carved from a single reclaimed timber block. Once sold, it\u2019s never restocked. Here are the editions that came before."}</p>
         </div>
       </section>
+      )}
 
       <section className="past-collection">
         <div className="container">
@@ -210,7 +230,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Mar 2026</span>
               </div>
               <div className="edition-actions">
-                <a href="/journal" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -235,7 +255,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Jan 2026</span>
               </div>
               <div className="edition-actions">
-                <a href="/journal" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -260,7 +280,7 @@ export default function ArchivePage() {
                 <span className="sold-date">Sep 2025</span>
               </div>
               <div className="edition-actions">
-                <a href="/journal" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>
@@ -285,7 +305,7 @@ export default function ArchivePage() {
                 <span className="sold-date">May 2025</span>
               </div>
               <div className="edition-actions">
-                <a href="/journal" className="watch-link">Watch the Process →</a>
+                <Link href="/studio" className="watch-link">Watch the Process →</Link>
                 <span className="sold-badge">Sold</span>
               </div>
             </div>

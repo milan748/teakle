@@ -2,81 +2,71 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
-
-const galleryDropdown = [
-  { label: 'Kitchen', items: [
-    { label: 'Countertop Essentials', href: '/subcategory?cat=kitchen&sub=countertop-essentials' },
-    { label: 'Coffee & Tea Station', href: '/subcategory?cat=kitchen&sub=coffee-tea-station' },
-    { label: 'Cooking Essentials', href: '/subcategory?cat=kitchen&sub=cooking-essentials' },
-    { label: 'Dining & Serving', href: '/subcategory?cat=kitchen&sub=dining-serving' },
-    { label: 'Storage & Organization', href: '/subcategory?cat=kitchen&sub=storage-organization' },
-  ]},
-  { label: 'Living Room', items: [
-    { label: 'Coffee Table Decor', href: '/subcategory?cat=living&sub=coffee-table-decor' },
-    { label: 'Sculptures', href: '/subcategory?cat=living&sub=sculptures' },
-    { label: 'Vases', href: '/subcategory?cat=living&sub=vases' },
-    { label: 'Storage', href: '/subcategory?cat=living&sub=storage-boxes' },
-  ]},
-  { label: 'Bedroom', items: [
-    { label: 'Nightstand Essentials', href: '/subcategory?cat=bedroom&sub=nightstand-essentials' },
-    { label: 'Organizers', href: '/subcategory?cat=bedroom&sub=organizers' },
-    { label: 'Mirrors', href: '/subcategory?cat=bedroom&sub=mirrors' },
-  ]},
-  { label: 'Office', items: [
-    { label: 'Desk Organization', href: '/subcategory?cat=office&sub=desk-organization' },
-    { label: 'Pen Holders', href: '/subcategory?cat=office&sub=pen-holders' },
-    { label: 'Laptop Stands', href: '/subcategory?cat=office&sub=laptop-stands' },
-  ]},
-  { label: 'Bathroom', items: [
-    { label: 'Vanity Organizers', href: '/subcategory?cat=bathroom&sub=vanity-organizers' },
-    { label: 'Soap Dispensers', href: '/subcategory?cat=bathroom&sub=soap-dispensers' },
-    { label: 'Toothbrush Holders', href: '/subcategory?cat=bathroom&sub=toothbrush-holders' },
-  ]},
-  { label: 'Outdoor', items: [
-    { label: 'Planters', href: '/subcategory?cat=outdoor&sub=planters' },
-    { label: 'Garden Decor', href: '/subcategory?cat=outdoor&sub=garden-decor' },
-    { label: 'Outdoor Serving', href: '/subcategory?cat=outdoor&sub=outdoor-serving' },
-  ]},
-  { label: 'Seasonal', items: [
-    { label: 'Festive Decor', href: '/subcategory?cat=seasonal&sub=festive-decor' },
-    { label: 'Limited Editions', href: '/subcategory?cat=seasonal&sub=limited-editions' },
-    { label: "Collector's Series", href: '/subcategory?cat=seasonal&sub=collectors-series' },
-  ]},
-  { label: 'Dining', items: [
-    { label: 'Serving Boards', href: '/subcategory?cat=dining&sub=serving-boards' },
-    { label: 'Trays', href: '/subcategory?cat=dining&sub=trays' },
-    { label: 'Bowls', href: '/subcategory?cat=dining&sub=bowls' },
-  ]},
-];
+import { useRouter, usePathname } from 'next/navigation';
+import { customerAuth } from '@/lib/api';
 
 function getInitials(name) {
   if (!name) return 'U';
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
+const HERO_PATHS = new Set([
+  '/',
+  '/gallery',
+  '/archive',
+  '/studio',
+  '/journal',
+  '/trade',
+  '/custom',
+  '/contact',
+]);
+
+function checkHasHero(pathname) {
+  if (HERO_PATHS.has(pathname)) return true;
+  if (pathname.startsWith('/subcategory')) return true;
+  if (pathname.startsWith('/collection/')) return true;
+  return false;
+}
+
 export default function Header() {
-  const [isSolid, setIsSolid] = useState(false);
-  const [logoSrc, setLogoSrc] = useState('/assets/logo-black.png');
+  const router = useRouter();
+  const pathname = usePathname();
+  const [logoSrc, setLogoSrc] = useState('/assets/logo-black.webp');
   const [accountOpen, setAccountOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const searchOverlayRef = useRef(null);
+
+  const hasHero = checkHasHero(pathname);
+
+  useEffect(() => {
+    document.body.toggleAttribute('data-page-has-hero', hasHero);
+  }, [hasHero]);
 
   useEffect(() => {
     const header = document.getElementById('siteHeader');
-    if (!header || header.classList.contains('is-solid')) return;
+    if (!header) return;
 
     function onScroll() {
       const scrolled = window.scrollY > 60;
       header.classList.toggle('is-scrolled', scrolled);
-      setLogoSrc(scrolled ? '/assets/logo-black.png' : '/assets/logo-white.png');
+      if (hasHero) {
+        const newSrc = scrolled ? '/assets/logo-black.webp' : '/assets/logo-white.webp';
+        setLogoSrc((prev) => prev === newSrc ? prev : newSrc);
+      }
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [hasHero]);
 
   useEffect(() => {
     function checkAuth() {
@@ -97,6 +87,117 @@ export default function Header() {
   const closeDropdown = useCallback(() => {
     setAccountOpen(false);
   }, []);
+
+  /* Search */
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [activeResultIdx, setActiveResultIdx] = useState(-1);
+  const resultRefs = useRef([]);
+  const searchDebounceRef = useRef(null);
+
+  const openSearch = useCallback(() => {
+    setSearchOpen(true);
+    setActiveResultIdx(-1);
+    setTimeout(() => searchInputRef.current?.focus(), 100);
+  }, []);
+
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSearchResults([]);
+    setActiveResultIdx(-1);
+    setSearchFocused(false);
+  }, []);
+
+  const clearSearch = useCallback(() => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setActiveResultIdx(-1);
+    searchInputRef.current?.focus();
+  }, []);
+
+  const searchFields = useCallback((q) => {
+    if (!q || q.length < 2) { setSearchResults([]); return; }
+    if (typeof window === 'undefined' || !window.TEAKLE_PRODUCTS) return;
+    const lower = q.toLowerCase().trim();
+    const results = window.TEAKLE_PRODUCTS.filter((p) => {
+      const haystack = [
+        p.name, p.material, p.category, p.categoryName,
+        p.subcategory, p.subcategoryName, p.shortDescription,
+        p.description, p.availability,
+        ...(Array.isArray(p.tags) ? p.tags : []),
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(lower);
+    }).slice(0, 8);
+    setSearchResults(results);
+    setActiveResultIdx(-1);
+  }, []);
+
+  const handleSearch = useCallback((q) => {
+    setSearchQuery(q);
+    clearTimeout(searchDebounceRef.current);
+    searchDebounceRef.current = setTimeout(() => searchFields(q), 200);
+  }, [searchFields]);
+
+  const closeDrawer = useCallback(() => {
+    const navLinks = document.getElementById('navLinks');
+    const navToggle = document.getElementById('navToggle');
+    if (navLinks) navLinks.classList.remove('is-open');
+    if (navToggle) {
+      navToggle.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+    document.body.classList.remove('nav-drawer-open');
+    const backdrop = document.querySelector('.nav-backdrop');
+    if (backdrop) backdrop.classList.remove('is-visible');
+    setGalleryOpen(false);
+  }, []);
+
+  const navigateToSearchPage = useCallback(() => {
+    if (searchQuery && searchQuery.trim().length >= 2) {
+      closeSearch();
+      closeDrawer();
+      router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  }, [searchQuery, closeSearch, closeDrawer, router]);
+
+  const handleSearchSubmit = useCallback((e) => {
+    e.preventDefault();
+    navigateToSearchPage();
+  }, [navigateToSearchPage]);
+
+  const handleSearchResultClick = useCallback((productId) => {
+    closeSearch();
+    router.push(`/shop/${productId}`);
+  }, [closeSearch, router]);
+
+  const handleSearchKeyDown = useCallback((e) => {
+    if (!searchResults.length) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveResultIdx((prev) => (prev < searchResults.length - 1 ? prev + 1 : 0));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveResultIdx((prev) => (prev > 0 ? prev - 1 : searchResults.length - 1));
+    } else if (e.key === 'Enter' && activeResultIdx >= 0 && searchResults[activeResultIdx]) {
+      e.preventDefault();
+      handleSearchResultClick(searchResults[activeResultIdx].id);
+    }
+  }, [searchResults, activeResultIdx, handleSearchResultClick]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    function onKeyDown(e) {
+      if (e.key === 'Escape') closeSearch();
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [searchOpen, closeSearch]);
+
+  useEffect(() => {
+    if (activeResultIdx >= 0 && resultRefs.current[activeResultIdx]) {
+      resultRefs.current[activeResultIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }, [activeResultIdx]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -122,6 +223,7 @@ export default function Header() {
 
   function handleLogout() {
     closeDropdown();
+    customerAuth.logout().catch(() => {});
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);
@@ -132,36 +234,113 @@ export default function Header() {
     setAccountOpen(prev => !prev);
   }
 
+  function toggleGallery() {
+    setGalleryOpen(prev => !prev);
+  }
+
+  useEffect(() => {
+    function onNavClosed() {
+      setGalleryOpen(false);
+    }
+    window.addEventListener('teakle-nav-closed', onNavClosed);
+    return () => window.removeEventListener('teakle-nav-closed', onNavClosed);
+  }, []);
+
   return (
-    <header className="site-header" id="siteHeader">
+    <header className={`site-header${hasHero ? '' : ' is-solid'}`} id="siteHeader">
       <div className="header-inner">
-        <Link href="/" className="logo">
+        <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+          <span></span><span></span><span></span>
+        </button>
+        <Link href="/" className="logo" aria-label="Teakle Home">
           <img src={logoSrc} alt="Teakle" />
         </Link>
+        <div className="header-mobile-actions">
+          <Link href="/login" className="header-icon" aria-label="Account">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </Link>
+          <Link href="/cart" className="header-icon" aria-label="Cart">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </Link>
+        </div>
         <ul className="nav-links" id="navLinks">
-          <li className="nav-dropdown">
-            <Link href="/gallery" className="nav-dropdown-desktop-link">Gallery</Link>
-            <button className="nav-dropdown-toggle">Gallery</button>
-            <ul className="nav-dropdown-menu">
-              {galleryDropdown.map((cat) => (
-                <li key={cat.label} className="nav-subdropdown">
-                  <button className="nav-subdropdown-toggle">{cat.label}</button>
-                  <ul className="nav-subdropdown-menu">
-                    {cat.items.map((item) => (
-                      <li key={item.href}><Link href={item.href}>{item.label}</Link></li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
+          <li className="nav-mobile-search-bar">
+            <div className="nav-mobile-search-row">
+              <form className="nav-mobile-search-form" onSubmit={(e) => { e.preventDefault(); if (searchQuery.trim().length >= 2) { closeDrawer(); setSearchQuery(''); setSearchResults([]); router.push(`/gallery?search=${encodeURIComponent(searchQuery.trim())}`); } }}>
+                <input
+                  type="text"
+                  className="nav-mobile-search-input"
+                  placeholder="Search pieces, materials..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  aria-label="Search products"
+                  autoComplete="off"
+                />
+                <button type="submit" className="nav-mobile-search-submit" aria-label="Submit search">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+              </form>
+              <button className="nav-mobile-close-btn" aria-label="Close menu" onClick={closeDrawer}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            {searchQuery.length >= 2 && searchResults.length > 0 && (
+              <div className="nav-mobile-search-results">
+                {searchResults.slice(0, 5).map((p) => (
+                  <button
+                    key={p.id}
+                    className="nav-mobile-search-result-item"
+                    onClick={() => { setSearchQuery(''); setSearchResults([]); closeDrawer(); router.push(`/shop/${p.id}`); }}
+                  >
+                    <img className="nav-mobile-search-result-img" src={p.images?.[0]} alt="" loading="lazy" />
+                    <div className="nav-mobile-search-result-info">
+                      <span className="nav-mobile-search-result-name">{p.name}</span>
+                      <span className="nav-mobile-search-result-meta">{p.priceFormatted}</span>
+                    </div>
+                  </button>
+                ))}
+                <button className="nav-mobile-search-view-all" onClick={() => { const q = searchQuery.trim(); setSearchQuery(''); setSearchResults([]); closeDrawer(); router.push(`/gallery?search=${encodeURIComponent(q)}`); }}>
+                  View all {searchResults.length} results for &ldquo;{searchQuery}&rdquo;
+                </button>
+              </div>
+            )}
+            {searchQuery.length >= 2 && searchResults.length === 0 && (
+              <div className="nav-mobile-search-results">
+                <p className="nav-mobile-search-empty">No pieces matched &ldquo;{searchQuery}&rdquo;</p>
+              </div>
+            )}
+          </li>
+          <li className={`nav-dropdown${galleryOpen ? ' is-open' : ''}`}>
+            <div className="nav-mobile-link-row">
+              <Link href="/gallery" className="nav-dropdown-desktop-link" onClick={closeDrawer}>Gallery</Link>
+              <button className="nav-dropdown-mobile-link" aria-label="Toggle Gallery submenu" aria-expanded={galleryOpen} aria-controls="gallery-dropdown-menu" onClick={(e) => { e.preventDefault(); toggleGallery(); }}>
+                <svg className="nav-dropdown-mobile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </div>
+            <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
+              <li className="nav-dropdown-featured">
+                <Link href="/shop/anchor-table" className="nav-dropdown-featured-link" onClick={closeDrawer}>
+                  <span className="nav-dropdown-featured-label">Hero Edition</span>
+                </Link>
+              </li>
+              <li className="nav-dropdown-featured">
+                <Link href="/gallery?availability=Limited+Edition" className="nav-dropdown-featured-link" onClick={closeDrawer}>
+                  <span className="nav-dropdown-featured-label">Limited Edition</span>
+                </Link>
+              </li>
             </ul>
           </li>
-          <li><Link href="/archive">Archive</Link></li>
-          <li><Link href="/studio">Studio</Link></li>
-          <li><Link href="/journal">Journal</Link></li>
-          <li><Link href="/custom">Customize</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
+          <li><Link href="/archive" onClick={closeDrawer}>Archive</Link></li>
+          <li><Link href="/studio" onClick={closeDrawer}>Studio</Link></li>
+          <li><Link href="/journal" onClick={closeDrawer}>Journal</Link></li>
+          <li><Link href="/custom" onClick={closeDrawer}>Customize</Link></li>
+          <li><Link href="/login" onClick={closeDrawer}>Account</Link></li>
+          <li><Link href="/cart" onClick={closeDrawer}>Cart</Link></li>
         </ul>
         <div className="header-actions">
+          <button className="header-icon" aria-label="Search" onClick={openSearch}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
           <Link href="/wishlist" className="header-icon" aria-label="Wishlist">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span className="icon-badge" id="wishlistCount" style={{display:'none'}}>0</span>
@@ -264,10 +443,107 @@ export default function Header() {
             </div>
           </div>
         </div>
-        <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
-          <span></span><span></span><span></span>
-        </button>
       </div>
+
+      {/* Search Overlay */}
+      {searchOpen && (
+        <div
+          ref={searchOverlayRef}
+          className="search-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Search products"
+          onClick={(e) => { if (e.target === searchOverlayRef.current) closeSearch(); }}
+        >
+          <div className="search-panel">
+            <form onSubmit={handleSearchSubmit} className="search-form">
+              <div className="search-input-wrap">
+                <svg className="search-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  className="search-input"
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  onKeyDown={handleSearchKeyDown}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+                  placeholder="Search for pieces, materials, rooms..."
+                  role="combobox"
+                  aria-expanded={searchResults.length > 0}
+                  aria-haspopup="listbox"
+                  aria-autocomplete="list"
+                  aria-controls="search-results-list"
+                  aria-activedescendant={activeResultIdx >= 0 ? `search-result-${activeResultIdx}` : undefined}
+                  autoComplete="off"
+                />
+                {searchQuery.length > 0 && (
+                  <button type="button" className="search-clear-btn" onClick={clearSearch} aria-label="Clear search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                )}
+              </div>
+              <button type="button" className="search-close-btn" onClick={closeSearch} aria-label="Close search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span className="search-close-label">ESC</span>
+              </button>
+            </form>
+
+            {/* Results */}
+            {searchQuery.length >= 2 && searchResults.length > 0 && (
+              <div className="search-results" id="search-results-list" role="listbox" aria-label="Search results">
+                {searchResults.map((p, idx) => (
+                  <button
+                    key={p.id}
+                    ref={(el) => { resultRefs.current[idx] = el; }}
+                    id={`search-result-${idx}`}
+                    className={`search-result-item${idx === activeResultIdx ? ' is-active' : ''}`}
+                    role="option"
+                    aria-selected={idx === activeResultIdx}
+                    onClick={() => handleSearchResultClick(p.id)}
+                    onMouseEnter={() => setActiveResultIdx(idx)}
+                  >
+                    <img className="search-result-img" src={p.images?.[0]} alt="" loading="lazy" />
+                    <div className="search-result-info">
+                      <span className="search-result-name">{p.name}</span>
+                      <span className="search-result-meta">{p.priceFormatted}{p.categoryName ? ` \u00B7 ${p.categoryName}` : ''}</span>
+                    </div>
+                  </button>
+                ))}
+                <button className="search-view-all" onClick={navigateToSearchPage}>
+                  View all results for &ldquo;{searchQuery}&rdquo;
+                </button>
+              </div>
+            )}
+
+            {/* No Results */}
+            {searchQuery.length >= 2 && searchResults.length === 0 && (
+              <div className="search-empty">
+                <p className="search-empty-title">No pieces matched &ldquo;{searchQuery}&rdquo;</p>
+                <p className="search-empty-sub">Try a different material, room, or product name.</p>
+                <div className="search-empty-actions">
+                  <button className="search-empty-btn" onClick={clearSearch}>Clear search</button>
+                  <Link href="/gallery" className="search-empty-btn search-empty-btn--primary" onClick={closeSearch}>Browse Gallery</Link>
+                </div>
+              </div>
+            )}
+
+            {/* Empty / Initial State */}
+            {searchQuery.length < 2 && (
+              <div className="search-hints">
+                <p className="search-hints-label">Popular searches</p>
+                <div className="search-hints-list">
+                  {['Teak', 'Table', 'Bowl', 'Tray', 'Planter'].map((term) => (
+                    <button key={term} className="search-hint-pill" onMouseDown={(e) => { e.preventDefault(); setSearchQuery(term); searchFields(term); }}>
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
