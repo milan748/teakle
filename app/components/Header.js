@@ -39,6 +39,7 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -145,10 +146,13 @@ export default function Header() {
     if (navToggle) {
       navToggle.classList.remove('is-open');
       navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Open menu');
+      navToggle.focus();
     }
     document.body.classList.remove('nav-drawer-open');
     const backdrop = document.querySelector('.nav-backdrop');
     if (backdrop) backdrop.classList.remove('is-visible');
+    setDrawerOpen(false);
     setGalleryOpen(false);
   }, []);
 
@@ -239,12 +243,25 @@ export default function Header() {
   }
 
   useEffect(() => {
-    function onNavClosed() {
-      setGalleryOpen(false);
-    }
+    function onNavOpened() { setDrawerOpen(true); }
+    function onNavClosed() { setDrawerOpen(false); setGalleryOpen(false); }
+    window.addEventListener('teakle-nav-opened', onNavOpened);
     window.addEventListener('teakle-nav-closed', onNavClosed);
-    return () => window.removeEventListener('teakle-nav-closed', onNavClosed);
+    return () => {
+      window.removeEventListener('teakle-nav-opened', onNavOpened);
+      window.removeEventListener('teakle-nav-closed', onNavClosed);
+    };
   }, []);
+
+  // Escape key closes mobile drawer
+  useEffect(() => {
+    if (!drawerOpen) return;
+    function onKeyDown(e) {
+      if (e.key === 'Escape') closeDrawer();
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [drawerOpen, closeDrawer]);
 
   return (
     <header className={`site-header${hasHero ? '' : ' is-solid'}`} id="siteHeader">
@@ -263,6 +280,7 @@ export default function Header() {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
           </Link>
         </div>
+        <nav aria-label="Main navigation">
         <ul className="nav-links" id="navLinks">
           <li className="nav-mobile-search-bar">
             <div className="nav-mobile-search-row">
@@ -337,6 +355,7 @@ export default function Header() {
           <li><Link href="/login" onClick={closeDrawer}>Account</Link></li>
           <li><Link href="/cart" onClick={closeDrawer}>Cart</Link></li>
         </ul>
+        </nav>
         <div className="header-actions">
           <button className="header-icon" aria-label="Search" onClick={openSearch}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

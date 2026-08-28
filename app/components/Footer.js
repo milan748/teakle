@@ -39,24 +39,28 @@ export default function Footer() {
             </div>
           </div>
           <div className="footer-col">
-            <h4>Explore</h4>
+            <h3>Explore</h3>
+            <nav aria-label="Explore">
             <ul>
               <li><Link href="/gallery">Gallery</Link></li>
               <li><Link href="/archive">Archive</Link></li>
               <li><Link href="/studio">Studio</Link></li>
               <li><Link href="/journal">Journal</Link></li>
             </ul>
+            </nav>
           </div>
           <div className="footer-col">
-            <h4>Services</h4>
+            <h3>Services</h3>
+            <nav aria-label="Services">
             <ul>
               <li><Link href="/trade">Trade &amp; Bulk Inquiries</Link></li>
               <li><Link href="/contact">Contact</Link></li>
               <li><Link href="/custom">Custom Orders</Link></li>
             </ul>
+            </nav>
           </div>
           <div className="footer-col footer-newsletter">
-            <h4>{newsletterHeading}</h4>
+            <h3>{newsletterHeading}</h3>
             <p>{newsletterDescription}</p>
             <form className="footer-newsletter-form" id="footerNewsletterForm" aria-label="Newsletter signup">
               <label htmlFor="footer-email" className="visually-hidden">Email address for newsletter</label>

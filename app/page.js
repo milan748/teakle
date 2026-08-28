@@ -1,7 +1,8 @@
 import HomeClient from './HomeClient';
 import { getPublishedPageSections } from '@/lib/cms';
+import { getHeroProduct } from './data/products';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate homepage every hour
 
 export const metadata = {
   title: 'Handcrafted Teak Furniture',
@@ -27,5 +28,5 @@ export default function HomePage() {
     }
   }
 
-  return <HomeClient cms={cms} cmsKeys={cmsKeys} />;
+  return <HomeClient cms={cms} cmsKeys={cmsKeys} heroProduct={getHeroProduct()} />;
 }

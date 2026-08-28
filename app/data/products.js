@@ -4071,3 +4071,7 @@ export function getRelatedProducts(product) {
     .filter(Boolean);
 }
 
+export function getHeroProduct() {
+  return PRODUCTS.find((p) => p.isHero === true) || null;
+}
+

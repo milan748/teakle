@@ -78,7 +78,7 @@ const galleryStyles = `
 .gal-cat-nav {
   max-width: var(--container);
   margin: 0 auto;
-  padding: var(--space-lg) var(--space-md) var(--space-md);
+  padding: var(--space-xl) var(--space-md) var(--space-md);
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -94,7 +94,7 @@ const galleryStyles = `
   border-radius: 100px;
   padding: 0.55em 1.2em;
   cursor: pointer;
-  transition: all var(--dur-fast) var(--ease);
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   white-space: nowrap;
 }
 .gal-cat-pill:hover {
@@ -116,7 +116,7 @@ const galleryStyles = `
 .gal-toolbar {
   max-width: var(--container);
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-md);
+  padding: 0 var(--space-md) var(--space-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -147,7 +147,7 @@ const galleryStyles = `
   display: flex;
   align-items: center;
   gap: 0.4em;
-  transition: all var(--dur-fast) var(--ease);
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
 }
 .gal-filter-toggle:hover {
   border-color: var(--bronze);
@@ -347,7 +347,7 @@ const galleryStyles = `
   align-items: center;
   gap: 0.3em;
   cursor: pointer;
-  transition: all var(--dur-fast) var(--ease);
+  transition: background var(--dur-fast) var(--ease);
 }
 .gal-active-tag:hover {
   background: rgba(167, 134, 89, 0.15);
@@ -364,7 +364,7 @@ const galleryStyles = `
   padding: 0 var(--space-md) var(--space-2xl);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 /* Empty State */
@@ -447,7 +447,7 @@ const galleryStyles = `
   .gal-filters-inner { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
-  .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-sm); }
+  .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-sm); padding-left: var(--space-sm); padding-right: var(--space-sm); }
   .gal-cat-pill { font-size: 12px; padding: 0.45em 0.9em; }
   .gal-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
   .gal-filters-inner { grid-template-columns: 1fr; }
@@ -457,8 +457,9 @@ const galleryStyles = `
 }
 @media (max-width: 430px) {
   .gal-grid { gap: var(--space-xs); }
-  .gal-cat-nav { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .gal-cat-nav { max-width: none; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-left: var(--space-sm); padding-right: var(--space-sm); }
   .gal-cat-nav::-webkit-scrollbar { display: none; }
+  .gal-cat-pill { flex-shrink: 0; }
 }
 `;
 
@@ -583,7 +584,7 @@ export default function GalleryClient({ products: serverProducts }) {
     <>
       <style>{galleryStyles}</style>
 
-      <main className="gal-page">
+      <div className="gal-page">
         <section className="page-hero">
           <img src="https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A curated collection of handcrafted teak serving pieces on a wooden table." />
           <div className="page-hero-content">
@@ -773,7 +774,7 @@ export default function GalleryClient({ products: serverProducts }) {
             <Link href="/custom">custom orders page</Link>.
           </p>
         </div>
-      </main>
+      </div>
     </>
   );
 }

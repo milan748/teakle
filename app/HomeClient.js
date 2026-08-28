@@ -1,11 +1,15 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
+import './homepage.css'
 
-export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
+export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct = null }) {
   const heroRef = useRef(null)
+  const sigSectionRef = useRef(null)
   const carouselTrackRef = useRef(null)
+  const [revealStage, setRevealStage] = useState(0)
+  const [galleryIdx, setGalleryIdx] = useState(0)
 
   const hero = cms.hero || {}
   const philosophy = cms.philosophy || {}
@@ -28,14 +32,14 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     const img = hero.querySelector('.v2-hero-img')
     if (!img) return
 
+    const heroHeight = hero.offsetHeight
     let ticking = false
     const onScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const y = window.scrollY
-          const h = hero.offsetHeight
-          if (y < h) {
-            const p = y / h
+          if (y < heroHeight) {
+            const p = y / heroHeight
             img.style.transform = `scale(${1.12 - p * 0.08}) translateY(${y * 0.25}px)`
             img.style.opacity = String(0.9 - p * 0.35)
           }
@@ -131,695 +135,125 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
     }
   }, [])
 
+  /* ---- Signature section one-shot cinematic reveal ---- */
+  useEffect(() => {
+    const section = sigSectionRef.current
+    if (!section) return
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setRevealStage(4)
+      return
+    }
+
+    let stage = 0
+    let completed = false
+    let ticking = false
+    let lastTouchY = null
+
+    const interactiveRe = /^(INPUT|TEXTAREA|SELECT|BUTTON)$/
+
+    function isInteractive(el) {
+      if (!el || el === document.body || el === document.documentElement) return false
+      if (interactiveRe.test(el.tagName)) return true
+      if (el.isContentEditable) return true
+      if (el.getAttribute && el.getAttribute('role') === 'button') return true
+      if (el.closest && (el.closest('a') || el.closest('button'))) return true
+      return false
+    }
+
+    function sectionInView() {
+      const rect = section.getBoundingClientRect()
+      return rect.bottom >= 0 && rect.top <= window.innerHeight
+    }
+
+    function finalize() {
+      completed = true
+      const rect = section.getBoundingClientRect()
+      const sectionAbsTop = window.scrollY + rect.top
+      section.classList.add('is-reveal-done')
+      const collapsedH = section.offsetHeight
+      const target = Math.max(0, sectionAbsTop + collapsedH - window.innerHeight)
+      window.scrollTo(0, target)
+      setRevealStage(4)
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchmove', onTouchMove)
+    }
+
+    function advance() {
+      if (completed) return
+      if (stage >= 4) { finalize(); return }
+      stage++
+      setRevealStage(stage)
+      if (stage >= 4) finalize()
+    }
+
+    function onWheel(e) {
+      if (completed) return
+      if (e.deltaY <= 0) return
+      if (!sectionInView()) return
+      e.preventDefault()
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => { ticking = false; advance() })
+    }
+
+    function onKeyDown(e) {
+      if (completed) return
+      if (isInteractive(document.activeElement)) return
+      const key = e.key
+      if (key !== 'ArrowDown' && key !== 'PageDown' && !(key === ' ' && !e.shiftKey)) return
+      if (!sectionInView()) return
+      e.preventDefault()
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => { ticking = false; advance() })
+    }
+
+    function onTouchStart(e) {
+      lastTouchY = e.touches[0].clientY
+    }
+
+    function onTouchMove(e) {
+      if (completed || lastTouchY === null) return
+      const dy = e.touches[0].clientY - lastTouchY
+      lastTouchY = e.touches[0].clientY
+      if (dy >= 0) return
+      if (!sectionInView()) return
+      e.preventDefault()
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => { ticking = false; advance() })
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false })
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchmove', onTouchMove)
+    }
+  }, [])
+
+  const sigImages = heroProduct?.images || []
+  const sigThumbs = heroProduct?.thumbnails || sigImages
+  const hasGallery = sigImages.length > 1
+  const isComplete = revealStage >= 4
+
+  const sigPrev = useCallback(() => {
+    setGalleryIdx(i => (i <= 0 ? sigImages.length - 1 : i - 1))
+  }, [sigImages.length])
+
+  const sigNext = useCallback(() => {
+    setGalleryIdx(i => (i >= sigImages.length - 1 ? 0 : i + 1))
+  }, [sigImages.length])
+
   return (
-    <>
-      <style>{`
-  /* ================================================================
-     HOMEPAGE V2 — Premium Editorial
-     ================================================================ */
-
-  /* ---- Hero ---- */
-  .v2-hero {
-    position: relative;
-    height: 100vh;
-    height: 100dvh;
-    min-height: 680px;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-    background: var(--walnut);
-  }
-  .v2-hero-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 115%;
-    object-fit: cover;
-    object-position: center 30%;
-    opacity: 0.95;
-    will-change: transform, opacity;
-    transform: scale(1.04);
-    animation: v2heroZoom 14s var(--ease) forwards;
-  }
-  @keyframes v2heroZoom {
-    from { transform: scale(1.04); }
-    to { transform: scale(1); }
-  }
-  .v2-hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg,
-      rgba(51,38,29,0.08) 0%,
-      rgba(51,38,29,0.22) 35%,
-      rgba(51,38,29,0.55) 65%,
-      rgba(51,38,29,0.82) 100%);
-    z-index: 1;
-  }
-  .v2-hero-content {
-    position: relative;
-    z-index: 2;
-    padding: 0 var(--space-md) var(--space-2xl);
-    max-width: 920px;
-    margin-left: 4vw;
-  }
-  .v2-hero-eyebrow {
-    font-size: var(--text-label);
-    font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--stone);
-    margin-bottom: var(--space-md);
-    opacity: 0;
-    animation: v2fadeUp 800ms var(--ease) 200ms forwards;
-  }
-  .v2-hero h1 {
-    font-size: clamp(2.75rem, 7vw, var(--text-hero));
-    font-weight: 600;
-    font-style: italic;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: var(--bg-primary);
-    margin-bottom: var(--space-lg);
-    opacity: 0;
-    animation: v2fadeUp 900ms var(--ease) 400ms forwards;
-  }
-  .v2-hero-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-lg);
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: v2fadeUp 800ms var(--ease) 650ms forwards;
-  }
-  .v2-hero-actions .link-quiet {
-    color: var(--bg-primary);
-    border-color: rgba(247,244,238,0.4);
-  }
-  .v2-hero-actions .link-quiet:hover {
-    color: var(--bronze);
-    border-color: var(--bronze);
-  }
-
-  .v2-scroll {
-    position: absolute;
-    left: 50%;
-    bottom: var(--space-md);
-    transform: translateX(-50%);
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-    color: var(--stone);
-    opacity: 0;
-    animation: v2fadeUp 600ms var(--ease) 1100ms forwards;
-  }
-  .v2-scroll span {
-    font-size: var(--text-caption);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-  .v2-scroll-line {
-    width: 1px;
-    height: 34px;
-    background: linear-gradient(180deg, var(--bronze), transparent);
-    animation: v2scrollPulse 2.2s var(--ease) infinite;
-  }
-  @keyframes v2scrollPulse {
-    0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
-    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
-    51% { transform-origin: bottom; }
-    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0.4; }
-  }
-
-  @keyframes v2fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ---- Trust Bar ---- */
-  .v2-trust {
-    background: var(--bg-secondary);
-    padding: var(--space-md) 0;
-    border-bottom: var(--border-subtle);
-  }
-  .v2-trust-inner {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-xl);
-    flex-wrap: wrap;
-  }
-  .v2-trust-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--text-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-  }
-  .v2-trust-item svg {
-    width: 16px;
-    height: 16px;
-    color: var(--bronze);
-    flex-shrink: 0;
-  }
-
-  /* ---- Philosophy ---- */
-  .v2-philosophy {
-    background: var(--bg-primary);
-    padding: var(--space-2xl) 0;
-  }
-  .v2-philosophy-inner {
-    max-width: 90%;
-    margin: 0 auto;
-    text-align: left;
-    padding: 0 var(--space-md);
-  }
-  .v2-philosophy .eyebrow {
-    margin-bottom: var(--space-md);
-  }
-  .v2-philosophy h2 {
-    font-size: clamp(1.75rem, 3.4vw, var(--text-h2));
-    margin-bottom: var(--space-md);
-    max-width: none;
-  }
-  .v2-philosophy p {
-    max-width: none;
-    font-size: var(--text-body);
-    color: var(--text-secondary);
-    line-height: var(--lh-relaxed);
-  }
-  .v2-philosophy p + p {
-    margin-top: var(--space-sm);
-  }
-
-  /* ---- Signature Collection ---- */
-  .v2-signature {
-    background: var(--walnut);
-    padding: var(--space-2xl) 0;
-    overflow: hidden;
-  }
-  .v2-sig-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2xl);
-    align-items: center;
-    max-width: var(--container);
-    margin: 0 auto;
-    padding: 0 var(--space-md);
-  }
-  .v2-sig-img {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    overflow: hidden;
-  }
-  .v2-sig-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1.4s var(--ease);
-  }
-  .v2-sig-img:hover img { transform: scale(1.03); }
-  .v2-sig-tag {
-    display: inline-block;
-    font-size: var(--text-caption);
-    letter-spacing: 0.06em;
-    color: var(--bronze);
-    border: 1px solid color-mix(in srgb, var(--bronze), transparent 60%);
-    padding: var(--space-sm) var(--space-md);
-    margin-bottom: var(--space-md);
-  }
-  .v2-sig-text .eyebrow { color: var(--stone); }
-  .v2-sig-text h2 {
-    color: var(--bg-primary);
-    font-size: clamp(2rem, 4vw, var(--text-h1));
-    margin: var(--space-sm) 0 var(--space-md);
-    max-width: none;
-  }
-  .v2-sig-text p {
-    color: var(--stone);
-    font-size: var(--text-body);
-    max-width: 46ch;
-    margin-bottom: var(--space-lg);
-    line-height: var(--lh-relaxed);
-  }
-  .v2-sig-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-lg);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-md);
-  }
-  .v2-sig-actions .link-quiet {
-    color: var(--bg-primary);
-    border-color: rgba(247,244,238,0.4);
-  }
-  .v2-sig-actions .link-quiet:hover {
-    color: var(--bronze);
-    border-color: var(--bronze);
-  }
-  .v2-sig-past {
-    font-size: var(--text-caption);
-    letter-spacing: 0.04em;
-    color: var(--stone);
-    opacity: 0.8;
-  }
-  .v2-sig-past a { color: var(--bronze); border-bottom: 1px solid color-mix(in srgb, var(--bronze), transparent 60%); }
-  .v2-sig-past a:hover { border-color: var(--bronze); }
-
-  /* ---- Craftsmanship ---- */
-  .v2-craft {
-    background: var(--bg-primary);
-    padding: var(--space-2xl) 0;
-  }
-  .v2-craft-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-    align-items: center;
-    max-width: var(--container);
-    margin: 0 auto;
-    padding: 0 var(--space-md);
-  }
-  .v2-craft-img {
-    position: relative;
-    overflow: hidden;
-  }
-  .v2-craft-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    aspect-ratio: 4 / 5;
-    transition: transform 1.2s var(--ease);
-  }
-  .v2-craft-img:hover img { transform: scale(1.03); }
-  .v2-craft-text h2 {
-    font-size: clamp(1.75rem, 3.4vw, var(--text-h2));
-    margin-bottom: var(--space-md);
-    max-width: none;
-  }
-  .v2-craft-text p {
-    max-width: none;
-    font-size: var(--text-body);
-    color: var(--text-secondary);
-    line-height: var(--lh-relaxed);
-  }
-  .v2-craft-text p + p {
-    margin-top: var(--space-sm);
-  }
-  .v2-craft-text .link-quiet {
-    display: inline-block;
-    margin-top: var(--space-md);
-  }
-
-  /* ---- Editorial Carousel ---- */
-  .v2-carousel {
-    background: var(--bg-primary);
-    padding: var(--space-lg) var(--space-md) var(--space-md);
-    overflow: hidden;
-    position: relative;
-  }
-  .v2-cprev, .v2-cnext {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    z-index: 5;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 1px solid var(--text-primary);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
-    line-height: 1;
-  }
-  .v2-cprev:hover, .v2-cnext:hover {
-    background: var(--text-primary);
-    color: var(--bg-primary);
-  }
-  .v2-cprev { left: var(--space-md); }
-  .v2-cnext { right: var(--space-md); }
-  .v2-ctrack {
-    display: flex;
-    gap: var(--space-md);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-  .v2-ctrack::-webkit-scrollbar { display: none; }
-  .v2-citem {
-    flex: 0 0 220px;
-    scroll-snap-align: start;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-  .v2-cimage {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    background: var(--stone);
-    overflow: hidden;
-  }
-  .v2-cimage img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--dur-slow) var(--ease);
-  }
-  .v2-citem:hover .v2-cimage img { transform: scale(1.04); }
-  .v2-clabel {
-    font-size: var(--text-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-primary);
-  }
-  .v2-cbtn {
-    display: inline-block;
-    font-size: var(--text-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    border: 1px solid var(--text-primary);
-    padding: 0.4em 1.4em;
-    color: var(--text-primary);
-    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
-  }
-  .v2-cbtn:hover {
-    background: var(--text-primary);
-    color: var(--bg-primary);
-  }
-  .v2-cdots {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-sm);
-    padding: var(--space-md) 0 var(--space-xs);
-  }
-  .v2cdot {
-    width: 6px;
-    height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--stone);
-    transition: background var(--dur-fast) var(--ease);
-  }
-  .v2cdot.active { background: var(--text-primary); }
-
-  /* ---- Products ---- */
-  .v2-products {
-    background: var(--bg-primary);
-    padding: var(--space-xl) 0 var(--space-lg);
-  }
-  .v2-products-head {
-    margin-bottom: var(--space-lg);
-  }
-  .v2-products-head h2 {
-    font-size: clamp(1.5rem, 3vw, var(--text-h2));
-    max-width: none;
-    margin-top: var(--space-xs);
-  }
-  .v2-pgrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-md);
-  }
-  .v2-pcard {
-    display: block;
-    background: var(--bg-primary);
-    padding-bottom: var(--space-sm);
-  }
-  .v2-pimg {
-    aspect-ratio: 4 / 5;
-    background: var(--stone);
-    overflow: hidden;
-    margin-bottom: var(--space-md);
-    border-radius: var(--radius-sm);
-  }
-  .v2-pimg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--dur-slow) var(--ease);
-  }
-  .v2-pcard:hover .v2-pimg img { transform: scale(1.03); }
-  .v2-pinfo {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--space-sm);
-  }
-  .v2-pinfo h3 {
-    font-size: var(--text-subhead);
-    font-weight: 600;
-    margin-bottom: 2px;
-    max-width: none;
-    line-height: 1.3;
-  }
-  .v2-pmeta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-  .v2-pcat {
-    font-size: var(--text-caption);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--text-secondary);
-    line-height: 1.3;
-  }
-  .v2-pprice {
-    font-size: var(--text-caption);
-    color: var(--text-secondary);
-    letter-spacing: 0.02em;
-  }
-  .v2-pcta {
-    text-align: center;
-    margin-top: var(--space-sm);
-  }
-
-  /* ---- Lifestyle (Story Block) ---- */
-  .v2-lifestyle {
-    position: relative;
-    height: 88vh;
-    min-height: 560px;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-  }
-  .v2-lifestyle-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1.2s var(--ease);
-  }
-  .v2-lifestyle:hover .v2-lifestyle-bg { transform: scale(1.03); }
-  .v2-lifestyle::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(0deg, rgba(51,38,29,0.72) 0%, rgba(51,38,29,0.1) 55%, transparent 100%);
-  }
-  .v2-lifestyle-content {
-    position: relative;
-    z-index: 2;
-    padding: var(--space-xl) var(--space-md);
-    max-width: 640px;
-  }
-  .v2-lifestyle .eyebrow { color: var(--stone); margin-bottom: var(--space-sm); }
-  .v2-lifestyle h2 {
-    color: var(--bg-primary);
-    font-size: clamp(2rem, 4vw, var(--text-h1));
-    margin-bottom: var(--space-sm);
-    max-width: none;
-  }
-  .v2-lifestyle p {
-    color: var(--stone);
-    font-size: var(--text-body);
-    max-width: 48ch;
-    margin-bottom: var(--space-md);
-    line-height: var(--lh-relaxed);
-  }
-  .v2-lifestyle .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); }
-  .v2-lifestyle .link-quiet:hover { color: var(--bronze); border-color: var(--bronze); }
-
-  /* ================================================================
-     RESPONSIVE
-     ================================================================ */
-
-  @media (max-width: 860px) {
-    .v2-hero { min-height: 0; height: 100svh; }
-    .v2-hero-content { padding: 0 var(--space-lg) var(--space-2xl); padding-bottom: calc(var(--space-2xl) + 56px); margin-left: 0; margin-top: 0; max-width: 100%; }
-    .v2-hero h1 { font-size: clamp(1.75rem, 7vw, 2.25rem); margin-bottom: var(--space-lg); line-height: 1.1; }
-    .v2-hero-actions { gap: var(--space-sm); }
-    .v2-hero-actions .btn-primary { min-height: 38px; padding: 0.4rem calc(var(--space-md) + var(--space-xs)); font-size: var(--text-caption); letter-spacing: 0.1em; }
-    .v2-hero-eyebrow { font-size: 0.5rem; letter-spacing: 0.18em; margin-bottom: var(--space-sm); font-weight: 500; }
-    .v2-scroll { display: none; }
-
-    .v2-trust-inner { gap: var(--space-md); }
-    .v2-trust-item { font-size: 0.5625rem; }
-
-    .v2-philosophy { padding: var(--space-2xl) 0 var(--space-xl); }
-    .v2-philosophy-inner { padding: 0 var(--space-lg); max-width: 100%; text-align: center; }
-    .v2-philosophy .eyebrow { justify-content: center; margin-bottom: var(--space-sm); }
-    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-sm); line-height: 1.3; max-width: none; }
-    .v2-philosophy p { display: none; }
-
-    .v2-signature { padding: var(--space-xl) 0; background: var(--bg-primary); }
-    .v2-sig-grid { grid-template-columns: 1fr; gap: 0; }
-    .v2-sig-img { max-height: none; aspect-ratio: 3/4; }
-    .v2-sig-text { padding: var(--space-lg) var(--space-lg) 0; }
-    .v2-sig-text h2 { font-size: var(--text-h2); color: var(--text-primary); line-height: 1.2; }
-    .v2-sig-text p { color: var(--text-secondary); max-width: none; font-size: var(--text-body); display: none; }
-    .v2-sig-text .eyebrow { color: var(--bronze); }
-    .v2-sig-tag { display: none; }
-    .v2-sig-actions .link-quiet { color: var(--text-primary); border-color: var(--stone); }
-    .v2-sig-past { display: none; }
-
-    .v2-craft { padding: var(--space-xl) 0; }
-    .v2-craft-grid { grid-template-columns: 1fr; gap: 0; }
-    .v2-craft-img { order: -1; }
-    .v2-craft-img img { aspect-ratio: 4/3; }
-    .v2-craft-text { padding: var(--space-lg) var(--space-lg) 0; }
-    .v2-craft-text h2 { font-size: var(--text-h2); line-height: 1.25; }
-    .v2-craft-text p { display: none; }
-    .v2-craft-text .link-quiet { margin-top: var(--space-sm); }
-
-    .v2-citem { flex: 0 0 140px; }
-    .v2-ctrack { gap: var(--space-sm); }
-
-    .v2-lifestyle {
-      position: relative;
-      display: block;
-      height: auto;
-      min-height: 0;
-      background: transparent;
-      overflow: hidden;
-      padding: 0 var(--space-lg) var(--space-lg);
-    }
-    .v2-lifestyle + .v2-lifestyle { margin-top: 0; padding-top: 0; }
-    .v2-lifestyle-bg {
-      position: relative;
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      transform: none;
-      border-radius: var(--radius-sm);
-      display: block;
-    }
-    .v2-lifestyle:hover .v2-lifestyle-bg { transform: none; }
-    .v2-lifestyle::after {
-      content: '';
-      display: block;
-      position: absolute;
-      left: var(--space-lg);
-      right: var(--space-lg);
-      bottom: var(--space-lg);
-      top: auto;
-      height: 260px;
-      background: linear-gradient(0deg, rgba(51,38,29,0.6) 0%, rgba(51,38,29,0.05) 55%, transparent 100%);
-      border-radius: var(--radius-sm);
-      z-index: 1;
-      pointer-events: none;
-    }
-    .v2-lifestyle-content {
-      position: absolute;
-      bottom: var(--space-lg);
-      left: var(--space-lg);
-      right: var(--space-lg);
-      z-index: 2;
-      padding: 0;
-      max-width: 100%;
-    }
-    .v2-lifestyle .eyebrow { color: rgba(247,244,238,0.85); font-size: var(--text-caption); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; }
-    .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h2); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 32ch; font-weight: 600; }
-    .v2-lifestyle p { display: none; }
-    .v2-lifestyle .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); font-size: var(--text-caption); letter-spacing: 0.08em; }
-
-    .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
-    .v2-pcard { padding-bottom: 0; }
-    .v2-pimg { margin-bottom: var(--space-xs); }
-    .v2-pinfo { flex-direction: column; align-items: flex-start; gap: var(--space-2xs); }
-    .v2-pinfo h3 { font-size: var(--text-body); }
-    .v2-pcat { font-size: var(--text-caption); }
-
-    .v2-products { padding: var(--space-xl) 0 var(--space-lg); }
-    .v2-products-head { margin-bottom: var(--space-lg); }
-    .v2-products-head h2 { font-size: var(--text-h2); }
-  }
-
-  @media (max-width: 560px) {
-    .v2-hero { height: 100svh; min-height: 340px; }
-    .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 52px); }
-    .v2-hero h1 { font-size: clamp(1.5rem, 7vw, 1.875rem); margin-bottom: var(--space-md); letter-spacing: -0.02em; line-height: 1.08; }
-    .v2-hero-actions { flex-direction: row; gap: var(--space-sm); align-items: center; }
-    .v2-hero-actions .btn-primary { flex: 1; min-height: 36px; font-size: 0.5625rem; width: auto; padding: 0.35rem var(--space-sm); }
-    .v2-hero-actions .link-quiet { font-size: 0.5rem; white-space: nowrap; }
-
-    .v2-signature { padding: var(--space-lg) 0; }
-    .v2-sig-img { max-height: none; aspect-ratio: 3/4; }
-    .v2-sig-text { padding: var(--space-md) var(--space-md) 0; }
-    .v2-sig-text h2 { font-size: var(--text-h2); }
-    .v2-sig-actions { flex-direction: column; gap: var(--space-xs); }
-    .v2-sig-actions .btn-primary { width: 100%; text-align: center; min-height: 40px; }
-
-    .v2-craft { padding: var(--space-lg) 0; }
-    .v2-craft-text { padding: var(--space-md) var(--space-md) 0; }
-
-    .v2-carousel { padding: var(--space-lg) var(--space-xs) var(--space-md); }
-    .v2-citem { flex: 0 0 120px; }
-    .v2-clabel { font-size: var(--text-caption); }
-    .v2-cbtn { font-size: 0.5rem; padding: 0.3em 1em; }
-
-    .v2-lifestyle { padding: 0 var(--space-md) var(--space-md); }
-    .v2-lifestyle-bg { height: 300px; }
-    .v2-lifestyle::after { left: var(--space-md); right: var(--space-md); bottom: var(--space-md); height: 200px; }
-    .v2-lifestyle-content { bottom: var(--space-md); left: var(--space-md); right: var(--space-md); padding: 0; }
-    .v2-lifestyle h2 { font-size: var(--text-h3); margin-bottom: var(--space-xs); max-width: 26ch; }
-
-    .v2-products { padding: var(--space-lg) 0; }
-    .v2-products-head { margin-bottom: var(--space-md); }
-    .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-    .v2-pimg { aspect-ratio: 4 / 5; margin-bottom: var(--space-2xs); }
-    .v2-pinfo { gap: 1px; }
-    .v2-pinfo h3 { font-size: var(--text-body); }
-    .v2-pcat { font-size: 0.5rem; }
-
-    .v2-philosophy { padding: var(--space-xl) 0; }
-    .v2-philosophy-inner { padding: 0 var(--space-md); }
-    .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: var(--space-xs); }
-
-    .v2-pcta { margin-top: var(--space-md); }
-  }
-
-  @media (max-width: 430px) {
-    .v2-hero h1 { font-size: 1.625rem; margin-bottom: var(--space-md); }
-    .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 48px); }
-    .v2-hero-actions .btn-primary { min-height: 34px; font-size: 0.5rem; }
-    .v2-hero-actions .link-quiet { font-size: 0.5rem; }
-    .v2-pgrid { gap: var(--space-xs); }
-    .v2-pinfo h3 { font-size: 0.8125rem; }
-    .v2-lifestyle h2 { font-size: var(--text-h3); max-width: 28ch; }
-    .v2-lifestyle-bg { height: 300px; }
-    .v2-lifestyle::after { height: 200px; }
-    .v2-philosophy h2 { font-size: var(--text-h3); }
-    .v2-citem { flex: 0 0 120px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .v2-hero-img { animation: none; transform: scale(1); }
-    .v2-hero-eyebrow, .v2-hero h1, .v2-hero-actions, .v2-scroll { animation: none; opacity: 1; transform: none; }
-  }
-      `}</style>
-
-      <main id="main-content">
+      <div>
 
         {/* 1. Hero */}
         {!heroDisabled && (
@@ -886,21 +320,40 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
 
         {/* 4. Signature Collection */}
         {!signatureDisabled && (
-        <section className="v2-signature">
-          <div className="v2-sig-grid">
-            <div className="v2-sig-img reveal">
-              <img src={signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="A single hand-shaped wooden stool, photographed on a plain neutral floor." loading="lazy" width="1200" height="800" />
-            </div>
-            <div className="v2-sig-text">
-              <span className="v2-sig-tag reveal">{'Piece N\u00B0 04 \u2014 This Season'}</span>
-              <span className="eyebrow eyebrow-light reveal">{signature.eyebrow || 'The Hero Edition'}</span>
-              <h2 className="reveal">{signature.title || 'This season\u2019s hero.'}</h2>
-              <p className="reveal">{signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
-              <div className="v2-sig-actions reveal">
-                <Link href={signature.buttonUrl || '/shop/anchor-table'} className="btn-primary">{signature.buttonLabel || 'View This Piece'}</Link>
-                <Link href="/journal" className="link-quiet">Watch It Being Made</Link>
+        <section className={`v2-signature${isComplete ? ' is-reveal-done' : ''}`} ref={sigSectionRef}>
+          <div className="v2-sig-cinema">
+            <div className="v2-sig-grid">
+              <div className="v2-sig-img">
+                <div className={`v2-sig-img-wrap${revealStage >= 1 ? ' is-stage-1' : ''}`}>
+                  <img className="v2-sig-img-main" src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`} width="960" height="1200" />
+                </div>
+                {hasGallery && (
+                  <>
+                    <div className="v2-sig-gallery" role="radiogroup" aria-label="Product images">
+                      {sigThumbs.map((thumb, i) => (
+                        <button key={i} className={`v2-sig-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
+                          <img src={thumb} alt="" width="56" height="56" loading="lazy" />
+                        </button>
+                      ))}
+                    </div>
+                    <div className="v2-sig-nav">
+                      <button className="v2-sig-nav-btn" onClick={sigPrev} aria-label="Previous image">&#8592;</button>
+                      <button className="v2-sig-nav-btn" onClick={sigNext} aria-label="Next image">&#8594;</button>
+                    </div>
+                  </>
+                )}
               </div>
-              <p className="v2-sig-past reveal">Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
+              <div className="v2-sig-text">
+                <span className={`v2-sig-tag v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>{heroProduct?.name || 'The Hero Edition'}</span>
+                <span className={`eyebrow eyebrow-light v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>One of One · Hero Edition</span>
+                <h2 className={`v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>{signature.title || 'This season\u2019s hero.'}</h2>
+                <p className={`v2-sig-reveal${revealStage >= 3 ? ' is-stage-3' : ''}`}>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
+                <div className={`v2-sig-actions v2-sig-reveal${revealStage >= 4 ? ' is-stage-4' : ''}`}>
+                  <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="btn-primary">View This Piece</Link>
+                  <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet">Watch the Process</Link>
+                </div>
+                <p className={`v2-sig-past v2-sig-reveal${revealStage >= 4 ? ' is-stage-4' : ''}`}>Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
+              </div>
             </div>
           </div>
         </section>
@@ -911,7 +364,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
         <section className="v2-craft">
           <div className="v2-craft-grid">
             <div className="v2-craft-img reveal">
-              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." loading="lazy" />
+              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" />
             </div>
             <div className="v2-craft-text">
               <span className="eyebrow reveal">{craftsmanship.eyebrow || 'Craftsmanship'}</span>
@@ -1067,7 +520,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
         {/* 8. Story Block — Workshop */}
         {!workshopDisabled && (
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." loading="lazy" />
+          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." width="1600" height="1067" loading="lazy" />
           <div className="v2-lifestyle-content">
             <span className="eyebrow eyebrow-light reveal">{workshopStory.eyebrow || 'The Workshop'}</span>
             <h2 className="reveal">{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
@@ -1080,17 +533,16 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set() }) {
         {/* 9. Story Block — Watch It Made */}
         {!processDisabled && (
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." loading="lazy" />
+          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" />
           <div className="v2-lifestyle-content">
             <span className="eyebrow eyebrow-light reveal">{processStory.eyebrow || 'Watch It Made'}</span>
             <h2 className="reveal">{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
             <p className="reveal">{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
-            <Link href={processStory.buttonUrl || '/journal'} className="link-quiet reveal">{processStory.buttonLabel || 'Watch the Process'}</Link>
+            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet reveal">{processStory.buttonLabel || 'Watch the Process'}</Link>
           </div>
         </section>
         )}
 
-      </main>
-    </>
+      </div>
   )
 }

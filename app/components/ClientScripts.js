@@ -101,6 +101,7 @@ export default function ClientScripts() {
         navToggle.setAttribute('aria-label', navLinks.classList.contains('is-open') ? 'Close menu' : 'Open menu');
         backdrop.classList.toggle('is-visible', navLinks.classList.contains('is-open'));
         document.body.classList.toggle('nav-drawer-open', navLinks.classList.contains('is-open'));
+        window.dispatchEvent(new CustomEvent(navLinks.classList.contains('is-open') ? 'teakle-nav-opened' : 'teakle-nav-closed'));
       });
 
       backdrop.addEventListener('click', closeNav);

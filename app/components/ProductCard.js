@@ -54,6 +54,8 @@ export default function ProductCard({
           src={imgSrc}
           alt={`${product.name}${product.material ? ', ' + product.material : ''}`}
           loading="lazy"
+          width="400"
+          height="533"
           onError={handleImageError}
         />
         {hoverImgSrc && (
@@ -62,6 +64,8 @@ export default function ProductCard({
             src={hoverImgSrc}
             alt=""
             loading="lazy"
+            width="400"
+            height="533"
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         )}
