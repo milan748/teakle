@@ -358,12 +358,12 @@ test('Gallery still has Clear All Filters button', () => {
   assertIncludes(galleryCode, 'Clear All Filters', 'Clear All Filters');
 });
 
-test('Sidebar still has Account link', () => {
-  assertIncludes(headerCode, 'href="/login" onClick={closeDrawer}>Account', 'Account link');
+test('Sidebar no longer has duplicate Account text link (now via header icon)', () => {
+  assertNotIncludes(headerCode, 'href="/login" onClick={closeDrawer}>Account', 'Account duplicate removed');
 });
 
-test('Sidebar still has Cart link', () => {
-  assertIncludes(headerCode, 'href="/cart" onClick={closeDrawer}>Cart', 'Cart link');
+test('Sidebar no longer has duplicate Cart text link (now via header icon)', () => {
+  assertNotIncludes(headerCode, 'href="/cart" onClick={closeDrawer}>Cart', 'Cart duplicate removed');
 });
 
 test('Sidebar still has Archive, Studio, Journal, Customize', () => {

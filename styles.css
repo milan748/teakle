@@ -379,6 +379,17 @@ em {
   -webkit-backdrop-filter: blur(8px) saturate(1.2);
   border-bottom: var(--border-subtle);
 }
+/* Auth pages: minimal header — logo only, centered */
+.site-header.is-auth .nav-toggle,
+.site-header.is-auth .header-mobile-actions,
+.site-header.is-auth nav[aria-label="Main navigation"],
+.site-header.is-auth .header-actions { display: none !important; }
+.site-header.is-auth .header-inner { justify-content: center; }
+.site-header.is-auth .logo { margin: 0 auto; }
+/* Active nav indication */
+.nav-links a.is-active { color: var(--bronze-text); }
+.nav-dropdown-featured-link.is-active { color: var(--bronze); }
+.nav-dropdown-featured-link.is-active .nav-dropdown-featured-label { color: var(--bronze); }
 .header-inner {
   display: flex;
   align-items: center;
@@ -1015,6 +1026,9 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
   line-height: var(--lh-relaxed);
 }
 
+/* Auth pages: hide marketing footer for focused task */
+body[data-auth-page] .site-footer { display: none; }
+
 /* ============================================
    Shared: Footer
    ============================================ */
@@ -1088,7 +1102,7 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
   transition: color var(--dur-fast) var(--ease);
 }
 .footer-legal a:hover { color: var(--bronze); }
-.footer-newsletter h4 {
+.footer-newsletter h3 {
   font-family: var(--font-body);
   font-size: var(--text-label);
   letter-spacing: 0.1em;
@@ -1383,7 +1397,7 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
   .nav-links a {
     display: block;
     color: var(--text-primary);
-    font-size: 0.8125rem;
+    font-size: var(--text-label);
     letter-spacing: 0.06em;
     padding: 1.5rem var(--space-lg);
     width: 100%;
@@ -1805,7 +1819,7 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
     border-bottom: 1px solid rgba(43,34,27,0.04);
   }
   .footer-newsletter { margin-top: 0; }
-  .footer-newsletter h4 {
+  .footer-newsletter h3 {
     font-size: 0.625rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -2181,7 +2195,7 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
 
 @media (max-width: 560px) {
   .pcard-info h3 { font-size: var(--text-body); }
-  .pcard-wishlist { width: 36px; height: 36px; }
+  .pcard-wishlist { width: 36px; height: 36px; opacity: 1; transform: scale(1); }
   .pcard-wishlist svg { width: 13px; height: 13px; }
   .pcard-badge { font-size: 0.5rem; padding: 0.2em 0.5em; }
   .pcard-meta { font-size: var(--text-caption); }

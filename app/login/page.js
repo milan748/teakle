@@ -560,6 +560,34 @@ export default function LoginPage() {
         .auth-forgot:hover { color: var(--bronze); }
         .auth-forgot:hover::after { transform: scaleX(1); }
 
+        .auth-recovery {
+          text-align: center;
+          margin-top: 1rem;
+          font-size: var(--text-caption);
+        }
+        .auth-recovery a {
+          color: var(--text-secondary);
+          text-decoration: none;
+          letter-spacing: 0.02em;
+          position: relative;
+          transition: color var(--dur-fast) var(--ease);
+        }
+        .auth-recovery a::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: var(--bronze);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 300ms var(--ease);
+        }
+        .auth-recovery a:hover { color: var(--bronze); }
+        .auth-recovery a:hover::after { transform: scaleX(1); }
+        .auth-recovery a:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+
         /* --- Submit Button --- */
         .auth-submit-wrapper {
           opacity: 0;
@@ -884,27 +912,16 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-              <div className="auth-options">
-                <label className="auth-remember">
-                  <input
-                    type="checkbox"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.target.checked)}
-                    disabled
-                    title="Requires Shopify customer accounts"
-                  />
-                  <span>Remember me</span>
-                </label>
-                <a href="#" className="auth-forgot" onClick={(e) => e.preventDefault()} title="Requires Shopify customer accounts">
-                  Forgot password?
-                </a>
-              </div>
+              {/* auth-options intentionally omitted: Remember me / Forgot password not supported in current auth — keep focused task */}
               <div className="auth-submit-wrapper">
                 <button type="submit" className={`auth-submit ${isLoading ? 'is-loading' : ''}`} disabled={isLoading}>
                   <span className="btn-text">Sign In</span>
                   <span className="btn-spinner"></span>
                 </button>
               </div>
+              <p className="auth-recovery">
+                <Link href="/contact">Forgot password? Contact support</Link>
+              </p>
             </form>
 
             <form

@@ -627,12 +627,12 @@
   .v2-hero h1 { font-size: clamp(1.75rem, 7vw, 2.25rem); margin-bottom: var(--space-lg); line-height: 1.1; }
   .v2-hero-actions { gap: var(--space-sm); }
   .v2-hero-actions .btn-primary { min-height: 44px; padding: 0.5rem calc(var(--space-md) + var(--space-xs)); font-size: var(--text-caption); letter-spacing: 0.1em; }
-  .v2-hero-eyebrow { font-size: 0.5rem; letter-spacing: 0.18em; margin-bottom: var(--space-sm); font-weight: 500; }
+  .v2-hero-eyebrow { font-size: var(--text-caption); letter-spacing: 0.18em; margin-bottom: var(--space-sm); font-weight: 500; }
   .v2-scroll { display: none; }
   .v2-trust { display: none; }
 
   .v2-trust-inner { gap: var(--space-md); }
-  .v2-trust-item { font-size: 0.5625rem; }
+  .v2-trust-item { font-size: var(--text-caption); }
 
   .v2-philosophy { padding: var(--space-2xl) 0 var(--space-xl); }
   .v2-philosophy-inner { padding: 0 var(--space-lg); max-width: 100%; text-align: left; }
@@ -755,7 +755,7 @@
   .v2-hero h1 { font-size: clamp(1.625rem, 7vw, 2.25rem); margin-bottom: var(--space-md); letter-spacing: -0.02em; line-height: 1.08; }
   .v2-hero-actions { flex-direction: row; gap: var(--space-sm); align-items: center; }
   .v2-hero-actions .btn-primary { flex: 1; min-height: 44px; font-size: 0.625rem; width: auto; padding: 0.35rem var(--space-sm); }
-  .v2-hero-actions .link-quiet { font-size: 0.5rem; white-space: nowrap; }
+  .v2-hero-actions .link-quiet { font-size: var(--text-label); white-space: nowrap; }
 
   .v2-signature { min-height: 220vh; }
   .v2-sig-cinema { position: sticky; top: 0; height: 100vh; height: 100dvh; }
@@ -772,7 +772,7 @@
   .v2-carousel { padding: var(--space-lg) var(--space-xs) var(--space-md); }
   .v2-citem { flex: 0 0 120px; }
   .v2-clabel { font-size: var(--text-caption); }
-  .v2-cbtn { font-size: 0.5625rem; padding: 0.4em 1em; min-height: 32px; }
+  .v2-cbtn { font-size: var(--text-caption); padding: 0.4em 1em; min-height: 32px; }
 
   .v2-lifestyle { padding: 0 var(--space-md) var(--space-md); }
   .v2-lifestyle-bg { height: 300px; }
@@ -786,8 +786,8 @@
   .v2-pimg { aspect-ratio: 4 / 5; margin-bottom: var(--space-2xs); }
   .v2-pinfo { gap: 1px; }
   .v2-pinfo h3 { font-size: var(--text-body); }
-  .v2-pcat { font-size: 0.5625rem; }
-  .v2-pprice { font-size: 0.5625rem; }
+  .v2-pcat { font-size: var(--text-label); }
+  .v2-pprice { font-size: var(--text-label); }
 
   .v2-philosophy { padding: var(--space-xl) 0; }
   .v2-philosophy-inner { padding: 0 var(--space-md); }
@@ -800,7 +800,7 @@
   .v2-hero h1 { font-size: 1.75rem; margin-bottom: var(--space-md); }
   .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 48px); }
   .v2-hero-actions .btn-primary { min-height: 40px; font-size: 0.5625rem; }
-  .v2-hero-actions .link-quiet { font-size: 0.5rem; }
+  .v2-hero-actions .link-quiet { font-size: var(--text-label); }
   .v2-pgrid { gap: var(--space-sm); }
   .v2-pinfo h3 { font-size: 0.875rem; }
   .v2-lifestyle h2 { font-size: var(--text-h3); max-width: 28ch; }

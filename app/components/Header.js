@@ -46,10 +46,20 @@ export default function Header() {
   const searchOverlayRef = useRef(null);
 
   const hasHero = checkHasHero(pathname);
+  const isAuthPage = pathname === '/login';
+  const isActive = useCallback((href) => {
+    if (href === '/gallery') return pathname === '/gallery' || pathname.startsWith('/gallery');
+    if (href.startsWith('/shop/')) return pathname === href;
+    return pathname === href;
+  }, [pathname]);
 
   useEffect(() => {
     document.body.toggleAttribute('data-page-has-hero', hasHero);
   }, [hasHero]);
+
+  useEffect(() => {
+    document.body.toggleAttribute('data-auth-page', isAuthPage);
+  }, [isAuthPage]);
 
   useEffect(() => {
     const header = document.getElementById('siteHeader');
@@ -264,7 +274,7 @@ export default function Header() {
   }, [drawerOpen, closeDrawer]);
 
   return (
-    <header className={`site-header${hasHero ? '' : ' is-solid'}`} id="siteHeader">
+    <header className={`site-header${hasHero ? '' : ' is-solid'}${isAuthPage ? ' is-auth' : ''}`} id="siteHeader">
       <div className="header-inner">
         <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
           <span></span><span></span><span></span>
@@ -330,14 +340,14 @@ export default function Header() {
           </li>
           <li className={`nav-dropdown${galleryOpen ? ' is-open' : ''}`}>
             <div className="nav-mobile-link-row">
-              <Link href="/gallery" className="nav-dropdown-desktop-link" onClick={closeDrawer}>Gallery</Link>
+              <Link href="/gallery" className={`nav-dropdown-desktop-link${isActive('/gallery') ? ' is-active' : ''}`} aria-current={isActive('/gallery') ? 'page' : undefined} onClick={closeDrawer}>Gallery</Link>
               <button className="nav-dropdown-mobile-link" aria-label="Toggle Gallery submenu" aria-expanded={galleryOpen} aria-controls="gallery-dropdown-menu" onClick={(e) => { e.preventDefault(); toggleGallery(); }}>
                 <svg className="nav-dropdown-mobile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </div>
             <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
               <li className="nav-dropdown-featured">
-                <Link href="/shop/anchor-table" className="nav-dropdown-featured-link" onClick={closeDrawer}>
+                <Link href="/shop/anchor-table" className={`nav-dropdown-featured-link${isActive('/shop/anchor-table') ? ' is-active' : ''}`} aria-current={isActive('/shop/anchor-table') ? 'page' : undefined} onClick={closeDrawer}>
                   <span className="nav-dropdown-featured-label">Hero Edition</span>
                 </Link>
               </li>
@@ -348,12 +358,10 @@ export default function Header() {
               </li>
             </ul>
           </li>
-          <li><Link href="/archive" onClick={closeDrawer}>Archive</Link></li>
-          <li><Link href="/studio" onClick={closeDrawer}>Studio</Link></li>
-          <li><Link href="/journal" onClick={closeDrawer}>Journal</Link></li>
-          <li><Link href="/custom" onClick={closeDrawer}>Customize</Link></li>
-          <li><Link href="/login" onClick={closeDrawer}>Account</Link></li>
-          <li><Link href="/cart" onClick={closeDrawer}>Cart</Link></li>
+          <li><Link href="/archive" className={isActive('/archive') ? 'is-active' : undefined} aria-current={isActive('/archive') ? 'page' : undefined} onClick={closeDrawer}>Archive</Link></li>
+          <li><Link href="/studio" className={isActive('/studio') ? 'is-active' : undefined} aria-current={isActive('/studio') ? 'page' : undefined} onClick={closeDrawer}>Studio</Link></li>
+          <li><Link href="/journal" className={isActive('/journal') ? 'is-active' : undefined} aria-current={isActive('/journal') ? 'page' : undefined} onClick={closeDrawer}>Journal</Link></li>
+          <li><Link href="/custom" className={isActive('/custom') ? 'is-active' : undefined} aria-current={isActive('/custom') ? 'page' : undefined} onClick={closeDrawer}>Customize</Link></li>
         </ul>
         </nav>
         <div className="header-actions">
