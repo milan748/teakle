@@ -1,5 +1,6 @@
 import { PRODUCTS } from './data/products';
 import { JOURNAL } from './data/journal';
+import { PROCESSES } from './data/process';
 
 export default function sitemap() {
   const base = 'https://teakle.in';
@@ -43,5 +44,12 @@ export default function sitemap() {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...collectionPages, ...productPages, ...journalPages];
+  const processPages = PROCESSES.map((process) => ({
+    url: `${base}/process/${process.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...collectionPages, ...productPages, ...journalPages, ...processPages];
 }

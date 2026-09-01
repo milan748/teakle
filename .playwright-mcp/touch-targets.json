@@ -1,0 +1,263 @@
+{
+  "hamburger": {
+    "w": 44,
+    "h": 44,
+    "label": "Open menu"
+  },
+  "headerIcons": [
+    {
+      "label": "Open menu",
+      "w": 44,
+      "h": 44,
+      "tag": "BUTTON"
+    },
+    {
+      "label": "Teakle Home",
+      "w": 86,
+      "h": 24,
+      "tag": "A"
+    },
+    {
+      "label": "Account",
+      "w": 36,
+      "h": 36,
+      "tag": "A"
+    },
+    {
+      "label": "Cart",
+      "w": 36,
+      "h": 36,
+      "tag": "A"
+    },
+    {
+      "label": "Submit search",
+      "w": 40,
+      "h": 48,
+      "tag": "BUTTON"
+    },
+    {
+      "label": "Close menu",
+      "w": 48,
+      "h": 48,
+      "tag": "BUTTON"
+    },
+    {
+      "label": "Toggle Gallery submenu",
+      "w": 64,
+      "h": 64,
+      "tag": "BUTTON"
+    },
+    {
+      "label": "Search",
+      "w": 36,
+      "h": 36,
+      "tag": "BUTTON"
+    },
+    {
+      "label": "Wishlist",
+      "w": 36,
+      "h": 36,
+      "tag": "A"
+    },
+    {
+      "label": "Cart",
+      "w": 36,
+      "h": 36,
+      "tag": "A"
+    },
+    {
+      "label": "Account",
+      "w": 0,
+      "h": 0,
+      "tag": "BUTTON"
+    }
+  ],
+  "galleryNav": [
+    {
+      "label": "View image 1",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 2",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 3",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 4",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "Previous image",
+      "w": 32,
+      "h": 32
+    },
+    {
+      "label": "Next image",
+      "w": 32,
+      "h": 32
+    },
+    {
+      "label": "Previous",
+      "w": 44,
+      "h": 44
+    },
+    {
+      "label": "Next",
+      "w": 44,
+      "h": 44
+    }
+  ],
+  "galleryDots": [
+    {
+      "label": "View image 1",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 2",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 3",
+      "w": 48,
+      "h": 48
+    },
+    {
+      "label": "View image 4",
+      "w": 48,
+      "h": 48
+    }
+  ],
+  "ctaButtons": [
+    {
+      "text": "Gallery",
+      "w": 248,
+      "h": 69,
+      "tag": "A"
+    },
+    {
+      "text": "Hero Edition",
+      "w": 304,
+      "h": 69,
+      "tag": "A"
+    },
+    {
+      "text": "Studio",
+      "w": 312,
+      "h": 69,
+      "tag": "A"
+    },
+    {
+      "text": "View the Collection",
+      "w": 280,
+      "h": 34,
+      "tag": "A"
+    },
+    {
+      "text": "Our Studio",
+      "w": 59,
+      "h": 18,
+      "tag": "A"
+    },
+    {
+      "text": "View This Piece",
+      "w": 319,
+      "h": 40,
+      "tag": "A"
+    },
+    {
+      "text": "Visit the Studio",
+      "w": 103,
+      "h": 21,
+      "tag": "A"
+    },
+    {
+      "text": "The Anchor TableDiscover",
+      "w": 120,
+      "h": 200,
+      "tag": "A"
+    }
+  ],
+  "productCards": [
+    {
+      "text": "Hero Edition",
+      "w": 304,
+      "h": 69
+    },
+    {
+      "text": "View This Piece",
+      "w": 319,
+      "h": 40
+    },
+    {
+      "text": "The Anchor TableDiscover",
+      "w": 120,
+      "h": 200
+    },
+    {
+      "text": "The Bearing ChairDiscover",
+      "w": 120,
+      "h": 200
+    }
+  ],
+  "footerLinks": [
+    {
+      "text": "",
+      "w": 64,
+      "h": 18
+    },
+    {
+      "text": "",
+      "w": 36,
+      "h": 36
+    },
+    {
+      "text": "",
+      "w": 36,
+      "h": 36
+    },
+    {
+      "text": "Gallery",
+      "w": 347,
+      "h": 29
+    },
+    {
+      "text": "Archive",
+      "w": 347,
+      "h": 29
+    },
+    {
+      "text": "Studio",
+      "w": 347,
+      "h": 29
+    },
+    {
+      "text": "Journal",
+      "w": 347,
+      "h": 29
+    },
+    {
+      "text": "Trade & Bulk Inquiri",
+      "w": 347,
+      "h": 29
+    }
+  ],
+  "scrollToTop": {
+    "w": 32,
+    "h": 32,
+    "label": "Scroll to top"
+  },
+  "sendButton": {
+    "text": "",
+    "w": 44,
+    "h": 44
+  }
+}

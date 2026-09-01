@@ -1,0 +1,692 @@
+- generic [active] [ref=f21e1]:
+  - link "Skip to content" [ref=f21e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f21e3]:
+    - generic [ref=f21e4]:
+      - button "Open menu" [ref=f21e5] [cursor=pointer]
+      - link "Teakle Home" [ref=f21e9] [cursor=pointer]:
+        - /url: /
+        - img "Teakle" [ref=f21e10]
+      - generic [ref=f21e11]:
+        - link "Account" [ref=f21e12] [cursor=pointer]:
+          - /url: /login
+        - link "Cart" [ref=f21e16] [cursor=pointer]:
+          - /url: /cart
+      - navigation "Main navigation" [ref=f21e20]:
+        - list [ref=f21e21]:
+          - listitem [ref=f21e22]:
+            - generic [ref=f21e23]:
+              - generic [ref=f21e24]:
+                - textbox "Search products" [ref=f21e25]:
+                  - /placeholder: Search pieces, materials...
+                - button "Submit search" [ref=f21e26] [cursor=pointer]
+              - button "Close menu" [ref=f21e30] [cursor=pointer]
+          - listitem [ref=f21e34]:
+            - generic [ref=f21e35]:
+              - link "Gallery" [ref=f21e36] [cursor=pointer]:
+                - /url: /gallery
+              - button "Toggle Gallery submenu" [ref=f21e37] [cursor=pointer]
+            - list:
+              - listitem [ref=f21e40]:
+                - link "Hero Edition" [ref=f21e41] [cursor=pointer]:
+                  - /url: /shop/anchor-table
+              - listitem [ref=f21e42]:
+                - link "Limited Edition" [ref=f21e43] [cursor=pointer]:
+                  - /url: /gallery?availability=Limited+Edition
+          - listitem [ref=f21e44]:
+            - link "Archive" [ref=f21e45] [cursor=pointer]:
+              - /url: /archive
+          - listitem [ref=f21e46]:
+            - link "Studio" [ref=f21e47] [cursor=pointer]:
+              - /url: /studio
+          - listitem [ref=f21e48]:
+            - link "Journal" [ref=f21e49] [cursor=pointer]:
+              - /url: /journal
+          - listitem [ref=f21e50]:
+            - link "Customize" [ref=f21e51] [cursor=pointer]:
+              - /url: /custom
+          - listitem [ref=f21e52]:
+            - link "Account" [ref=f21e53] [cursor=pointer]:
+              - /url: /login
+          - listitem [ref=f21e54]:
+            - link "Cart" [ref=f21e55] [cursor=pointer]:
+              - /url: /cart
+      - generic [ref=f21e56]:
+        - button "Search" [ref=f21e57]
+        - link "Wishlist" [ref=f21e61] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Cart" [ref=f21e64] [cursor=pointer]:
+          - /url: /cart
+  - main [ref=f21e68]:
+    - generic [ref=f21e69]:
+      - generic [ref=f21e70]:
+        - img "A curated collection of handcrafted teak serving pieces on a wooden table." [ref=f21e71]
+        - generic [ref=f21e72]:
+          - generic [ref=f21e73]: Gallery
+          - heading "Every piece, handcrafted from solid timber." [level=1] [ref=f21e74]
+          - paragraph [ref=f21e75]: Browse by use case — kitchen, coffee, storage, décor, bathroom, and everyday living.
+      - navigation "Product categories" [ref=f21e76]:
+        - button "All51" [ref=f21e77] [cursor=pointer]
+        - button "Kitchen & Dining17" [ref=f21e78] [cursor=pointer]
+        - button "Coffee & Tea2" [ref=f21e79] [cursor=pointer]
+        - button "Storage & Organization11" [ref=f21e80] [cursor=pointer]
+        - button "Home Décor12" [ref=f21e81] [cursor=pointer]
+        - button "Bathroom5" [ref=f21e82] [cursor=pointer]
+        - button "Everyday Living9" [ref=f21e83] [cursor=pointer]
+      - generic [ref=f21e84]:
+        - generic [ref=f21e85]:
+          - generic [ref=f21e86]: 51 pieces
+          - button "Filters" [ref=f21e87] [cursor=pointer]
+        - combobox "Sort products" [ref=f21e90] [cursor=pointer]:
+          - option "Featured" [selected]
+          - 'option "Price: Low to High"'
+          - 'option "Price: High to Low"'
+          - 'option "Name: A–Z"'
+      - region "Product filters":
+        - generic [ref=f21e91]:
+          - generic [ref=f21e92]:
+            - heading "Price Range" [level=4] [ref=f21e93]
+            - generic [ref=f21e94]:
+              - generic [ref=f21e95]: ₹3,500
+              - generic [ref=f21e96]: ₹1,85,000
+            - generic [ref=f21e97]:
+              - slider "Minimum price": "3500"
+              - slider "Maximum price": "185000"
+          - generic [ref=f21e98]:
+            - heading "Availability" [level=4] [ref=f21e99]
+            - generic [ref=f21e100] [cursor=pointer]:
+              - radio "All" [checked] [ref=f21e101]
+              - text: All
+            - generic [ref=f21e102] [cursor=pointer]:
+              - radio "Handcrafted" [ref=f21e103]
+              - text: Handcrafted
+            - generic [ref=f21e104] [cursor=pointer]:
+              - radio "In Stock" [ref=f21e105]
+              - text: In Stock
+            - generic [ref=f21e106] [cursor=pointer]:
+              - radio "Limited Edition" [ref=f21e107]
+              - text: Limited Edition
+        - button "Clear All Filters" [ref=f21e109] [cursor=pointer]
+      - generic [ref=f21e110]:
+        - link "The Anchor Table, Solid Teak Add The Anchor Table to wishlist The Anchor Table Solid Teak ₹1,85,000" [ref=f21e111] [cursor=pointer]:
+          - /url: /shop/anchor-table
+          - generic [ref=f21e112]:
+            - img "The Anchor Table, Solid Teak" [ref=f21e113]
+            - button "Add The Anchor Table to wishlist" [ref=f21e114]
+          - generic [ref=f21e117]:
+            - generic [ref=f21e118]:
+              - heading "The Anchor Table" [level=3] [ref=f21e119]
+              - generic [ref=f21e120]: Solid Teak
+            - generic [ref=f21e121]: ₹1,85,000
+        - link "The Bearing Chair, Solid Teak Add The Bearing Chair to wishlist The Bearing Chair Solid Teak ₹68,000" [ref=f21e122] [cursor=pointer]:
+          - /url: /shop/bearing-chair
+          - generic [ref=f21e123]:
+            - img "The Bearing Chair, Solid Teak" [ref=f21e124]
+            - button "Add The Bearing Chair to wishlist" [ref=f21e125]
+          - generic [ref=f21e128]:
+            - generic [ref=f21e129]:
+              - heading "The Bearing Chair" [level=3] [ref=f21e130]
+              - generic [ref=f21e131]: Solid Teak
+            - generic [ref=f21e132]: ₹68,000
+        - link "The Circle Table, Solid Teak Add The Circle Table to wishlist The Circle Table Solid Teak ₹72,000" [ref=f21e133] [cursor=pointer]:
+          - /url: /shop/circle-table
+          - generic [ref=f21e134]:
+            - img "The Circle Table, Solid Teak" [ref=f21e135]
+            - button "Add The Circle Table to wishlist" [ref=f21e136]
+          - generic [ref=f21e139]:
+            - generic [ref=f21e140]:
+              - heading "The Circle Table" [level=3] [ref=f21e141]
+              - generic [ref=f21e142]: Solid Teak
+            - generic [ref=f21e143]: ₹72,000
+        - link "The Hollow Bench, Solid Teak Add The Hollow Bench to wishlist The Hollow Bench Solid Teak ₹54,000" [ref=f21e144] [cursor=pointer]:
+          - /url: /shop/hollow-bench
+          - generic [ref=f21e145]:
+            - img "The Hollow Bench, Solid Teak" [ref=f21e146]
+            - button "Add The Hollow Bench to wishlist" [ref=f21e147]
+          - generic [ref=f21e150]:
+            - generic [ref=f21e151]:
+              - heading "The Hollow Bench" [level=3] [ref=f21e152]
+              - generic [ref=f21e153]: Solid Teak
+            - generic [ref=f21e154]: ₹54,000
+        - link "The Spice Shelf, Solid Teak Add The Spice Shelf to wishlist The Spice Shelf Solid Teak ₹12,000" [ref=f21e155] [cursor=pointer]:
+          - /url: /shop/spice-shelf
+          - generic [ref=f21e156]:
+            - img "The Spice Shelf, Solid Teak" [ref=f21e157]
+            - button "Add The Spice Shelf to wishlist" [ref=f21e158]
+          - generic [ref=f21e161]:
+            - generic [ref=f21e162]:
+              - heading "The Spice Shelf" [level=3] [ref=f21e163]
+              - generic [ref=f21e164]: Solid Teak
+            - generic [ref=f21e165]: ₹12,000
+        - link "Pour-Over Station, Solid Teak Add Pour-Over Station to wishlist Pour-Over Station Solid Teak ₹18,000" [ref=f21e166] [cursor=pointer]:
+          - /url: /shop/pour-over-station
+          - generic [ref=f21e167]:
+            - img "Pour-Over Station, Solid Teak" [ref=f21e168]
+            - button "Add Pour-Over Station to wishlist" [ref=f21e169]
+          - generic [ref=f21e172]:
+            - generic [ref=f21e173]:
+              - heading "Pour-Over Station" [level=3] [ref=f21e174]
+              - generic [ref=f21e175]: Solid Teak
+            - generic [ref=f21e176]: ₹18,000
+        - link "The Carving Board, End-grain Teak Add The Carving Board to wishlist The Carving Board End-grain Teak ₹8,500" [ref=f21e177] [cursor=pointer]:
+          - /url: /shop/carving-board
+          - generic [ref=f21e178]:
+            - img "The Carving Board, End-grain Teak" [ref=f21e179]
+            - button "Add The Carving Board to wishlist" [ref=f21e180]
+          - generic [ref=f21e183]:
+            - generic [ref=f21e184]:
+              - heading "The Carving Board" [level=3] [ref=f21e185]
+              - generic [ref=f21e186]: End-grain Teak
+            - generic [ref=f21e187]: ₹8,500
+        - link "The Bread Box, Solid Teak Add The Bread Box to wishlist The Bread Box Solid Teak ₹14,000" [ref=f21e188] [cursor=pointer]:
+          - /url: /shop/bread-box
+          - generic [ref=f21e189]:
+            - img "The Bread Box, Solid Teak" [ref=f21e190]
+            - button "Add The Bread Box to wishlist" [ref=f21e191]
+          - generic [ref=f21e194]:
+            - generic [ref=f21e195]:
+              - heading "The Bread Box" [level=3] [ref=f21e196]
+              - generic [ref=f21e197]: Solid Teak
+            - generic [ref=f21e198]: ₹14,000
+        - link "Drift Sculpture, Solid Teak, Natural Stone Add Drift Sculpture to wishlist Drift Sculpture Solid Teak, Natural Stone ₹24,000" [ref=f21e199] [cursor=pointer]:
+          - /url: /shop/drift-sculpture
+          - generic [ref=f21e200]:
+            - img "Drift Sculpture, Solid Teak, Natural Stone" [ref=f21e201]
+            - button "Add Drift Sculpture to wishlist" [ref=f21e202]
+          - generic [ref=f21e205]:
+            - generic [ref=f21e206]:
+              - heading "Drift Sculpture" [level=3] [ref=f21e207]
+              - generic [ref=f21e208]: Solid Teak, Natural Stone
+            - generic [ref=f21e209]: ₹24,000
+        - link "Hourglass Vase, Solid Teak Add Hourglass Vase to wishlist Hourglass Vase Solid Teak ₹9,500" [ref=f21e210] [cursor=pointer]:
+          - /url: /shop/hourglass-vase
+          - generic [ref=f21e211]:
+            - img "Hourglass Vase, Solid Teak" [ref=f21e212]
+            - button "Add Hourglass Vase to wishlist" [ref=f21e213]
+          - generic [ref=f21e216]:
+            - generic [ref=f21e217]:
+              - heading "Hourglass Vase" [level=3] [ref=f21e218]
+              - generic [ref=f21e219]: Solid Teak
+            - generic [ref=f21e220]: ₹9,500
+        - link "Blanket Ladder, Solid Teak Add Blanket Ladder to wishlist Blanket Ladder Solid Teak ₹16,000" [ref=f21e221] [cursor=pointer]:
+          - /url: /shop/blanket-ladder
+          - generic [ref=f21e222]:
+            - img "Blanket Ladder, Solid Teak" [ref=f21e223]
+            - button "Add Blanket Ladder to wishlist" [ref=f21e224]
+          - generic [ref=f21e227]:
+            - generic [ref=f21e228]:
+              - heading "Blanket Ladder" [level=3] [ref=f21e229]
+              - generic [ref=f21e230]: Solid Teak
+            - generic [ref=f21e231]: ₹16,000
+        - link "Bedside Tray, Solid Teak Add Bedside Tray to wishlist Bedside Tray Solid Teak ₹7,500" [ref=f21e232] [cursor=pointer]:
+          - /url: /shop/bedside-tray
+          - generic [ref=f21e233]:
+            - img "Bedside Tray, Solid Teak" [ref=f21e234]
+            - button "Add Bedside Tray to wishlist" [ref=f21e235]
+          - generic [ref=f21e238]:
+            - generic [ref=f21e239]:
+              - heading "Bedside Tray" [level=3] [ref=f21e240]
+              - generic [ref=f21e241]: Solid Teak
+            - generic [ref=f21e242]: ₹7,500
+        - link "Jewellery Box, Solid Teak, Felt Lining Add Jewellery Box to wishlist Jewellery Box Solid Teak, Felt Lining ₹11,000" [ref=f21e243] [cursor=pointer]:
+          - /url: /shop/jewellery-box
+          - generic [ref=f21e244]:
+            - img "Jewellery Box, Solid Teak, Felt Lining" [ref=f21e245]
+            - button "Add Jewellery Box to wishlist" [ref=f21e246]
+          - generic [ref=f21e249]:
+            - generic [ref=f21e250]:
+              - heading "Jewellery Box" [level=3] [ref=f21e251]
+              - generic [ref=f21e252]: Solid Teak, Felt Lining
+            - generic [ref=f21e253]: ₹11,000
+        - link "Frame Mirror, Solid Teak, Bevelled Mirror Glass Add Frame Mirror to wishlist Frame Mirror Solid Teak, Bevelled Mirror Glass ₹22,000" [ref=f21e254] [cursor=pointer]:
+          - /url: /shop/frame-mirror
+          - generic [ref=f21e255]:
+            - img "Frame Mirror, Solid Teak, Bevelled Mirror Glass" [ref=f21e256]
+            - button "Add Frame Mirror to wishlist" [ref=f21e257]
+          - generic [ref=f21e260]:
+            - generic [ref=f21e261]:
+              - heading "Frame Mirror" [level=3] [ref=f21e262]
+              - generic [ref=f21e263]: Solid Teak, Bevelled Mirror Glass
+            - generic [ref=f21e264]: ₹22,000
+        - link "Desk Caddy, Solid Teak Add Desk Caddy to wishlist Desk Caddy Solid Teak ₹9,000" [ref=f21e265] [cursor=pointer]:
+          - /url: /shop/desk-caddy
+          - generic [ref=f21e266]:
+            - img "Desk Caddy, Solid Teak" [ref=f21e267]
+            - button "Add Desk Caddy to wishlist" [ref=f21e268]
+          - generic [ref=f21e271]:
+            - generic [ref=f21e272]:
+              - heading "Desk Caddy" [level=3] [ref=f21e273]
+              - generic [ref=f21e274]: Solid Teak
+            - generic [ref=f21e275]: ₹9,000
+        - link "Pen Stand, Solid Teak Add Pen Stand to wishlist Pen Stand Solid Teak ₹4,500" [ref=f21e276] [cursor=pointer]:
+          - /url: /shop/pen-stand
+          - generic [ref=f21e277]:
+            - img "Pen Stand, Solid Teak" [ref=f21e278]
+            - button "Add Pen Stand to wishlist" [ref=f21e279]
+          - generic [ref=f21e282]:
+            - generic [ref=f21e283]:
+              - heading "Pen Stand" [level=3] [ref=f21e284]
+              - generic [ref=f21e285]: Solid Teak
+            - generic [ref=f21e286]: ₹4,500
+        - link "Laptop Riser, Solid Teak Add Laptop Riser to wishlist Laptop Riser Solid Teak ₹12,000" [ref=f21e287] [cursor=pointer]:
+          - /url: /shop/laptop-riser
+          - generic [ref=f21e288]:
+            - img "Laptop Riser, Solid Teak" [ref=f21e289]
+            - button "Add Laptop Riser to wishlist" [ref=f21e290]
+          - generic [ref=f21e293]:
+            - generic [ref=f21e294]:
+              - heading "Laptop Riser" [level=3] [ref=f21e295]
+              - generic [ref=f21e296]: Solid Teak
+            - generic [ref=f21e297]: ₹12,000
+        - link "Vanity Tray, Solid Teak Add Vanity Tray to wishlist Vanity Tray Solid Teak ₹6,500" [ref=f21e298] [cursor=pointer]:
+          - /url: /shop/vanity-tray
+          - generic [ref=f21e299]:
+            - img "Vanity Tray, Solid Teak" [ref=f21e300]
+            - button "Add Vanity Tray to wishlist" [ref=f21e301]
+          - generic [ref=f21e304]:
+            - generic [ref=f21e305]:
+              - heading "Vanity Tray" [level=3] [ref=f21e306]
+              - generic [ref=f21e307]: Solid Teak
+            - generic [ref=f21e308]: ₹6,500
+        - link "Soap Stone, Solid Teak Add Soap Stone to wishlist Soap Stone Solid Teak ₹5,500" [ref=f21e309] [cursor=pointer]:
+          - /url: /shop/soap-stone
+          - generic [ref=f21e310]:
+            - img "Soap Stone, Solid Teak" [ref=f21e311]
+            - button "Add Soap Stone to wishlist" [ref=f21e312]
+          - generic [ref=f21e315]:
+            - generic [ref=f21e316]:
+              - heading "Soap Stone" [level=3] [ref=f21e317]
+              - generic [ref=f21e318]: Solid Teak
+            - generic [ref=f21e319]: ₹5,500
+        - link "Tumbler, Solid Teak Add Tumbler to wishlist Tumbler Solid Teak ₹4,000" [ref=f21e320] [cursor=pointer]:
+          - /url: /shop/tumbler
+          - generic [ref=f21e321]:
+            - img "Tumbler, Solid Teak" [ref=f21e322]
+            - button "Add Tumbler to wishlist" [ref=f21e323]
+          - generic [ref=f21e326]:
+            - generic [ref=f21e327]:
+              - heading "Tumbler" [level=3] [ref=f21e328]
+              - generic [ref=f21e329]: Solid Teak
+            - generic [ref=f21e330]: ₹4,000
+        - link "Herb Planter, Solid Teak Add Herb Planter to wishlist Herb Planter Solid Teak ₹8,000" [ref=f21e331] [cursor=pointer]:
+          - /url: /shop/herb-planter
+          - generic [ref=f21e332]:
+            - img "Herb Planter, Solid Teak" [ref=f21e333]
+            - button "Add Herb Planter to wishlist" [ref=f21e334]
+          - generic [ref=f21e337]:
+            - generic [ref=f21e338]:
+              - heading "Herb Planter" [level=3] [ref=f21e339]
+              - generic [ref=f21e340]: Solid Teak
+            - generic [ref=f21e341]: ₹8,000
+        - link "Stone Lantern, Solid Teak, Natural Stone Add Stone Lantern to wishlist Stone Lantern Solid Teak, Natural Stone ₹15,000" [ref=f21e342] [cursor=pointer]:
+          - /url: /shop/stone-lantern
+          - generic [ref=f21e343]:
+            - img "Stone Lantern, Solid Teak, Natural Stone" [ref=f21e344]
+            - button "Add Stone Lantern to wishlist" [ref=f21e345]
+          - generic [ref=f21e348]:
+            - generic [ref=f21e349]:
+              - heading "Stone Lantern" [level=3] [ref=f21e350]
+              - generic [ref=f21e351]: Solid Teak, Natural Stone
+            - generic [ref=f21e352]: ₹15,000
+        - link "Serving Plank, Solid Teak (live edge) Add Serving Plank to wishlist Serving Plank Solid Teak (live edge) ₹7,000" [ref=f21e353] [cursor=pointer]:
+          - /url: /shop/serving-plank
+          - generic [ref=f21e354]:
+            - img "Serving Plank, Solid Teak (live edge)" [ref=f21e355]
+            - button "Add Serving Plank to wishlist" [ref=f21e356]
+          - generic [ref=f21e359]:
+            - generic [ref=f21e360]:
+              - heading "Serving Plank" [level=3] [ref=f21e361]
+              - generic [ref=f21e362]: Solid Teak (live edge)
+            - generic [ref=f21e363]: ₹7,000
+        - link "The Carve Board, Solid Teak Add The Carve Board to wishlist The Carve Board Solid Teak ₹6,500" [ref=f21e364] [cursor=pointer]:
+          - /url: /shop/carve-board
+          - generic [ref=f21e365]:
+            - img "The Carve Board, Solid Teak" [ref=f21e366]
+            - button "Add The Carve Board to wishlist" [ref=f21e367]
+          - generic [ref=f21e370]:
+            - generic [ref=f21e371]:
+              - heading "The Carve Board" [level=3] [ref=f21e372]
+              - generic [ref=f21e373]: Solid Teak
+            - generic [ref=f21e374]: ₹6,500
+        - link "The Tray, Solid Teak Add The Tray to wishlist The Tray Solid Teak ₹8,500" [ref=f21e375] [cursor=pointer]:
+          - /url: /shop/the-tray
+          - generic [ref=f21e376]:
+            - img "The Tray, Solid Teak" [ref=f21e377]
+            - button "Add The Tray to wishlist" [ref=f21e378]
+          - generic [ref=f21e381]:
+            - generic [ref=f21e382]:
+              - heading "The Tray" [level=3] [ref=f21e383]
+              - generic [ref=f21e384]: Solid Teak
+            - generic [ref=f21e385]: ₹8,500
+        - link "Nesting Bowls, Solid Teak Add Nesting Bowls to wishlist Nesting Bowls Solid Teak ₹11,000" [ref=f21e386] [cursor=pointer]:
+          - /url: /shop/nesting-bowls
+          - generic [ref=f21e387]:
+            - img "Nesting Bowls, Solid Teak" [ref=f21e388]
+            - button "Add Nesting Bowls to wishlist" [ref=f21e389]
+          - generic [ref=f21e392]:
+            - generic [ref=f21e393]:
+              - heading "Nesting Bowls" [level=3] [ref=f21e394]
+              - generic [ref=f21e395]: Solid Teak
+            - generic [ref=f21e396]: ₹11,000
+        - link "Diya Holder, Solid Teak Add Diya Holder to wishlist Diya Holder Solid Teak ₹3,500" [ref=f21e397] [cursor=pointer]:
+          - /url: /shop/diya-holder
+          - generic [ref=f21e398]:
+            - img "Diya Holder, Solid Teak" [ref=f21e399]
+            - button "Add Diya Holder to wishlist" [ref=f21e400]
+          - generic [ref=f21e403]:
+            - generic [ref=f21e404]:
+              - heading "Diya Holder" [level=3] [ref=f21e405]
+              - generic [ref=f21e406]: Solid Teak
+            - generic [ref=f21e407]: ₹3,500
+        - link "Collector's Bowl, Reclaimed Teak Limited Edition Add Collector's Bowl to wishlist Collector's Bowl Reclaimed Teak ₹35,000" [ref=f21e408] [cursor=pointer]:
+          - /url: /shop/collectors-bowl
+          - generic [ref=f21e409]:
+            - img "Collector's Bowl, Reclaimed Teak" [ref=f21e410]
+            - generic [ref=f21e411]: Limited Edition
+            - button "Add Collector's Bowl to wishlist" [ref=f21e412]
+          - generic [ref=f21e415]:
+            - generic [ref=f21e416]:
+              - heading "Collector's Bowl" [level=3] [ref=f21e417]
+              - generic [ref=f21e418]: Reclaimed Teak
+            - generic [ref=f21e419]: ₹35,000
+        - link "Wall Spice Rack, Solid Teak Add Wall Spice Rack to wishlist Wall Spice Rack Solid Teak ₹9,500" [ref=f21e420] [cursor=pointer]:
+          - /url: /shop/spice-rack
+          - generic [ref=f21e421]:
+            - img "Wall Spice Rack, Solid Teak" [ref=f21e422]
+            - button "Add Wall Spice Rack to wishlist" [ref=f21e423]
+          - generic [ref=f21e426]:
+            - generic [ref=f21e427]:
+              - heading "Wall Spice Rack" [level=3] [ref=f21e428]
+              - generic [ref=f21e429]: Solid Teak
+            - generic [ref=f21e430]: ₹9,500
+        - link "The Rolling Pin, Solid Teak Add The Rolling Pin to wishlist The Rolling Pin Solid Teak ₹5,500" [ref=f21e431] [cursor=pointer]:
+          - /url: /shop/rolling-pin
+          - generic [ref=f21e432]:
+            - img "The Rolling Pin, Solid Teak" [ref=f21e433]
+            - button "Add The Rolling Pin to wishlist" [ref=f21e434]
+          - generic [ref=f21e437]:
+            - generic [ref=f21e438]:
+              - heading "The Rolling Pin" [level=3] [ref=f21e439]
+              - generic [ref=f21e440]: Solid Teak
+            - generic [ref=f21e441]: ₹5,500
+        - link "Flour Dish, Solid Teak Add Flour Dish to wishlist Flour Dish Solid Teak ₹6,000" [ref=f21e442] [cursor=pointer]:
+          - /url: /shop/flour-dish
+          - generic [ref=f21e443]:
+            - img "Flour Dish, Solid Teak" [ref=f21e444]
+            - button "Add Flour Dish to wishlist" [ref=f21e445]
+          - generic [ref=f21e448]:
+            - generic [ref=f21e449]:
+              - heading "Flour Dish" [level=3] [ref=f21e450]
+              - generic [ref=f21e451]: Solid Teak
+            - generic [ref=f21e452]: ₹6,000
+        - link "Tea Caddy, Solid Teak Add Tea Caddy to wishlist Tea Caddy Solid Teak ₹7,000" [ref=f21e453] [cursor=pointer]:
+          - /url: /shop/tea-caddy
+          - generic [ref=f21e454]:
+            - img "Tea Caddy, Solid Teak" [ref=f21e455]
+            - button "Add Tea Caddy to wishlist" [ref=f21e456]
+          - generic [ref=f21e459]:
+            - generic [ref=f21e460]:
+              - heading "Tea Caddy" [level=3] [ref=f21e461]
+              - generic [ref=f21e462]: Solid Teak
+            - generic [ref=f21e463]: ₹7,000
+        - link "Cutlery Rest Set, Solid Teak Add Cutlery Rest Set to wishlist Cutlery Rest Set Solid Teak ₹4,000" [ref=f21e464] [cursor=pointer]:
+          - /url: /shop/cutlery-set
+          - generic [ref=f21e465]:
+            - img "Cutlery Rest Set, Solid Teak" [ref=f21e466]
+            - button "Add Cutlery Rest Set to wishlist" [ref=f21e467]
+          - generic [ref=f21e470]:
+            - generic [ref=f21e471]:
+              - heading "Cutlery Rest Set" [level=3] [ref=f21e472]
+              - generic [ref=f21e473]: Solid Teak
+            - generic [ref=f21e474]: ₹4,000
+        - link "Wine Coaster Set, Solid Teak, Felt Add Wine Coaster Set to wishlist Wine Coaster Set Solid Teak, Felt ₹5,000" [ref=f21e475] [cursor=pointer]:
+          - /url: /shop/wine-coaster
+          - generic [ref=f21e476]:
+            - img "Wine Coaster Set, Solid Teak, Felt" [ref=f21e477]
+            - button "Add Wine Coaster Set to wishlist" [ref=f21e478]
+          - generic [ref=f21e481]:
+            - generic [ref=f21e482]:
+              - heading "Wine Coaster Set" [level=3] [ref=f21e483]
+              - generic [ref=f21e484]: Solid Teak, Felt
+            - generic [ref=f21e485]: ₹5,000
+        - link "Centrepiece Bowl, Solid Teak Add Centrepiece Bowl to wishlist Centrepiece Bowl Solid Teak ₹15,000" [ref=f21e486] [cursor=pointer]:
+          - /url: /shop/centrepiece-bowl
+          - generic [ref=f21e487]:
+            - img "Centrepiece Bowl, Solid Teak" [ref=f21e488]
+            - button "Add Centrepiece Bowl to wishlist" [ref=f21e489]
+          - generic [ref=f21e492]:
+            - generic [ref=f21e493]:
+              - heading "Centrepiece Bowl" [level=3] [ref=f21e494]
+              - generic [ref=f21e495]: Solid Teak
+            - generic [ref=f21e496]: ₹15,000
+        - link "Candle Bowl, Solid Teak Add Candle Bowl to wishlist Candle Bowl Solid Teak ₹6,500" [ref=f21e497] [cursor=pointer]:
+          - /url: /shop/candle-bowl
+          - generic [ref=f21e498]:
+            - img "Candle Bowl, Solid Teak" [ref=f21e499]
+            - button "Add Candle Bowl to wishlist" [ref=f21e500]
+          - generic [ref=f21e503]:
+            - generic [ref=f21e504]:
+              - heading "Candle Bowl" [level=3] [ref=f21e505]
+              - generic [ref=f21e506]: Solid Teak
+            - generic [ref=f21e507]: ₹6,500
+        - link "Sculptural Objects Set, Solid Teak Add Sculptural Objects Set to wishlist Sculptural Objects Set Solid Teak ₹19,000" [ref=f21e508] [cursor=pointer]:
+          - /url: /shop/decorative-objects-set
+          - generic [ref=f21e509]:
+            - img "Sculptural Objects Set, Solid Teak" [ref=f21e510]
+            - button "Add Sculptural Objects Set to wishlist" [ref=f21e511]
+          - generic [ref=f21e514]:
+            - generic [ref=f21e515]:
+              - heading "Sculptural Objects Set" [level=3] [ref=f21e516]
+              - generic [ref=f21e517]: Solid Teak
+            - generic [ref=f21e518]: ₹19,000
+        - link "Floating Shelf Set, Solid Teak Add Floating Shelf Set to wishlist Floating Shelf Set Solid Teak ₹18,000" [ref=f21e519] [cursor=pointer]:
+          - /url: /shop/floating-shelf-set
+          - generic [ref=f21e520]:
+            - img "Floating Shelf Set, Solid Teak" [ref=f21e521]
+            - button "Add Floating Shelf Set to wishlist" [ref=f21e522]
+          - generic [ref=f21e525]:
+            - generic [ref=f21e526]:
+              - heading "Floating Shelf Set" [level=3] [ref=f21e527]
+              - generic [ref=f21e528]: Solid Teak
+            - generic [ref=f21e529]: ₹18,000
+        - link "Candle Holder Set, Solid Teak Add Candle Holder Set to wishlist Candle Holder Set Solid Teak ₹8,000" [ref=f21e530] [cursor=pointer]:
+          - /url: /shop/candle-holder-set
+          - generic [ref=f21e531]:
+            - img "Candle Holder Set, Solid Teak" [ref=f21e532]
+            - button "Add Candle Holder Set to wishlist" [ref=f21e533]
+          - generic [ref=f21e536]:
+            - generic [ref=f21e537]:
+              - heading "Candle Holder Set" [level=3] [ref=f21e538]
+              - generic [ref=f21e539]: Solid Teak
+            - generic [ref=f21e540]: ₹8,000
+        - link "Trinket Dish, Solid Teak Add Trinket Dish to wishlist Trinket Dish Solid Teak ₹4,500" [ref=f21e541] [cursor=pointer]:
+          - /url: /shop/trinket-dish
+          - generic [ref=f21e542]:
+            - img "Trinket Dish, Solid Teak" [ref=f21e543]
+            - button "Add Trinket Dish to wishlist" [ref=f21e544]
+          - generic [ref=f21e547]:
+            - generic [ref=f21e548]:
+              - heading "Trinket Dish" [level=3] [ref=f21e549]
+              - generic [ref=f21e550]: Solid Teak
+            - generic [ref=f21e551]: ₹4,500
+        - link "Perfume Stand, Solid Teak Add Perfume Stand to wishlist Perfume Stand Solid Teak ₹5,000" [ref=f21e552] [cursor=pointer]:
+          - /url: /shop/perfume-stand
+          - generic [ref=f21e553]:
+            - img "Perfume Stand, Solid Teak" [ref=f21e554]
+            - button "Add Perfume Stand to wishlist" [ref=f21e555]
+          - generic [ref=f21e558]:
+            - generic [ref=f21e559]:
+              - heading "Perfume Stand" [level=3] [ref=f21e560]
+              - generic [ref=f21e561]: Solid Teak
+            - generic [ref=f21e562]: ₹5,000
+        - link "Lamp Base, Solid Teak Add Lamp Base to wishlist Lamp Base Solid Teak ₹12,000" [ref=f21e563] [cursor=pointer]:
+          - /url: /shop/bedside-lamp-base
+          - generic [ref=f21e564]:
+            - img "Lamp Base, Solid Teak" [ref=f21e565]
+            - button "Add Lamp Base to wishlist" [ref=f21e566]
+          - generic [ref=f21e569]:
+            - generic [ref=f21e570]:
+              - heading "Lamp Base" [level=3] [ref=f21e571]
+              - generic [ref=f21e572]: Solid Teak
+            - generic [ref=f21e573]: ₹12,000
+        - link "File Organiser, Solid Teak Add File Organiser to wishlist File Organiser Solid Teak ₹11,000" [ref=f21e574] [cursor=pointer]:
+          - /url: /shop/file-organizer
+          - generic [ref=f21e575]:
+            - img "File Organiser, Solid Teak" [ref=f21e576]
+            - button "Add File Organiser to wishlist" [ref=f21e577]
+          - generic [ref=f21e580]:
+            - generic [ref=f21e581]:
+              - heading "File Organiser" [level=3] [ref=f21e582]
+              - generic [ref=f21e583]: Solid Teak
+            - generic [ref=f21e584]: ₹11,000
+        - link "Desk Clock, Solid Teak, Quartz Movement Add Desk Clock to wishlist Desk Clock Solid Teak, Quartz Movement ₹8,500" [ref=f21e585] [cursor=pointer]:
+          - /url: /shop/desk-clock
+          - generic [ref=f21e586]:
+            - img "Desk Clock, Solid Teak, Quartz Movement" [ref=f21e587]
+            - button "Add Desk Clock to wishlist" [ref=f21e588]
+          - generic [ref=f21e591]:
+            - generic [ref=f21e592]:
+              - heading "Desk Clock" [level=3] [ref=f21e593]
+              - generic [ref=f21e594]: Solid Teak, Quartz Movement
+            - generic [ref=f21e595]: ₹8,500
+        - link "Business Card Holder, Solid Teak Add Business Card Holder to wishlist Business Card Holder Solid Teak ₹4,000" [ref=f21e596] [cursor=pointer]:
+          - /url: /shop/business-card-holder
+          - generic [ref=f21e597]:
+            - img "Business Card Holder, Solid Teak" [ref=f21e598]
+            - button "Add Business Card Holder to wishlist" [ref=f21e599]
+          - generic [ref=f21e602]:
+            - generic [ref=f21e603]:
+              - heading "Business Card Holder" [level=3] [ref=f21e604]
+              - generic [ref=f21e605]: Solid Teak
+            - generic [ref=f21e606]: ₹4,000
+        - link "Bath Shelf, Solid Teak Add Bath Shelf to wishlist Bath Shelf Solid Teak ₹9,000" [ref=f21e607] [cursor=pointer]:
+          - /url: /shop/bath-shelf
+          - generic [ref=f21e608]:
+            - img "Bath Shelf, Solid Teak" [ref=f21e609]
+            - button "Add Bath Shelf to wishlist" [ref=f21e610]
+          - generic [ref=f21e613]:
+            - generic [ref=f21e614]:
+              - heading "Bath Shelf" [level=3] [ref=f21e615]
+              - generic [ref=f21e616]: Solid Teak
+            - generic [ref=f21e617]: ₹9,000
+        - link "Bath Mat, Solid Teak Add Bath Mat to wishlist Bath Mat Solid Teak ₹12,000" [ref=f21e618] [cursor=pointer]:
+          - /url: /shop/bath-mat
+          - generic [ref=f21e619]:
+            - img "Bath Mat, Solid Teak" [ref=f21e620]
+            - button "Add Bath Mat to wishlist" [ref=f21e621]
+          - generic [ref=f21e624]:
+            - generic [ref=f21e625]:
+              - heading "Bath Mat" [level=3] [ref=f21e626]
+              - generic [ref=f21e627]: Solid Teak
+            - generic [ref=f21e628]: ₹12,000
+        - link "Plant Pot Stand, Solid Teak Add Plant Pot Stand to wishlist Plant Pot Stand Solid Teak ₹7,500" [ref=f21e629] [cursor=pointer]:
+          - /url: /shop/plant-pot-stand
+          - generic [ref=f21e630]:
+            - img "Plant Pot Stand, Solid Teak" [ref=f21e631]
+            - button "Add Plant Pot Stand to wishlist" [ref=f21e632]
+          - generic [ref=f21e635]:
+            - generic [ref=f21e636]:
+              - heading "Plant Pot Stand" [level=3] [ref=f21e637]
+              - generic [ref=f21e638]: Solid Teak
+            - generic [ref=f21e639]: ₹7,500
+        - link "Garden Tool Set, Solid Teak, Steel Tools Add Garden Tool Set to wishlist Garden Tool Set Solid Teak, Steel Tools ₹14,000" [ref=f21e640] [cursor=pointer]:
+          - /url: /shop/garden-tool-set
+          - generic [ref=f21e641]:
+            - img "Garden Tool Set, Solid Teak, Steel Tools" [ref=f21e642]
+            - button "Add Garden Tool Set to wishlist" [ref=f21e643]
+          - generic [ref=f21e646]:
+            - generic [ref=f21e647]:
+              - heading "Garden Tool Set" [level=3] [ref=f21e648]
+              - generic [ref=f21e649]: Solid Teak, Steel Tools
+            - generic [ref=f21e650]: ₹14,000
+        - link "Limited Edition Vase, Reclaimed Teak Limited Edition Add Limited Edition Vase to wishlist Limited Edition Vase Reclaimed Teak ₹28,000" [ref=f21e651] [cursor=pointer]:
+          - /url: /shop/limited-vase
+          - generic [ref=f21e652]:
+            - img "Limited Edition Vase, Reclaimed Teak" [ref=f21e653]
+            - generic [ref=f21e654]: Limited Edition
+            - button "Add Limited Edition Vase to wishlist" [ref=f21e655]
+          - generic [ref=f21e658]:
+            - generic [ref=f21e659]:
+              - heading "Limited Edition Vase" [level=3] [ref=f21e660]
+              - generic [ref=f21e661]: Reclaimed Teak
+            - generic [ref=f21e662]: ₹28,000
+        - link "Artisan Gift Box, Solid Teak Add Artisan Gift Box to wishlist Artisan Gift Box Solid Teak ₹16,000" [ref=f21e663] [cursor=pointer]:
+          - /url: /shop/gift-box
+          - generic [ref=f21e664]:
+            - img "Artisan Gift Box, Solid Teak" [ref=f21e665]
+            - button "Add Artisan Gift Box to wishlist" [ref=f21e666]
+          - generic [ref=f21e669]:
+            - generic [ref=f21e670]:
+              - heading "Artisan Gift Box" [level=3] [ref=f21e671]
+              - generic [ref=f21e672]: Solid Teak
+            - generic [ref=f21e673]: ₹16,000
+      - paragraph [ref=f21e675]:
+        - text: Most pieces are in stock and ship within a week. For bespoke creations, visit our
+        - link "custom orders page" [ref=f21e676] [cursor=pointer]:
+          - /url: /custom
+        - text: .
+  - contentinfo [ref=f21e677]:
+    - generic [ref=f21e678]:
+      - generic [ref=f21e679]:
+        - generic [ref=f21e680]:
+          - link [ref=f21e681] [cursor=pointer]:
+            - /url: /
+            - img "Teakle" [ref=f21e682]
+          - paragraph [ref=f21e683]: Made by hand in India, one piece at a time.
+          - generic [ref=f21e684]:
+            - link "Instagram" [ref=f21e685] [cursor=pointer]:
+              - /url: https://www.instagram.com/teaklestudio
+            - link "Email" [ref=f21e690] [cursor=pointer]:
+              - /url: mailto:hello@teakle.in
+        - generic [ref=f21e694]:
+          - heading "Explore" [level=3] [ref=f21e695]
+          - navigation "Explore" [ref=f21e696]:
+            - list [ref=f21e697]:
+              - listitem [ref=f21e698]:
+                - link "Gallery" [ref=f21e699] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=f21e700]:
+                - link "Archive" [ref=f21e701] [cursor=pointer]:
+                  - /url: /archive
+              - listitem [ref=f21e702]:
+                - link "Studio" [ref=f21e703] [cursor=pointer]:
+                  - /url: /studio
+              - listitem [ref=f21e704]:
+                - link "Journal" [ref=f21e705] [cursor=pointer]:
+                  - /url: /journal
+        - generic [ref=f21e706]:
+          - heading "Services" [level=3] [ref=f21e707]
+          - navigation "Services" [ref=f21e708]:
+            - list [ref=f21e709]:
+              - listitem [ref=f21e710]:
+                - link "Trade & Bulk Inquiries" [ref=f21e711] [cursor=pointer]:
+                  - /url: /trade
+              - listitem [ref=f21e712]:
+                - link "Contact" [ref=f21e713] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=f21e714]:
+                - link "Custom Orders" [ref=f21e715] [cursor=pointer]:
+                  - /url: /custom
+        - generic [ref=f21e716]:
+          - heading "From the Workshop" [level=3] [ref=f21e717]
+          - paragraph [ref=f21e718]: Receive occasional notes from the workshop. No spam. No offers. Only stories.
+          - form "Newsletter signup" [ref=f21e719]:
+            - generic [ref=f21e720]: Email address for newsletter
+            - textbox "Email address for newsletter" [ref=f21e721]:
+              - /placeholder: Your email
+            - button "Send" [ref=f21e722] [cursor=pointer]
+      - generic [ref=f21e723]:
+        - generic [ref=f21e724]: © 2026 Teakle. Handcrafted in India.
+        - generic [ref=f21e725]:
+          - link "Privacy" [ref=f21e726] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f21e727] [cursor=pointer]:
+            - /url: /terms
+          - link "Shipping" [ref=f21e728] [cursor=pointer]:
+            - /url: /shipping
+          - link "Returns & Refunds" [ref=f21e729] [cursor=pointer]:
+            - /url: /returns-and-refunds
+          - link "Cancellation" [ref=f21e730] [cursor=pointer]:
+            - /url: /cancellation
+          - link "Warranty" [ref=f21e731] [cursor=pointer]:
+            - /url: /warranty

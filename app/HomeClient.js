@@ -8,7 +8,6 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   const heroRef = useRef(null)
   const sigSectionRef = useRef(null)
   const carouselTrackRef = useRef(null)
-  const [revealStage, setRevealStage] = useState(0)
   const [galleryIdx, setGalleryIdx] = useState(0)
 
   const hero = cms.hero || {}
@@ -135,114 +134,99 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
     }
   }, [])
 
-  /* ---- Signature section one-shot cinematic reveal ---- */
+  /* ---- Signature section block-based reveal (one-shot, non-rewinding) ---- */
   useEffect(() => {
     const section = sigSectionRef.current
     if (!section) return
 
+    /* Reduced motion: show everything immediately, no scroll interaction */
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setRevealStage(4)
+      section.classList.add('sig-revealed')
       return
     }
 
-    let stage = 0
+    /* Block selectors in reveal order — each maps to a DOM group */
+    const blocks = [
+      '.v2-sig-editorial-img',
+      '.v2-sig-editorial-tag',
+      '.v2-sig-editorial-text .eyebrow',
+      '.v2-sig-editorial-text h2',
+      '.v2-sig-editorial-text p',
+      '.v2-sig-editorial-meta',
+      '.v2-sig-editorial-actions',
+      '.v2-sig-editorial-past',
+    ]
+
+    /* Thresholds: fraction of scroll progress through section at which each block appears.
+       0.0 = section top at viewport top
+       1.0 = section bottom at viewport bottom */
+    const thresholds = [0.05, 0.15, 0.25, 0.35, 0.50, 0.60, 0.70, 0.80]
+
+    /* Completion latch — once true, reveal is permanently finished */
     let completed = false
-    let ticking = false
-    let lastTouchY = null
 
-    const interactiveRe = /^(INPUT|TEXTAREA|SELECT|BUTTON)$/
+    function update() {
+      if (completed) return
 
-    function isInteractive(el) {
-      if (!el || el === document.body || el === document.documentElement) return false
-      if (interactiveRe.test(el.tagName)) return true
-      if (el.isContentEditable) return true
-      if (el.getAttribute && el.getAttribute('role') === 'button') return true
-      if (el.closest && (el.closest('a') || el.closest('button'))) return true
-      return false
-    }
-
-    function sectionInView() {
       const rect = section.getBoundingClientRect()
-      return rect.bottom >= 0 && rect.top <= window.innerHeight
+      const sectionH = section.offsetHeight
+      const vh = window.innerHeight
+
+      /* Scroll progress through the tall section:
+         0 = section top at viewport top (just arrived)
+         1 = section bottom at viewport bottom (about to leave) */
+      const scrolled = -rect.top
+      const scrollable = sectionH - vh
+      const progress = Math.min(1, Math.max(0, scrolled / scrollable))
+
+      /* Reveal blocks whose threshold has been crossed */
+      let newCount = 0
+      for (let i = 0; i < blocks.length; i++) {
+        if (progress >= thresholds[i]) {
+          const el = section.querySelector(blocks[i])
+          if (el && !el.classList.contains('is-revealed')) {
+            el.classList.add('is-revealed')
+          }
+          newCount = i + 1
+        }
+      }
+
+      /* If all blocks revealed, latch completion permanently and stop listening */
+      if (newCount >= blocks.length && !completed) {
+        completed = true
+
+        /* Record position BEFORE collapse */
+        const secAbsTop = window.scrollY + rect.top
+
+        /* Mark revealed — CSS collapses section height and releases sticky */
+        section.classList.add('sig-revealed')
+
+        /* Force layout so browser calculates collapsed height */
+        void section.offsetHeight
+
+        /* Compensate scroll: put user at top of collapsed section */
+        window.scrollTo({ top: secAbsTop, behavior: 'instant' })
+
+        /* Remove listeners — Hero is now passive */
+        window.removeEventListener('scroll', update)
+        window.removeEventListener('resize', update)
+      }
     }
 
-    function finalize() {
-      completed = true
-      const rect = section.getBoundingClientRect()
-      const sectionAbsTop = window.scrollY + rect.top
-      section.classList.add('is-reveal-done')
-      const collapsedH = section.offsetHeight
-      const target = Math.max(0, sectionAbsTop + collapsedH - window.innerHeight)
-      window.scrollTo(0, target)
-      setRevealStage(4)
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
-    }
+    /* Initial paint */
+    update()
 
-    function advance() {
-      if (completed) return
-      if (stage >= 4) { finalize(); return }
-      stage++
-      setRevealStage(stage)
-      if (stage >= 4) finalize()
-    }
-
-    function onWheel(e) {
-      if (completed) return
-      if (e.deltaY <= 0) return
-      if (!sectionInView()) return
-      e.preventDefault()
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => { ticking = false; advance() })
-    }
-
-    function onKeyDown(e) {
-      if (completed) return
-      if (isInteractive(document.activeElement)) return
-      const key = e.key
-      if (key !== 'ArrowDown' && key !== 'PageDown' && !(key === ' ' && !e.shiftKey)) return
-      if (!sectionInView()) return
-      e.preventDefault()
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => { ticking = false; advance() })
-    }
-
-    function onTouchStart(e) {
-      lastTouchY = e.touches[0].clientY
-    }
-
-    function onTouchMove(e) {
-      if (completed || lastTouchY === null) return
-      const dy = e.touches[0].clientY - lastTouchY
-      lastTouchY = e.touches[0].clientY
-      if (dy >= 0) return
-      if (!sectionInView()) return
-      e.preventDefault()
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(() => { ticking = false; advance() })
-    }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('keydown', onKeyDown)
-    window.addEventListener('touchstart', onTouchStart, { passive: true })
-    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update, { passive: true })
     return () => {
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('keydown', onKeyDown)
-      window.removeEventListener('touchstart', onTouchStart)
-      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
     }
   }, [])
 
   const sigImages = heroProduct?.images || []
   const sigThumbs = heroProduct?.thumbnails || sigImages
   const hasGallery = sigImages.length > 1
-  const isComplete = revealStage >= 4
 
   const sigPrev = useCallback(() => {
     setGalleryIdx(i => (i <= 0 ? sigImages.length - 1 : i - 1))
@@ -318,41 +302,48 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         </section>
         )}
 
-        {/* 4. Signature Collection */}
+        {/* 4. Signature Edition — Hero Product */}
         {!signatureDisabled && (
-        <section className={`v2-signature${isComplete ? ' is-reveal-done' : ''}`} ref={sigSectionRef}>
-          <div className="v2-sig-cinema">
-            <div className="v2-sig-grid">
-              <div className="v2-sig-img">
-                <div className={`v2-sig-img-wrap${revealStage >= 1 ? ' is-stage-1' : ''}`}>
-                  <img className="v2-sig-img-main" src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`} width="960" height="1200" />
-                </div>
+        <section className="v2-sig-editorial" ref={sigSectionRef}>
+          <div className="v2-sig-editorial-inner">
+            <div className="v2-sig-editorial-grid">
+              <div className="v2-sig-editorial-img">
+                <img
+                  src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
+                  alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
+                  width="960" height="1200" loading="lazy"
+                />
                 {hasGallery && (
-                  <>
-                    <div className="v2-sig-gallery" role="radiogroup" aria-label="Product images">
+                  <div className="v2-sig-editorial-gallery">
+                    <div className="v2-sig-editorial-thumbs" role="radiogroup" aria-label="Product images">
                       {sigThumbs.map((thumb, i) => (
-                        <button key={i} className={`v2-sig-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
+                        <button key={i} className={`v2-sig-editorial-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
                           <img src={thumb} alt="" width="56" height="56" loading="lazy" />
                         </button>
                       ))}
                     </div>
-                    <div className="v2-sig-nav">
-                      <button className="v2-sig-nav-btn" onClick={sigPrev} aria-label="Previous image">&#8592;</button>
-                      <button className="v2-sig-nav-btn" onClick={sigNext} aria-label="Next image">&#8594;</button>
+                    <div className="v2-sig-editorial-nav">
+                      <button className="v2-sig-editorial-nav-btn" onClick={sigPrev} aria-label="Previous image">&#8592;</button>
+                      <button className="v2-sig-editorial-nav-btn" onClick={sigNext} aria-label="Next image">&#8594;</button>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
-              <div className="v2-sig-text">
-                <span className={`v2-sig-tag v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>{heroProduct?.name || 'The Hero Edition'}</span>
-                <span className={`eyebrow eyebrow-light v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>One of One · Hero Edition</span>
-                <h2 className={`v2-sig-reveal${revealStage >= 2 ? ' is-stage-2' : ''}`}>{signature.title || 'This season\u2019s hero.'}</h2>
-                <p className={`v2-sig-reveal${revealStage >= 3 ? ' is-stage-3' : ''}`}>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
-                <div className={`v2-sig-actions v2-sig-reveal${revealStage >= 4 ? ' is-stage-4' : ''}`}>
+              <div className="v2-sig-editorial-text">
+                <span className="v2-sig-editorial-tag">{heroProduct?.name || 'The Hero Edition'}</span>
+                <span className="eyebrow">One of One · Hero Edition</span>
+                <h2>{signature.title || 'This season\u2019s hero.'}</h2>
+                <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
+                <div className="v2-sig-editorial-meta">
+                  {heroProduct?.material && <span>{heroProduct.material}</span>}
+                  {heroProduct?.dimensions && <span>{heroProduct.dimensions}</span>}
+                  {heroProduct?.buildTime && <span>{heroProduct.buildTime}</span>}
+                </div>
+                <div className="v2-sig-editorial-actions">
                   <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="btn-primary">View This Piece</Link>
                   <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet">Watch the Process</Link>
                 </div>
-                <p className={`v2-sig-past v2-sig-reveal${revealStage >= 4 ? ' is-stage-4' : ''}`}>Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
+                <p className="v2-sig-editorial-past">Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
               </div>
             </div>
           </div>

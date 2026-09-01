@@ -1,0 +1,59 @@
+{
+  "animationCount": 7,
+  "transitionCount": 131,
+  "animatedElements": [
+    {
+      "tag": "BODY",
+      "className": "",
+      "animation": "pageIn",
+      "duration": "0.5s"
+    },
+    {
+      "tag": "IMG",
+      "className": "v2-hero-img",
+      "animation": "v2heroZoom",
+      "duration": "14s"
+    },
+    {
+      "tag": "SPAN",
+      "className": "eyebrow",
+      "animation": "v2fadeUp",
+      "duration": "0.8s"
+    },
+    {
+      "tag": "H1",
+      "className": "",
+      "animation": "v2fadeUp",
+      "duration": "0.9s"
+    },
+    {
+      "tag": "DIV",
+      "className": "v2-hero-actions",
+      "animation": "v2fadeUp",
+      "duration": "0.8s"
+    },
+    {
+      "tag": "A",
+      "className": "v2-scroll",
+      "animation": "v2fadeUp",
+      "duration": "0.6s"
+    },
+    {
+      "tag": "SPAN",
+      "className": "v2-scroll-line",
+      "animation": "v2scrollPulse",
+      "duration": "2.2s"
+    }
+  ],
+  "hasReducedMotionRule": true,
+  "htmlScrollBehavior": "smooth",
+  "bodyScrollBehavior": "auto",
+  "revealElementsCount": 39,
+  "revealClasses": [
+    "reveal",
+    "reveal",
+    "reveal",
+    "reveal",
+    "v2-sig-reveal"
+  ]
+}

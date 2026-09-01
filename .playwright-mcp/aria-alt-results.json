@@ -1,0 +1,301 @@
+{
+  "images": [
+    {
+      "src": "logo-white.webp",
+      "alt": "Teakle",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 86,
+      "height": 24,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "hero-luxury-entryway.png",
+      "alt": "A woodworker's hands finishing the grain of a solid timber surface in natural light.",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 1521,
+      "height": 1035,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-11112739.jpeg?auto=compres",
+      "alt": "The Anchor Table, handcrafted teak dining table",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 560,
+      "height": 560,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-11112739.jpeg?auto=compres",
+      "alt": "",
+      "hasAlt": true,
+      "isDecorative": true,
+      "isVisible": true,
+      "width": 53,
+      "height": 53,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-11112745.jpeg?auto=compres",
+      "alt": "",
+      "hasAlt": true,
+      "isDecorative": true,
+      "isVisible": true,
+      "width": 53,
+      "height": 53,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-4564013.jpeg?auto=compress",
+      "alt": "",
+      "hasAlt": true,
+      "isDecorative": true,
+      "isVisible": true,
+      "width": 53,
+      "height": 53,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-5974275.jpeg?auto=compress",
+      "alt": "",
+      "hasAlt": true,
+      "isDecorative": true,
+      "isVisible": true,
+      "width": 53,
+      "height": 53,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-5974275.jpeg?auto=compress",
+      "alt": "Close-up of hand-cut joinery on a solid teak furniture piece.",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 548,
+      "height": 685,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-11112739.jpeg?auto=compres",
+      "alt": "The Anchor Table",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-29546532.jpeg?auto=compres",
+      "alt": "The Bearing Chair",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-6910978.jpeg?auto=compress",
+      "alt": "Teak Serving Board",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-7123134.jpeg?auto=compress",
+      "alt": "Carving Board",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-34942955.jpeg?auto=compres",
+      "alt": "Spice Rack",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-4612501.jpeg?auto=compress",
+      "alt": "Drift Sculpture",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-10677815.jpeg?auto=compres",
+      "alt": "Hourglass Vase",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 220,
+      "height": 275,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-11112739.jpeg?auto=compres",
+      "alt": "The Anchor Table",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-29546532.jpeg?auto=compres",
+      "alt": "The Bearing Chair",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-6910978.jpeg?auto=compress",
+      "alt": "Teak Serving Board",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-34942955.jpeg?auto=compres",
+      "alt": "Spice Rack",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-4612501.jpeg?auto=compress",
+      "alt": "Drift Sculpture",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-10677815.jpeg?auto=compres",
+      "alt": "Hourglass Vase",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 373,
+      "height": 467,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-5974417.jpeg?auto=compress",
+      "alt": "A craftsman's weathered hands sanding a wooden surface in the workshop.",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 1521,
+      "height": 792,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "pexels-photo-5710742.jpeg?auto=compress",
+      "alt": "Timber being shaped by hand, filmed for a process video.",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 1521,
+      "height": 792,
+      "hasAriaHidden": false,
+      "role": ""
+    },
+    {
+      "src": "logo-black.webp",
+      "alt": "Teakle",
+      "hasAlt": true,
+      "isDecorative": false,
+      "isVisible": true,
+      "width": 79,
+      "height": 22,
+      "hasAriaHidden": false,
+      "role": ""
+    }
+  ],
+  "unlabeledInteractive": [
+    {
+      "tag": "A",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "hasAccessibleName": "",
+      "type": ""
+    }
+  ],
+  "ariaHiddenFocusable": [],
+  "formLabels": [
+    {
+      "type": "text",
+      "id": "",
+      "placeholder": "Search pieces, materials...",
+      "hasLabel": false,
+      "hasWrappedLabel": false,
+      "hasAriaLabel": true,
+      "hasAriaLabelledby": false,
+      "name": ""
+    },
+    {
+      "type": "email",
+      "id": "footer-email",
+      "placeholder": "Your email",
+      "hasLabel": true,
+      "hasWrappedLabel": false,
+      "hasAriaLabel": true,
+      "hasAriaLabelledby": false,
+      "name": "email"
+    }
+  ]
+}

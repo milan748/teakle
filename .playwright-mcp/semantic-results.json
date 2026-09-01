@@ -1,0 +1,97 @@
+{
+  "headings": [
+    {
+      "level": 1,
+      "text": "Where wood becomes timeless art.",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "We make objects that are not finished when they leave the wo",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "This season’s hero.",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "Every piece passes through one pair of hands, start to finis",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "Pieces Built to Last",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "The Anchor Table",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "The Bearing Chair",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "Teak Serving Board",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "Spice Rack",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "Drift Sculpture",
+      "visible": true
+    },
+    {
+      "level": 3,
+      "text": "Hourglass Vase",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "A family workshop, unchanged in method for three generations",
+      "visible": true
+    },
+    {
+      "level": 2,
+      "text": "Every piece is documented from timber to finish.",
+      "visible": true
+    },
+    {
+      "level": 4,
+      "text": "Explore",
+      "visible": true
+    },
+    {
+      "level": 4,
+      "text": "Services",
+      "visible": true
+    },
+    {
+      "level": 4,
+      "text": "From the Workshop",
+      "visible": true
+    }
+  ],
+  "headingIssues": [
+    "Skipped from h2 to h4 at \"Explore\""
+  ],
+  "duplicateIds": [
+    {
+      "id": "main-content",
+      "count": 2,
+      "elements": [
+        "MAIN",
+        "MAIN"
+      ]
+    }
+  ]
+}

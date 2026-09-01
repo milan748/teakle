@@ -1,0 +1,226 @@
+- generic [active] [ref=f26e1]:
+  - link "Skip to content" [ref=f26e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f26e3]:
+    - generic [ref=f26e4]:
+      - link "Teakle Home" [ref=f26e5] [cursor=pointer]:
+        - /url: /
+        - img "Teakle" [ref=f26e6]
+      - navigation "Main navigation" [ref=f26e7]:
+        - list [ref=f26e8]:
+          - listitem [ref=f26e9]:
+            - link "Gallery" [ref=f26e11] [cursor=pointer]:
+              - /url: /gallery
+          - listitem [ref=f26e12]:
+            - link "Archive" [ref=f26e13] [cursor=pointer]:
+              - /url: /archive
+          - listitem [ref=f26e14]:
+            - link "Studio" [ref=f26e15] [cursor=pointer]:
+              - /url: /studio
+          - listitem [ref=f26e16]:
+            - link "Journal" [ref=f26e17] [cursor=pointer]:
+              - /url: /journal
+          - listitem [ref=f26e18]:
+            - link "Customize" [ref=f26e19] [cursor=pointer]:
+              - /url: /custom
+          - listitem [ref=f26e20]:
+            - link "Account" [ref=f26e21] [cursor=pointer]:
+              - /url: /login
+          - listitem [ref=f26e22]:
+            - link "Cart" [ref=f26e23] [cursor=pointer]:
+              - /url: /cart
+      - generic [ref=f26e24]:
+        - button "Search" [ref=f26e25]
+        - link "Wishlist" [ref=f26e29] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Cart" [ref=f26e32] [cursor=pointer]:
+          - /url: /cart
+        - button "Account" [ref=f26e37] [cursor=pointer]
+  - main [ref=f26e41]:
+    - navigation "Breadcrumb" [ref=f26e44]:
+      - link "Home" [ref=f26e45] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f26e46]: /
+      - link "Gallery" [ref=f26e47] [cursor=pointer]:
+        - /url: /gallery
+      - generic [ref=f26e48]: /
+      - link "Kitchen" [ref=f26e49] [cursor=pointer]:
+        - /url: /subcategory?cat=kitchen
+      - generic [ref=f26e50]: /
+      - link "Dining & Serving" [ref=f26e51] [cursor=pointer]:
+        - /url: /subcategory?cat=kitchen&sub=dining-serving
+      - generic [ref=f26e52]: /
+      - generic [ref=f26e53]: The Bearing Chair
+    - generic [ref=f26e55]:
+      - generic [ref=f26e56]:
+        - generic [ref=f26e57]:
+          - generic [ref=f26e58]: In Stock
+          - generic "Image 1 of 3" [ref=f26e59]: 1 / 3
+          - generic: Click to zoom
+          - button "View fullscreen" [ref=f26e60] [cursor=pointer]
+          - button "Previous image" [ref=f26e63] [cursor=pointer]
+          - button "Next image" [ref=f26e66] [cursor=pointer]
+          - img "The Bearing Chair" [ref=f26e69]
+        - generic [ref=f26e70]:
+          - button "View image 1" [ref=f26e71] [cursor=pointer]:
+            - img "The Bearing Chair view 1" [ref=f26e72]
+          - button "View image 2" [ref=f26e73] [cursor=pointer]:
+            - img "The Bearing Chair view 2" [ref=f26e74]
+          - button "View image 3" [ref=f26e75] [cursor=pointer]:
+            - img "The Bearing Chair view 3" [ref=f26e76]
+      - generic [ref=f26e77]:
+        - heading "The Bearing Chair" [level=2] [ref=f26e78]
+        - paragraph [ref=f26e79]: Hand-carved dining chair from a single timber block.
+        - generic [ref=f26e80]:
+          - generic [ref=f26e81]: ₹68,000
+          - generic [ref=f26e82]: In Stock
+        - generic [ref=f26e83]:
+          - generic [ref=f26e84]:
+            - generic [ref=f26e85]: Quantity
+            - generic [ref=f26e86]:
+              - button "Decrease quantity" [ref=f26e87] [cursor=pointer]: −
+              - generic [ref=f26e88]: "1"
+              - button "Increase quantity" [ref=f26e89] [cursor=pointer]: +
+          - generic [ref=f26e90]:
+            - button "Add to Cart" [ref=f26e91] [cursor=pointer]
+            - generic [ref=f26e95]:
+              - button "Wishlist" [ref=f26e96] [cursor=pointer]
+              - button "Share" [ref=f26e99] [cursor=pointer]
+        - generic [ref=f26e106]:
+          - generic [ref=f26e107]: White-glove delivery available.
+          - generic [ref=f26e114]: Handcrafted in India. Ships worldwide.
+          - generic [ref=f26e119]: Returns accepted only for manufacturing defects within 7 days.
+    - generic [ref=f26e124]:
+      - img "The making process" [ref=f26e126]
+      - generic [ref=f26e127]:
+        - generic [ref=f26e128]: Craftsmanship
+        - heading "Each chair is carved from a single timber block using traditional hand tools. Th..." [level=2] [ref=f26e129]
+        - paragraph [ref=f26e130]: Each chair is carved from a single timber block using traditional hand tools. The seat is shaped with adzes and chisels, then smoothed with hand planes. No joints, no glue, no fasteners — just one piece of wood, shaped by hand.
+    - generic [ref=f26e132]:
+      - generic [ref=f26e133]:
+        - generic [ref=f26e134]: Care Guide
+        - heading "Caring for Your Piece" [level=2] [ref=f26e135]
+      - generic [ref=f26e136]:
+        - generic [ref=f26e137]:
+          - heading "Cleaning" [level=3] [ref=f26e140]
+          - paragraph [ref=f26e141]: Wipe with a soft, damp cloth. Avoid abrasive cleaners or harsh chemicals that may damage the oil finish.
+        - generic [ref=f26e142]:
+          - heading "Moisture" [level=3] [ref=f26e146]
+          - paragraph [ref=f26e147]: Blot spills immediately. Teak is naturally moisture-resistant, but prolonged exposure may affect the finish.
+        - generic [ref=f26e148]:
+          - heading "Sunlight" [level=3] [ref=f26e155]
+          - paragraph [ref=f26e156]: Avoid placing in direct, prolonged sunlight. UV exposure may cause the wood to lighten or the finish to dry.
+        - generic [ref=f26e157]:
+          - heading "Storage" [level=3] [ref=f26e161]
+          - paragraph [ref=f26e162]: Keep in a stable environment. Avoid extreme temperature changes. Reapply oil every 12–18 months for lasting protection.
+    - generic [ref=f26e164]:
+      - generic [ref=f26e165]:
+        - button "Our Craft — Story, Materials & Care +" [ref=f26e166] [cursor=pointer]
+        - generic [ref=f26e167]:
+          - heading [level=4] [ref=f26e168]: The Story
+          - paragraph [ref=f26e169]: The Bearing Chair started as an experiment in single-block furniture. A craftsman took one solid piece of teak and carved away everything that wasn't a chair. What remains is a seamless form — seat, legs, and back flowing from one continuous surface.
+          - heading [level=4] [ref=f26e170]: Craftsmanship
+          - paragraph [ref=f26e171]: Each chair is carved from a single timber block using traditional hand tools. The seat is shaped with adzes and chisels, then smoothed with hand planes. No joints, no glue, no fasteners — just one piece of wood, shaped by hand.
+          - heading [level=4] [ref=f26e172]: Materials
+          - paragraph [ref=f26e173]: Solid plantation teak, selected for grain direction and density. The wood is naturally resistant to wear and moisture.
+          - heading [level=4] [ref=f26e174]: Care Instructions
+          - paragraph [ref=f26e175]: Dust regularly with a soft cloth. Clean with a damp cloth as needed. Apply oil annually to maintain the finish.
+      - generic [ref=f26e176]:
+        - button "Specifications +" [ref=f26e177] [cursor=pointer]
+        - generic [ref=f26e178]:
+          - generic [ref=f26e179]:
+            - generic [ref=f26e180]: Material
+            - generic [ref=f26e181]: Solid Teak
+          - generic [ref=f26e182]:
+            - generic [ref=f26e183]: Dimensions
+            - generic [ref=f26e184]: 45 × 52 × 80 cm
+          - generic [ref=f26e185]:
+            - generic [ref=f26e186]: Weight
+            - generic [ref=f26e187]: 8 kg
+          - generic [ref=f26e188]:
+            - generic [ref=f26e189]: Finish
+            - generic [ref=f26e190]: Natural oil
+          - generic [ref=f26e191]:
+            - generic [ref=f26e192]: Joinery
+            - generic [ref=f26e193]: Single-block carving
+          - generic [ref=f26e194]:
+            - generic [ref=f26e195]: Build Time
+            - generic [ref=f26e196]: ~12 hours
+      - generic [ref=f26e197]:
+        - button "Shipping & Returns +" [ref=f26e198] [cursor=pointer]
+        - generic [ref=f26e199]:
+          - heading [level=4] [ref=f26e200]: Shipping
+          - paragraph [ref=f26e201]: Shipped in custom protective packaging. White-glove delivery available.
+          - heading [level=4] [ref=f26e202]: Returns
+          - paragraph [ref=f26e203]: Returns accepted only for manufacturing defects within 7 days.
+    - generic [ref=f26e206]:
+      - generic [ref=f26e207]: Curated
+      - heading "Complete the Space" [level=2] [ref=f26e208]
+    - generic:
+      - generic: ₹68,000
+      - button "Add to Cart"
+  - contentinfo [ref=f26e209]:
+    - generic [ref=f26e210]:
+      - generic [ref=f26e211]:
+        - generic [ref=f26e212]:
+          - link [ref=f26e213] [cursor=pointer]:
+            - /url: /
+            - img "Teakle" [ref=f26e214]
+          - paragraph [ref=f26e215]: Made by hand in India, one piece at a time.
+          - generic [ref=f26e216]:
+            - link "Instagram" [ref=f26e217] [cursor=pointer]:
+              - /url: https://www.instagram.com/teaklestudio
+            - link "Email" [ref=f26e222] [cursor=pointer]:
+              - /url: mailto:hello@teakle.in
+        - generic [ref=f26e226]:
+          - heading "Explore" [level=3] [ref=f26e227]
+          - navigation "Explore" [ref=f26e228]:
+            - list [ref=f26e229]:
+              - listitem [ref=f26e230]:
+                - link "Gallery" [ref=f26e231] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=f26e232]:
+                - link "Archive" [ref=f26e233] [cursor=pointer]:
+                  - /url: /archive
+              - listitem [ref=f26e234]:
+                - link "Studio" [ref=f26e235] [cursor=pointer]:
+                  - /url: /studio
+              - listitem [ref=f26e236]:
+                - link "Journal" [ref=f26e237] [cursor=pointer]:
+                  - /url: /journal
+        - generic [ref=f26e238]:
+          - heading "Services" [level=3] [ref=f26e239]
+          - navigation "Services" [ref=f26e240]:
+            - list [ref=f26e241]:
+              - listitem [ref=f26e242]:
+                - link "Trade & Bulk Inquiries" [ref=f26e243] [cursor=pointer]:
+                  - /url: /trade
+              - listitem [ref=f26e244]:
+                - link "Contact" [ref=f26e245] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=f26e246]:
+                - link "Custom Orders" [ref=f26e247] [cursor=pointer]:
+                  - /url: /custom
+        - generic [ref=f26e248]:
+          - heading "From the Workshop" [level=3] [ref=f26e249]
+          - paragraph [ref=f26e250]: Receive occasional notes from the workshop. No spam. No offers. Only stories.
+          - form "Newsletter signup" [ref=f26e251]:
+            - generic [ref=f26e252]: Email address for newsletter
+            - textbox "Email address for newsletter" [ref=f26e253]:
+              - /placeholder: Your email
+            - button "Send" [ref=f26e254] [cursor=pointer]
+      - generic [ref=f26e255]:
+        - generic [ref=f26e256]: © 2026 Teakle. Handcrafted in India.
+        - generic [ref=f26e257]:
+          - link "Privacy" [ref=f26e258] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f26e259] [cursor=pointer]:
+            - /url: /terms
+          - link "Shipping" [ref=f26e260] [cursor=pointer]:
+            - /url: /shipping
+          - link "Returns & Refunds" [ref=f26e261] [cursor=pointer]:
+            - /url: /returns-and-refunds
+          - link "Cancellation" [ref=f26e262] [cursor=pointer]:
+            - /url: /cancellation
+          - link "Warranty" [ref=f26e263] [cursor=pointer]:
+            - /url: /warranty

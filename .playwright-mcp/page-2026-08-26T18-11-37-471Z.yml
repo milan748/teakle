@@ -1,0 +1,127 @@
+- generic [active] [ref=f4e1]:
+  - link "Skip to content" [ref=f4e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - link "Teakle Home" [ref=f4e5] [cursor=pointer]:
+        - /url: /
+        - img "Teakle" [ref=f4e6]
+      - list [ref=f4e7]:
+        - listitem [ref=f4e8]:
+          - link "Gallery" [ref=f4e10] [cursor=pointer]:
+            - /url: /gallery
+        - listitem [ref=f4e11]:
+          - link "Archive" [ref=f4e12] [cursor=pointer]:
+            - /url: /archive
+        - listitem [ref=f4e13]:
+          - link "Studio" [ref=f4e14] [cursor=pointer]:
+            - /url: /studio
+        - listitem [ref=f4e15]:
+          - link "Journal" [ref=f4e16] [cursor=pointer]:
+            - /url: /journal
+        - listitem [ref=f4e17]:
+          - link "Customize" [ref=f4e18] [cursor=pointer]:
+            - /url: /custom
+        - listitem [ref=f4e19]:
+          - link "Account" [ref=f4e20] [cursor=pointer]:
+            - /url: /login
+        - listitem [ref=f4e21]:
+          - link "Cart" [ref=f4e22] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f4e23]:
+        - button "Search" [ref=f4e24]
+        - link "Wishlist" [ref=f4e28] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Cart" [ref=f4e31] [cursor=pointer]:
+          - /url: /cart
+        - button "Account" [ref=f4e36] [cursor=pointer]
+  - main [ref=f4e40]:
+    - generic [ref=f4e41]:
+      - img "Close-up of wood grain on a finished tabletop." [ref=f4e42]
+      - generic [ref=f4e44]:
+        - generic [ref=f4e45]: Wood Facts
+        - heading "What \"solid wood\" actually means, and why the label is used loosely" [level=1] [ref=f4e46]
+        - generic [ref=f4e47]:
+          - generic [ref=f4e48]: March 2026
+          - generic [ref=f4e49]: Teakle Journal
+    - article [ref=f4e50]:
+      - generic [ref=f4e51]:
+        - link "Back to Journal" [ref=f4e52] [cursor=pointer]:
+          - /url: /journal
+        - generic [ref=f4e55]:
+          - paragraph [ref=f4e56]: Walk into any furniture showroom and you'll see the phrase "solid wood" applied to everything from $200 nightstands to $20,000 dining tables. The label has become so overused that it's lost almost all meaning. Most of what it describes is veneer — a thin layer of real wood glued over particleboard or MDF.
+          - paragraph [ref=f4e57]: There's nothing inherently wrong with veneer. It's a perfectly valid material, and in some applications it makes sense. But when a piece is marketed as "solid wood" and it's actually veneer, the customer is being misled about what they're buying — and more importantly, how the piece will age.
+          - heading "What solid wood actually is" [level=2] [ref=f4e58]
+          - paragraph [ref=f4e59]: Solid wood means the entire piece — or at least every structural component — is cut from real timber. Not a thin layer over engineered wood. Not a laminate with a wood-grain print. The wood goes all the way through.
+          - paragraph [ref=f4e60]: When you run your finger along the edge of a solid wood board, you feel the same grain pattern on the edge as you do on the face. That's because it's the same piece of wood. With veneer, the edge often reveals a different material underneath — particleboard, MDF, or plywood.
+          - heading "Why it matters after five years" [level=2] [ref=f4e61]
+          - paragraph [ref=f4e62]: On day one, a well-made veneer piece and a solid wood piece can look identical. The difference emerges over time. Solid wood develops a patina — it darkens slightly, the grain becomes more pronounced, and small marks from daily use blend into the surface rather than revealing a different material underneath.
+          - paragraph [ref=f4e63]: Veneer, by contrast, wears through. The thin layer — typically 0.5 to 1mm — can be scratched, chipped, or worn away, exposing the engineered material below. Once that happens, there's no way to repair it. The piece can't be sanded down and refinished because there's nothing underneath to refinish.
+          - heading "How to tell the difference" [level=2] [ref=f4e64]
+          - paragraph [ref=f4e65]: The simplest test is to look at the edges and underside. Solid wood will show consistent grain patterns on all surfaces. Veneer will often show a seam where the thin layer meets the edge, or a different material entirely on the underside.
+          - paragraph [ref=f4e66]: Weight is another indicator. Solid teak is dense — a solid wood dining table will be significantly heavier than a veneered one of the same size. If a large piece feels surprisingly light, it's likely engineered wood inside.
+          - paragraph [ref=f4e67]: Ask about the construction. A maker who works in solid wood will know exactly which boards went into a piece, where the timber came from, and how it was dried. A manufacturer using veneer often can't answer those questions because the materials are sourced commodity items.
+          - paragraph [ref=f4e68]: At Teakle, every piece is solid teak — not because we're making a statement, but because that's how wood is supposed to work. The grain runs through, the joints are cut to fit, and the surface is finished to age gracefully over decades, not just look good on delivery day.
+  - contentinfo [ref=f4e69]:
+    - generic [ref=f4e70]:
+      - generic [ref=f4e71]:
+        - generic [ref=f4e72]:
+          - link [ref=f4e73] [cursor=pointer]:
+            - /url: /
+            - img "Teakle" [ref=f4e74]
+          - paragraph [ref=f4e75]: Made by hand in India, one piece at a time.
+          - generic [ref=f4e76]:
+            - link "Instagram" [ref=f4e77] [cursor=pointer]:
+              - /url: https://www.instagram.com/teaklestudio
+            - link "Email" [ref=f4e82] [cursor=pointer]:
+              - /url: mailto:hello@teakle.in
+        - generic [ref=f4e86]:
+          - heading "Explore" [level=4] [ref=f4e87]
+          - list [ref=f4e88]:
+            - listitem [ref=f4e89]:
+              - link "Gallery" [ref=f4e90] [cursor=pointer]:
+                - /url: /gallery
+            - listitem [ref=f4e91]:
+              - link "Archive" [ref=f4e92] [cursor=pointer]:
+                - /url: /archive
+            - listitem [ref=f4e93]:
+              - link "Studio" [ref=f4e94] [cursor=pointer]:
+                - /url: /studio
+            - listitem [ref=f4e95]:
+              - link "Journal" [ref=f4e96] [cursor=pointer]:
+                - /url: /journal
+        - generic [ref=f4e97]:
+          - heading "Services" [level=4] [ref=f4e98]
+          - list [ref=f4e99]:
+            - listitem [ref=f4e100]:
+              - link "Trade & Bulk Inquiries" [ref=f4e101] [cursor=pointer]:
+                - /url: /trade
+            - listitem [ref=f4e102]:
+              - link "Contact" [ref=f4e103] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=f4e104]:
+              - link "Custom Orders" [ref=f4e105] [cursor=pointer]:
+                - /url: /custom
+        - generic [ref=f4e106]:
+          - heading "From the Workshop" [level=4] [ref=f4e107]
+          - paragraph [ref=f4e108]: Receive occasional notes from the workshop. No spam. No offers. Only stories.
+          - form "Newsletter signup" [ref=f4e109]:
+            - generic [ref=f4e110]: Email address for newsletter
+            - textbox "Email address for newsletter" [ref=f4e111]:
+              - /placeholder: Your email
+            - button "Send" [ref=f4e112] [cursor=pointer]
+      - generic [ref=f4e113]:
+        - generic [ref=f4e114]: © 2026 Teakle. Handcrafted in India.
+        - generic [ref=f4e115]:
+          - link "Privacy" [ref=f4e116] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f4e117] [cursor=pointer]:
+            - /url: /terms
+          - link "Shipping" [ref=f4e118] [cursor=pointer]:
+            - /url: /shipping
+          - link "Returns & Refunds" [ref=f4e119] [cursor=pointer]:
+            - /url: /returns-and-refunds
+          - link "Cancellation" [ref=f4e120] [cursor=pointer]:
+            - /url: /cancellation
+          - link "Warranty" [ref=f4e121] [cursor=pointer]:
+            - /url: /warranty

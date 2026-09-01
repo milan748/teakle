@@ -1,0 +1,1399 @@
+{
+  "totalFocusable": 77,
+  "tabOrder": [
+    {
+      "index": 0,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Skip to content",
+      "href": "#main-content",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 12,
+        "y": -900,
+        "w": 155,
+        "h": 42
+      }
+    },
+    {
+      "index": 1,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Open menu",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 2,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Teakle Home",
+      "text": "",
+      "href": "/",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 20,
+        "y": 26,
+        "w": 86,
+        "h": 24
+      }
+    },
+    {
+      "index": 3,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Account",
+      "text": "",
+      "href": "/login",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 4,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Cart",
+      "text": "",
+      "href": "/cart",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 5,
+      "tag": "input",
+      "role": "",
+      "ariaLabel": "Search products",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "text",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 6,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Submit search",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "submit",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 7,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Close menu",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 8,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Gallery",
+      "href": "/gallery",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 396,
+        "y": 32,
+        "w": 60,
+        "h": 17
+      }
+    },
+    {
+      "index": 9,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Toggle Gallery submenu",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 10,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Hero Edition",
+      "href": "/shop/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 11,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Limited Edition",
+      "href": "/gallery?availability=Limited+Edition",
+      "tabindex": null,
+      "type": "",
+      "visible": false,
+      "inViewport": true,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      }
+    },
+    {
+      "index": 12,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Archive",
+      "href": "/archive",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 496,
+        "y": 32,
+        "w": 59,
+        "h": 17
+      }
+    },
+    {
+      "index": 13,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Studio",
+      "href": "/studio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 594,
+        "y": 32,
+        "w": 50,
+        "h": 17
+      }
+    },
+    {
+      "index": 14,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Journal",
+      "href": "/journal",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 684,
+        "y": 32,
+        "w": 63,
+        "h": 17
+      }
+    },
+    {
+      "index": 15,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Customize",
+      "href": "/custom",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 787,
+        "y": 32,
+        "w": 77,
+        "h": 17
+      }
+    },
+    {
+      "index": 16,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Account",
+      "href": "/login",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 904,
+        "y": 32,
+        "w": 64,
+        "h": 17
+      }
+    },
+    {
+      "index": 17,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Cart",
+      "href": "/cart",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1008,
+        "y": 32,
+        "w": 34,
+        "h": 17
+      }
+    },
+    {
+      "index": 18,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Search",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1333,
+        "y": 20,
+        "w": 36,
+        "h": 36
+      }
+    },
+    {
+      "index": 19,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Wishlist",
+      "text": "0",
+      "href": "/wishlist",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1377,
+        "y": 20,
+        "w": 36,
+        "h": 36
+      }
+    },
+    {
+      "index": 20,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Cart",
+      "text": "0",
+      "href": "/cart",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1421,
+        "y": 20,
+        "w": 36,
+        "h": 36
+      }
+    },
+    {
+      "index": 21,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Account",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1465,
+        "y": 20,
+        "w": 36,
+        "h": 36
+      }
+    },
+    {
+      "index": 22,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Sign In",
+      "href": "/login",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1247,
+        "y": 140,
+        "w": 253,
+        "h": 34
+      }
+    },
+    {
+      "index": 23,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Create Account",
+      "href": "/login",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1247,
+        "y": 174,
+        "w": 253,
+        "h": 34
+      }
+    },
+    {
+      "index": 24,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Track Order",
+      "href": "/subcategory",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1247,
+        "y": 217,
+        "w": 253,
+        "h": 34
+      }
+    },
+    {
+      "index": 25,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Wishlist",
+      "href": "/wishlist",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1247,
+        "y": 251,
+        "w": 253,
+        "h": 34
+      }
+    },
+    {
+      "index": 26,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Support",
+      "href": "/contact",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1247,
+        "y": 285,
+        "w": 253,
+        "h": 34
+      }
+    },
+    {
+      "index": 27,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "View the Collection",
+      "href": "/gallery",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 81,
+        "y": 759,
+        "w": 210,
+        "h": 37
+      }
+    },
+    {
+      "index": 28,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Our Studio",
+      "href": "/studio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 331,
+        "y": 767,
+        "w": 81,
+        "h": 21
+      }
+    },
+    {
+      "index": 29,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Scroll to explore",
+      "text": "Scroll",
+      "href": "#philosophy",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 760,
+        "y": 818,
+        "w": 51,
+        "h": 63
+      }
+    },
+    {
+      "index": 30,
+      "tag": "button",
+      "role": "radio",
+      "ariaLabel": "View image 1",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 1973,
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "index": 31,
+      "tag": "button",
+      "role": "radio",
+      "ariaLabel": "View image 2",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 244,
+        "y": 1973,
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "index": 32,
+      "tag": "button",
+      "role": "radio",
+      "ariaLabel": "View image 3",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 308,
+        "y": 1973,
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "index": 33,
+      "tag": "button",
+      "role": "radio",
+      "ariaLabel": "View image 4",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 372,
+        "y": 1973,
+        "w": 56,
+        "h": 56
+      }
+    },
+    {
+      "index": 34,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Previous image",
+      "text": "←",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 2039,
+        "w": 32,
+        "h": 32
+      }
+    },
+    {
+      "index": 35,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Next image",
+      "text": "→",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 218,
+        "y": 2039,
+        "w": 32,
+        "h": 32
+      }
+    },
+    {
+      "index": 36,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "View This Piece",
+      "href": "/shop/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 812,
+        "y": 1824,
+        "w": 169,
+        "h": 37
+      }
+    },
+    {
+      "index": 37,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Watch the Process",
+      "href": "/process/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1022,
+        "y": 1832,
+        "w": 139,
+        "h": 21
+      }
+    },
+    {
+      "index": 38,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "See past editions",
+      "href": "/archive",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 812,
+        "y": 1883,
+        "w": 366,
+        "h": 38
+      }
+    },
+    {
+      "index": 39,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Visit the Studio",
+      "href": "/studio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 792,
+        "y": 4588,
+        "w": 113,
+        "h": 21
+      }
+    },
+    {
+      "index": 40,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Previous",
+      "text": "←",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 20,
+        "y": 5061,
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "index": 41,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Next",
+      "text": "→",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1457,
+        "y": 5061,
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "index": 42,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "The Anchor TableDiscover",
+      "href": "/shop/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": -159,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 43,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "The Bearing ChairDiscover",
+      "href": "/shop/bearing-chair",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 81,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 44,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Teak Serving BoardDiscover",
+      "href": "/shop/serving-plank",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 321,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 45,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Carving BoardDiscover",
+      "href": "/shop/carving-board",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 561,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 46,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Spice RackDiscover",
+      "href": "/shop/spice-rack",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 801,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 47,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Drift SculptureDiscover",
+      "href": "/shop/drift-sculpture",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1041,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 48,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Hourglass VaseDiscover",
+      "href": "/shop/hourglass-vase",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1281,
+        "y": 4948,
+        "w": 220,
+        "h": 342
+      }
+    },
+    {
+      "index": 49,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "The Anchor TableDining₹1,85,000",
+      "href": "/shop/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 5507,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 50,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "The Bearing ChairDining₹68,000",
+      "href": "/shop/bearing-chair",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 574,
+        "y": 5507,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 51,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Teak Serving BoardKitchen₹7,000",
+      "href": "/shop/serving-plank",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 967,
+        "y": 5507,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 52,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Spice RackKitchen₹9,500",
+      "href": "/shop/spice-rack",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 6065,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 53,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Drift SculptureLiving₹24,000",
+      "href": "/shop/drift-sculpture",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 574,
+        "y": 6065,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 54,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Hourglass VaseLiving₹9,500",
+      "href": "/shop/hourglass-vase",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 967,
+        "y": 6065,
+        "w": 373,
+        "h": 538
+      }
+    },
+    {
+      "index": 55,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Explore the Full Collection",
+      "href": "/gallery",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 624,
+        "y": 6615,
+        "w": 273,
+        "h": 37
+      }
+    },
+    {
+      "index": 56,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Read About Our Process",
+      "href": "/studio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 20,
+        "y": 7403,
+        "w": 180,
+        "h": 16
+      }
+    },
+    {
+      "index": 57,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Watch the Process",
+      "href": "/process/anchor-table",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 20,
+        "y": 8195,
+        "w": 139,
+        "h": 16
+      }
+    },
+    {
+      "index": 58,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "",
+      "href": "/",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 8341,
+        "w": 288,
+        "h": 22
+      }
+    },
+    {
+      "index": 59,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Instagram",
+      "text": "",
+      "href": "https://www.instagram.com/teaklestudio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 180,
+        "y": 8446,
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "index": 60,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "Email",
+      "text": "",
+      "href": "mailto:hello@teakle.in",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 236,
+        "y": 8446,
+        "w": 44,
+        "h": 44
+      }
+    },
+    {
+      "index": 61,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Gallery",
+      "href": "/gallery",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 533,
+        "y": 8377,
+        "w": 45,
+        "h": 16
+      }
+    },
+    {
+      "index": 62,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Archive",
+      "href": "/archive",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 533,
+        "y": 8406,
+        "w": 49,
+        "h": 16
+      }
+    },
+    {
+      "index": 63,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Studio",
+      "href": "/studio",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 533,
+        "y": 8436,
+        "w": 42,
+        "h": 16
+      }
+    },
+    {
+      "index": 64,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Journal",
+      "href": "/journal",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 533,
+        "y": 8465,
+        "w": 48,
+        "h": 16
+      }
+    },
+    {
+      "index": 65,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Trade & Bulk Inquiries",
+      "href": "/trade",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 803,
+        "y": 8377,
+        "w": 142,
+        "h": 16
+      }
+    },
+    {
+      "index": 66,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Contact",
+      "href": "/contact",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 803,
+        "y": 8406,
+        "w": 51,
+        "h": 16
+      }
+    },
+    {
+      "index": 67,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Custom Orders",
+      "href": "/custom",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 803,
+        "y": 8436,
+        "w": 99,
+        "h": 16
+      }
+    },
+    {
+      "index": 68,
+      "tag": "input",
+      "role": "",
+      "ariaLabel": "Email address for newsletter",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "email",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1073,
+        "y": 8449,
+        "w": 211,
+        "h": 33
+      }
+    },
+    {
+      "index": 69,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Send",
+      "href": "",
+      "tabindex": null,
+      "type": "submit",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1296,
+        "y": 8449,
+        "w": 45,
+        "h": 33
+      }
+    },
+    {
+      "index": 70,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Privacy",
+      "href": "/privacy",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 896,
+        "y": 8597,
+        "w": 39,
+        "h": 18
+      }
+    },
+    {
+      "index": 71,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Terms",
+      "href": "/terms",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 955,
+        "y": 8597,
+        "w": 34,
+        "h": 18
+      }
+    },
+    {
+      "index": 72,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Shipping",
+      "href": "/shipping",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1009,
+        "y": 8597,
+        "w": 50,
+        "h": 18
+      }
+    },
+    {
+      "index": 73,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Returns & Refunds",
+      "href": "/returns-and-refunds",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1079,
+        "y": 8597,
+        "w": 103,
+        "h": 18
+      }
+    },
+    {
+      "index": 74,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Cancellation",
+      "href": "/cancellation",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1201,
+        "y": 8597,
+        "w": 69,
+        "h": 18
+      }
+    },
+    {
+      "index": 75,
+      "tag": "a",
+      "role": "",
+      "ariaLabel": "",
+      "text": "Warranty",
+      "href": "/warranty",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": false,
+      "rect": {
+        "x": 1290,
+        "y": 8597,
+        "w": 50,
+        "h": 18
+      }
+    },
+    {
+      "index": 76,
+      "tag": "button",
+      "role": "",
+      "ariaLabel": "Scroll to top",
+      "text": "",
+      "href": "",
+      "tabindex": null,
+      "type": "",
+      "visible": true,
+      "inViewport": true,
+      "rect": {
+        "x": 1447,
+        "y": 834,
+        "w": 40,
+        "h": 40
+      }
+    }
+  ],
+  "positiveTabindex": [],
+  "skipLink": {
+    "exists": true,
+    "href": "#main-content",
+    "visible": false
+  },
+  "focusableWithNoOutline": 0,
+  "totalFocusableEls": 77
+}

@@ -1,0 +1,278 @@
+- generic [active] [ref=f6e1]:
+  - link "Skip to content" [ref=f6e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f6e3]:
+    - generic [ref=f6e4]:
+      - button "Open menu" [ref=f6e5] [cursor=pointer]
+      - link "Teakle Home" [ref=f6e9] [cursor=pointer]:
+        - /url: /
+        - img "Teakle" [ref=f6e10]
+      - generic [ref=f6e11]:
+        - link "Account" [ref=f6e12] [cursor=pointer]:
+          - /url: /login
+        - link "Cart" [ref=f6e16] [cursor=pointer]:
+          - /url: /cart
+      - list [ref=f6e20]:
+        - listitem [ref=f6e21]:
+          - generic [ref=f6e22]:
+            - generic [ref=f6e23]:
+              - textbox "Search products" [ref=f6e24]:
+                - /placeholder: Search pieces, materials...
+              - button "Submit search" [ref=f6e25] [cursor=pointer]
+            - button "Close menu" [ref=f6e29] [cursor=pointer]
+        - listitem [ref=f6e33]:
+          - generic [ref=f6e34]:
+            - link "Gallery" [ref=f6e35] [cursor=pointer]:
+              - /url: /gallery
+            - button "Toggle Gallery submenu" [ref=f6e36] [cursor=pointer]
+          - list:
+            - listitem [ref=f6e39]:
+              - link "Hero Edition" [ref=f6e40] [cursor=pointer]:
+                - /url: /shop/anchor-table
+            - listitem [ref=f6e41]:
+              - link "Limited Edition" [ref=f6e42] [cursor=pointer]:
+                - /url: /gallery?availability=Limited+Edition
+        - listitem [ref=f6e43]:
+          - link "Archive" [ref=f6e44] [cursor=pointer]:
+            - /url: /archive
+        - listitem [ref=f6e45]:
+          - link "Studio" [ref=f6e46] [cursor=pointer]:
+            - /url: /studio
+        - listitem [ref=f6e47]:
+          - link "Journal" [ref=f6e48] [cursor=pointer]:
+            - /url: /journal
+        - listitem [ref=f6e49]:
+          - link "Customize" [ref=f6e50] [cursor=pointer]:
+            - /url: /custom
+        - listitem [ref=f6e51]:
+          - link "Account" [ref=f6e52] [cursor=pointer]:
+            - /url: /login
+        - listitem [ref=f6e53]:
+          - link "Cart" [ref=f6e54] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f6e55]:
+        - button "Search" [ref=f6e56]
+        - link "Wishlist" [ref=f6e60] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Cart" [ref=f6e63] [cursor=pointer]:
+          - /url: /cart
+  - main [ref=f6e67]:
+    - navigation "Breadcrumb" [ref=f6e70]:
+      - link "Home" [ref=f6e71] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f6e72]: /
+      - link "Gallery" [ref=f6e73] [cursor=pointer]:
+        - /url: /gallery
+      - generic [ref=f6e74]: /
+      - generic [ref=f6e75]: The Anchor Table
+    - generic [ref=f6e76]:
+      - img "The Anchor Table, image 1 of 4" [ref=f6e77]
+      - generic [ref=f6e79]:
+        - generic [ref=f6e80]: Signature Piece
+        - heading "The Anchor Table" [level=1] [ref=f6e81]
+        - paragraph [ref=f6e82]: ₹1,85,000
+      - button "Previous image" [ref=f6e83] [cursor=pointer]
+      - button "Next image" [ref=f6e86] [cursor=pointer]
+      - generic [ref=f6e89]:
+        - img "The Anchor Table view 1" [ref=f6e91] [cursor=pointer]
+        - img "The Anchor Table view 2" [ref=f6e93] [cursor=pointer]
+        - img "The Anchor Table view 3" [ref=f6e95] [cursor=pointer]
+        - img "The Anchor Table view 4" [ref=f6e97] [cursor=pointer]
+      - button "View fullscreen" [ref=f6e98] [cursor=pointer]
+    - generic [ref=f6e102]:
+      - generic [ref=f6e103]:
+        - generic [ref=f6e104]: About This Piece
+        - heading "Solid teak dining table, hand-finished from a single selected block." [level=2] [ref=f6e105]
+        - paragraph [ref=f6e106]: A dining table built from a single selected teak block, left to settle before any cutting begins. The grain runs the length of the top, unbroken, and the legs are joined by hand without metal fasteners. Finished in food-safe oil, reapplied by hand as it ages. Every table is unique — the timber and finish are chosen once you enquire.
+        - generic [ref=f6e107]: In Stock
+        - generic [ref=f6e108]:
+          - generic [ref=f6e109]:
+            - generic [ref=f6e110]: Material
+            - generic [ref=f6e111]: Solid Teak
+          - generic [ref=f6e112]:
+            - generic [ref=f6e113]: Dimensions
+            - generic [ref=f6e114]: 180 × 90 × 76 cm
+          - generic [ref=f6e115]:
+            - generic [ref=f6e116]: Weight
+            - generic [ref=f6e117]: 42 kg
+          - generic [ref=f6e118]:
+            - generic [ref=f6e119]: Seating
+            - generic [ref=f6e120]: "6"
+          - generic [ref=f6e121]:
+            - generic [ref=f6e122]: Finish
+            - generic [ref=f6e123]: Food-safe oil
+          - generic [ref=f6e124]:
+            - generic [ref=f6e125]: Joinery
+            - generic [ref=f6e126]: Mortise & tenon
+          - generic [ref=f6e127]:
+            - generic [ref=f6e128]: Build Time
+            - generic [ref=f6e129]: ~18 hours
+      - generic [ref=f6e130]:
+        - paragraph [ref=f6e131]: ₹1,85,000
+        - generic [ref=f6e132]:
+          - generic [ref=f6e133]:
+            - generic [ref=f6e134]: Availability
+            - generic [ref=f6e135]: One of one
+          - generic [ref=f6e137]:
+            - button "Add to Cart" [ref=f6e138] [cursor=pointer]
+            - generic [ref=f6e142]:
+              - button "Wishlist" [ref=f6e143] [cursor=pointer]
+              - button "Share" [ref=f6e146] [cursor=pointer]
+        - generic [ref=f6e153]:
+          - generic [ref=f6e154]: White-glove delivery available.
+          - generic [ref=f6e161]: Handcrafted in India. Ships worldwide.
+          - generic [ref=f6e166]: Returns are accepted only in case of manufacturing defects. Contact us within 7 days of delivery. Custom dimensions and finishes are final sale.
+    - generic [ref=f6e170]:
+      - img "The making process" [ref=f6e171]
+      - generic [ref=f6e172]:
+        - generic [ref=f6e173]: The Craft
+        - heading "Every joint is hand-cut using traditional mortise and tenon joinery. No metal fa..." [level=2] [ref=f6e174]
+        - paragraph [ref=f6e175]: The Anchor Table began as a single teak log, selected from a managed plantation in southern India. The wood was left to settle in the workshop for several weeks before any cutting began. Each joint is cut by hand — mortise and tenon, locked without metal. The grain runs the full length of the top, unbroken, a record of the tree's growth.
+        - link "Visit the Studio" [ref=f6e176] [cursor=pointer]:
+          - /url: /studio
+    - generic [ref=f6e177]:
+      - generic [ref=f6e178]:
+        - generic [ref=f6e179]: Progress
+        - heading "From timber to finish." [level=2] [ref=f6e180]
+      - generic [ref=f6e181]:
+        - generic [ref=f6e182] [cursor=pointer]:
+          - img "Process step 1" [ref=f6e183]
+          - generic [ref=f6e184]: Step 1
+        - generic [ref=f6e185] [cursor=pointer]:
+          - img "Process step 2" [ref=f6e186]
+          - generic [ref=f6e187]: Step 2
+        - generic [ref=f6e188] [cursor=pointer]:
+          - img "Process step 3" [ref=f6e189]
+          - generic [ref=f6e190]: Step 3
+        - generic [ref=f6e191] [cursor=pointer]:
+          - img "Process step 4" [ref=f6e192]
+          - generic [ref=f6e193]: Step 4
+    - generic [ref=f6e195]:
+      - generic [ref=f6e196]:
+        - generic [ref=f6e197]: Care Guide
+        - heading "Caring for Your Piece" [level=2] [ref=f6e198]
+      - generic [ref=f6e199]:
+        - generic [ref=f6e200]:
+          - heading "Cleaning" [level=3] [ref=f6e203]
+          - paragraph [ref=f6e204]: Wipe with a soft, damp cloth. Avoid abrasive cleaners or harsh chemicals that may damage the oil finish.
+        - generic [ref=f6e205]:
+          - heading "Moisture" [level=3] [ref=f6e209]
+          - paragraph [ref=f6e210]: Blot spills immediately. Teak is naturally moisture-resistant, but prolonged exposure may affect the finish.
+        - generic [ref=f6e211]:
+          - heading "Sunlight" [level=3] [ref=f6e218]
+          - paragraph [ref=f6e219]: Avoid placing in direct, prolonged sunlight. UV exposure may cause the wood to lighten or the finish to dry.
+        - generic [ref=f6e220]:
+          - heading "Storage" [level=3] [ref=f6e224]
+          - paragraph [ref=f6e225]: Keep in a stable environment. Avoid extreme temperature changes. Reapply oil every 12–18 months for lasting protection.
+    - generic [ref=f6e227]:
+      - generic [ref=f6e228]:
+        - button "Our Craft — Story, Materials & Care +" [ref=f6e229] [cursor=pointer]
+        - generic [ref=f6e230]:
+          - heading [level=4] [ref=f6e231]: The Story
+          - paragraph [ref=f6e232]: The Anchor Table began as a single teak log, selected from a managed plantation in southern India. The wood was left to settle in the workshop for several weeks before any cutting began. Each joint is cut by hand — mortise and tenon, locked without metal. The grain runs the full length of the top, unbroken, a record of the tree's growth.
+          - heading [level=4] [ref=f6e233]: Craftsmanship
+          - paragraph [ref=f6e234]: Every joint is hand-cut using traditional mortise and tenon joinery. No metal fasteners, no screws — just wood meeting wood, as it has for centuries. The surface is planed by hand, not sanded, to preserve the grain's natural lustre. Multiple thin coats of food-safe oil are worked in by hand, each allowed to cure before the next.
+          - heading [level=4] [ref=f6e235]: Materials
+          - paragraph [ref=f6e236]: Solid plantation teak, harvested sustainably from managed forests in southern India. Teak is naturally resistant to moisture and insects, making it ideal for dining furniture that will see daily use. The oil finish is food-safe and non-toxic.
+          - heading [level=4] [ref=f6e237]: Care Instructions
+          - paragraph [ref=f6e238]: Wipe with a damp cloth. Avoid harsh chemicals. Reapply food-safe oil every 12–18 months to maintain the surface. Small scratches can be buffed out with fine steel wool (0000 grade) followed by a coat of oil. Keep away from direct heat sources.
+      - generic [ref=f6e239]:
+        - button "Specifications +" [ref=f6e240] [cursor=pointer]
+        - generic [ref=f6e241]:
+          - generic [ref=f6e242]:
+            - generic [ref=f6e243]: Material
+            - generic [ref=f6e244]: Solid Teak
+          - generic [ref=f6e245]:
+            - generic [ref=f6e246]: Dimensions
+            - generic [ref=f6e247]: 180 × 90 × 76 cm
+          - generic [ref=f6e248]:
+            - generic [ref=f6e249]: Weight
+            - generic [ref=f6e250]: 42 kg
+          - generic [ref=f6e251]:
+            - generic [ref=f6e252]: Seating
+            - generic [ref=f6e253]: "6"
+          - generic [ref=f6e254]:
+            - generic [ref=f6e255]: Finish
+            - generic [ref=f6e256]: Food-safe oil
+          - generic [ref=f6e257]:
+            - generic [ref=f6e258]: Joinery
+            - generic [ref=f6e259]: Mortise & tenon
+          - generic [ref=f6e260]:
+            - generic [ref=f6e261]: Build Time
+            - generic [ref=f6e262]: ~18 hours
+      - generic [ref=f6e263]:
+        - button "Shipping & Returns +" [ref=f6e264] [cursor=pointer]
+        - generic [ref=f6e265]:
+          - heading [level=4] [ref=f6e266]: Shipping
+          - paragraph [ref=f6e267]: White-glove delivery available across India. International shipping on request. Each piece is carefully packed in custom wooden crates. Delivery includes placement in your room of choice and packaging removal.
+          - heading [level=4] [ref=f6e268]: Returns
+          - paragraph [ref=f6e269]: Returns are accepted only in case of manufacturing defects. Contact us within 7 days of delivery. Custom dimensions and finishes are final sale.
+    - generic [ref=f6e272]:
+      - generic [ref=f6e273]: Curated
+      - heading "Complete the Space" [level=2] [ref=f6e274]
+    - generic:
+      - generic: ₹1,85,000
+      - button "Add to Cart"
+  - contentinfo [ref=f6e275]:
+    - generic [ref=f6e276]:
+      - generic [ref=f6e277]:
+        - generic [ref=f6e278]:
+          - link [ref=f6e279] [cursor=pointer]:
+            - /url: /
+            - img "Teakle" [ref=f6e280]
+          - paragraph [ref=f6e281]: Made by hand in India, one piece at a time.
+          - generic [ref=f6e282]:
+            - link "Instagram" [ref=f6e283] [cursor=pointer]:
+              - /url: https://www.instagram.com/teaklestudio
+            - link "Email" [ref=f6e288] [cursor=pointer]:
+              - /url: mailto:hello@teakle.in
+        - generic [ref=f6e292]:
+          - heading "Explore" [level=4] [ref=f6e293]
+          - list [ref=f6e294]:
+            - listitem [ref=f6e295]:
+              - link "Gallery" [ref=f6e296] [cursor=pointer]:
+                - /url: /gallery
+            - listitem [ref=f6e297]:
+              - link "Archive" [ref=f6e298] [cursor=pointer]:
+                - /url: /archive
+            - listitem [ref=f6e299]:
+              - link "Studio" [ref=f6e300] [cursor=pointer]:
+                - /url: /studio
+            - listitem [ref=f6e301]:
+              - link "Journal" [ref=f6e302] [cursor=pointer]:
+                - /url: /journal
+        - generic [ref=f6e303]:
+          - heading "Services" [level=4] [ref=f6e304]
+          - list [ref=f6e305]:
+            - listitem [ref=f6e306]:
+              - link "Trade & Bulk Inquiries" [ref=f6e307] [cursor=pointer]:
+                - /url: /trade
+            - listitem [ref=f6e308]:
+              - link "Contact" [ref=f6e309] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=f6e310]:
+              - link "Custom Orders" [ref=f6e311] [cursor=pointer]:
+                - /url: /custom
+        - generic [ref=f6e312]:
+          - heading "From the Workshop" [level=4] [ref=f6e313]
+          - paragraph [ref=f6e314]: Receive occasional notes from the workshop. No spam. No offers. Only stories.
+          - form "Newsletter signup" [ref=f6e315]:
+            - generic [ref=f6e316]: Email address for newsletter
+            - textbox "Email address for newsletter" [ref=f6e317]:
+              - /placeholder: Your email
+            - button "Send" [ref=f6e318] [cursor=pointer]
+      - generic [ref=f6e319]:
+        - generic [ref=f6e320]: © 2026 Teakle. Handcrafted in India.
+        - generic [ref=f6e321]:
+          - link "Privacy" [ref=f6e322] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f6e323] [cursor=pointer]:
+            - /url: /terms
+          - link "Shipping" [ref=f6e324] [cursor=pointer]:
+            - /url: /shipping
+          - link "Returns & Refunds" [ref=f6e325] [cursor=pointer]:
+            - /url: /returns-and-refunds
+          - link "Cancellation" [ref=f6e326] [cursor=pointer]:
+            - /url: /cancellation
+          - link "Warranty" [ref=f6e327] [cursor=pointer]:
+            - /url: /warranty

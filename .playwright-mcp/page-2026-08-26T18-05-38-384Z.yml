@@ -1,0 +1,270 @@
+- generic [active] [ref=f2e1]:
+  - link "Skip to content" [ref=f2e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "Teakle Home" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+        - img "Teakle" [ref=f2e6]
+      - list [ref=f2e7]:
+        - listitem [ref=f2e8]:
+          - link "Gallery" [ref=f2e10] [cursor=pointer]:
+            - /url: /gallery
+        - listitem [ref=f2e11]:
+          - link "Archive" [ref=f2e12] [cursor=pointer]:
+            - /url: /archive
+        - listitem [ref=f2e13]:
+          - link "Studio" [ref=f2e14] [cursor=pointer]:
+            - /url: /studio
+        - listitem [ref=f2e15]:
+          - link "Journal" [ref=f2e16] [cursor=pointer]:
+            - /url: /journal
+        - listitem [ref=f2e17]:
+          - link "Customize" [ref=f2e18] [cursor=pointer]:
+            - /url: /custom
+        - listitem [ref=f2e19]:
+          - link "Account" [ref=f2e20] [cursor=pointer]:
+            - /url: /login
+        - listitem [ref=f2e21]:
+          - link "Cart" [ref=f2e22] [cursor=pointer]:
+            - /url: /cart
+      - generic [ref=f2e23]:
+        - button "Search" [ref=f2e24]
+        - link "Wishlist" [ref=f2e28] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Cart" [ref=f2e31] [cursor=pointer]:
+          - /url: /cart
+        - button "Account" [ref=f2e36] [cursor=pointer]
+  - main [ref=f2e40]:
+    - generic [ref=f2e41]:
+      - generic [ref=f2e42]:
+        - img "A woodworker's hands finishing the grain of a solid timber surface in natural light." [ref=f2e43]
+        - generic [ref=f2e44]:
+          - generic [ref=f2e45]: An Indian Workshop
+          - heading "Where wood becomes timeless art." [level=1] [ref=f2e46]
+          - generic [ref=f2e47]:
+            - link "View the Collection" [ref=f2e48] [cursor=pointer]:
+              - /url: /gallery
+            - link "Our Studio" [ref=f2e49] [cursor=pointer]:
+              - /url: /studio
+        - link "Scroll to explore" [ref=f2e50] [cursor=pointer]:
+          - /url: "#philosophy"
+          - generic [ref=f2e51]: Scroll
+      - generic [ref=f2e55]:
+        - generic [ref=f2e56]: Handcrafted in India
+        - generic [ref=f2e60]: Solid Timber, Never Veneer
+        - generic [ref=f2e64]: White-Glove Delivery
+        - generic [ref=f2e71]: Sustainably Sourced
+      - generic [ref=f2e76]:
+        - generic [ref=f2e77]: Why We Exist
+        - heading "We make objects that are not finished when they leave the workshop." [level=2] [ref=f2e78]
+        - paragraph [ref=f2e79]: A piece of solid teak keeps changing long after it reaches your home — the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.
+        - paragraph [ref=f2e80]: This is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.
+      - generic [ref=f2e83]:
+        - generic [ref=f2e84]:
+          - img "The Anchor Table, handcrafted teak dining table" [ref=f2e86]
+          - radiogroup "Product images" [ref=f2e87]:
+            - radio "View image 1" [checked] [ref=f2e88] [cursor=pointer]
+            - radio "View image 2" [ref=f2e89] [cursor=pointer]
+            - radio "View image 3" [ref=f2e90] [cursor=pointer]
+            - radio "View image 4" [ref=f2e91] [cursor=pointer]
+          - generic [ref=f2e92]:
+            - button "Previous image" [ref=f2e93] [cursor=pointer]: ←
+            - button "Next image" [ref=f2e94] [cursor=pointer]: →
+        - generic [ref=f2e95]:
+          - generic [ref=f2e96]: The Anchor Table
+          - generic [ref=f2e97]: One of One · Hero Edition
+          - heading "This season’s hero." [level=2] [ref=f2e98]
+          - paragraph [ref=f2e99]: Solid teak dining table, hand-finished from a single selected block. Never restocked. Never repeated.
+          - generic [ref=f2e100]:
+            - link "View This Piece" [ref=f2e101] [cursor=pointer]:
+              - /url: /shop/anchor-table
+            - link "Watch the Process" [ref=f2e102] [cursor=pointer]:
+              - /url: /process/anchor-table
+          - paragraph [ref=f2e103]:
+            - text: Looking for something from a past season?
+            - link "See past editions" [ref=f2e104] [cursor=pointer]:
+              - /url: /archive
+            - text: .
+      - generic [ref=f2e106]:
+        - img "Close-up of hand-cut joinery on a solid teak furniture piece." [ref=f2e108]
+        - generic [ref=f2e109]:
+          - generic [ref=f2e110]: Craftsmanship
+          - heading "Every piece passes through one pair of hands, start to finish." [level=2] [ref=f2e111]
+          - paragraph [ref=f2e112]: We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it — rushing this step is the most common way a piece fails early.
+          - paragraph [ref=f2e113]: Joints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece’s life, not sealed under lacquer that traps moisture and cracks.
+          - link "Visit the Studio" [ref=f2e114] [cursor=pointer]:
+            - /url: /studio
+      - generic [ref=f2e115]:
+        - button "Previous" [ref=f2e116] [cursor=pointer]: ←
+        - button "Next" [ref=f2e117] [cursor=pointer]: →
+        - generic [ref=f2e118]:
+          - link "The Anchor Table The Anchor Table Discover" [ref=f2e119] [cursor=pointer]:
+            - /url: /shop/anchor-table
+            - img "The Anchor Table" [ref=f2e121]
+            - generic [ref=f2e122]: The Anchor Table
+            - generic [ref=f2e123]: Discover
+          - link "The Bearing Chair The Bearing Chair Discover" [ref=f2e124] [cursor=pointer]:
+            - /url: /shop/bearing-chair
+            - img "The Bearing Chair" [ref=f2e126]
+            - generic [ref=f2e127]: The Bearing Chair
+            - generic [ref=f2e128]: Discover
+          - link "Teak Serving Board Teak Serving Board Discover" [ref=f2e129] [cursor=pointer]:
+            - /url: /shop/serving-plank
+            - img "Teak Serving Board" [ref=f2e131]
+            - generic [ref=f2e132]: Teak Serving Board
+            - generic [ref=f2e133]: Discover
+          - link "Carving Board Carving Board Discover" [ref=f2e134] [cursor=pointer]:
+            - /url: /shop/carving-board
+            - img "Carving Board" [ref=f2e136]
+            - generic [ref=f2e137]: Carving Board
+            - generic [ref=f2e138]: Discover
+          - link "Spice Rack Spice Rack Discover" [ref=f2e139] [cursor=pointer]:
+            - /url: /shop/spice-rack
+            - img "Spice Rack" [ref=f2e141]
+            - generic [ref=f2e142]: Spice Rack
+            - generic [ref=f2e143]: Discover
+          - link "Drift Sculpture Drift Sculpture Discover" [ref=f2e144] [cursor=pointer]:
+            - /url: /shop/drift-sculpture
+            - img "Drift Sculpture" [ref=f2e146]
+            - generic [ref=f2e147]: Drift Sculpture
+            - generic [ref=f2e148]: Discover
+          - link "Hourglass Vase Hourglass Vase Discover" [ref=f2e149] [cursor=pointer]:
+            - /url: /shop/hourglass-vase
+            - img "Hourglass Vase" [ref=f2e151]
+            - generic [ref=f2e152]: Hourglass Vase
+            - generic [ref=f2e153]: Discover
+      - generic [ref=f2e163]:
+        - generic [ref=f2e164]:
+          - generic [ref=f2e165]: From the Collection
+          - heading "Pieces Built to Last" [level=2] [ref=f2e166]
+        - generic [ref=f2e167]:
+          - link "The Anchor Table The Anchor Table Dining ₹1,85,000" [ref=f2e168] [cursor=pointer]:
+            - /url: /shop/anchor-table
+            - img "The Anchor Table" [ref=f2e170]
+            - generic [ref=f2e172]:
+              - heading "The Anchor Table" [level=3] [ref=f2e173]
+              - generic [ref=f2e174]:
+                - generic [ref=f2e175]: Dining
+                - generic [ref=f2e176]: ₹1,85,000
+          - link "The Bearing Chair The Bearing Chair Dining ₹68,000" [ref=f2e177] [cursor=pointer]:
+            - /url: /shop/bearing-chair
+            - img "The Bearing Chair" [ref=f2e179]
+            - generic [ref=f2e181]:
+              - heading "The Bearing Chair" [level=3] [ref=f2e182]
+              - generic [ref=f2e183]:
+                - generic [ref=f2e184]: Dining
+                - generic [ref=f2e185]: ₹68,000
+          - link "Teak Serving Board Teak Serving Board Kitchen ₹7,000" [ref=f2e186] [cursor=pointer]:
+            - /url: /shop/serving-plank
+            - img "Teak Serving Board" [ref=f2e188]
+            - generic [ref=f2e190]:
+              - heading "Teak Serving Board" [level=3] [ref=f2e191]
+              - generic [ref=f2e192]:
+                - generic [ref=f2e193]: Kitchen
+                - generic [ref=f2e194]: ₹7,000
+          - link "Spice Rack Spice Rack Kitchen ₹9,500" [ref=f2e195] [cursor=pointer]:
+            - /url: /shop/spice-rack
+            - img "Spice Rack" [ref=f2e197]
+            - generic [ref=f2e199]:
+              - heading "Spice Rack" [level=3] [ref=f2e200]
+              - generic [ref=f2e201]:
+                - generic [ref=f2e202]: Kitchen
+                - generic [ref=f2e203]: ₹9,500
+          - link "Drift Sculpture Drift Sculpture Living ₹24,000" [ref=f2e204] [cursor=pointer]:
+            - /url: /shop/drift-sculpture
+            - img "Drift Sculpture" [ref=f2e206]
+            - generic [ref=f2e208]:
+              - heading "Drift Sculpture" [level=3] [ref=f2e209]
+              - generic [ref=f2e210]:
+                - generic [ref=f2e211]: Living
+                - generic [ref=f2e212]: ₹24,000
+          - link "Hourglass Vase Hourglass Vase Living ₹9,500" [ref=f2e213] [cursor=pointer]:
+            - /url: /shop/hourglass-vase
+            - img "Hourglass Vase" [ref=f2e215]
+            - generic [ref=f2e217]:
+              - heading "Hourglass Vase" [level=3] [ref=f2e218]
+              - generic [ref=f2e219]:
+                - generic [ref=f2e220]: Living
+                - generic [ref=f2e221]: ₹9,500
+        - link "Explore the Full Collection" [ref=f2e223] [cursor=pointer]:
+          - /url: /gallery
+      - generic [ref=f2e224]:
+        - img "A craftsman's weathered hands sanding a wooden surface in the workshop." [ref=f2e225]
+        - generic [ref=f2e226]:
+          - generic [ref=f2e227]: The Workshop
+          - heading "A family workshop, unchanged in method for three generations." [level=2] [ref=f2e228]
+          - paragraph [ref=f2e229]: The tools are old. The hands are patient. Nothing here is made to a deadline — a piece is finished when it is ready, and not before.
+          - link "Read About Our Process" [ref=f2e230] [cursor=pointer]:
+            - /url: /studio
+      - generic [ref=f2e231]:
+        - img "Timber being shaped by hand, filmed for a process video." [ref=f2e232]
+        - generic [ref=f2e233]:
+          - generic [ref=f2e234]: Watch It Made
+          - heading "Every piece is documented from timber to finish." [level=2] [ref=f2e235]
+          - paragraph [ref=f2e236]: We don’t ask you to imagine the process — we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you’re buying before you buy it.
+          - link "Watch the Process" [ref=f2e237] [cursor=pointer]:
+            - /url: /process/anchor-table
+  - contentinfo [ref=f2e238]:
+    - generic [ref=f2e239]:
+      - generic [ref=f2e240]:
+        - generic [ref=f2e241]:
+          - link [ref=f2e242] [cursor=pointer]:
+            - /url: /
+            - img "Teakle" [ref=f2e243]
+          - paragraph [ref=f2e244]: Made by hand in India, one piece at a time.
+          - generic [ref=f2e245]:
+            - link "Instagram" [ref=f2e246] [cursor=pointer]:
+              - /url: https://www.instagram.com/teaklestudio
+            - link "Email" [ref=f2e251] [cursor=pointer]:
+              - /url: mailto:hello@teakle.in
+        - generic [ref=f2e255]:
+          - heading "Explore" [level=4] [ref=f2e256]
+          - list [ref=f2e257]:
+            - listitem [ref=f2e258]:
+              - link "Gallery" [ref=f2e259] [cursor=pointer]:
+                - /url: /gallery
+            - listitem [ref=f2e260]:
+              - link "Archive" [ref=f2e261] [cursor=pointer]:
+                - /url: /archive
+            - listitem [ref=f2e262]:
+              - link "Studio" [ref=f2e263] [cursor=pointer]:
+                - /url: /studio
+            - listitem [ref=f2e264]:
+              - link "Journal" [ref=f2e265] [cursor=pointer]:
+                - /url: /journal
+        - generic [ref=f2e266]:
+          - heading "Services" [level=4] [ref=f2e267]
+          - list [ref=f2e268]:
+            - listitem [ref=f2e269]:
+              - link "Trade & Bulk Inquiries" [ref=f2e270] [cursor=pointer]:
+                - /url: /trade
+            - listitem [ref=f2e271]:
+              - link "Contact" [ref=f2e272] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=f2e273]:
+              - link "Custom Orders" [ref=f2e274] [cursor=pointer]:
+                - /url: /custom
+        - generic [ref=f2e275]:
+          - heading "From the Workshop" [level=4] [ref=f2e276]
+          - paragraph [ref=f2e277]: Receive occasional notes from the workshop. No spam. No offers. Only stories.
+          - form "Newsletter signup" [ref=f2e278]:
+            - generic [ref=f2e279]: Email address for newsletter
+            - textbox "Email address for newsletter" [ref=f2e280]:
+              - /placeholder: Your email
+            - button "Send" [ref=f2e281] [cursor=pointer]
+      - generic [ref=f2e282]:
+        - generic [ref=f2e283]: © 2026 Teakle. Handcrafted in India.
+        - generic [ref=f2e284]:
+          - link "Privacy" [ref=f2e285] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f2e286] [cursor=pointer]:
+            - /url: /terms
+          - link "Shipping" [ref=f2e287] [cursor=pointer]:
+            - /url: /shipping
+          - link "Returns & Refunds" [ref=f2e288] [cursor=pointer]:
+            - /url: /returns-and-refunds
+          - link "Cancellation" [ref=f2e289] [cursor=pointer]:
+            - /url: /cancellation
+          - link "Warranty" [ref=f2e290] [cursor=pointer]:
+            - /url: /warranty

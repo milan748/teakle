@@ -1,0 +1,20 @@
+[    4573ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/gallery:0
+[    4859ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom-client.development.js:28004
+[    4983ms] TypeError: __webpack_modules__[moduleId] is not a function
+    at Object.__webpack_require__ [as require] (file://C:\Users\Milan\Desktop\code v4(inspired)\.next\server\webpack-runtime.js:25:42)
+    at Object.require (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:40:28568)
+    at globalThis.__next_require__ (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:40:29391)
+    at requireModule (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:318257)
+    at initializeModuleChunk (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:347653)
+    at getOutlinedModel (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:357412)
+    at <unknown> (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:365365)
+    at ResponseInstance._fromJSON (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:365456)
+    at JSON.parse (<anonymous>)
+    at initializeModelChunk (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:347044)
+    at resolveModelChunk (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:345332)
+    at processFullStringRow (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:384476)
+    at <unknown> (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:386879)
+    at processBinaryChunk (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:386951)
+    at progress (file://C:\Users\Milan\Desktop\code v4(inspired)\node_modules\next\dist\compiled\next-server\app-page.runtime.dev.js:2:388479)
+[    4975ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[    4985ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/favicon.ico:0
