@@ -181,25 +181,20 @@
   margin-top: var(--space-sm);
 }
 
-/* ---- Signature Collection (Scroll-Beat Reveal) ---- */
-/* ---- Signature Edition — Hero Product Editorial (Scroll-Progress Reveal) ---- */
+/* ---- Signature Edition — Hero Product Editorial (GSAP ScrollTrigger) ---- */
 .v2-sig-editorial {
   background: var(--bg-primary);
   padding: 0;
-  min-height: 250vh;
 }
 .v2-sig-editorial-inner {
   max-width: var(--container);
   margin: 0 auto;
   padding: 0 var(--space-md);
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 .v2-sig-editorial-grid {
   display: grid;
@@ -210,8 +205,8 @@
   max-width: var(--container);
   margin: 0 auto;
 }
-/* ---- Block-based reveal (one-shot, non-rewinding) ---- */
-/* Default state: hidden */
+/* ---- Block-based reveal (GSAP ScrollTrigger controlled) ---- */
+/* Default state: hidden — GSAP sets initial opacity/transform */
 .v2-sig-editorial-img,
 .v2-sig-editorial-tag,
 .v2-sig-editorial-text .eyebrow,
@@ -220,41 +215,7 @@
 .v2-sig-editorial-meta,
 .v2-sig-editorial-actions,
 .v2-sig-editorial-past {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-/* Revealed state: visible */
-.v2-sig-editorial-img.is-revealed,
-.v2-sig-editorial-tag.is-revealed,
-.v2-sig-editorial-text .eyebrow.is-revealed,
-.v2-sig-editorial-text h2.is-revealed,
-.v2-sig-editorial-text p.is-revealed,
-.v2-sig-editorial-meta.is-revealed,
-.v2-sig-editorial-actions.is-revealed,
-.v2-sig-editorial-past.is-revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-/* Completed state: collapse section + release sticky to restore normal scroll */
-.v2-sig-editorial.sig-revealed {
-  min-height: auto;
-}
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-inner {
-  position: relative;
-  height: auto;
-  min-height: 100vh;
-  min-height: 100dvh;
-}
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-img,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-tag,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-text .eyebrow,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-text h2,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-text p,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-meta,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-actions,
-.v2-sig-editorial.sig-revealed .v2-sig-editorial-past {
-  transition: none;
+  will-change: opacity, transform;
 }
 .v2-sig-editorial-img img {
   width: 100%;
@@ -797,8 +758,6 @@
   .v2-hero-actions .btn-primary { flex: 1; min-height: 44px; font-size: 0.625rem; width: auto; padding: 0.35rem var(--space-sm); }
   .v2-hero-actions .link-quiet { font-size: var(--text-label); white-space: nowrap; }
 
-  .v2-sig-editorial { min-height: 250vh; }
-  .v2-sig-editorial-inner { position: sticky; top: 0; height: 100vh; height: 100dvh; }
   .v2-sig-editorial-thumb { width: 48px; height: 48px; }
   .v2-sig-editorial-text { padding: 0 var(--space-md); }
   .v2-sig-editorial-text h2 { font-size: var(--text-h2); }
@@ -853,9 +812,7 @@
 @media (prefers-reduced-motion: reduce) {
   .v2-hero-img { animation: none; transform: scale(1); }
   .v2-hero-eyebrow, .v2-hero h1, .v2-hero-actions, .v2-scroll { animation: none; opacity: 1; transform: none; }
-  /* Reduced motion: section shows immediately, no scroll-progress control */
-  .v2-sig-editorial { min-height: auto !important; }
-  .v2-sig-editorial-inner { position: relative !important; height: auto !important; min-height: 100vh; }
+  /* Reduced motion: show all signature blocks immediately */
   .v2-sig-editorial-img,
   .v2-sig-editorial-tag,
   .v2-sig-editorial-text .eyebrow,
@@ -864,6 +821,6 @@
   .v2-sig-editorial-meta,
   .v2-sig-editorial-actions,
   .v2-sig-editorial-past {
-    opacity: 1 !important; transform: none !important; transition: none !important;
+    opacity: 1 !important; transform: none !important;
   }
 }

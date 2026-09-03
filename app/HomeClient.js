@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import './homepage.css'
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct = null }) {
   const heroRef = useRef(null)
@@ -134,94 +140,74 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
     }
   }, [])
 
-  /* ---- Signature section block-based reveal (one-shot, non-rewinding) ---- */
+  /* ---- Signature section GSAP ScrollTrigger reveal ---- */
   useEffect(() => {
     const section = sigSectionRef.current
     if (!section) return
 
     /* Reduced motion: show everything immediately, no scroll interaction */
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      section.classList.add('sig-revealed')
+      gsap.set(section.querySelectorAll([
+        '.v2-sig-editorial-img',
+        '.v2-sig-editorial-tag',
+        '.v2-sig-editorial-text .eyebrow',
+        '.v2-sig-editorial-text h2',
+        '.v2-sig-editorial-text p',
+        '.v2-sig-editorial-meta',
+        '.v2-sig-editorial-actions',
+        '.v2-sig-editorial-past'
+      ].join(',')), { opacity: 1, y: 0 })
       return
     }
 
-    /* Block selectors in reveal order — each maps to a DOM group */
-    const blocks = [
-      '.v2-sig-editorial-img',
-      '.v2-sig-editorial-tag',
-      '.v2-sig-editorial-text .eyebrow',
-      '.v2-sig-editorial-text h2',
-      '.v2-sig-editorial-text p',
-      '.v2-sig-editorial-meta',
-      '.v2-sig-editorial-actions',
-      '.v2-sig-editorial-past',
-    ]
+    const ctx = gsap.context(() => {
+      /* Block selectors in reveal order */
+      const blocks = [
+        '.v2-sig-editorial-img',
+        '.v2-sig-editorial-tag',
+        '.v2-sig-editorial-text .eyebrow',
+        '.v2-sig-editorial-text h2',
+        '.v2-sig-editorial-text p',
+        '.v2-sig-editorial-meta',
+        '.v2-sig-editorial-actions',
+        '.v2-sig-editorial-past',
+      ]
 
-    /* Thresholds: fraction of scroll progress through section at which each block appears.
-       0.0 = section top at viewport top
-       1.0 = section bottom at viewport bottom */
-    const thresholds = [0.05, 0.15, 0.25, 0.35, 0.50, 0.60, 0.70, 0.80]
+      /* Set initial state: all blocks hidden */
+      gsap.set(blocks.map(s => section.querySelector(s)).filter(Boolean), {
+        opacity: 0,
+        y: 30,
+      })
 
-    /* Completion latch — once true, reveal is permanently finished */
-    let completed = false
+      /* Create timeline */
+      const tl = gsap.timeline()
 
-    function update() {
-      if (completed) return
+      /* Reveal each block sequentially across the scroll progress */
+      blocks.forEach((sel, i) => {
+        const el = section.querySelector(sel)
+        if (!el) return
+        tl.to(el, {
+          opacity: 1,
+          y: 0,
+          duration: 0.15,
+          ease: 'power2.out',
+        }, i * 0.12) /* stagger: each block starts 12% after the previous */
+      })
 
-      const rect = section.getBoundingClientRect()
-      const sectionH = section.offsetHeight
-      const vh = window.innerHeight
+      /* Attach ScrollTrigger to pin the section and scrub the timeline */
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top top',
+        end: () => '+=' + (window.innerHeight * 1.5),
+        pin: section.querySelector('.v2-sig-editorial-inner'),
+        pinSpacing: true,
+        scrub: 0.8,
+        animation: tl,
+        once: true,
+      })
+    }, section)
 
-      /* Scroll progress through the tall section:
-         0 = section top at viewport top (just arrived)
-         1 = section bottom at viewport bottom (about to leave) */
-      const scrolled = -rect.top
-      const scrollable = sectionH - vh
-      const progress = Math.min(1, Math.max(0, scrolled / scrollable))
-
-      /* Reveal blocks whose threshold has been crossed */
-      let newCount = 0
-      for (let i = 0; i < blocks.length; i++) {
-        if (progress >= thresholds[i]) {
-          const el = section.querySelector(blocks[i])
-          if (el && !el.classList.contains('is-revealed')) {
-            el.classList.add('is-revealed')
-          }
-          newCount = i + 1
-        }
-      }
-
-      /* If all blocks revealed, latch completion permanently and stop listening */
-      if (newCount >= blocks.length && !completed) {
-        completed = true
-
-        /* Record position BEFORE collapse */
-        const secAbsTop = window.scrollY + rect.top
-
-        /* Mark revealed — CSS collapses section height and releases sticky */
-        section.classList.add('sig-revealed')
-
-        /* Force layout so browser calculates collapsed height */
-        void section.offsetHeight
-
-        /* Compensate scroll: put user at top of collapsed section */
-        window.scrollTo({ top: secAbsTop, behavior: 'instant' })
-
-        /* Remove listeners — Hero is now passive */
-        window.removeEventListener('scroll', update)
-        window.removeEventListener('resize', update)
-      }
-    }
-
-    /* Initial paint */
-    update()
-
-    window.addEventListener('scroll', update, { passive: true })
-    window.addEventListener('resize', update, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-    }
+    return () => ctx.revert()
   }, [])
 
   const sigImages = heroProduct?.images || []
