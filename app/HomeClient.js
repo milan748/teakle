@@ -4,16 +4,17 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import './homepage.css'
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
-}
+gsap.registerPlugin(ScrollTrigger)
 
 export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct = null }) {
   const heroRef = useRef(null)
   const sigSectionRef = useRef(null)
   const carouselTrackRef = useRef(null)
+  const sigCompletedRef = useRef(false)
+  const prefersReducedMotionRef = useRef(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
 
   const hero = cms.hero || {}
@@ -56,6 +57,108 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  /* ---- Reduced-motion check ---- */
+  useEffect(() => {
+    prefersReducedMotionRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  }, [])
+
+  /* ---- Signature section: GSAP ScrollTrigger pin + reveal ---- */
+  useGSAP(() => {
+    const section = sigSectionRef.current
+    if (!section) return
+
+    /* Block selectors in reveal order */
+    const blocks = [
+      '.v2-sig-editorial-img',
+      '.v2-sig-editorial-meta-line',
+      '.v2-sig-editorial-text h2',
+      '.v2-sig-editorial-subtitle',
+      '.v2-sig-editorial-text > p',
+      '.v2-sig-editorial-features',
+      '.v2-sig-editorial-price',
+      '.v2-sig-editorial-actions',
+      '.v2-sig-editorial-maker',
+      '.v2-sig-editorial-quote',
+    ]
+
+    /* Reduced motion: show everything immediately, skip scroll interaction */
+    if (prefersReducedMotionRef.current) {
+      gsap.set(blocks.map(s => section.querySelector(s)).filter(Boolean), {
+        opacity: 1, y: 0,
+      })
+      return
+    }
+
+    /* Set initial state: all blocks hidden */
+    const els = blocks.map(s => section.querySelector(s)).filter(Boolean)
+    gsap.set(els, { opacity: 0, y: 24 })
+
+    /* Build the reveal timeline — staggered across scroll progress */
+    const tl = gsap.timeline({ paused: true })
+    els.forEach((el, i) => {
+      tl.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.12,
+        ease: 'power2.out',
+      }, i * 0.08)
+    })
+
+    /*
+     * ScrollTrigger:
+     * - pin: '.v2-sig-editorial' (the OUTER section)
+     * - pinSpacing: true (creates space so scroll can continue past)
+     * - start: top of section reaches 85px from top (below fixed header)
+     * - end: "+=150%" of viewport height (short intentional hold)
+     * - scrub: 0.6 (scroll position drives timeline with smoothing)
+     *
+     * CRITICAL: The pin target is the outer section. Its transform is
+     * managed entirely by ScrollTrigger. We NEVER animate it manually.
+     * Only visual children (opacity, y) are animated by the timeline.
+     *
+     * No-rewind: onUpdate tracks max progress. Once the timeline reaches
+     * completion, we permanently lock the visual children at their final
+     * state using gsap.set(). This way, even if the scrub reverses, the
+     * blocks remain fully revealed. The pin lifecycle is NOT interrupted.
+     */
+    let maxProgress = 0
+    let lastProgress = 0
+    let locked = false
+    ScrollTrigger.create({
+      trigger: section,
+      pin: true,
+      start: 'top 85px',
+      end: '+=200%',
+      scrub: 0.6,
+      animation: tl,
+      onUpdate: (self) => {
+        /* Track scroll direction and max progress */
+        const scrollingDown = self.progress >= lastProgress
+        lastProgress = self.progress
+
+        if (self.progress > maxProgress) {
+          maxProgress = self.progress
+        }
+
+        /*
+         * No-rewind: once the timeline has reached completion, lock it
+         * at progress 1 so scrubbing backward does not reverse the
+         * visual reveal. The pin lifecycle is NOT interrupted — only
+         * the timeline progress is overridden.
+         */
+        if (maxProgress >= 1 && !locked) {
+          locked = true
+          gsap.set(els, { opacity: 1, y: 0, overwrite: true })
+        }
+
+        /* While locked and scrolling backward, keep timeline at end */
+        if (locked && !scrollingDown) {
+          tl.progress(1)
+        }
+      },
+    })
+  }, { scope: sigSectionRef })
 
   /* ---- Editorial carousel ---- */
   useEffect(() => {
@@ -138,76 +241,6 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
       track.removeEventListener('touchend', te)
       track.removeEventListener('scroll', onScroll)
     }
-  }, [])
-
-  /* ---- Signature section GSAP ScrollTrigger reveal ---- */
-  useEffect(() => {
-    const section = sigSectionRef.current
-    if (!section) return
-
-    /* Reduced motion: show everything immediately, no scroll interaction */
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(section.querySelectorAll([
-        '.v2-sig-editorial-img',
-        '.v2-sig-editorial-tag',
-        '.v2-sig-editorial-text .eyebrow',
-        '.v2-sig-editorial-text h2',
-        '.v2-sig-editorial-text p',
-        '.v2-sig-editorial-meta',
-        '.v2-sig-editorial-actions',
-        '.v2-sig-editorial-past'
-      ].join(',')), { opacity: 1, y: 0 })
-      return
-    }
-
-    const ctx = gsap.context(() => {
-      /* Block selectors in reveal order */
-      const blocks = [
-        '.v2-sig-editorial-img',
-        '.v2-sig-editorial-tag',
-        '.v2-sig-editorial-text .eyebrow',
-        '.v2-sig-editorial-text h2',
-        '.v2-sig-editorial-text p',
-        '.v2-sig-editorial-meta',
-        '.v2-sig-editorial-actions',
-        '.v2-sig-editorial-past',
-      ]
-
-      /* Set initial state: all blocks hidden */
-      gsap.set(blocks.map(s => section.querySelector(s)).filter(Boolean), {
-        opacity: 0,
-        y: 30,
-      })
-
-      /* Create timeline */
-      const tl = gsap.timeline()
-
-      /* Reveal each block sequentially across the scroll progress */
-      blocks.forEach((sel, i) => {
-        const el = section.querySelector(sel)
-        if (!el) return
-        tl.to(el, {
-          opacity: 1,
-          y: 0,
-          duration: 0.15,
-          ease: 'power2.out',
-        }, i * 0.12) /* stagger: each block starts 12% after the previous */
-      })
-
-      /* Attach ScrollTrigger to pin the section and scrub the timeline */
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'top top',
-        end: () => '+=' + (window.innerHeight * 1.5),
-        pin: section.querySelector('.v2-sig-editorial-inner'),
-        pinSpacing: true,
-        scrub: 0.8,
-        animation: tl,
-        once: true,
-      })
-    }, section)
-
-    return () => ctx.revert()
   }, [])
 
   const sigImages = heroProduct?.images || []
@@ -293,7 +326,12 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         <section className="v2-sig-editorial" ref={sigSectionRef}>
           <div className="v2-sig-editorial-inner">
             <div className="v2-sig-editorial-grid">
+              {/* Left: Product media */}
               <div className="v2-sig-editorial-img">
+                <div className="v2-sig-badge">
+                  <span className="v2-sig-badge-label">One<br/>of<br/>One</span>
+                  <span className="v2-sig-badge-sub">Never to be<br/>recreated</span>
+                </div>
                 <img
                   src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
                   alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
@@ -304,35 +342,116 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                     <div className="v2-sig-editorial-thumbs" role="radiogroup" aria-label="Product images">
                       {sigThumbs.map((thumb, i) => (
                         <button key={i} className={`v2-sig-editorial-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
-                          <img src={thumb} alt="" width="56" height="56" loading="lazy" />
+                          <img src={thumb} alt="" width="72" height="72" loading="lazy" />
                         </button>
                       ))}
                     </div>
-                    <div className="v2-sig-editorial-nav">
-                      <button className="v2-sig-editorial-nav-btn" onClick={sigPrev} aria-label="Previous image">&#8592;</button>
-                      <button className="v2-sig-editorial-nav-btn" onClick={sigNext} aria-label="Next image">&#8594;</button>
-                    </div>
                   </div>
                 )}
+                {/* Trust badges */}
+                <div className="v2-sig-trust">
+                  <div className="v2-sig-trust-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <strong>100% Handcrafted</strong>
+                    <span>By master artisans</span>
+                  </div>
+                  <div className="v2-sig-trust-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <strong>Certificate of Authenticity</strong>
+                    <span>Signed & sealed</span>
+                  </div>
+                  <div className="v2-sig-trust-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <strong>Built to Last</strong>
+                    <span>Generations of legacy</span>
+                  </div>
+                  <div className="v2-sig-trust-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                    <strong>Sustainable & Rare</strong>
+                    <span>Responsibly sourced</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Right: Product information */}
               <div className="v2-sig-editorial-text">
-                <span className="v2-sig-editorial-tag">{heroProduct?.name || 'The Hero Edition'}</span>
-                <span className="eyebrow">One of One · Hero Edition</span>
-                <h2>{signature.title || 'This season\u2019s hero.'}</h2>
+                <div className="v2-sig-editorial-meta-line">
+                  <span>Hero Edition</span>
+                  <span className="v2-sig-meta-sep"></span>
+                  <span>Piece No. 01</span>
+                </div>
+                <h2>{signature.title || 'The Anchor Table.'}</h2>
+                <div className="v2-sig-editorial-subtitle">Solid Teak, Timeless Form.</div>
                 <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
-                <div className="v2-sig-editorial-meta">
-                  {heroProduct?.material && <span>{heroProduct.material}</span>}
-                  {heroProduct?.dimensions && <span>{heroProduct.dimensions}</span>}
-                  {heroProduct?.buildTime && <span>{heroProduct.buildTime}</span>}
+
+                {/* Feature blocks */}
+                <div className="v2-sig-editorial-features">
+                  <div className="v2-sig-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    <span className="v2-sig-feature-label">{heroProduct?.buildTime || '~18 Hours'}</span>
+                    <span className="v2-sig-feature-text">of meticulous handcrafting</span>
+                  </div>
+                  <div className="v2-sig-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                    <span className="v2-sig-feature-label">Master Crafted</span>
+                    <span className="v2-sig-feature-text">by skilled artisans in India</span>
+                  </div>
+                  <div className="v2-sig-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    <span className="v2-sig-feature-label">{heroProduct?.material || 'Reclaimed Teak'}</span>
+                    <span className="v2-sig-feature-text">sustainable, rare & timeless</span>
+                  </div>
+                  <div className="v2-sig-feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    <span className="v2-sig-feature-label">One of One</span>
+                    <span className="v2-sig-feature-text">never to be recreated</span>
+                  </div>
                 </div>
+
+                <div className="v2-sig-divider"></div>
+
+                {/* Price */}
+                <div className="v2-sig-editorial-price">
+                  <div className="v2-sig-editorial-price-amount">{heroProduct?.priceFormatted || '₹1,85,000'}</div>
+                  <div className="v2-sig-editorial-price-note">One of One · Never to be recreated</div>
+                </div>
+
+                {/* CTAs */}
                 <div className="v2-sig-editorial-actions">
-                  <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="btn-primary">View This Piece</Link>
-                  <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet">Watch the Process</Link>
+                  <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="btn-primary">Inquire to Own</Link>
+                  <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet">Book a Private Viewing</Link>
                 </div>
-                <p className="v2-sig-editorial-past">Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
+
+                {/* Maker card */}
+                <div className="v2-sig-editorial-maker">
+                  <img className="v2-sig-maker-img" src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Master artisan" width="64" height="64" loading="lazy" />
+                  <div className="v2-sig-maker-info">
+                    <div className="v2-sig-maker-label">Crafted by Master Artisan</div>
+                    <div className="v2-sig-maker-name">Raghav Prasad</div>
+                    <div className="v2-sig-maker-desc">Third generation wood sculptor with 30+ years of experience.</div>
+                  </div>
+                  <Link href="/studio" className="v2-sig-maker-link">
+                    Meet the Maker
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                  </Link>
+                </div>
+
+                {/* Quote */}
+                <div className="v2-sig-editorial-quote">
+                  <blockquote>&ldquo;We don&rsquo;t make furniture. We create heirlooms.&rdquo;</blockquote>
+                  <cite>— Teakle Studio</cite>
+                </div>
+
+                <p className="v2-sig-editorial-past" style={{marginTop: 'var(--space-lg)'}}>Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
               </div>
             </div>
           </div>
+
+          {/* Studio Visit vertical tab */}
+          <a href="/studio" className="v2-sig-studio-tab" aria-label="Book a studio visit">
+            Book a Studio Visit
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </a>
         </section>
         )}
 
