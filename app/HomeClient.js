@@ -9,6 +9,59 @@ import './homepage.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
+/* ── Style Override Helpers (shared with editor) ─────────────────────────── */
+function parseOverrides(sectionData) {
+  try {
+    return JSON.parse(sectionData?.styleOverrides || '{}') || {}
+  } catch { return {} }
+}
+
+function elStyle(elementKey, defaults, overrides, isMobile) {
+  const el = overrides?.[elementKey] || {}
+  const base = { ...defaults }
+  // Apply desktop overrides
+  for (const [key, val] of Object.entries(el)) {
+    if (key !== 'mobile') base[key] = val
+  }
+  // Apply mobile overrides
+  if (isMobile && el.mobile) {
+    for (const [key, val] of Object.entries(el.mobile)) {
+      base[key] = val
+    }
+  }
+  return base
+}
+
+/* Only safe typography/visual properties — never layout */
+const TYPO_KEYS = ['fontSize', 'fontWeight', 'fontStyle', 'lineHeight', 'letterSpacing', 'textAlign']
+function typoStyle(elementKey, defaults, overrides, isMobile) {
+  const el = overrides?.[elementKey] || {}
+  const base = { ...defaults }
+  // Apply desktop overrides
+  for (const k of TYPO_KEYS) {
+    if (el[k] !== undefined) base[k] = el[k]
+  }
+  // Apply mobile overrides
+  if (isMobile && el.mobile) {
+    for (const k of TYPO_KEYS) {
+      if (el.mobile[k] !== undefined) base[k] = el.mobile[k]
+    }
+  }
+  return base
+}
+
+/* Check if viewport is mobile-sized */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+  return isMobile
+}
+
 export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct = null }) {
   const heroRef = useRef(null)
   const sigSectionRef = useRef(null)
@@ -16,6 +69,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   const sigCompletedRef = useRef(false)
   const prefersReducedMotionRef = useRef(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
+  const isMobile = useIsMobile()
 
   const hero = cms.hero || {}
   const philosophy = cms.philosophy || {}
@@ -23,6 +77,14 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   const craftsmanship = cms.craftsmanship || {}
   const workshopStory = cms['workshop-story'] || {}
   const processStory = cms['process-story'] || {}
+
+  /* Parse style overrides for each section */
+  const heroOver = parseOverrides(cms.hero)
+  const philOver = parseOverrides(cms.philosophy)
+  const sigOver = parseOverrides(cms.signature)
+  const craftOver = parseOverrides(cms.craftsmanship)
+  const workshopOver = parseOverrides(cms['workshop-story'])
+  const processOver = parseOverrides(cms['process-story'])
 
   const heroDisabled = cmsKeys.has('hero') && !cms.hero
   const philosophyDisabled = cmsKeys.has('philosophy') && !cms.philosophy
@@ -264,16 +326,16 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
           <picture>
             <source srcSet="/assets/hero-luxury-entryway.avif" type="image/avif" />
             <source srcSet="/assets/hero-luxury-entryway.webp" type="image/webp" />
-            <img className="v2-hero-img" src={hero.image || '/assets/hero-luxury-entryway.png'} alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" />
+            <img className="v2-hero-img" src={hero.image || '/assets/hero-luxury-entryway.png'} alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" style={elStyle('image', {}, heroOver, isMobile)} />
           </picture>
           <div className="v2-hero-content">
-            <span className="eyebrow eyebrow-light v2-hero-eyebrow">{hero.eyebrow || 'An Indian Workshop'}</span>
-            <h1>{(hero.title || 'Where wood becomes<br />timeless art.').split('<br').length > 1
+            <span className="eyebrow eyebrow-light v2-hero-eyebrow" style={typoStyle('eyebrow', {}, heroOver, isMobile)}>{hero.eyebrow || 'An Indian Workshop'}</span>
+            <h1 style={typoStyle('title', {}, heroOver, isMobile)}>{(hero.title || 'Where wood becomes<br />timeless art.').split('<br').length > 1
               ? <>{hero.title?.split('<br />')[0] || 'Where wood becomes'}<br />{hero.title?.split('<br />')[1] || 'timeless art.'}</>
               : hero.title || <>{'Where wood becomes'}<br />{'timeless art.'}</>
             }</h1>
             <div className="v2-hero-actions">
-              <Link href={hero.buttonUrl || '/gallery'} className="btn-primary">{hero.buttonLabel || 'View the Collection'}</Link>
+              <Link href={hero.buttonUrl || '/gallery'} className="btn-primary" style={typoStyle('button', {}, heroOver, isMobile)}>{hero.buttonLabel || 'View the Collection'}</Link>
               <Link href="/studio" className="link-quiet">Our Studio</Link>
             </div>
           </div>
@@ -312,10 +374,10 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         {!philosophyDisabled && (
         <section className="v2-philosophy" id="philosophy">
           <div className="v2-philosophy-inner">
-            <span className="eyebrow reveal">{philosophy.eyebrow || 'Why We Exist'}</span>
-            <h2 className="reveal">{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
+            <span className="eyebrow reveal" style={typoStyle('eyebrow', {}, philOver, isMobile)}>{philosophy.eyebrow || 'Why We Exist'}</span>
+            <h2 className="reveal" style={typoStyle('title', {}, philOver, isMobile)}>{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
             {(philosophy.body || 'A piece of solid teak keeps changing long after it reaches your home \u2014 the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.\n\nThis is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.').split('\n\n').map((p, i) => (
-              <p key={i} className="reveal">{p}</p>
+              <p key={i} className="reveal" style={typoStyle('body', {}, philOver, isMobile)}>{p}</p>
             ))}
           </div>
         </section>
@@ -336,6 +398,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                   src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
                   alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
                   width="960" height="1200" loading="lazy"
+                  style={elStyle('image', {}, sigOver, isMobile)}
                 />
                 {hasGallery && (
                   <div className="v2-sig-editorial-gallery">
@@ -380,7 +443,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                   <span className="v2-sig-meta-sep"></span>
                   <span>Piece No. 01</span>
                 </div>
-                <h2>{signature.title || 'The Anchor Table.'}</h2>
+                <h2 style={typoStyle('title', {}, sigOver, isMobile)}>{signature.title || 'The Anchor Table.'}</h2>
                 <div className="v2-sig-editorial-subtitle">Solid Teak, Timeless Form.</div>
                 <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
 
@@ -460,13 +523,13 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         <section className="v2-craft">
           <div className="v2-craft-grid">
             <div className="v2-craft-img reveal">
-              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" />
+              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={elStyle('image', {}, craftOver, isMobile)} />
             </div>
             <div className="v2-craft-text">
-              <span className="eyebrow reveal">{craftsmanship.eyebrow || 'Craftsmanship'}</span>
-              <h2 className="reveal">{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
+              <span className="eyebrow reveal" style={typoStyle('eyebrow', {}, craftOver, isMobile)}>{craftsmanship.eyebrow || 'Craftsmanship'}</span>
+              <h2 className="reveal" style={typoStyle('title', {}, craftOver, isMobile)}>{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
               {(craftsmanship.body || 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.').split('\n\n').map((p, i) => (
-                <p key={i} className="reveal">{p}</p>
+                <p key={i} className="reveal" style={typoStyle('body', {}, craftOver, isMobile)}>{p}</p>
               ))}
               <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet reveal">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
             </div>
@@ -616,12 +679,12 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         {/* 8. Story Block — Workshop */}
         {!workshopDisabled && (
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." width="1600" height="1067" loading="lazy" />
+          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." width="1600" height="1067" loading="lazy" style={elStyle('image', {}, workshopOver, isMobile)} />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal">{workshopStory.eyebrow || 'The Workshop'}</span>
-            <h2 className="reveal">{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
-            <p className="reveal">{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
-            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet reveal">{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
+            <span className="eyebrow eyebrow-light reveal" style={typoStyle('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
+            <h2 className="reveal" style={typoStyle('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
+            <p className="reveal" style={typoStyle('body', {}, workshopOver, isMobile)}>{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
+            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet reveal" style={typoStyle('button', {}, workshopOver, isMobile)}>{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
           </div>
         </section>
         )}
@@ -629,12 +692,12 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         {/* 9. Story Block — Watch It Made */}
         {!processDisabled && (
         <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" />
+          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={elStyle('image', {}, processOver, isMobile)} />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal">{processStory.eyebrow || 'Watch It Made'}</span>
-            <h2 className="reveal">{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
-            <p className="reveal">{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
-            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet reveal">{processStory.buttonLabel || 'Watch the Process'}</Link>
+            <span className="eyebrow eyebrow-light reveal" style={typoStyle('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
+            <h2 className="reveal" style={typoStyle('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
+            <p className="reveal" style={typoStyle('body', {}, processOver, isMobile)}>{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
+            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet reveal" style={typoStyle('button', {}, processOver, isMobile)}>{processStory.buttonLabel || 'Watch the Process'}</Link>
           </div>
         </section>
         )}
