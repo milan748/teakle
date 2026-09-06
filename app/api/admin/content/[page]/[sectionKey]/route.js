@@ -95,7 +95,8 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
       sortOrder: body.sortOrder,
       enabled: enabled,
       styleOverrides: body.styleOverrides,
-    });
+      sectionStyleOverrides: body.sectionStyleOverrides,
+    }, body.instanceId);
 
     try {
       const db = getDb();
