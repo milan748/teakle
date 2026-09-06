@@ -12,6 +12,7 @@ import SiteSettingsEditor from './SiteSettingsEditor';
 import OrdersManager from './OrdersManager';
 import ProductsManager from './ProductsManager';
 import AuditLogManager from './AuditLogManager';
+import PageListManager from './PageListManager';
 import { adminFetch } from '@/lib/adminApi';
 
 const PAGES = {
@@ -87,12 +88,35 @@ export default function AdminDashboard({ admin }) {
           <div style={{ padding: '16px 0' }}>
             <SectionLabel text="Overview" />
             <NavButton label="Dashboard" isActive={activePage === 'dashboard'} onClick={() => { setActivePage('dashboard'); setShowMedia(false); }} />
+            <NavButton label="Pages" isActive={activePage === 'pages' && !showMedia} onClick={() => { setActivePage('pages'); setShowMedia(false); }} />
           </div>
 
           <div style={{ padding: '16px 0', borderTop: '1px solid #eee' }}>
             <SectionLabel text="Content" />
             {Object.entries(PAGES).map(([key, cfg]) => (
               <NavButton key={key} label={cfg.label} isActive={activePage === key && !showMedia} onClick={() => { setActivePage(key); setShowMedia(false); }} />
+            ))}
+          </div>
+
+          <div style={{ padding: '16px 0', borderTop: '1px solid #eee' }}>
+            <SectionLabel text="Visual Editor" />
+            {Object.entries(PAGES).map(([key, cfg]) => (
+              <a
+                key={key}
+                href={`/admin/editor/${key}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'block',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  color: '#A78659',
+                  textDecoration: 'none',
+                  fontWeight: 400,
+                }}
+              >
+                {cfg.label} ↗
+              </a>
             ))}
           </div>
 
@@ -131,6 +155,7 @@ export default function AdminDashboard({ admin }) {
         {/* Main content */}
         <div style={{ flex: 1, padding: '32px 40px', overflow: 'auto' }}>
           {activePage === 'dashboard' && <DashboardOverview />}
+          {activePage === 'pages' && <PageListManager />}
           {isContentPage && (
             <PageEditor
               page={activePage}
