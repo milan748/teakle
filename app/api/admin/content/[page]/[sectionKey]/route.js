@@ -94,6 +94,7 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
       buttonUrl: body.buttonUrl,
       sortOrder: body.sortOrder,
       enabled: enabled,
+      styleOverrides: body.styleOverrides,
     });
 
     try {
