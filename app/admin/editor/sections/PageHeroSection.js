@@ -1,8 +1,22 @@
 'use client'
 
-function getStyle(elementKey, defaults, styleOverrides) {
+function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   const overrides = styleOverrides?.[elementKey] || {}
-  return { ...defaults, ...overrides }
+  const base = { ...defaults }
+  
+  // Apply desktop overrides
+  for (const [key, val] of Object.entries(overrides)) {
+    if (key !== 'mobile') base[key] = val
+  }
+  
+  // Apply mobile overrides when in mobile view
+  if (viewMode === 'mobile' && overrides.mobile) {
+    for (const [key, val] of Object.entries(overrides.mobile)) {
+      base[key] = val
+    }
+  }
+  
+  return base
 }
 
 export default function PageHeroSection({
@@ -13,6 +27,7 @@ export default function PageHeroSection({
   onSelectElement,
   onUpdateField,
   styleOverrides,
+  viewMode,
   onSelect,
   page,
 }) {
@@ -171,7 +186,7 @@ export default function PageHeroSection({
                   letterSpacing: '0.15em',
                   textTransform: 'uppercase',
                   color: '#A78659',
-                }, styleOverrides),
+                }, styleOverrides, viewMode),
                 cursor: isElementSelected('eyebrow') ? 'text' : 'pointer',
                 outline: 'none',
                 minWidth: isElementSelected('eyebrow') ? '60px' : undefined,
@@ -203,7 +218,7 @@ export default function PageHeroSection({
                 fontWeight: 400,
                 lineHeight: 1.1,
                 color: '#F7F4EE',
-              }, styleOverrides),
+              }, styleOverrides, viewMode),
               cursor: isElementSelected('title') ? 'text' : 'pointer',
               outline: 'none',
               minWidth: isElementSelected('title') ? '200px' : undefined,
@@ -236,7 +251,7 @@ export default function PageHeroSection({
                   maxWidth: '480px',
                   marginLeft: 'auto',
                   marginRight: 'auto',
-                }, styleOverrides),
+                }, styleOverrides, viewMode),
                 cursor: isElementSelected('subtitle') ? 'text' : 'pointer',
                 outline: 'none',
                 minWidth: isElementSelected('subtitle') ? '200px' : undefined,
@@ -280,7 +295,7 @@ export default function PageHeroSection({
                     ...getButtonVariantStyles(styleOverrides?.button?.variant),
                     ...styleOverrides?.button,
                   },
-                }),
+                }, viewMode),
                 cursor: isElementSelected('button') ? 'text' : 'pointer',
                 outline: 'none',
                 minWidth: isElementSelected('button') ? '60px' : undefined,
