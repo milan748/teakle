@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { adminFetch } from '@/lib/adminApi'
-import { PAGE_SECTIONS, PAGE_LABELS, getSectionConfig } from './sections/registry'
+import { PAGE_SECTIONS, PAGE_LABELS, getSectionConfig, getElementsForSection } from './sections/registry'
 import Canvas from './Canvas'
 import Inspector from './Inspector'
 import EditorToolbar from './EditorToolbar'
@@ -11,6 +11,7 @@ import MediaLibrary from '../MediaLibrary'
 export default function EditorClient({ page }) {
   const [sections, setSections] = useState([])
   const [selectedSection, setSelectedSection] = useState(null)
+  const [selectedElement, setSelectedElement] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ text: '', type: '' })
@@ -23,6 +24,7 @@ export default function EditorClient({ page }) {
   
   useEffect(() => {
     fetchSections()
+    setSelectedElement(null)
   }, [page])
   
   async function fetchSections() {
@@ -41,6 +43,29 @@ export default function EditorClient({ page }) {
     return sections.find(s => s.sectionKey === sectionKey) || null
   }
   
+  function handleSelectElement(sectionKey, elementKey) {
+    if (elementKey) {
+      setSelectedElement({ sectionKey, elementKey })
+      setSelectedSection(sectionKey)
+    } else {
+      setSelectedElement(null)
+      setSelectedSection(sectionKey)
+    }
+  }
+
+  function handleStyleChange(sectionKey, elementKey, property, value) {
+    setSections(prev => prev.map(s => {
+      if (s.sectionKey !== sectionKey) return s
+      const currentRaw = s.draftStyleOverrides || s.styleOverrides || '{}'
+      let overrides
+      try { overrides = JSON.parse(currentRaw) } catch { overrides = {} }
+      if (!overrides[elementKey]) overrides[elementKey] = {}
+      overrides[elementKey][property] = value
+      const newJson = JSON.stringify(overrides)
+      return { ...s, draftStyleOverrides: newJson, status: 'draft' }
+    }))
+  }
+
   function updateSectionData(sectionKey, fieldKey, value) {
     setSections(prev => prev.map(s => {
       if (s.sectionKey !== sectionKey) return s
@@ -74,6 +99,7 @@ export default function EditorClient({ page }) {
         ? section.draftEnabled
         : section.enabled
       payload.enabled = draftEnabled === 1 || draftEnabled === true
+      payload.styleOverrides = section.draftStyleOverrides || section.styleOverrides || null
       
       const data = await adminFetch(`/api/admin/content/${page}/${sectionKey}`, {
         method: 'PUT',
@@ -136,7 +162,12 @@ export default function EditorClient({ page }) {
   
   function handleMediaSelect(item) {
     if (mediaTarget) {
-      updateSectionData(mediaTarget.sectionKey, mediaTarget.fieldKey, item.url)
+      if (mediaTarget.fieldKey.includes(':')) {
+        const [elementKey, fieldKey] = mediaTarget.fieldKey.split(':')
+        handleFieldChange(mediaTarget.sectionKey, fieldKey, item.url)
+      } else {
+        updateSectionData(mediaTarget.sectionKey, mediaTarget.fieldKey, item.url)
+      }
       setShowMedia(false)
       setMediaTarget(null)
     }
@@ -206,7 +237,7 @@ export default function EditorClient({ page }) {
               return (
                 <button
                   key={key}
-                  onClick={() => setSelectedSection(key)}
+                  onClick={() => { setSelectedSection(key); setSelectedElement(null) }}
                   style={{
                     display: 'block',
                     width: '100%',
@@ -245,7 +276,9 @@ export default function EditorClient({ page }) {
           sections={sectionKeys}
           getSectionData={getSectionData}
           selectedSection={selectedSection}
-          onSelectSection={setSelectedSection}
+          onSelectSection={(key) => { setSelectedSection(key); setSelectedElement(null) }}
+          selectedElement={selectedElement}
+          onSelectElement={handleSelectElement}
           viewMode={viewMode}
           loading={loading}
           page={page}
@@ -256,12 +289,23 @@ export default function EditorClient({ page }) {
           sectionData={selectedData}
           sectionConfig={selectedConfig}
           page={page}
+          selectedElement={selectedElement}
+          elements={selectedConfig ? getElementsForSection(selectedSection, page) : []}
+          styleOverrides={selectedData ? (() => {
+            try { return JSON.parse(selectedData.draftStyleOverrides || selectedData.styleOverrides || '{}') }
+            catch { return {} }
+          })() : {}}
           onFieldChange={handleFieldChange}
+          onStyleChange={handleStyleChange}
           onSave={() => selectedSection && saveDraft(selectedSection)}
           onPublish={() => selectedSection && publishSection(selectedSection)}
           onDiscard={() => selectedSection && discardDraft(selectedSection)}
           onOpenMedia={(fieldKey) => {
-            setMediaTarget({ sectionKey: selectedSection, fieldKey })
+            if (selectedElement) {
+              setMediaTarget({ sectionKey: selectedSection, fieldKey: selectedElement.elementKey + ':' + fieldKey })
+            } else {
+              setMediaTarget({ sectionKey: selectedSection, fieldKey })
+            }
             setShowMedia(true)
           }}
           saving={saving}
