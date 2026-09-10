@@ -124,6 +124,88 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ---- Hero Variants ---- */
+/* Split variant: image on one side, text on the other */
+.v2-hero.v2-hero--split {
+  height: auto;
+  min-height: 600px;
+  background: var(--walnut);
+}
+.v2-hero--split .v2-hero-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 600px;
+}
+.v2-hero--split .v2-hero-split-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-2xl) var(--space-xl);
+  z-index: 2;
+}
+.v2-hero--split .v2-hero-split-text h1 {
+  font-size: clamp(2rem, 5vw, var(--text-h1));
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--bg-primary);
+  margin-bottom: var(--space-lg);
+}
+.v2-hero--split .v2-hero-split-text .v2-hero-actions {
+  opacity: 1;
+  animation: none;
+}
+.v2-hero--split .v2-hero-split-image {
+  position: relative;
+  overflow: hidden;
+}
+.v2-hero--split .v2-hero-split-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.v2-hero--split .v2-hero-eyebrow {
+  opacity: 1;
+  animation: none;
+}
+
+/* Minimal variant: text-focused, no image */
+.v2-hero.v2-hero--minimal {
+  height: auto;
+  min-height: 500px;
+  background: var(--walnut);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.v2-hero--minimal .v2-hero-minimal {
+  position: relative;
+  z-index: 2;
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 800px;
+}
+.v2-hero--minimal .v2-hero-minimal h1 {
+  font-size: clamp(2.5rem, 6vw, var(--text-hero));
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--bg-primary);
+  margin-bottom: var(--space-lg);
+}
+.v2-hero--minimal .v2-hero-minimal .v2-hero-actions {
+  opacity: 1;
+  animation: none;
+  justify-content: center;
+}
+.v2-hero--minimal .v2-hero-eyebrow {
+  opacity: 1;
+  animation: none;
+}
+.v2-hero--minimal::after {
+  display: none;
+}
+
 /* ---- Trust Bar ---- */
 .v2-trust {
   background: var(--bg-secondary);
@@ -179,6 +261,15 @@
 }
 .v2-philosophy p + p {
   margin-top: var(--space-sm);
+}
+
+/* Philosophy variant: centered */
+.v2-philosophy.v2-philosophy--centered .v2-philosophy-inner {
+  text-align: center;
+  max-width: 800px;
+}
+.v2-philosophy.v2-philosophy--centered .v2-philosophy-inner .eyebrow {
+  text-align: center;
 }
 
 /* ---- Signature Edition — Hero Product Editorial ---- */
@@ -668,6 +759,21 @@
   transform: rotate(90deg);
 }
 
+/* Signature variant: gallery (featured image with text overlay) */
+.v2-sig-editorial.v2-sig-editorial--gallery .v2-sig-editorial-grid {
+  grid-template-columns: 1fr;
+}
+.v2-sig-editorial--gallery .v2-sig-editorial-img {
+  position: relative;
+  max-height: 500px;
+  overflow: hidden;
+}
+.v2-sig-editorial--gallery .v2-sig-editorial-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* ---- Responsive: Tablet & Mobile ---- */
 @media (max-width: 860px) {
   .v2-sig-editorial {
@@ -1132,7 +1238,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(51,38,29,0.82) 0%, rgba(51,38,29,0.25) 55%, transparent 100%);
+  background: linear-gradient(0deg, rgba(51,38,29,0.88) 0%, rgba(51,38,29,0.35) 55%, transparent 100%);
 }
 .v2-lifestyle-content {
   position: relative;
@@ -1143,9 +1249,11 @@
 .v2-lifestyle .eyebrow { color: var(--stone); margin-bottom: var(--space-sm); }
 .v2-lifestyle h2 {
   color: var(--bg-primary);
-  font-size: clamp(2rem, 4vw, var(--text-h1));
+  font-size: clamp(1.75rem, 3.5vw, var(--text-h1));
   margin-bottom: var(--space-sm);
   max-width: none;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 .v2-lifestyle p {
   color: var(--stone);
@@ -1170,6 +1278,12 @@
   .v2-hero-eyebrow { font-size: var(--text-caption); letter-spacing: 0.18em; margin-bottom: var(--space-sm); font-weight: 500; }
   .v2-scroll { display: none; }
   .v2-trust { display: none; }
+
+  /* Hero split variant: stack on tablet */
+  .v2-hero--split .v2-hero-split { grid-template-columns: 1fr; min-height: auto; }
+  .v2-hero--split .v2-hero-split-text { padding: var(--space-xl) var(--space-lg); }
+  .v2-hero--split .v2-hero-split-image { max-height: 400px; }
+  .v2-hero--minimal { min-height: 400px; }
 
   .v2-trust-inner { gap: var(--space-md); }
   .v2-trust-item { font-size: var(--text-caption); }
@@ -1255,7 +1369,7 @@
     bottom: var(--space-lg);
     top: auto;
     height: 260px;
-    background: linear-gradient(0deg, rgba(51,38,29,0.6) 0%, rgba(51,38,29,0.05) 55%, transparent 100%);
+    background: linear-gradient(0deg, rgba(51,38,29,0.7) 0%, rgba(51,38,29,0.12) 55%, transparent 100%);
     border-radius: var(--radius-sm);
     z-index: 1;
     pointer-events: none;
@@ -1270,7 +1384,7 @@
     max-width: 100%;
   }
   .v2-lifestyle .eyebrow { color: rgba(247,244,238,0.85); font-size: var(--text-caption); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; }
-  .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h3); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 28ch; font-weight: 600; }
+  .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h3); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 28ch; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
   .v2-lifestyle p { display: none; }
   .v2-lifestyle .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); font-size: var(--text-caption); letter-spacing: 0.08em; }
 
@@ -1294,6 +1408,15 @@
   .v2-hero-actions { flex-direction: row; gap: var(--space-sm); align-items: center; }
   .v2-hero-actions .btn-primary { flex: 1; min-height: 44px; font-size: 0.625rem; width: auto; padding: 0.35rem var(--space-sm); }
   .v2-hero-actions .link-quiet { font-size: var(--text-label); white-space: nowrap; }
+
+  /* Hero split variant: stack on mobile */
+  .v2-hero--split .v2-hero-split { grid-template-columns: 1fr; min-height: auto; }
+  .v2-hero--split .v2-hero-split-text { padding: var(--space-lg) var(--space-md); }
+  .v2-hero--split .v2-hero-split-image { max-height: 300px; }
+  .v2-hero--split .v2-hero-split-text h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
+  .v2-hero--minimal { min-height: 340px; }
+  .v2-hero--minimal .v2-hero-minimal { padding: var(--space-lg) var(--space-md); }
+  .v2-hero--minimal .v2-hero-minimal h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
 
   .v2-sig-editorial-thumb { width: 56px; height: 56px; }
   .v2-sig-editorial-text { padding: 0; }
