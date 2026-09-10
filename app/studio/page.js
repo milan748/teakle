@@ -1,5 +1,6 @@
 import StudioRoadmap from '../components/StudioRoadmap'
-import { getPublishedPageSections } from '@/lib/cms'
+import { getPublishedPageSections, seedDefaultSections, getPageDesignSettings } from '@/lib/cms'
+import { resolvePageDesign, resolveVariant, parseStyleOverrides, parseSectionOverrides, resolveSectionStyle, getVariantClass } from '@/lib/designResolution'
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,13 @@ export const metadata = {
 
 export default function StudioPage() {
   let sections = [];
-  try { sections = getPublishedPageSections('studio'); } catch {}
+  try {
+    sections = getPublishedPageSections('studio');
+    if (sections.length > 0) {
+      seedDefaultSections('studio');
+      sections = getPublishedPageSections('studio');
+    }
+  } catch {}
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));
@@ -19,27 +26,87 @@ export default function StudioPage() {
   const hero = cms.hero || {};
   const origin = cms.origin || {};
   const gallery = cms.gallery || {};
+  const materials = cms.materials || {};
   const heroDisabled = cmsKeys.has('hero') && !cms.hero;
   const originDisabled = cmsKeys.has('origin') && !cms.origin;
   const galleryDisabled = cmsKeys.has('gallery') && !cms.gallery;
+  const materialsDisabled = cmsKeys.has('materials') && !cms.materials;
+
+  // Parse materials items from JSON body
+  let materialItems = [];
+  try { materialItems = JSON.parse(materials.body || '{}').items || []; } catch {}
+
+  // ── Design Resolution (shared with Homepage) ──────────────────────────────
+  let pageDesign = {};
+  try { pageDesign = getPageDesignSettings('studio') || {}; } catch {}
+
+  // Server-side: always resolve as desktop (isMobile=false).
+  // Mobile overrides are handled by CSS custom properties + media queries.
+  const pd = resolvePageDesign(pageDesign, false)
+
+  // Resolve variants for each CMS-backed section
+  const heroVariant = resolveVariant('hero', hero.variant)
+  const originVariant = resolveVariant('origin', origin.variant)
+  const materialsVariant = resolveVariant('materials', materials.variant)
+  const galleryVariant = resolveVariant('gallery', gallery.variant)
+
+  // Resolve section-level overrides
+  const heroSectionStyle = resolveSectionStyle(parseSectionOverrides(hero.sectionStyleOverrides), pd, false)
+  const originSectionStyle = resolveSectionStyle(parseSectionOverrides(origin.sectionStyleOverrides), pd, false)
+  const materialsSectionStyle = resolveSectionStyle(parseSectionOverrides(materials.sectionStyleOverrides), pd, false)
+  const gallerySectionStyle = resolveSectionStyle(parseSectionOverrides(gallery.sectionStyleOverrides), pd, false)
+
+  // Parse element-level style overrides
+  const heroOver = parseStyleOverrides(hero.styleOverrides)
+  const originOver = parseStyleOverrides(origin.styleOverrides)
+  const materialsOver = parseStyleOverrides(materials.styleOverrides)
+  const galleryOver = parseStyleOverrides(gallery.styleOverrides)
+
+  // CSS custom properties from page design (resolved server-side)
+  const pageDesignVars = {
+    '--studio-content-width': pd.contentWidth || '1200px',
+    '--studio-section-padding': pd.sectionPadding || '80px 0',
+    '--studio-gap': pd.gap || '64px',
+    '--studio-heading-scale': pd.headingScale || 1.0,
+    ...(pd.colors ? {
+      '--studio-primary': pd.colors.primary,
+      '--studio-text': pd.colors.text,
+      '--studio-text-light': pd.colors.textLight,
+      '--studio-text-muted': pd.colors.textMuted,
+      '--studio-bg': pd.colors.bg,
+    } : {}),
+  }
+
   return (
     <>
       <StudioRoadmap />
+
+      {/* Page Design CSS custom properties */}
+      <style>{`
+        :root {
+          ${Object.entries(pageDesignVars).map(([k, v]) => `${k}: ${v};`).join('\n          ')}
+        }
+      `}</style>
+
+      {/* Studio section styles */}
       <style>{`
         .origin {
           background: var(--bg-primary);
-          padding: var(--space-xl) 0 var(--space-2xl);
+          padding: var(--studio-section-padding);
         }
         .origin-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: var(--space-2xl);
+          gap: var(--studio-gap);
           align-items: center;
+          max-width: var(--studio-content-width);
+          margin: 0 auto;
+          padding: 0 var(--space-md);
         }
         .origin-image { aspect-ratio: 4 / 5; }
         .origin-image img { width: 100%; height: 100%; object-fit: cover; }
         .origin-text h2 {
-          font-size: clamp(1.75rem, 3.2vw, var(--text-h2));
+          font-size: clamp(1.75rem, calc(3.2vw * var(--studio-heading-scale, 1)), var(--text-h2));
           margin-bottom: var(--space-md);
           max-width: none;
         }
@@ -47,7 +114,7 @@ export default function StudioPage() {
 
         .materials {
           background: var(--bg-secondary);
-          padding: var(--space-2xl) 0;
+          padding: var(--studio-section-padding);
         }
         .materials-header {
           max-width: 640px;
@@ -55,7 +122,7 @@ export default function StudioPage() {
           text-align: center;
         }
         .materials-header h2 {
-          font-size: clamp(1.75rem, 3.2vw, var(--text-h2));
+          font-size: clamp(1.75rem, calc(3.2vw * var(--studio-heading-scale, 1)), var(--text-h2));
           margin-top: var(--space-sm);
           max-width: none;
         }
@@ -63,6 +130,9 @@ export default function StudioPage() {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: var(--space-lg);
+          max-width: var(--studio-content-width);
+          margin: 0 auto;
+          padding: 0 var(--space-md);
         }
         .material-item { border-top: var(--border-hair); padding-top: var(--space-md); }
         .material-item h3 {
@@ -293,22 +363,29 @@ export default function StudioPage() {
           .process-content-right {
             padding: 0 var(--space-sm) 0 6px;
           }
+          .origin--centered .origin-text h2 { font-size: clamp(1.5rem, 5vw, 1.75rem); }
+          .gallery--full .gallery-item { aspect-ratio: 4 / 3; }
         }
 
         @media (max-width: 860px) {
-          .origin-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
-          .materials-grid { grid-template-columns: 1fr; gap: var(--space-md); }
+          .origin-grid { grid-template-columns: 1fr; gap: var(--space-lg); max-width: 100%; }
+          .materials-grid { grid-template-columns: 1fr; gap: var(--space-md); max-width: 100%; }
         }
 
         .gallery {
           background: var(--walnut);
           color: var(--bg-primary);
-          padding: var(--space-2xl) 0;
+          padding: var(--studio-section-padding);
         }
         .gallery .eyebrow { color: var(--stone); }
+        .gallery-header {
+          max-width: var(--studio-content-width);
+          margin: 0 auto;
+          padding: 0 var(--space-md);
+        }
         .gallery-header h2 {
           color: var(--bg-primary);
-          font-size: clamp(1.75rem, 3.2vw, var(--text-h2));
+          font-size: clamp(1.75rem, calc(3.2vw * var(--studio-heading-scale, 1)), var(--text-h2));
           max-width: 620px;
           margin: var(--space-sm) 0 var(--space-lg);
         }
@@ -318,6 +395,9 @@ export default function StudioPage() {
           grid-template-rows: repeat(2, 1fr);
           gap: var(--space-sm);
           height: 640px;
+          max-width: var(--studio-content-width);
+          margin: 0 auto;
+          padding: 0 var(--space-md);
         }
         .gallery-grid a:first-child { grid-row: 1 / 3; }
         .gallery-item { overflow: hidden; }
@@ -331,12 +411,24 @@ export default function StudioPage() {
           .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; height: auto; }
           .gallery-grid a:first-child { grid-row: auto; }
           .gallery-item { aspect-ratio: 4 / 3; }
+          .origin--centered .origin-grid { grid-template-columns: 1fr; }
+          .origin--centered .origin-image { max-width: 100%; }
+          .materials--compact .material-item { grid-template-columns: 1fr; }
+          .gallery--full .gallery-grid { grid-template-columns: 1fr; height: auto; }
         }
       `}</style>
 
+      {/* ── Hero Section (CMS-backed, variant-aware) ── */}
       {!heroDisabled && (
-      <section className="page-hero">
-        <img src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." />
+      <section
+        className={`page-hero ${getVariantClass('page-hero', heroVariant?.id)}`}
+        style={{
+          ...(heroSectionStyle.contentWidth ? { maxWidth: heroSectionStyle.contentWidth, margin: '0 auto' } : {}),
+          ...(heroSectionStyle.paddingTop ? { paddingTop: heroSectionStyle.paddingTop } : {}),
+          ...(heroSectionStyle.paddingBottom ? { paddingBottom: heroSectionStyle.paddingBottom } : {}),
+        }}
+      >
+        <img src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." width="1600" height="900" />
         <div className="page-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Studio'}</span>
           <h1>{hero.title || 'Why we work in solid wood, and why it takes as long as it does.'}</h1>
@@ -345,11 +437,17 @@ export default function StudioPage() {
       </section>
       )}
 
+      {/* ── Origin Section (CMS-backed, variant-aware) ── */}
       {!originDisabled && (
-      <section className="origin">
-        <div className="container origin-grid">
-          <div className="origin-image reveal">
-            <img loading="lazy" src={origin.image || "https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900"} alt="An older craftsman examining a piece of raw timber in a workshop." />
+      <section
+        className={`origin ${getVariantClass('origin', originVariant?.id)}`}
+        style={{
+          ...(originSectionStyle.backgroundPreset ? { backgroundColor: originSectionStyle.backgroundPreset } : {}),
+        }}
+      >
+        <div className="origin-grid">
+          <div className="origin-image reveal" suppressHydrationWarning>
+            <img loading="lazy" src={origin.image || "https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900"} alt="An older craftsman examining a piece of raw timber in a workshop." width="900" height="1125" />
           </div>
           <div className="origin-text">
             <span className="eyebrow reveal">{origin.eyebrow || 'Where We Started'}</span>
@@ -363,41 +461,32 @@ export default function StudioPage() {
       </section>
       )}
 
-      <section className="materials">
+      {/* ── Materials Section (CMS-backed, variant-aware) ── */}
+      {!materialsDisabled && materialItems.length > 0 && (
+      <section
+        className={`materials ${getVariantClass('materials', materialsVariant?.id)}`}
+        style={{
+          ...(materialsSectionStyle.backgroundPreset ? { backgroundColor: materialsSectionStyle.backgroundPreset } : {}),
+        }}
+      >
         <div className="container">
           <div className="materials-header">
-            <span className="eyebrow reveal">Materials</span>
-            <h2 className="reveal">Solid wood, and why we don&apos;t use anything else.</h2>
+            <span className="eyebrow reveal">{materials.eyebrow || 'Materials'}</span>
+            <h2 className="reveal">{materials.title || "Solid wood, and why we don't use anything else."}</h2>
           </div>
           <div className="materials-grid">
-            <div className="material-item reveal">
-              <h3>Why Teak</h3>
-              <p>Teak carries its own natural oils, which is why it has been used in shipbuilding for centuries. It resists moisture and doesn&apos;t need synthetic sealants to survive daily use.</p>
-            </div>
-            <div className="material-item reveal">
-              <h3>Why Solid, Not Veneer</h3>
-              <p>Veneer looks identical on day one and fails first. A solid block can be sanded, repaired, and refinished for generations. A veneer sheet cannot.</p>
-            </div>
-            <div className="material-item reveal">
-              <h3>Why Grain Matters</h3>
-              <p>Every board is chosen and oriented by hand so the grain runs with the piece&apos;s structure, not against it. This is slower, and it&apos;s why the piece doesn&apos;t crack at the joints.</p>
-            </div>
-            <div className="material-item reveal">
-              <h3>Why We Let Wood Age</h3>
-              <p>A finished piece will darken and change texture slightly over its first few years. This isn&apos;t wear — it&apos;s the wood settling into its final state.</p>
-            </div>
-            <div className="material-item reveal">
-              <h3>Why We Keep Imperfections</h3>
-              <p>A knot or a faint colour shift in the grain isn&apos;t sanded away. It&apos;s the record of where the tree grew, and it&apos;s part of what makes the piece singular.</p>
-            </div>
-            <div className="material-item reveal">
-              <h3>Why Food-Safe Oil</h3>
-              <p>Lacquer seals moisture in and cracks over time. An oil finish can be reapplied by hand for as long as the piece is in use.</p>
-            </div>
+            {materialItems.map((item, i) => (
+              <div key={i} className="material-item reveal">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+      )}
 
+      {/* ── Process Section (hardcoded, not CMS-backed) ── */}
       <section className="process">
         <div className="container">
           <div className="process-header">
@@ -477,8 +566,14 @@ export default function StudioPage() {
         </div>
       </section>
 
+      {/* ── Gallery Section (CMS-backed, variant-aware) ── */}
       {!galleryDisabled && (
-      <section className="gallery">
+      <section
+        className={`gallery ${getVariantClass('gallery', galleryVariant?.id)}`}
+        style={{
+          ...(gallerySectionStyle.backgroundPreset ? { backgroundColor: gallerySectionStyle.backgroundPreset } : {}),
+        }}
+      >
         <div className="container">
           <div className="gallery-header">
             <span className="eyebrow reveal">{gallery.eyebrow || 'The Workshop'}</span>
@@ -486,13 +581,13 @@ export default function StudioPage() {
           </div>
           <div className="gallery-grid">
             <div className="gallery-item img-zoom reveal">
-              <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." />
+              <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
             </div>
             <div className="gallery-item img-zoom reveal">
-              <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." />
+              <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." width="700" height="467" />
             </div>
             <div className="gallery-item img-zoom reveal">
-              <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." />
+              <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." width="700" height="467" />
             </div>
           </div>
         </div>
