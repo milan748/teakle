@@ -283,11 +283,12 @@ export default function Header() {
           <img src={logoSrc} alt="Teakle" />
         </Link>
         <div className="header-mobile-actions">
-          <Link href="/login" className="header-icon" aria-label="Account">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </Link>
+          <button className="header-icon" aria-label="Search" onClick={openSearch}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
           <Link href="/cart" className="header-icon" aria-label="Cart">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span className="icon-badge" id="mobileCartCount" style={{display:'none'}}>0</span>
           </Link>
         </div>
         <nav aria-label="Main navigation">
@@ -362,6 +363,8 @@ export default function Header() {
           <li><Link href="/studio" className={isActive('/studio') ? 'is-active' : undefined} aria-current={isActive('/studio') ? 'page' : undefined} onClick={closeDrawer}>Studio</Link></li>
           <li><Link href="/journal" className={isActive('/journal') ? 'is-active' : undefined} aria-current={isActive('/journal') ? 'page' : undefined} onClick={closeDrawer}>Journal</Link></li>
           <li><Link href="/custom" className={isActive('/custom') ? 'is-active' : undefined} aria-current={isActive('/custom') ? 'page' : undefined} onClick={closeDrawer}>Customize</Link></li>
+          <li className="nav-drawer-secondary"><Link href="/login" onClick={closeDrawer}>Account</Link></li>
+          <li className="nav-drawer-secondary"><Link href="/wishlist" onClick={closeDrawer}>Wishlist</Link></li>
         </ul>
         </nav>
         <div className="header-actions">

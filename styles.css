@@ -395,6 +395,7 @@ em {
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem var(--space-md);
+  min-width: 0;
 }
 .header-inner nav {
   display: contents; /* Preserve existing layout — nav is a semantic wrapper only */
@@ -520,6 +521,7 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
   display: flex;
   align-items: center;
   gap: var(--space-xs);
+  flex-shrink: 0;
 }
 .header-mobile-actions {
   display: none;
@@ -1229,6 +1231,84 @@ body[data-auth-page] .site-footer { display: none; }
   margin-top: var(--space-sm);
 }
 
+/* Page Hero Variants */
+.page-hero--split {
+  height: auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.page-hero--split img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  animation: none;
+  transform: none;
+}
+.page-hero--split::after { display: none; }
+.page-hero--split .page-hero-content {
+  position: relative;
+  top: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-lg);
+}
+.page-hero--split .page-hero-content h1 {
+  color: var(--text-primary);
+}
+.page-hero--split .page-hero-content p {
+  color: var(--text-secondary);
+}
+
+.page-hero--minimal {
+  height: auto;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+.page-hero--minimal img { display: none; }
+.page-hero--minimal::after { display: none; }
+.page-hero--minimal .page-hero-content {
+  position: relative;
+  top: auto;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+.page-hero--minimal .page-hero-content h1 {
+  color: var(--text-primary);
+}
+.page-hero--minimal .page-hero-content p {
+  color: var(--text-secondary);
+}
+
+/* Studio Section Variants */
+.origin--centered .origin-grid {
+  grid-template-columns: 1fr;
+  text-align: center;
+}
+.origin--centered .origin-image { order: -1; max-width: 600px; margin: 0 auto; }
+.origin--centered .origin-text h2 { max-width: none; }
+.origin--centered .origin-text p { max-width: 64ch; margin-left: auto; margin-right: auto; }
+
+.materials--compact .materials-grid { grid-template-columns: 1fr; max-width: 640px; }
+.materials--compact .material-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.gallery--full .gallery-grid {
+  grid-template-columns: 1fr 1fr;
+  height: 500px;
+}
+.gallery--full .gallery-grid a:first-child { grid-row: auto; }
+
 .visually-hidden {
   position: absolute; width: 1px; height: 1px;
   overflow: hidden; clip: rect(0,0,0,0);
@@ -1474,6 +1554,17 @@ body[data-auth-page] .site-footer { display: none; }
     max-height: 600px;
     padding: 0.25rem 0 0.5rem var(--space-sm);
     opacity: 1;
+  }
+
+  /* Drawer secondary links — Account, Wishlist (separated from primary nav) */
+  .nav-drawer-secondary {
+    border-top: 1px solid rgba(43,34,27,0.10) !important;
+    margin-top: auto;
+  }
+  .nav-drawer-secondary a {
+    color: var(--text-secondary) !important;
+    font-size: 0.6875rem !important;
+    letter-spacing: 0.08em !important;
   }
 
   /* Category items */
@@ -1903,6 +1994,10 @@ body[data-auth-page] .site-footer { display: none; }
   .page-hero { min-height: 45vh; }
   .page-hero h1 { font-size: var(--text-h1); }
   .page-hero-content { top: 14vh; }
+  .page-hero--split { grid-template-columns: 1fr; }
+  .page-hero--split img { min-height: 300px; }
+  .page-hero--split .page-hero-content { padding: var(--space-lg); }
+  .page-hero--minimal { min-height: 300px; }
 
   .btn-primary { min-height: 44px; font-size: var(--text-label); }
 }
@@ -1928,9 +2023,8 @@ body[data-auth-page] .site-footer { display: none; }
   /* Footer — tighter */
   .footer-nav a { min-height: 32px; line-height: 32px; }
 
-  /* Mobile: show search in header */
-  .header-actions { display: flex; gap: var(--space-xs); }
-  .header-actions .account-trigger-wrap { display: none; }
+  /* Mobile: hide desktop actions — search & cart are in header-mobile-actions */
+  .header-actions { display: none !important; }
 }
 
 /* ================================================================
