@@ -23,6 +23,10 @@ export const PATCH = withCsrf(async function PATCH(request) {
       return NextResponse.json({ success: false, error: 'orderIds array is required' }, { status: 400 });
     }
 
+    if (orderIds.length > 50) {
+      return NextResponse.json({ success: false, error: 'Cannot bulk update more than 50 orders at once' }, { status: 400 });
+    }
+
     if (!status || typeof status !== 'string') {
       return NextResponse.json({ success: false, error: 'Status is required' }, { status: 400 });
     }
@@ -46,39 +50,52 @@ export const PATCH = withCsrf(async function PATCH(request) {
 
     const results = { success: 0, failed: 0, errors: [] };
 
+    // Validate all transitions upfront before starting the transaction
+    const validOrders = [];
     for (const order of orders) {
       if (!isValidStatusTransition(order.status, normalizedStatus)) {
         results.failed++;
         results.errors.push({ orderId: order.id, orderNumber: order.orderNumber, error: `Cannot transition from ${order.status} to ${normalizedStatus}` });
-        continue;
-      }
-
-      try {
-        const updateOrder = db.transaction(() => {
-          db.prepare("UPDATE orders SET status = ?, updatedAt = datetime('now') WHERE id = ?")
-            .run(normalizedStatus, order.id);
-
-          db.prepare(
-            `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
-             VALUES (?, ?, ?, ?, 'admin', 'Bulk status update')`
-          ).run(order.id, order.status, normalizedStatus, auth.admin.email);
-
-          db.prepare(
-            `INSERT INTO order_activity (orderId, actorType, actorId, action, oldValue, newValue, note, isCustomerVisible)
-             VALUES (?, 'admin', ?, 'status_changed', ?, ?, 'Bulk status update', 1)`
-          ).run(order.id, auth.admin.email, order.status, normalizedStatus);
-
-          log.adminAudit(auth.admin.id, 'bulk_status_change', 'order', order.id, { oldStatus: order.status, newStatus: normalizedStatus });
-          log.orderActivity(order.id, 'admin', auth.admin.email, 'status_changed', order.status, normalizedStatus, 'Bulk status update', 1);
-        });
-
-        updateOrder();
-        results.success++;
-      } catch (e) {
-        results.failed++;
-        results.errors.push({ orderId: order.id, orderNumber: order.orderNumber, error: 'Update failed' });
+      } else {
+        validOrders.push(order);
       }
     }
+
+    if (validOrders.length === 0) {
+      // Audit log for bulk operation with no valid orders
+      try {
+        db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+          auth.admin.id, 'bulk_status_change', 'order', null,
+          JSON.stringify({ status: normalizedStatus, successCount: 0, failedCount: results.failed, orderIds })
+        );
+      } catch { /* audit log failure is non-blocking */ }
+      return NextResponse.json({ success: true, data: results });
+    }
+
+    // Wrap all DB updates in a single transaction — all-or-nothing
+    const bulkUpdate = db.transaction(() => {
+      for (const order of validOrders) {
+        db.prepare("UPDATE orders SET status = ?, updatedAt = datetime('now') WHERE id = ?")
+          .run(normalizedStatus, order.id);
+
+        db.prepare(
+          `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
+           VALUES (?, ?, ?, ?, 'admin', 'Bulk status update')`
+        ).run(order.id, order.status, normalizedStatus, auth.admin.email);
+
+        db.prepare(
+          `INSERT INTO order_activity (orderId, actorType, actorId, action, oldValue, newValue, note, isCustomerVisible)
+           VALUES (?, 'admin', ?, 'status_changed', ?, ?, 'Bulk status update', 1)`
+        ).run(order.id, auth.admin.email, order.status, normalizedStatus);
+
+        log.adminAudit(auth.admin.id, 'bulk_status_change', 'order', order.id, { oldStatus: order.status, newStatus: normalizedStatus });
+        log.orderActivity(order.id, 'admin', auth.admin.email, 'status_changed', order.status, normalizedStatus, 'Bulk status update', 1);
+
+        results.success++;
+      }
+    });
+
+    bulkUpdate();
 
     // Audit log for bulk operation
     try {

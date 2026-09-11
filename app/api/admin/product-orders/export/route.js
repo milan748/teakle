@@ -88,7 +88,10 @@ export async function GET(request) {
     }
     query += ' ORDER BY o.createdAt DESC';
 
+    const MAX_EXPORT_ROWS = 1000;
     const orders = db.prepare(query).all(...params);
+    const truncated = orders.length > MAX_EXPORT_ROWS;
+    const exportedOrders = truncated ? orders.slice(0, MAX_EXPORT_ROWS) : orders;
 
     const escapeCSV = (val) => {
       if (val == null) return '';
@@ -111,7 +114,7 @@ export async function GET(request) {
       'Created At', 'Updated At',
     ];
 
-    const rows = orders.map(o => [
+    const rows = exportedOrders.map(o => [
       o.orderNumber, o.status, o.paymentStatus,
       o.subtotal, o.shippingAmount, o.totalAmount,
       o.customerName || '', o.customerEmail || '',
@@ -127,16 +130,21 @@ export async function GET(request) {
     try {
       db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
         auth.admin.id, 'export', 'orders', null,
-        JSON.stringify({ format: 'csv', rowCount: orders.length })
+        JSON.stringify({ format: 'csv', rowCount: exportedOrders.length, truncated })
       );
     } catch { /* audit log failure is non-blocking */ }
 
+    const responseHeaders = {
+      'Content-Type': 'text/csv; charset=utf-8',
+      'Content-Disposition': `attachment; filename="teakle-orders-${new Date().toISOString().split('T')[0]}.csv"`,
+    };
+    if (truncated) {
+      responseHeaders['X-Export-Warning'] = `Results exceeded ${MAX_EXPORT_ROWS} rows. Only the first ${MAX_EXPORT_ROWS} rows are included. Total matching orders: ${orders.length}.`;
+    }
+
     return new Response(csv, {
       status: 200,
-      headers: {
-        'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="teakle-orders-${new Date().toISOString().split('T')[0]}.csv"`,
-      },
+      headers: responseHeaders,
     });
   } catch (error) {
     log.error('Orders export error:', error);

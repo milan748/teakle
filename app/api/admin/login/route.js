@@ -27,7 +27,7 @@ export const POST = withCsrf(async function POST(request) {
 
     const normalizedEmail = body.email.trim().toLowerCase();
     const db = getDb();
-    const admin = db.prepare('SELECT id, email, passwordHash, role FROM admins WHERE email = ?').get(
+    const admin = db.prepare('SELECT id, email, passwordHash, role, sessionVersion FROM admins WHERE email = ?').get(
       normalizedEmail
     );
 
@@ -63,6 +63,7 @@ export const POST = withCsrf(async function POST(request) {
         id: admin.id,
         email: admin.email,
         role: admin.role,
+        sessionVersion: admin.sessionVersion || 0,
       });
     } catch {
       log.adminLogin(normalizedEmail, false);

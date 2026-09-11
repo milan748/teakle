@@ -8,6 +8,7 @@ import { calculateOrderTotal } from '@/lib/orderPricing';
 import { withCsrf } from '@/lib/csrf';
 import { createPaymentRecord } from '@/lib/payment';
 import { sendOrderConfirmation } from '@/lib/email';
+import crypto from 'crypto';
 
 const VALID_ORDER_STATUSES = ['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 const VALID_PAYMENT_STATUSES = ['UNPAID', 'PENDING', 'PAID', 'FAILED', 'REFUNDED', 'CANCELLED'];
@@ -20,9 +21,9 @@ const VALID_TRANSITIONS = {
 };
 
 function generateOrderNumber() {
-  const ts = Date.now().toString(36).toUpperCase();
-  const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `TK-${ts}-${rand}`;
+  const timestamp = Date.now().toString(36);
+  const random = crypto.randomBytes(4).toString('hex');
+  return `TK-${timestamp}-${random}`.toUpperCase();
 }
 
 function isValidStatusTransition(from, to) {
