@@ -4,6 +4,7 @@ import { createCustomerSession } from '@/lib/customerSession';
 import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { sendWelcomeEmail } from '@/lib/email';
+import { withCsrf } from '@/lib/csrf';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NAME = 100;
@@ -11,7 +12,7 @@ const MAX_EMAIL = 254;
 const MIN_PASSWORD = 8;
 const MAX_PASSWORD = 128;
 
-export async function POST(req) {
+const handler = async function POST(req) {
   try {
     const rl = rateLimitIp('auth:register', RATE_LIMITS.customerRegister, req.headers);
     if (!rl.allowed) {
@@ -81,3 +82,5 @@ export async function POST(req) {
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const POST = withCsrf(handler);

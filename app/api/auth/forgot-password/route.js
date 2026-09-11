@@ -3,6 +3,7 @@ import { rateLimitIp } from '@/lib/rateLimit';
 import { log } from '@/lib/logger';
 import { createHash, randomBytes } from 'crypto';
 import { sendPasswordReset } from '@/lib/email';
+import { withCsrf } from '@/lib/csrf';
 
 const RESET_EXPIRY_HOURS = 1;
 const MAX_RESET_REQUESTS = 5;
@@ -16,7 +17,7 @@ function generateToken() {
   return randomBytes(32).toString('hex');
 }
 
-export async function POST(req) {
+const handler = async function POST(req) {
   try {
     const rl = rateLimitIp('auth:forgot-password', { limit: MAX_RESET_REQUESTS, windowMs: RESET_WINDOW_MS }, req.headers);
     if (!rl.allowed) {
@@ -67,3 +68,5 @@ export async function POST(req) {
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const POST = withCsrf(handler);
