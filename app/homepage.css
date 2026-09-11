@@ -426,9 +426,6 @@
   outline: 2px solid var(--bronze);
   outline-offset: 2px;
 }
-.v2-sig-editorial-nav {
-  display: none;
-}
 
 /* Trust badges below thumbnails */
 .v2-sig-trust {
@@ -495,9 +492,6 @@
   background: var(--stone);
   flex-shrink: 0;
 }
-
-/* Tag (hidden — replaced by meta line) */
-.v2-sig-editorial-tag { display: none; }
 
 /* Eyebrow (hidden — replaced by meta line) */
 .v2-sig-editorial-text .eyebrow { display: none; }
@@ -824,9 +818,6 @@
     height: 36px;
     flex-shrink: 0;
   }
-  .v2-sig-editorial-nav {
-    display: none;
-  }
 
   .v2-sig-trust {
     grid-template-columns: repeat(2, 1fr);
@@ -850,9 +841,6 @@
 
   .v2-sig-editorial-text {
     padding-top: 0;
-  }
-  .v2-sig-editorial-meta {
-    gap: var(--space-md);
   }
   .v2-sig-editorial-meta-line {
     margin-bottom: 2px;
@@ -1480,11 +1468,9 @@
   .v2-hero-eyebrow, .v2-hero h1, .v2-hero-actions, .v2-scroll { animation: none; opacity: 1; transform: none; }
   /* Reduced motion: show all signature blocks immediately */
   .v2-sig-editorial-img,
-  .v2-sig-editorial-tag,
   .v2-sig-editorial-text .eyebrow,
   .v2-sig-editorial-text h2,
   .v2-sig-editorial-text p,
-  .v2-sig-editorial-meta,
   .v2-sig-editorial-actions,
   .v2-sig-editorial-past,
   .v2-sig-editorial-features,

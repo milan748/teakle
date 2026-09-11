@@ -237,7 +237,7 @@ export default function Header() {
 
   function handleLogout() {
     closeDropdown();
-    customerAuth.logout().catch(() => {});
+    customerAuth.logout().catch((e) => console.warn('Logout failed:', e.message));
     window.Teakle.logout();
     setIsLoggedIn(false);
     setUser(null);

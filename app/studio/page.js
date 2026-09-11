@@ -18,7 +18,7 @@ export default function StudioPage() {
       seedDefaultSections('studio');
       sections = getPublishedPageSections('studio');
     }
-  } catch {}
+  } catch (e) { console.warn('Failed to load CMS sections:', e.message); }
   const cms = {};
   for (const s of sections) { if (s.enabled) cms[s.sectionKey] = s; }
   const cmsKeys = new Set(sections.map(s => s.sectionKey));
@@ -34,11 +34,11 @@ export default function StudioPage() {
 
   // Parse materials items from JSON body
   let materialItems = [];
-  try { materialItems = JSON.parse(materials.body || '{}').items || []; } catch {}
+  try { materialItems = JSON.parse(materials.body || '{}').items || []; } catch (e) { console.warn('Failed to parse materials:', e.message); }
 
   // ── Design Resolution (shared with Homepage) ──────────────────────────────
   let pageDesign = {};
-  try { pageDesign = getPageDesignSettings('studio') || {}; } catch {}
+  try { pageDesign = getPageDesignSettings('studio') || {}; } catch (e) { console.warn('Failed to load page design:', e.message); }
 
   // Server-side: always resolve as desktop (isMobile=false).
   // Mobile overrides are handled by CSS custom properties + media queries.
@@ -428,7 +428,7 @@ export default function StudioPage() {
           ...(heroSectionStyle.paddingBottom ? { paddingBottom: heroSectionStyle.paddingBottom } : {}),
         }}
       >
-        <img src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." width="1600" height="900" />
+        <img fetchPriority="high" src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." width="1600" height="900" />
         <div className="page-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Studio'}</span>
           <h1>{hero.title || 'Why we work in solid wood, and why it takes as long as it does.'}</h1>
