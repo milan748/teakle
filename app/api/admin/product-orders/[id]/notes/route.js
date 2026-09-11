@@ -3,10 +3,10 @@ import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
-import { rateLimitIp } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 export const POST = withCsrf(async function POST(request, { params }) {
-  const rl = rateLimitIp('orderNoteAdd', { limit: 20, windowMs: 60000 }, request.headers);
+  const rl = rateLimitIp('orderNoteAdd', RATE_LIMITS.orderNoteAdd, request.headers);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 });
   }

@@ -3,7 +3,7 @@ import { getCustomerSession } from '@/lib/customerSession';
 import { getProduct } from '@/lib/products';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
-import { rateLimitIp } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 function getOrCreateCart(db, customerId) {
   let cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
@@ -60,7 +60,7 @@ export async function GET() {
 
 export const POST = withCsrf(async function POST(req) {
   try {
-    const rl = rateLimitIp('cartAdd', { limit: 30, windowMs: 60000 }, req.headers);
+    const rl = rateLimitIp('cartAdd', RATE_LIMITS.cartAdd, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests' }, { status: 429 });
     }
@@ -120,7 +120,7 @@ export const POST = withCsrf(async function POST(req) {
 
 export const PUT = withCsrf(async function PUT(req) {
   try {
-    const rl = rateLimitIp('cartUpdate', { limit: 30, windowMs: 60000 }, req.headers);
+    const rl = rateLimitIp('cartUpdate', RATE_LIMITS.cartUpdate, req.headers);
     if (!rl.allowed) {
       return Response.json({ error: 'Too many requests' }, { status: 429 });
     }

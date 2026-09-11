@@ -24,9 +24,7 @@ export async function middleware(request) {
       if (token) {
         try {
           const { payload } = await jwtVerify(token, secretKey)
-          requestHeaders.set('x-admin-id', String(payload.adminId))
-          requestHeaders.set('x-admin-email', payload.email)
-          requestHeaders.set('x-admin-role', payload.role)
+          // Admin session verified — route handlers call requireAdmin() independently
         } catch {
           // Invalid token — still pass through (per-route can enforce)
         }
@@ -58,15 +56,9 @@ export async function middleware(request) {
     }
 
     try {
-      const { payload } = await jwtVerify(token, secretKey)
-      // Pass admin info to route via headers (defense-in-depth layer)
-      const requestHeaders = new Headers(request.headers)
-      requestHeaders.set('x-admin-id', String(payload.adminId))
-      requestHeaders.set('x-admin-email', payload.email)
-      requestHeaders.set('x-admin-role', payload.role)
-      return NextResponse.next({
-        request: { headers: requestHeaders }
-      })
+      await jwtVerify(token, secretKey)
+      // Admin session verified — route handlers call requireAdmin() independently
+      return NextResponse.next()
     } catch {
       return NextResponse.json(
         { success: false, error: 'Invalid or expired session' },

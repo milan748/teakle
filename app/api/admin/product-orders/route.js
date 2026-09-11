@@ -2,10 +2,10 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth';
 import { log } from '@/lib/logger';
-import { rateLimitIp } from '@/lib/rateLimit';
+import { rateLimitIp, RATE_LIMITS } from '@/lib/rateLimit';
 
 export async function GET(request) {
-  const rl = rateLimitIp('adminProductOrders', { limit: 30, windowMs: 60000 }, request.headers);
+  const rl = rateLimitIp('adminProductOrders', RATE_LIMITS.adminProductOrders, request.headers);
   if (!rl.allowed) {
     return NextResponse.json({ success: false, error: 'Too many requests' }, { status: 429 });
   }

@@ -275,13 +275,15 @@ test('middleware rejects expired tokens (same error path)', () => {
   assert(catchMatch, 'Catch block should handle expired tokens with same error message');
 });
 
-test('middleware passes admin info via headers', () => {
-  assertIncludes(middlewareSrc, "requestHeaders.set('x-admin-id'",
-    'Middleware should set x-admin-id header');
-  assertIncludes(middlewareSrc, "requestHeaders.set('x-admin-email'",
-    'Middleware should set x-admin-email header');
-  assertIncludes(middlewareSrc, "requestHeaders.set('x-admin-role'",
-    'Middleware should set x-admin-role header');
+test('middleware verifies admin session but does not forward admin headers', () => {
+  // Dead headers (x-admin-id, x-admin-email, x-admin-role) were removed —
+  // route handlers call requireAdmin() independently.
+  assertNotIncludes(middlewareSrc, "requestHeaders.set('x-admin-id'",
+    'Middleware should not set x-admin-id header (dead code)');
+  assertNotIncludes(middlewareSrc, "requestHeaders.set('x-admin-email'",
+    'Middleware should not set x-admin-email header (dead code)');
+  assertNotIncludes(middlewareSrc, "requestHeaders.set('x-admin-role'",
+    'Middleware should not set x-admin-role header (dead code)');
 });
 
 // ═══════════════════════════════════════════════════════════════

@@ -5,7 +5,7 @@ import { withCsrf } from '@/lib/csrf';
 import { log } from '@/lib/logger';
 
 // GET — List all section templates
-export const GET = withCsrf(async function GET() {
+export async function GET() {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
@@ -15,9 +15,7 @@ export const GET = withCsrf(async function GET() {
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-});
-
-// POST — Create a section template
+}
 export const POST = withCsrf(async function POST(request) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
