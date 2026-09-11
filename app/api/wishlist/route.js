@@ -3,6 +3,7 @@ import { getCustomerSession } from '@/lib/customerSession';
 import { getProductById } from '@/app/data/products';
 import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
+import { rateLimitIp } from '@/lib/rateLimit';
 
 function getOrCreateWishlist(db, customerId) {
   let wl = db.prepare('SELECT id FROM wishlists WHERE customerId = ?').get(customerId);
@@ -51,6 +52,11 @@ export async function GET() {
 
 export const POST = withCsrf(async function POST(req) {
   try {
+    const rl = rateLimitIp('wishlistToggle', { limit: 30, windowMs: 60000 }, req.headers);
+    if (!rl.allowed) {
+      return Response.json({ error: 'Too many requests' }, { status: 429 });
+    }
+
     const session = await getCustomerSession();
     if (!session) {
       return Response.json({ error: 'Authentication required' }, { status: 401 });
