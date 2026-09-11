@@ -358,8 +358,9 @@ test('Gallery still has Clear All Filters button', () => {
   assertIncludes(galleryCode, 'Clear All Filters', 'Clear All Filters');
 });
 
-test('Sidebar no longer has duplicate Account text link (now via header icon)', () => {
-  assertNotIncludes(headerCode, 'href="/login" onClick={closeDrawer}>Account', 'Account duplicate removed');
+test('Sidebar has Account link in drawer (secondary, not duplicate)', () => {
+  assertIncludes(headerCode, 'href="/login" onClick={closeDrawer}>Account', 'Account link present');
+  assertIncludes(headerCode, 'nav-drawer-secondary', 'Account is secondary link');
 });
 
 test('Sidebar no longer has duplicate Cart text link (now via header icon)', () => {
