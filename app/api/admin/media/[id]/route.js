@@ -4,6 +4,7 @@ import { deleteMedia, updateMediaAlt, getMediaById } from '@/lib/media';
 import { withCsrf } from '@/lib/csrf';
 import { getDb } from '@/lib/db';
 import { isValidUUID } from '@/lib/validate';
+import { log } from '@/lib/logger';
 
 export const DELETE = withCsrf(async function DELETE(_request, { params }) {
   const auth = await requireAdmin();
@@ -66,6 +67,7 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
     }
 
     const updated = updateMediaAlt(id, altText || '');
+    log.adminAudit(auth.admin.id, 'media_alt_update', 'media', id, { oldAltText: existing.altText, newAltText: altText || '' });
     return NextResponse.json({ success: true, data: updated });
   } catch (err) {
     return NextResponse.json({ error: 'Update failed' }, { status: 500 });

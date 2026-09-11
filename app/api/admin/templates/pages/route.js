@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/auth';
 import { createPageTemplate, getPageTemplates, deletePageTemplate, updatePageTemplate } from '@/lib/cms';
 import { withCsrf } from '@/lib/csrf';
+import { log } from '@/lib/logger';
 
 // GET — List all page templates
 export const GET = withCsrf(async function GET() {
@@ -42,6 +43,7 @@ export const POST = withCsrf(async function POST(request) {
       pageDesign: pageDesign || {}
     });
 
+    log.adminAudit(auth.admin.id, 'template_page_create', 'template', template.id, { name: name.trim() });
     return NextResponse.json({ success: true, data: template });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -81,6 +83,7 @@ export const PUT = withCsrf(async function PUT(request) {
     if (!template) {
       return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
     }
+    log.adminAudit(auth.admin.id, 'template_page_update', 'template', id, { updatedFields: Object.keys(updates) });
     return NextResponse.json({ success: true, data: template });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -110,6 +113,7 @@ export const DELETE = withCsrf(async function DELETE(request) {
     if (!deleted) {
       return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
     }
+    log.adminAudit(auth.admin.id, 'template_page_delete', 'template', id, { name: deleted.name });
     return NextResponse.json({ success: true, data: deleted });
   } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

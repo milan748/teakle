@@ -61,6 +61,8 @@ export const POST = withCsrf(async function POST(request) {
       adminEmail: auth.admin.email,
     });
 
+    log.adminAudit(auth.admin.id, `payment_confirm_${status.toLowerCase()}`, 'payment', paymentId, { orderId: payment.orderId, status });
+
     return NextResponse.json({
       success: true,
       data: {
