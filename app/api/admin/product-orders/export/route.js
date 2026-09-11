@@ -96,8 +96,9 @@ export async function GET(request) {
     const escapeCSV = (val) => {
       if (val == null) return '';
       const str = String(val);
-      if (/[=+\-@]/.test(str.charAt(0))) {
-        return "'" + str;
+      // Check for dangerous characters anywhere in the string
+      if (/[=+\-@\t\r]/.test(str)) {
+        return '"' + str.replace(/"/g, '""') + '"';
       }
       if (str.includes(',') || str.includes('"') || str.includes('\n')) {
         return '"' + str.replace(/"/g, '""') + '"';
