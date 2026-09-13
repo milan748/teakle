@@ -1,12 +1,21 @@
 'use client'
 
+import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
+
 function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   const overrides = styleOverrides?.[elementKey] || {}
   const base = { ...defaults }
   
   // Apply desktop overrides
   for (const [key, val] of Object.entries(overrides)) {
-    if (key !== 'mobile') base[key] = val
+    if (key !== 'mobile' && key !== 'tablet') base[key] = val
+  }
+  
+  // Apply tablet overrides when in tablet view
+  if (viewMode === 'tablet' && overrides.tablet) {
+    for (const [key, val] of Object.entries(overrides.tablet)) {
+      base[key] = val
+    }
   }
   
   // Apply mobile overrides when in mobile view
@@ -210,7 +219,7 @@ export default function PageGallerySection({
                 paddingTop: '100%',
                 backgroundImage: `url(${img})`,
                 backgroundSize: styleOverrides?.image?.backgroundSize || 'cover',
-                backgroundPosition: styleOverrides?.image?.backgroundPosition || 'center',
+                backgroundPosition: focalPointToBackgroundPosition(resolveFocalPoint(styleOverrides, 'image', viewMode)),
                 borderRadius: '2px',
               }}
             />

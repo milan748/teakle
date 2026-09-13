@@ -6,7 +6,8 @@ const SESSION_NAME = 'teakle_admin_session'
 function getSecretKey() {
   const secret = process.env.ADMIN_SESSION_SECRET || process.env.SESSION_SECRET
   if (!secret) return null
-  return new TextEncoder().encode(secret)
+  // Must match lib/session.js key derivation (teakle-admin: prefix)
+  return new TextEncoder().encode(`teakle-admin:${secret}`)
 }
 
 export async function middleware(request) {
