@@ -12,4 +12,19 @@ data/*.db-shm
 public/uploads/
 backups/
 .vercel
-.env*
+
+# Playwright MCP output (debug artifacts — recreated each session)
+.playwright-mcp/
+
+# Debug screenshots and scripts (opencode working files)
+.opencode/screenshots/
+.opencode/scripts/
+.opencode/dev-server*.log
+.opencode/dev.log
+
+# Debug screenshots directory
+screenshots_reveal/
+
+# Dev server logs
+devserver.log
+dev-server.log
