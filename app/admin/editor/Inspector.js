@@ -97,6 +97,7 @@ function PillGroup({ options, value, onChange, style: extraStyle }) {
 
 function ControlGroup({ title, defaultOpen = true, children }) {
   const [open, setOpen] = useState(defaultOpen)
+  const contentRef = useRef(null)
 
   return (
     <div style={{ marginBottom: '2px' }}>
@@ -132,24 +133,31 @@ function ControlGroup({ title, defaultOpen = true, children }) {
           ▶
         </span>
       </button>
-      {open && (
+      <div
+        ref={contentRef}
+        style={{
+          maxHeight: open ? (contentRef.current ? contentRef.current.scrollHeight + 'px' : '500px') : '0',
+          overflow: 'hidden',
+          transition: 'max-height 0.2s ease-in-out',
+        }}
+      >
         <div style={{ padding: '10px 0 6px' }}>
           {children}
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 /* ── Typography Controls ───────────────────────────────────────────────────── */
 
-function TypographyControls({ elementKey, styleOverrides, onStyleChange, instanceId }) {
+function TypographyControls({ elementKey, styleOverrides, onStyleChange, instanceId, defaultOpen = true }) {
   const overrides = (styleOverrides && styleOverrides[elementKey]) || {}
 
   const set = (prop, val) => onStyleChange(instanceId, elementKey, prop, val)
 
   return (
-    <ControlGroup title="Typography">
+    <ControlGroup title="Typography" defaultOpen={defaultOpen}>
       <div style={{ marginBottom: '10px' }}>
         <span style={LABEL_STYLE}>Size</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -255,13 +263,13 @@ function TypographyControls({ elementKey, styleOverrides, onStyleChange, instanc
 }
 
 /* ── Spacing Controls ──────────────────────────────────────────────────────── */
-
-function SpacingControls({ elementKey, styleOverrides, onStyleChange, instanceId }) {
+function SpacingControls({ elementKey, styleOverrides, onStyleChange, instanceId, defaultOpen = true }) {
   const overrides = (styleOverrides && styleOverrides[elementKey]) || {}
+
   const set = (prop, val) => onStyleChange(instanceId, elementKey, prop, val)
 
   return (
-    <ControlGroup title="Spacing">
+    <ControlGroup title="Spacing" defaultOpen={defaultOpen}>
       <div style={{ marginBottom: '10px' }}>
         <span style={LABEL_STYLE}>Padding Top</span>
         <PillGroup
@@ -492,7 +500,7 @@ function FocalPointPicker({ focalX, focalY, imageUrl, imageLabel, onChange, onRe
   )
 }
 
-function ImageControls({ element, elementKey, instanceId, sectionData, styleOverrides, onStyleChange, onFieldChange, onOpenMedia }) {
+function ImageControls({ element, elementKey, instanceId, sectionData, styleOverrides, onStyleChange, onFieldChange, onOpenMedia, defaultOpen = true }) {
   const contentValue = getFieldValue(sectionData, element.contentField)
   const overrides = (styleOverrides && styleOverrides[elementKey]) || {}
   const set = (prop, val) => onStyleChange(instanceId, elementKey, prop, val)
@@ -509,7 +517,7 @@ function ImageControls({ element, elementKey, instanceId, sectionData, styleOver
 
   return (
     <>
-      <ControlGroup title="Image">
+      <ControlGroup title="Image" defaultOpen={defaultOpen}>
         {contentValue && (
           <div style={{
             marginBottom: '8px',
@@ -563,7 +571,7 @@ function ImageControls({ element, elementKey, instanceId, sectionData, styleOver
       </ControlGroup>
 
       {element.capabilities.includes('fit') && (
-        <ControlGroup title="Fit">
+        <ControlGroup title="Fit" defaultOpen={false}>
           <span style={LABEL_STYLE}>Object Fit</span>
           <PillGroup
             options={IMAGE_FIT_OPTIONS}
@@ -574,7 +582,7 @@ function ImageControls({ element, elementKey, instanceId, sectionData, styleOver
       )}
 
       {element.capabilities.includes('position') && (
-        <ControlGroup title="Focal Point">
+        <ControlGroup title="Focal Point" defaultOpen={false}>
           <span style={LABEL_STYLE}>Drag to set crop focus</span>
           <FocalPointPicker
             focalX={overrides.focalX}
@@ -592,7 +600,7 @@ function ImageControls({ element, elementKey, instanceId, sectionData, styleOver
 
 /* ── Button Element Controls ───────────────────────────────────────────────── */
 
-function ButtonElementControls({ element, elementKey, instanceId, sectionData, styleOverrides, onStyleChange, onFieldChange }) {
+function ButtonElementControls({ element, elementKey, instanceId, sectionData, styleOverrides, onStyleChange, onFieldChange, defaultOpen = true }) {
   const labelValue = getFieldValue(sectionData, element.contentField)
   const urlValue = getFieldValue(sectionData, element.urlField)
   const overrides = (styleOverrides && styleOverrides[elementKey]) || {}
@@ -600,7 +608,7 @@ function ButtonElementControls({ element, elementKey, instanceId, sectionData, s
 
   return (
     <>
-      <ControlGroup title="Content">
+      <ControlGroup title="Content" defaultOpen={defaultOpen}>
         <div style={{ marginBottom: '10px' }}>
           <span style={LABEL_STYLE}>Label</span>
           <input
@@ -623,7 +631,7 @@ function ButtonElementControls({ element, elementKey, instanceId, sectionData, s
       </ControlGroup>
 
       {element.capabilities.includes('variant') && (
-        <ControlGroup title="Style">
+        <ControlGroup title="Style" defaultOpen={false}>
           <div style={{ marginBottom: '10px' }}>
             <span style={LABEL_STYLE}>Variant</span>
             <PillGroup
@@ -644,7 +652,7 @@ function ButtonElementControls({ element, elementKey, instanceId, sectionData, s
       )}
 
       {element.capabilities.includes('alignment') && (
-        <ControlGroup title="Alignment">
+        <ControlGroup title="Alignment" defaultOpen={false}>
           <span style={LABEL_STYLE}>Alignment</span>
           <PillGroup
             options={ALIGNMENT_OPTIONS}
@@ -953,9 +961,16 @@ export default function Inspector({
   /* ── Element selected → contextual element panel ───────────────────── */
   const el = resolvedElement
 
+  // Element type icons
+  const typeIcons = {
+    text: 'T',
+    image: '🖼',
+    button: '→',
+  }
+
   return (
     <div style={panelStyle}>
-      {/* Header: section name + element label */}
+      {/* Header: section name + element label + type icon */}
       <div style={{
         padding: '16px',
         borderBottom: '1px solid #333',
@@ -975,12 +990,19 @@ export default function Inspector({
         }}>
           {el.label}
         </span>
+        <span style={{
+          fontSize: '10px',
+          color: '#A78659',
+          marginLeft: 'auto',
+        }}>
+          {typeIcons[el.type] || ''}
+        </span>
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', padding: '0 16px' }}>
         {el.type === 'text' && (
           <>
-            {/* CONTENT group */}
+            {/* CONTENT group — first group open by default */}
             <ControlGroup title="Content">
               <span style={LABEL_STYLE}>{el.label}</span>
               <textarea
@@ -1002,6 +1024,7 @@ export default function Inspector({
                 styleOverrides={resolvedStyleOverrides}
                 onStyleChange={onStyleChange}
                 instanceId={instanceId}
+                defaultOpen={false}
               />
             )}
 
@@ -1011,6 +1034,7 @@ export default function Inspector({
                 styleOverrides={resolvedStyleOverrides}
                 onStyleChange={onStyleChange}
                 instanceId={instanceId}
+                defaultOpen={false}
               />
             )}
           </>
@@ -1026,6 +1050,7 @@ export default function Inspector({
             onStyleChange={onStyleChange}
             onFieldChange={onFieldChange}
             onOpenMedia={onOpenMedia}
+            defaultOpen={true}
           />
         )}
 
@@ -1038,6 +1063,7 @@ export default function Inspector({
             styleOverrides={resolvedStyleOverrides}
             onStyleChange={onStyleChange}
             onFieldChange={onFieldChange}
+            defaultOpen={true}
           />
         )}
       </div>
