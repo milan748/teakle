@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 /**
  * MaterialsSection — Editor component for the studio materials list.
@@ -33,7 +34,7 @@ function parseItems(body) {
   }
 }
 
-export default function MaterialsSection({
+function MaterialsSection({
   sectionKey, data, isSelected, selectedElement, onSelectElement,
   onUpdateField, styleOverrides, sectionStyleOverrides, viewMode, onSelect, page,
 }) {
@@ -107,3 +108,5 @@ export default function MaterialsSection({
     </div>
   )
 }
+
+export default memo(MaterialsSection)

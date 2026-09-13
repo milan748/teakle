@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 /**
  * CollectionCarouselSection — Editor component for the product carousel.
@@ -34,7 +35,7 @@ function parseProductIds(body) {
   }
 }
 
-export default function CollectionCarouselSection({
+function CollectionCarouselSection({
   sectionKey, data, isSelected, selectedElement, onSelectElement,
   onUpdateField, styleOverrides, sectionStyleOverrides, viewMode, onSelect, page,
 }) {
@@ -102,3 +103,5 @@ export default function CollectionCarouselSection({
     </div>
   )
 }
+
+export default memo(CollectionCarouselSection)

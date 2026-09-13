@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
 
@@ -28,7 +29,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function PageOriginSection({
+function PageOriginSection({
   sectionKey,
   data,
   isSelected,
@@ -253,3 +254,5 @@ export default function PageOriginSection({
     </div>
   )
 }
+
+export default memo(PageOriginSection)

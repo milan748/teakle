@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   const overrides = styleOverrides?.[elementKey] || {}
@@ -26,7 +27,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function PageIntroSection({
+function PageIntroSection({
   sectionKey,
   data,
   isSelected,
@@ -400,3 +401,5 @@ export default function PageIntroSection({
     </div>
   )
 }
+
+export default memo(PageIntroSection)

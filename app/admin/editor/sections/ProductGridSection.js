@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 /**
  * ProductGridSection — Editor component for the product grid.
@@ -34,7 +35,7 @@ function parseProductIds(body) {
   }
 }
 
-export default function ProductGridSection({
+function ProductGridSection({
   sectionKey, data, isSelected, selectedElement, onSelectElement,
   onUpdateField, styleOverrides, sectionStyleOverrides, viewMode, onSelect, page,
 }) {
@@ -112,3 +113,5 @@ export default function ProductGridSection({
     </div>
   )
 }
+
+export default memo(ProductGridSection)

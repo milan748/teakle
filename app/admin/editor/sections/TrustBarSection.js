@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 /**
  * TrustBarSection — Editor component for the trust bar.
@@ -43,7 +44,7 @@ function parseItems(body) {
   }
 }
 
-export default function TrustBarSection({
+function TrustBarSection({
   sectionKey, data, isSelected, selectedElement, onSelectElement,
   onUpdateField, styleOverrides, sectionStyleOverrides, viewMode, onSelect, page,
 }) {
@@ -98,3 +99,5 @@ export default function TrustBarSection({
     </div>
   )
 }
+
+export default memo(TrustBarSection)

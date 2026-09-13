@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
 
@@ -28,7 +29,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function CraftsmanshipSection({
+function CraftsmanshipSection({
   sectionKey,
   data,
   isSelected,
@@ -254,3 +255,5 @@ export default function CraftsmanshipSection({
     </div>
   )
 }
+
+export default memo(CraftsmanshipSection)

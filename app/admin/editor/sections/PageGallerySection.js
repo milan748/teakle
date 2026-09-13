@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
 
@@ -28,7 +29,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function PageGallerySection({
+function PageGallerySection({
   sectionKey,
   data,
   isSelected,
@@ -229,3 +230,5 @@ export default function PageGallerySection({
     </div>
   )
 }
+
+export default memo(PageGallerySection)

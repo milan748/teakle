@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
 
@@ -28,7 +29,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function PageHeroSection({
+function PageHeroSection({
   sectionKey,
   data,
   isSelected,
@@ -318,3 +319,5 @@ export default function PageHeroSection({
     </div>
   )
 }
+
+export default memo(PageHeroSection)

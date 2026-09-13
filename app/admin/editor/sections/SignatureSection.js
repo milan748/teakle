@@ -1,4 +1,5 @@
 'use client'
+import { memo } from 'react'
 
 import { resolveFocalPoint, focalPointToBackgroundPosition } from '@/lib/designResolution'
 
@@ -28,7 +29,7 @@ function getStyle(elementKey, defaults, styleOverrides, viewMode) {
   return base
 }
 
-export default function SignatureSection({
+function SignatureSection({
   sectionKey,
   data,
   isSelected,
@@ -388,3 +389,5 @@ export default function SignatureSection({
     </div>
   )
 }
+
+export default memo(SignatureSection)
