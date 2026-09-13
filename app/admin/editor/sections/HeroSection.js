@@ -51,7 +51,7 @@ export default function HeroSection({
   const titleLines = title.split('\n')
 
   const isElementSelected = (elementKey) =>
-    selectedElement?.sectionKey === sectionKey && selectedElement?.elementKey === elementKey
+    selectedElement?.elementKey === elementKey
 
   const handleSectionClick = (e) => {
     if (e.target === e.currentTarget || e.currentTarget.contains(e.target)) {

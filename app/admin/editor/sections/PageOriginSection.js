@@ -48,7 +48,7 @@ export default function PageOriginSection({
   const paragraphs = body.split('\n\n').filter(Boolean)
 
   const isElementSelected = (elementKey) =>
-    selectedElement?.sectionKey === sectionKey && selectedElement?.elementKey === elementKey
+    selectedElement?.elementKey === elementKey
 
   const handleSectionClick = (e) => {
     if (e.target === e.currentTarget || e.currentTarget.contains(e.target)) {

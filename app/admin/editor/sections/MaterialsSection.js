@@ -42,7 +42,7 @@ export default function MaterialsSection({
   const title = data?.title || 'Solid wood, and why we don\'t use anything else.'
 
   const isElementSelected = (elementKey) =>
-    selectedElement?.sectionKey === sectionKey && selectedElement?.elementKey === elementKey
+    selectedElement?.elementKey === elementKey
 
   const handleSectionClick = (e) => {
     if (e.target === e.currentTarget || e.currentTarget.contains(e.target)) {

@@ -45,7 +45,7 @@ export default function ProductGridSection({
   const buttonUrl = data?.buttonUrl || '/gallery'
 
   const isElementSelected = (elementKey) =>
-    selectedElement?.sectionKey === sectionKey && selectedElement?.elementKey === elementKey
+    selectedElement?.elementKey === elementKey
 
   const handleSectionClick = (e) => {
     if (e.target === e.currentTarget || e.currentTarget.contains(e.target)) {

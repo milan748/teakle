@@ -72,6 +72,7 @@ export default function EditorClient({ page }) {
   const [dragOverIndex, setDragOverIndex] = useState(null) // index for insertion line
   const [draggedIndex, setDraggedIndex] = useState(null)
   const [focusedIndex, setFocusedIndex] = useState(-1)
+  const [expandedSections, setExpandedSections] = useState(new Set()) // instanceIds of expanded sections
   
   // Template state
   const [sectionTemplates, setSectionTemplates] = useState([])
@@ -220,6 +221,18 @@ export default function EditorClient({ page }) {
       setSelectedElement(null)
       setSelectedSection(instanceId)
     }
+  }
+
+  function toggleExpand(instanceId) {
+    setExpandedSections(prev => {
+      const next = new Set(prev)
+      if (next.has(instanceId)) {
+        next.delete(instanceId)
+      } else {
+        next.add(instanceId)
+      }
+      return next
+    })
   }
   
   // ── Section Operations ───────────────────────────────────────────────
@@ -581,6 +594,18 @@ export default function EditorClient({ page }) {
         setSelectedElement(null)
         return next
       })
+    } else if (e.key === 'ArrowRight' && focusedIndex >= 0 && focusedIndex < count) {
+      e.preventDefault()
+      const sec = sections[focusedIndex]
+      if (!expandedSections.has(sec.instanceId)) {
+        toggleExpand(sec.instanceId)
+      }
+    } else if (e.key === 'ArrowLeft' && focusedIndex >= 0 && focusedIndex < count) {
+      e.preventDefault()
+      const sec = sections[focusedIndex]
+      if (expandedSections.has(sec.instanceId)) {
+        toggleExpand(sec.instanceId)
+      }
     } else if (e.key === 'Enter' && focusedIndex >= 0 && focusedIndex < count) {
       e.preventDefault()
       const sec = sections[focusedIndex]
@@ -621,6 +646,18 @@ export default function EditorClient({ page }) {
       document.removeEventListener('contextmenu', close)
     }
   }, [contextMenu])
+
+  // Auto-expand selected section when an element is selected
+  useEffect(() => {
+    if (selectedElement?.instanceId) {
+      setExpandedSections(prev => {
+        if (prev.has(selectedElement.instanceId)) return prev
+        const next = new Set(prev)
+        next.add(selectedElement.instanceId)
+        return next
+      })
+    }
+  }, [selectedElement])
 
   // Keyboard shortcuts for undo/redo
   useEffect(() => {
@@ -957,9 +994,11 @@ export default function EditorClient({ page }) {
               const isDragging = draggedIndex === index
               const showInsertBefore = dragOverIndex === index
               const showInsertAfter = dragOverIndex === index + 1 && index === sections.length - 1
+              const isExpanded = expandedSections.has(section.instanceId)
+              const elements = getElementsForSection(section.sectionKey, page) || []
               
               return (
-                <div key={section.instanceId}>
+                <div key={section.instanceId} role="treeitem" aria-selected={isActive}>
                   {/* Insertion line indicator */}
                   {(showInsertBefore || showInsertAfter) && (
                     <div style={{
@@ -1004,6 +1043,36 @@ export default function EditorClient({ page }) {
                     }}
                     onFocus={() => setFocusedIndex(index)}
                   >
+                    {/* Expand/collapse toggle */}
+                    <button
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-label={isExpanded ? `Collapse ${config?.label || section.sectionKey}` : `Expand ${config?.label || section.sectionKey}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleExpand(section.instanceId)
+                      }}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'transparent',
+                        color: isActive ? 'rgba(255,255,255,0.5)' : '#666',
+                        border: 'none',
+                        borderRadius: '3px',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                        fontSize: '10px',
+                        transition: 'transform 0.15s',
+                        transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                      }}
+                      title={isExpanded ? 'Collapse' : 'Expand'}
+                    >
+                      ▶
+                    </button>
+
                     {/* Drag handle */}
                     <span
                       style={{
@@ -1099,6 +1168,69 @@ export default function EditorClient({ page }) {
                       ⋮
                     </button>
                   </div>
+
+                  {/* Element sub-list */}
+                  {isExpanded && elements.length > 0 && (
+                    <div
+                      role="group"
+                      aria-label={`${config?.label || section.sectionKey} elements`}
+                      style={{ paddingLeft: '36px' }}
+                    >
+                      {elements.map((el) => {
+                        const isElSelected = selectedElement?.instanceId === section.instanceId
+                          && selectedElement?.elementKey === el.contentField
+                        const typeIcon = el.type === 'image' ? '🖼' : el.type === 'button' ? '→' : 'T'
+                        return (
+                          <div
+                            key={el.contentField}
+                            role="option"
+                            aria-selected={isElSelected}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedSection(section.instanceId)
+                              setSelectedElement({ instanceId: section.instanceId, elementKey: el.contentField })
+                              setShowPageDesign(false)
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '6px 8px',
+                              marginBottom: '1px',
+                              borderRadius: '4px',
+                              background: isElSelected ? 'rgba(167, 134, 89, 0.3)' : 'transparent',
+                              color: isElSelected ? '#fff' : '#999',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                              transition: 'background 0.15s, color 0.15s',
+                              borderLeft: isElSelected ? '2px solid #A78659' : '2px solid transparent',
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isElSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isElSelected) e.currentTarget.style.background = 'transparent'
+                            }}
+                          >
+                            <span style={{
+                              width: '16px',
+                              fontSize: '10px',
+                              flexShrink: 0,
+                              opacity: 0.6,
+                            }}>
+                              {typeIcon}
+                            </span>
+                            <span style={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}>
+                              {el.label}
+                            </span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )
             })}
