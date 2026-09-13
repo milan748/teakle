@@ -667,8 +667,11 @@ export default function EditorClient({ page }) {
         try { overrides = JSON.parse(currentRaw) || {} } catch { overrides = {} }
         if (!overrides[elementKey]) overrides[elementKey] = {}
         
-        // Mobile overrides: store under .mobile subkey
-        if (viewMode === 'mobile') {
+        // Responsive overrides: store under .tablet or .mobile subkey
+        if (viewMode === 'tablet') {
+          if (!overrides[elementKey].tablet) overrides[elementKey].tablet = {}
+          overrides[elementKey].tablet[property] = value
+        } else if (viewMode === 'mobile') {
           if (!overrides[elementKey].mobile) overrides[elementKey].mobile = {}
           overrides[elementKey].mobile[property] = value
         } else {
@@ -691,7 +694,18 @@ export default function EditorClient({ page }) {
         const currentRaw = s.draftSectionStyleOverrides || s.sectionStyleOverrides || '{}'
         let overrides
         try { overrides = JSON.parse(currentRaw) || {} } catch { overrides = {} }
-        overrides[property] = value
+        
+        // Responsive section overrides: store under .tablet or .mobile subkey
+        if (viewMode === 'tablet') {
+          if (!overrides.tablet) overrides.tablet = {}
+          overrides.tablet[property] = value
+        } else if (viewMode === 'mobile') {
+          if (!overrides.mobile) overrides.mobile = {}
+          overrides.mobile[property] = value
+        } else {
+          overrides[property] = value
+        }
+        
         const newJson = JSON.stringify(overrides)
         return { ...s, draftSectionStyleOverrides: newJson, status: 'draft' }
       })
@@ -1854,6 +1868,7 @@ export default function EditorClient({ page }) {
             onStyleChange={handleStyleChange}
             instanceId={selectedSection}
             containerRef={canvasContainerRef}
+            viewMode={viewMode}
           />
         </div>
         
@@ -1874,6 +1889,7 @@ export default function EditorClient({ page }) {
               try { return JSON.parse(selectedData.draftSectionStyleOverrides || selectedData.sectionStyleOverrides || '{}') || {} }
               catch { return {} }
             })() : {}}
+            viewMode={viewMode}
             onFieldChange={handleFieldChange}
             onStyleChange={handleStyleChange}
             onSectionStyleChange={handleSectionStyleChange}

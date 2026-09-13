@@ -1,5 +1,6 @@
 import './globals.css';
 import Script from 'next/script';
+import { headers } from 'next/headers';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollTopBtn from './components/ScrollTopBtn';
@@ -73,7 +74,10 @@ const websiteSchema = {
   url: 'https://teakle.in',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const h = await headers();
+  const isEditor = h.get('x-editor-route') === '1';
+
   return (
     <html lang="en">
       <head>
@@ -94,14 +98,16 @@ export default function RootLayout({ children }) {
         <StructuredData data={websiteSchema} />
       </head>
       <body>
-        <a href="#main-content" className="skip-link">Skip to content</a>
-        <Header />
-        <main id="main-content">
-          {children}
-        </main>
-        <Footer />
-        <ScrollTopBtn />
-        <ClientScripts />
+        {!isEditor && <a href="#main-content" className="skip-link">Skip to content</a>}
+        {!isEditor && <Header />}
+        {isEditor ? children : (
+          <main id="main-content">
+            {children}
+          </main>
+        )}
+        {!isEditor && <Footer />}
+        {!isEditor && <ScrollTopBtn />}
+        {!isEditor && <ClientScripts />}
         <Script src="/app.js" strategy="beforeInteractive" />
         <Script src="/products-browser.js" strategy="afterInteractive" />
       </body>

@@ -33,9 +33,22 @@ function CreatePageModal({ onClose, onCreated }) {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [template, setTemplate] = useState('');
+  const [pageTemplateId, setPageTemplateId] = useState('');
+  const [pageTemplates, setPageTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [slugEdited, setSlugEdited] = useState(false);
+
+  useEffect(() => {
+    // Fetch page templates
+    adminFetch('/api/admin/templates/pages')
+      .then(data => {
+        if (data.success) {
+          setPageTemplates(data.data || []);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   function generateSlug(t) {
     return t
@@ -66,10 +79,20 @@ function CreatePageModal({ onClose, onCreated }) {
     setLoading(true);
     setError('');
     try {
+      // Create the page first
       await adminFetch('/api/admin/pages', {
         method: 'POST',
         body: JSON.stringify({ title: title.trim(), slug: slug.trim(), template }),
       });
+      
+      // If a page template was selected, instantiate it
+      if (pageTemplateId) {
+        await adminFetch(`/api/admin/templates/pages/${pageTemplateId}`, {
+          method: 'POST',
+          body: JSON.stringify({ page: slug.trim() }),
+        });
+      }
+      
       onCreated();
     } catch (err) {
       setError(err.message || 'Failed to create page');
@@ -132,9 +155,9 @@ function CreatePageModal({ onClose, onCreated }) {
           </p>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '16px' }}>
           <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#333' }}>
-            Template (optional)
+            Page Type (optional)
           </label>
           <select
             value={template}
@@ -154,6 +177,30 @@ function CreatePageModal({ onClose, onCreated }) {
             <option value="archive">Archive</option>
           </select>
         </div>
+
+        {pageTemplates.length > 0 && (
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '4px', color: '#333' }}>
+              Start from Template (optional)
+            </label>
+            <select
+              value={pageTemplateId}
+              onChange={e => setPageTemplateId(e.target.value)}
+              style={{
+                width: '100%', padding: '8px 10px', border: '1px solid #d1d5db',
+                borderRadius: '4px', fontSize: '14px', boxSizing: 'border-box',
+              }}
+            >
+              <option value="">Blank Page</option>
+              {pageTemplates.map(t => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+            <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#666' }}>
+              Pre-populate with sections from a saved template
+            </p>
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
           <button

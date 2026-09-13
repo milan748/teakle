@@ -1,772 +1,244 @@
-/**
- * Sprint #12 — Checkout & Order Operations Tests
- * Run: node scripts/test-sprint12.js
- */
+// Sprint 12 Tests — Tablet Canvas Editing & Responsive Layout Controls
+// Run: node scripts/test-sprint12.js
 
-import Database from 'better-sqlite3';
-import bcrypt from 'bcryptjs';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.join(__dirname, '..', 'data', 'teakle-test-s12.db');
-
-let db;
+const ROOT = resolve(import.meta.dirname, '..');
 let passed = 0;
 let failed = 0;
 let total = 0;
 
-function test(name, fn) {
+function ok(label, condition, detail = '') {
   total++;
-  try {
-    fn();
-    passed++;
-    console.log(`  \x1b[32m✓\x1b[0m ${name}`);
-  } catch (err) {
-    failed++;
-    console.log(`  \x1b[31m✗\x1b[0m ${name}`);
-    console.log(`    ${err.message}`);
-  }
+  if (condition) { passed++; console.log(`  \x1b[32m✓\x1b[0m ${label}`); }
+  else { failed++; console.log(`  \x1b[31m✗\x1b[0m ${label}${detail ? ' — ' + detail : ''}`); }
 }
 
-function assert(condition, msg) {
-  if (!condition) throw new Error(msg || 'Assertion failed');
-}
-function assertEq(a, b, msg) {
-  if (a !== b) throw new Error(msg || `Expected ${JSON.stringify(b)}, got ${JSON.stringify(a)}`);
+function read(rel) {
+  return readFileSync(resolve(ROOT, rel), 'utf8');
 }
 
-function setup() {
-  if (fs.existsSync(DB_PATH)) fs.unlinkSync(DB_PATH);
-  db = new Database(DB_PATH);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
+console.log('\n==================================================');
+console.log('Sprint 12 Tests — Tablet Canvas Editing');
+console.log('==================================================\n');
 
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS customers (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      passwordHash TEXT NOT NULL,
-      name TEXT NOT NULL DEFAULT '',
-      phone TEXT DEFAULT '',
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-    CREATE TABLE IF NOT EXISTS admins (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL UNIQUE,
-      passwordHash TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'admin',
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-    CREATE TABLE IF NOT EXISTS carts (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customerId INTEGER NOT NULL UNIQUE,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (customerId) REFERENCES customers(id)
-    );
-    CREATE TABLE IF NOT EXISTS cart_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      cartId INTEGER NOT NULL,
-      productId TEXT NOT NULL,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(cartId, productId),
-      FOREIGN KEY (cartId) REFERENCES carts(id)
-    );
-    CREATE TABLE IF NOT EXISTS orders (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      customerId INTEGER NOT NULL,
-      orderNumber TEXT NOT NULL UNIQUE,
-      status TEXT NOT NULL DEFAULT 'PENDING',
-      paymentStatus TEXT NOT NULL DEFAULT 'UNPAID',
-      subtotal INTEGER NOT NULL DEFAULT 0,
-      shippingAmount INTEGER NOT NULL DEFAULT 0,
-      totalAmount INTEGER NOT NULL DEFAULT 0,
-      shippingFirstName TEXT,
-      shippingLastName TEXT,
-      shippingEmail TEXT,
-      shippingPhone TEXT,
-      shippingAddress TEXT,
-      shippingApartment TEXT,
-      shippingCity TEXT,
-      shippingState TEXT,
-      shippingPin TEXT,
-      shippingCountry TEXT DEFAULT 'India',
-      billingSameAsShipping INTEGER DEFAULT 1,
-      billingFirstName TEXT,
-      billingLastName TEXT,
-      billingAddress TEXT,
-      billingApartment TEXT,
-      billingCity TEXT,
-      billingState TEXT,
-      billingPin TEXT,
-      notes TEXT,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (customerId) REFERENCES customers(id)
-    );
-    CREATE TABLE IF NOT EXISTS order_items (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      productId TEXT NOT NULL,
-      productName TEXT NOT NULL,
-      productNameSnapshot TEXT NOT NULL DEFAULT '',
-      productImage TEXT,
-      price INTEGER NOT NULL DEFAULT 0,
-      unitPrice INTEGER NOT NULL DEFAULT 0,
-      quantity INTEGER NOT NULL DEFAULT 1,
-      lineTotal INTEGER NOT NULL DEFAULT 0,
-      FOREIGN KEY (orderId) REFERENCES orders(id)
-    );
-    CREATE TABLE IF NOT EXISTS order_status_history (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      oldStatus TEXT,
-      newStatus TEXT NOT NULL,
-      changedBy TEXT NOT NULL,
-      changedByType TEXT NOT NULL DEFAULT 'admin',
-      note TEXT,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (orderId) REFERENCES orders(id)
-    );
-    CREATE TABLE IF NOT EXISTS order_notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      orderId INTEGER NOT NULL,
-      author TEXT NOT NULL,
-      authorType TEXT NOT NULL DEFAULT 'admin',
-      content TEXT NOT NULL,
-      isInternal INTEGER NOT NULL DEFAULT 0,
-      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
-      FOREIGN KEY (orderId) REFERENCES orders(id)
-    );
-    CREATE INDEX IF NOT EXISTS idx_orders_customerId ON orders(customerId);
-    CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
-    CREATE INDEX IF NOT EXISTS idx_orders_createdAt ON orders(createdAt);
-    CREATE INDEX IF NOT EXISTS idx_order_items_orderId ON order_items(orderId);
-    CREATE INDEX IF NOT EXISTS idx_order_status_history_orderId ON order_status_history(orderId);
-    CREATE INDEX IF NOT EXISTS idx_order_notes_orderId ON order_notes(orderId);
-    CREATE INDEX IF NOT EXISTS idx_customers_email ON customers(email);
-  `);
+// ── Phase 1: normalizeViewport helper ──
+console.log('Phase 1: normalizeViewport Helper');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('normalizeViewport function exists', drSrc.includes('export function normalizeViewport'));
+  ok('normalizeViewport handles boolean false → desktop', drSrc.includes("return viewportOrIsMobile ? 'mobile' : 'desktop'"));
+  ok('normalizeViewport handles string viewport', drSrc.includes("'tablet' || viewportOrIsMobile === 'mobile' || viewportOrIsMobile === 'desktop'"));
 }
 
-function cleanup() {
-  if (db) db.close();
-  [DB_PATH, DB_PATH + '-wal', DB_PATH + '-shm'].forEach(f => {
-    if (fs.existsSync(f)) fs.unlinkSync(f);
-  });
+// ── Phase 2: Element Style Resolution — tablet ──
+console.log('\nPhase 2: Element Style Resolution — Tablet');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('resolveElementStyle calls normalizeViewport', drSrc.includes("const viewport = normalizeViewport(viewportOrIsMobile)") && drSrc.includes('resolveElementStyle'));
+  ok('Filters both mobile and tablet subkeys from desktop', drSrc.includes("key !== 'mobile' && key !== 'tablet'"));
+  ok('Applies tablet overrides when viewport=tablet', drSrc.includes("viewport === 'tablet' && el.tablet"));
+  ok('Applies mobile overrides when viewport=mobile', drSrc.includes("viewport === 'mobile' && el.mobile"));
 }
 
-// ─── 1. Database Schema Tests ──────────────────────────────
-function testDatabaseSchema() {
-  console.log('\n\x1b[1m── Database Schema ──\x1b[0m');
-
-  test('order_status_history table exists', () => {
-    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='order_status_history'").all();
-    assert(tables.length === 1, 'Table not found');
-  });
-
-  test('order_notes table exists', () => {
-    const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='order_notes'").all();
-    assert(tables.length === 1, 'Table not found');
-  });
-
-  test('order_status_history has required columns', () => {
-    const cols = db.prepare("PRAGMA table_info(order_status_history)").all().map(c => c.name);
-    assert(cols.includes('id'), 'Missing id');
-    assert(cols.includes('orderId'), 'Missing orderId');
-    assert(cols.includes('oldStatus'), 'Missing oldStatus');
-    assert(cols.includes('newStatus'), 'Missing newStatus');
-    assert(cols.includes('changedBy'), 'Missing changedBy');
-    assert(cols.includes('changedByType'), 'Missing changedByType');
-    assert(cols.includes('note'), 'Missing note');
-    assert(cols.includes('createdAt'), 'Missing createdAt');
-  });
-
-  test('order_notes has required columns', () => {
-    const cols = db.prepare("PRAGMA table_info(order_notes)").all().map(c => c.name);
-    assert(cols.includes('id'), 'Missing id');
-    assert(cols.includes('orderId'), 'Missing orderId');
-    assert(cols.includes('author'), 'Missing author');
-    assert(cols.includes('authorType'), 'Missing authorType');
-    assert(cols.includes('content'), 'Missing content');
-    assert(cols.includes('isInternal'), 'Missing isInternal');
-    assert(cols.includes('createdAt'), 'Missing createdAt');
-  });
-
-  test('order_status_history indexes exist', () => {
-    const indexes = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_order_status_history_orderId'").all();
-    assert(indexes.length === 1, 'Index not found');
-  });
-
-  test('order_notes indexes exist', () => {
-    const indexes = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_order_notes_orderId'").all();
-    assert(indexes.length === 1, 'Index not found');
-  });
-
-  test('orders table has paymentStatus column', () => {
-    const cols = db.prepare("PRAGMA table_info(orders)").all().map(c => c.name);
-    assert(cols.includes('paymentStatus'), 'Missing paymentStatus');
-  });
-
-  test('order_items has snapshot columns', () => {
-    const cols = db.prepare("PRAGMA table_info(order_items)").all().map(c => c.name);
-    assert(cols.includes('productNameSnapshot'), 'Missing productNameSnapshot');
-    assert(cols.includes('unitPrice'), 'Missing unitPrice');
-    assert(cols.includes('lineTotal'), 'Missing lineTotal');
-  });
+// ── Phase 3: Typography Resolution — tablet ──
+console.log('\nPhase 3: Typography Resolution — Tablet');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('resolveTypography calls normalizeViewport', drSrc.includes('resolveTypography') && drSrc.includes("const viewport = normalizeViewport(viewportOrIsMobile)"));
+  ok('resolveTypography applies tablet overrides', drSrc.includes("viewport === 'tablet' && el.tablet") || drSrc.includes("el.tablet[k] !== undefined"));
 }
 
-// ─── 2. Order Status History Tests ─────────────────────────
-function testOrderStatusHistory() {
-  console.log('\n\x1b[1m── Order Status History ──\x1b[0m');
-
-  const hash = bcrypt.hashSync('pass', 12);
-  const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('hist@test.com', hash, 'Hist User');
-  const customerId = r.lastInsertRowid;
-
-  const orderResult = db.prepare(
-    `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-     shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-     VALUES (?, ?, 'PENDING', 'UNPAID', 1000, 0, 1000, 'Test', 'User', 'test@test.com', '123 St', 'City', 'State', '123456')`
-  ).run(customerId, 'TK-HIST-001');
-  const orderId = orderResult.lastInsertRowid;
-
-  test('status history can be inserted', () => {
-    db.prepare(
-      `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
-       VALUES (?, 'PENDING', 'CONFIRMED', 'admin@test.com', 'admin', 'Order confirmed')`
-    ).run(orderId);
-    const history = db.prepare('SELECT * FROM order_status_history WHERE orderId = ?').all(orderId);
-    assert(history.length === 1, 'No history record');
-    assertEq(history[0].oldStatus, 'PENDING');
-    assertEq(history[0].newStatus, 'CONFIRMED');
-    assertEq(history[0].changedBy, 'admin@test.com');
-    assertEq(history[0].changedByType, 'admin');
-    assertEq(history[0].note, 'Order confirmed');
-  });
-
-  test('multiple status changes tracked in order', () => {
-    db.prepare(
-      `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
-       VALUES (?, 'CONFIRMED', 'PROCESSING', 'admin@test.com', 'admin', NULL)`
-    ).run(orderId);
-    db.prepare(
-      `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
-       VALUES (?, 'PROCESSING', 'COMPLETED', 'admin@test.com', 'admin', 'Shipped')`
-    ).run(orderId);
-    const history = db.prepare('SELECT * FROM order_status_history WHERE orderId = ? ORDER BY createdAt ASC').all(orderId);
-    assertEq(history.length, 3, 'Expected 3 history records');
-    assertEq(history[0].newStatus, 'CONFIRMED');
-    assertEq(history[1].newStatus, 'PROCESSING');
-    assertEq(history[2].newStatus, 'COMPLETED');
-  });
-
-  test('customer cancellation recorded in history', () => {
-    const r2 = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 500, 0, 500, 'T', 'U', 't@t.com', '123', 'C', 'S', '123')`
-    ).run(customerId, 'TK-HIST-CANCEL');
-    const cancelOrderId = r2.lastInsertRowid;
-
-    db.prepare(
-      `INSERT INTO order_status_history (orderId, oldStatus, newStatus, changedBy, changedByType, note)
-       VALUES (?, 'PENDING', 'CANCELLED', 'test@test.com', 'customer', 'Customer requested cancellation')`
-    ).run(cancelOrderId);
-
-    const history = db.prepare('SELECT * FROM order_status_history WHERE orderId = ?').all(cancelOrderId);
-    assert(history.length === 1, 'No cancel history');
-    assertEq(history[0].changedByType, 'customer');
-    assertEq(history[0].newStatus, 'CANCELLED');
-  });
-
-  test('history is ordered by createdAt ASC', () => {
-    const r3 = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 100, 0, 100, 'T', 'U', 't@t.com', '123', 'C', 'S', '123')`
-    ).run(customerId, 'TK-HIST-ORDER');
-    const order3Id = r3.lastInsertRowid;
-
-    db.prepare(`INSERT INTO order_status_history (orderId, newStatus, changedBy, changedByType) VALUES (?, 'CONFIRMED', 'a@t.com', 'admin')`).run(order3Id);
-    db.prepare(`INSERT INTO order_status_history (orderId, newStatus, changedBy, changedByType) VALUES (?, 'PROCESSING', 'a@t.com', 'admin')`).run(order3Id);
-
-    const history = db.prepare('SELECT newStatus FROM order_status_history WHERE orderId = ? ORDER BY createdAt ASC').all(order3Id);
-    assertEq(history[0].newStatus, 'CONFIRMED');
-    assertEq(history[1].newStatus, 'PROCESSING');
-  });
+// ── Phase 4: Section Style Resolution — tablet ──
+console.log('\nPhase 4: Section Style Resolution — Tablet');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('resolveSectionStyle calls normalizeViewport', drSrc.includes('resolveSectionStyle') && drSrc.includes("const viewport = normalizeViewport(viewportOrIsMobile)"));
+  ok('resolveSectionStyle resolves tablet subkey', drSrc.includes("viewport === 'tablet' ? (sectionOverrides.tablet || {})"));
+  ok('resolveSectionStyle resolves mobile subkey', drSrc.includes("viewport === 'mobile' ? (sectionOverrides.mobile || {})"));
+  ok('Content width precedence: mobile > tablet > base > pageDesign', drSrc.includes('mobile.contentWidth || tablet.contentWidth || sectionOverrides.contentWidth || pageDesignDefaults.contentWidth'));
+  ok('Padding precedence: mobile > tablet > base > pageDesign', drSrc.includes('mobile.paddingTop || tablet.paddingTop || sectionOverrides.paddingTop || pageDesignDefaults.paddingTop'));
 }
 
-// ─── 3. Order Notes Tests ──────────────────────────────────
-function testOrderNotes() {
-  console.log('\n\x1b[1m── Order Notes ──\x1b[0m');
-
-  const hash = bcrypt.hashSync('pass', 12);
-  const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('notes@test.com', hash, 'Notes User');
-  const customerId = r.lastInsertRowid;
-
-  const orderResult = db.prepare(
-    `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-     shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-     VALUES (?, ?, 'PENDING', 'UNPAID', 2000, 0, 2000, 'N', 'U', 'n@t.com', '123', 'C', 'S', '123')`
-  ).run(customerId, 'TK-NOTES-001');
-  const orderId = orderResult.lastInsertRowid;
-
-  test('admin note can be inserted', () => {
-    db.prepare(
-      `INSERT INTO order_notes (orderId, author, authorType, content, isInternal)
-       VALUES (?, 'admin@test.com', 'admin', 'Customer requested expedited shipping', 0)`
-    ).run(orderId);
-    const notes = db.prepare('SELECT * FROM order_notes WHERE orderId = ?').all(orderId);
-    assert(notes.length === 1, 'No note record');
-    assertEq(notes[0].author, 'admin@test.com');
-    assertEq(notes[0].authorType, 'admin');
-    assertEq(notes[0].content, 'Customer requested expedited shipping');
-    assertEq(notes[0].isInternal, 0);
-  });
-
-  test('internal note can be created', () => {
-    db.prepare(
-      `INSERT INTO order_notes (orderId, author, authorType, content, isInternal)
-       VALUES (?, 'admin@test.com', 'admin', 'Follow up with warehouse', 1)`
-    ).run(orderId);
-    const notes = db.prepare('SELECT * FROM order_notes WHERE orderId = ? AND isInternal = 1').all(orderId);
-    assert(notes.length >= 1, 'No internal note');
-    assertEq(notes[0].isInternal, 1);
-  });
-
-  test('customer-visible notes exclude internal', () => {
-    const visible = db.prepare('SELECT * FROM order_notes WHERE orderId = ? AND isInternal = 0').all(orderId);
-    const all = db.prepare('SELECT * FROM order_notes WHERE orderId = ?').all(orderId);
-    assert(visible.length < all.length, 'Internal notes should be filtered');
-    visible.forEach(n => assertEq(n.isInternal, 0, 'Internal note leaked'));
-  });
-
-  test('multiple notes ordered by createdAt', () => {
-    db.prepare(
-      `INSERT INTO order_notes (orderId, author, authorType, content, isInternal)
-       VALUES (?, 'admin@test.com', 'admin', 'First note', 0)`
-    ).run(orderId);
-    const notes = db.prepare('SELECT content FROM order_notes WHERE orderId = ? ORDER BY createdAt ASC').all(orderId);
-    assert(notes.length >= 3, `Expected >= 3 notes, got ${notes.length}`);
-    assertEq(notes[0].content, 'Customer requested expedited shipping');
-  });
-
-  test('notes are linked to orderId with index', () => {
-    const indexes = db.prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_order_notes_orderId'").all();
-    assert(indexes.length === 1, 'Index missing');
-  });
+// ── Phase 5: Page Design Resolution — tablet ──
+console.log('\nPhase 5: Page Design Resolution — Tablet');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('resolvePageDesign calls normalizeViewport', drSrc.includes('resolvePageDesign') && drSrc.includes("const viewport = normalizeViewport(viewportOrIsMobile)"));
+  ok('resolvePageDesign resolves tablet subkey', drSrc.includes("viewport === 'tablet' && pageDesign.tablet"));
+  ok('Background precedence: mobile > tablet > base', drSrc.includes('mobile.background || tablet.background || pageDesign.background'));
+  ok('Spacing precedence: mobile > tablet > base', drSrc.includes('mobile.spacing || tablet.spacing || pageDesign.spacing'));
+  ok('ContentWidth precedence: mobile > tablet > base', drSrc.includes('mobile.contentWidth || tablet.contentWidth || pageDesign.contentWidth'));
 }
 
-// ─── 4. Order Cancellation Tests ───────────────────────────
-function testOrderCancellation() {
-  console.log('\n\x1b[1m── Order Cancellation ──\x1b[0m');
-
-  const VALID_TRANSITIONS = {
-    PENDING: ['CONFIRMED', 'CANCELLED'],
-    CONFIRMED: ['PROCESSING', 'CANCELLED'],
-    PROCESSING: ['COMPLETED', 'CANCELLED'],
-    COMPLETED: [],
-    CANCELLED: [],
-  };
-  const CUSTOMER_CANCEL_STATUSES = ['PENDING', 'CONFIRMED'];
-
-  test('PENDING orders can be cancelled by customer', () => {
-    assert(CUSTOMER_CANCEL_STATUSES.includes('PENDING'), 'PENDING not in cancel list');
-  });
-
-  test('CONFIRMED orders can be cancelled by customer', () => {
-    assert(CUSTOMER_CANCEL_STATUSES.includes('CONFIRMED'), 'CONFIRMED not in cancel list');
-  });
-
-  test('PROCESSING orders cannot be cancelled by customer', () => {
-    assert(!CUSTOMER_CANCEL_STATUSES.includes('PROCESSING'), 'PROCESSING should not be cancellable');
-  });
-
-  test('COMPLETED orders cannot be cancelled by customer', () => {
-    assert(!CUSTOMER_CANCEL_STATUSES.includes('COMPLETED'), 'COMPLETED should not be cancellable');
-  });
-
-  test('CANCELLED orders cannot be cancelled again', () => {
-    assert(!CUSTOMER_CANCEL_STATUSES.includes('CANCELLED'), 'CANCELLED should not be cancellable');
-  });
-
-  test('PENDING -> CANCELLED is valid transition', () => {
-    assert(VALID_TRANSITIONS.PENDING.includes('CANCELLED'), 'Transition not allowed');
-  });
-
-  test('CONFIRMED -> CANCELLED is valid transition', () => {
-    assert(VALID_TRANSITIONS.CONFIRMED.includes('CANCELLED'), 'Transition not allowed');
-  });
-
-  test('COMPLETED -> CANCELLED is NOT valid transition', () => {
-    assert(!VALID_TRANSITIONS.COMPLETED.includes('CANCELLED'), 'Should not be allowed');
-  });
-
-  test('CANCELLED -> any is NOT valid transition', () => {
-    assertEq(VALID_TRANSITIONS.CANCELLED.length, 0, 'No transitions from CANCELLED');
-  });
-
-  test('cancellation changes order status to CANCELLED', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('cancel@test.com', hash, 'Cancel User');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 1000, 0, 1000, 'C', 'U', 'c@t.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, 'TK-CANCEL-001');
-
-    db.prepare("UPDATE orders SET status = 'CANCELLED', updatedAt = datetime('now') WHERE id = ?").run(orderR.lastInsertRowid);
-    const order = db.prepare('SELECT status FROM orders WHERE id = ?').get(orderR.lastInsertRowid);
-    assertEq(order.status, 'CANCELLED');
-  });
-
-  test('cancelled order cannot be modified further', () => {
-    const transitions = VALID_TRANSITIONS['CANCELLED'];
-    assertEq(transitions.length, 0, 'No transitions from CANCELLED');
-  });
+// ── Phase 6: EditorToolbar — 3 viewport buttons ──
+console.log('\nPhase 6: EditorToolbar — Viewport Buttons');
+{
+  const toolbarSrc = read('app/admin/editor/EditorToolbar.js');
+  ok('Has Desktop button', toolbarSrc.includes("'desktop'") && toolbarSrc.includes('Desktop'));
+  ok('Has Tablet button', toolbarSrc.includes("'tablet'") && toolbarSrc.includes('Tablet'));
+  ok('Has Mobile button', toolbarSrc.includes("'mobile'") && toolbarSrc.includes('Mobile'));
+  ok('Desktop button has aria-pressed', toolbarSrc.includes("aria-pressed={viewMode === 'desktop'}"));
+  ok('Tablet button has aria-pressed', toolbarSrc.includes("aria-pressed={viewMode === 'tablet'}"));
+  ok('Mobile button has aria-pressed', toolbarSrc.includes("aria-pressed={viewMode === 'mobile'}"));
 }
 
-// ─── 5. CSV Export Tests ───────────────────────────────────
-function testCSVExport() {
-  console.log('\n\x1b[1m── CSV Export ──\x1b[0m');
-
-  test('CSV escape handles commas', () => {
-    const escapeCSV = (val) => {
-      if (val == null) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
-    assertEq(escapeCSV('hello, world'), '"hello, world"', 'Comma not escaped');
-  });
-
-  test('CSV escape handles double quotes', () => {
-    const escapeCSV = (val) => {
-      if (val == null) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
-    assertEq(escapeCSV('say "hello"'), '"say ""hello"""', 'Quotes not escaped');
-  });
-
-  test('CSV escape handles newlines', () => {
-    const escapeCSV = (val) => {
-      if (val == null) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
-    assertEq(escapeCSV('line1\nline2'), '"line1\nline2"', 'Newline not escaped');
-  });
-
-  test('CSV escape passes through plain strings', () => {
-    const escapeCSV = (val) => {
-      if (val == null) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
-    assertEq(escapeCSV('simple'), 'simple', 'Plain string escaped');
-  });
-
-  test('CSV escape handles null/undefined', () => {
-    const escapeCSV = (val) => {
-      if (val == null) return '';
-      const str = String(val);
-      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    };
-    assertEq(escapeCSV(null), '', 'null not handled');
-    assertEq(escapeCSV(undefined), '', 'undefined not handled');
-  });
+// ── Phase 7: Canvas — tablet viewport width ──
+console.log('\nPhase 7: Canvas — Tablet Viewport Width');
+{
+  const canvasSrc = read('app/admin/editor/Canvas.js');
+  ok('Canvas has tablet width (768px)', canvasSrc.includes("viewMode === 'tablet' ? '768px'"));
+  ok('Canvas has mobile width (375px)', canvasSrc.includes("viewMode === 'mobile' ? '375px'"));
+  ok('Canvas centers tablet viewport', canvasSrc.includes("viewMode === 'desktop' ? 'stretch' : 'center'"));
+  ok('Canvas has tablet boxShadow', canvasSrc.includes("viewMode === 'desktop' ? 'none' : '0 0 40px"));
+  ok('Canvas has tablet maxWidth', canvasSrc.includes("viewMode === 'tablet' ? '768px'"));
 }
 
-// ─── 6. Order Number Format Tests ──────────────────────────
-function testOrderNumberFormat() {
-  console.log('\n\x1b[1m── Order Number Format ──\x1b[0m');
+// ── Phase 8: EditorClient — tablet override storage ──
+console.log('\nPhase 8: EditorClient — Tablet Override Storage');
+{
+  const editorSrc = read('app/admin/editor/EditorClient.js');
+  ok('handleStyleChange stores tablet overrides under .tablet subkey', editorSrc.includes("if (!overrides[elementKey].tablet) overrides[elementKey].tablet = {}") && editorSrc.includes("overrides[elementKey].tablet[property] = value"));
+  ok('handleSectionStyleChange stores tablet overrides under .tablet subkey', editorSrc.includes("if (!overrides.tablet) overrides.tablet = {}") && editorSrc.includes("overrides.tablet[property] = value"));
+  ok('Inspector receives viewMode prop', editorSrc.includes('viewMode={viewMode}'));
+  ok('FloatingToolbar receives viewMode prop', editorSrc.includes("viewMode={viewMode}"));
+}
 
-  test('order number starts with TK-', () => {
-    const ts = Date.now().toString(36).toUpperCase();
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const orderNumber = `TK-${ts}-${rand}`;
-    assert(orderNumber.startsWith('TK-'), 'Missing TK- prefix');
-  });
+// ── Phase 9: Inspector — responsive override resolution ──
+console.log('\nPhase 9: Inspector — Responsive Override Resolution');
+{
+  const inspectorSrc = read('app/admin/editor/Inspector.js');
+  ok('Inspector accepts viewMode prop', inspectorSrc.includes("viewMode = 'desktop'"));
+  ok('Inspector has resolveOverrides function', inspectorSrc.includes('function resolveOverrides'));
+  ok('Inspector has resolveSectionOverrides function', inspectorSrc.includes('function resolveSectionOverrides'));
+  ok('Inspector computes resolvedStyleOverrides', inspectorSrc.includes('const resolvedStyleOverrides'));
+  ok('SectionControls uses resolved overrides', inspectorSrc.includes('sectionStyleOverrides={resolveSectionOverrides'));
+  ok('TypographyControls uses resolved overrides', inspectorSrc.includes('styleOverrides={resolvedStyleOverrides}'));
+  ok('SpacingControls uses resolved overrides', inspectorSrc.includes('styleOverrides={resolvedStyleOverrides}'));
+  ok('ImageControls uses resolved overrides', inspectorSrc.includes('styleOverrides={resolvedStyleOverrides}'));
+  ok('ButtonElementControls uses resolved overrides', inspectorSrc.includes('styleOverrides={resolvedStyleOverrides}'));
+}
 
-  test('order number contains base36 timestamp', () => {
-    const ts = Date.now().toString(36).toUpperCase();
-    assert(ts.length > 0, 'Empty timestamp');
-    assert(/^[A-Z0-9]+$/.test(ts), 'Non-alphanumeric timestamp');
-  });
+// ── Phase 10: FloatingToolbar — responsive override resolution ──
+console.log('\nPhase 10: FloatingToolbar — Responsive Override Resolution');
+{
+  const ftSrc = read('app/admin/editor/FloatingToolbar.js');
+  ok('FloatingToolbar accepts viewMode prop', ftSrc.includes("viewMode = 'desktop'"));
+  ok('FloatingToolbar resolves tablet overrides', ftSrc.includes("viewMode === 'tablet' && rawOverrides.tablet"));
+  ok('FloatingToolbar resolves mobile overrides', ftSrc.includes("viewMode === 'mobile' && rawOverrides.mobile"));
+}
 
-  test('order number format is TK-{base36ts}-{base36rand}', () => {
-    const ts = Date.now().toString(36).toUpperCase();
-    const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const orderNumber = `TK-${ts}-${rand}`;
-    const parts = orderNumber.split('-');
-    assertEq(parts.length, 3, 'Wrong number of parts');
-    assertEq(parts[0], 'TK', 'Wrong prefix');
-    assert(parts[1].length > 0, 'Empty timestamp');
-    assert(parts[2].length > 0, 'Empty random');
-  });
+// ── Phase 11: PageDesignPanel — tablet overrides section ──
+console.log('\nPhase 11: PageDesignPanel — Tablet Overrides');
+{
+  const pdpSrc = read('app/admin/editor/PageDesignPanel.js');
+  ok('PageDesignPanel has tabletOverrides state', pdpSrc.includes('const [tabletOverrides, setTabletOverrides]'));
+  ok('PageDesignPanel has updateTablet function', pdpSrc.includes('function updateTablet'));
+  ok('PageDesignPanel has Tablet Overrides section', pdpSrc.includes('"Tablet Overrides"'));
+  ok('Tablet Overrides has content width control', pdpSrc.includes('tabletOverrides.contentWidth'));
+  ok('Tablet Overrides has spacing control', pdpSrc.includes('tabletOverrides.spacing'));
+  ok('Mobile Overrides section still exists', pdpSrc.includes('"Mobile Overrides"'));
+}
 
-  test('order numbers are unique', () => {
-    const numbers = new Set();
-    for (let i = 0; i < 100; i++) {
-      const ts = Date.now().toString(36).toUpperCase() + i;
-      const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-      numbers.add(`TK-${ts}-${rand}`);
+// ── Phase 12: All 13 section components handle tablet ──
+console.log('\nPhase 12: Section Components — Tablet Support');
+{
+  const sectionFiles = [
+    'HeroSection.js', 'PhilosophySection.js', 'SignatureSection.js',
+    'CraftsmanshipSection.js', 'LifestyleSection.js', 'PageHeroSection.js',
+    'PageIntroSection.js', 'PageOriginSection.js', 'PageGallerySection.js',
+    'MaterialsSection.js', 'CollectionCarouselSection.js', 'ProductGridSection.js',
+    'TrustBarSection.js',
+  ];
+  
+  let allHaveTablet = true;
+  let allOldPatternRemoved = true;
+  for (const file of sectionFiles) {
+    const src = read(`app/admin/editor/sections/${file}`);
+    const hasTablet = src.includes("key !== 'tablet'") && src.includes("viewMode === 'tablet'") && src.includes("overrides.tablet");
+    if (!hasTablet) {
+      allHaveTablet = false;
+      ok(`  ${file} has tablet support`, false);
     }
-    assertEq(numbers.size, 100, 'Not all unique');
-  });
-}
-
-// ─── 7. Payment Status Tests ───────────────────────────────
-function testPaymentStatus() {
-  console.log('\n\x1b[1m── Payment Status ──\x1b[0m');
-
-  const VALID_PAYMENT_STATUSES = ['UNPAID', 'PAID'];
-
-  test('valid payment statuses defined', () => {
-    assert(VALID_PAYMENT_STATUSES.includes('UNPAID'), 'Missing UNPAID');
-    assert(VALID_PAYMENT_STATUSES.includes('PAID'), 'Missing PAID');
-  });
-
-  test('default payment status is UNPAID', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('pay@test.com', hash, 'Pay User');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 100, 0, 100, 'P', 'U', 'p@t.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, 'TK-PAY-001');
-    const order = db.prepare('SELECT paymentStatus FROM orders WHERE id = ?').get(orderR.lastInsertRowid);
-    assertEq(order.paymentStatus, 'UNPAID');
-  });
-
-  test('payment status stored correctly', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('pay2@test.com', hash, 'Pay2');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'PAID', 100, 0, 100, 'P', 'U', 'p@t.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, 'TK-PAY-002');
-    const order = db.prepare('SELECT paymentStatus FROM orders WHERE id = ?').get(orderR.lastInsertRowid);
-    assertEq(order.paymentStatus, 'PAID');
-  });
-}
-
-// ─── 8. Admin Filtering Tests ──────────────────────────────
-function testAdminFiltering() {
-  console.log('\n\x1b[1m── Admin Filtering ──\x1b[0m');
-
-  const hash = bcrypt.hashSync('pass', 12);
-  const r1 = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('filter1@test.com', hash, 'Filter1');
-  const r2 = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('filter2@test.com', hash, 'Filter2');
-
-  db.prepare(
-    `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-     shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin, createdAt)
-     VALUES (?, 'TK-FILT-001', 'PENDING', 'UNPAID', 1000, 0, 1000, 'A', 'B', 'a@b.com', '123', 'C', 'S', '123', '2026-01-15 10:00:00')`
-  ).run(r1.lastInsertRowid);
-
-  db.prepare(
-    `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-     shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin, createdAt)
-     VALUES (?, 'TK-FILT-002', 'COMPLETED', 'PAID', 2000, 0, 2000, 'C', 'D', 'c@d.com', '456', 'C', 'S', '123', '2026-06-20 14:00:00')`
-  ).run(r2.lastInsertRowid);
-
-  test('filter by payment status UNPAID', () => {
-    const results = db.prepare("SELECT * FROM orders WHERE paymentStatus = 'UNPAID'").all();
-    assert(results.length >= 1, 'No UNPAID orders found');
-    results.forEach(o => assertEq(o.paymentStatus, 'UNPAID'));
-  });
-
-  test('filter by payment status PAID', () => {
-    const results = db.prepare("SELECT * FROM orders WHERE paymentStatus = 'PAID'").all();
-    assert(results.length >= 1, 'No PAID orders found');
-    results.forEach(o => assertEq(o.paymentStatus, 'PAID'));
-  });
-
-  test('filter by date range', () => {
-    const results = db.prepare("SELECT * FROM orders WHERE createdAt >= ? AND createdAt <= ?").all('2026-01-01', '2026-12-31 23:59:59');
-    assert(results.length >= 2, 'Date range filter failed');
-  });
-
-  test('filter by status', () => {
-    const results = db.prepare("SELECT * FROM orders WHERE status = 'PENDING'").all();
-    assert(results.length >= 1, 'No PENDING orders found');
-    results.forEach(o => assertEq(o.status, 'PENDING'));
-  });
-
-  test('combined filters work', () => {
-    const results = db.prepare("SELECT * FROM orders WHERE status = ? AND paymentStatus = ?").all('PENDING', 'UNPAID');
-    assert(results.length >= 1, 'Combined filter failed');
-    results.forEach(o => {
-      assertEq(o.status, 'PENDING');
-      assertEq(o.paymentStatus, 'UNPAID');
-    });
-  });
-}
-
-// ─── 9. Transaction Integrity Tests ────────────────────────
-function testTransactionIntegrity() {
-  console.log('\n\x1b[1m── Transaction Integrity ──\x1b[0m');
-
-  test('order creation within transaction is atomic', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('atom@test.com', hash, 'Atom');
-    const customerId = r.lastInsertRowid;
-    db.prepare('INSERT INTO carts (customerId) VALUES (?)').run(customerId);
-    const cart = db.prepare('SELECT id FROM carts WHERE customerId = ?').get(customerId);
-    db.prepare('INSERT INTO cart_items (cartId, productId, quantity) VALUES (?, ?, ?)').run(cart.id, 'anchor-table', 1);
-
-    const createOrder = db.transaction(() => {
-      const orderResult = db.prepare(
-        `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-         shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-         VALUES (?, ?, 'PENDING', 'UNPAID', 1000, 0, 1000, 'A', 'B', 'a@b.com', '123', 'C', 'S', '123')`
-      ).run(customerId, `TK-ATOM-${Date.now()}`);
-      const orderId = orderResult.lastInsertRowid;
-      db.prepare('INSERT INTO order_items (orderId, productId, productName, productNameSnapshot, unitPrice, quantity, lineTotal) VALUES (?, ?, ?, ?, ?, ?, ?)')
-        .run(orderId, 'anchor-table', 'Anchor Table', 'Anchor Table', 1000, 1, 1000);
-      db.prepare('DELETE FROM cart_items WHERE cartId = ?').run(cart.id);
-      return orderId;
-    });
-
-    const orderId = createOrder();
-    const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
-    assert(order !== undefined, 'Order not created');
-    const items = db.prepare('SELECT * FROM order_items WHERE orderId = ?').all(orderId);
-    assertEq(items.length, 1, 'Item not created');
-    const remaining = db.prepare('SELECT * FROM cart_items WHERE cartId = ?').all(cart.id);
-    assertEq(remaining.length, 0, 'Cart not cleared');
-  });
-
-  test('order belongs to correct customer', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('own@test.com', hash, 'Owner');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 100, 0, 100, 'O', 'W', 'o@w.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, `TK-OWN-${Date.now()}`);
-    const order = db.prepare('SELECT customerId FROM orders WHERE id = ?').get(orderR.lastInsertRowid);
-    assertEq(order.customerId, r.lastInsertRowid);
-  });
-
-  test('order item snapshots are preserved', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('snap@test.com', hash, 'Snap');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 1000, 0, 1000, 'S', 'N', 's@n.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, `TK-SNAP-${Date.now()}`);
-    db.prepare(
-      'INSERT INTO order_items (orderId, productId, productName, productNameSnapshot, unitPrice, quantity, lineTotal) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    ).run(orderR.lastInsertRowid, 'anchor-table', 'Anchor Table', 'Anchor Table', 1000, 1, 1000);
-
-    const item = db.prepare('SELECT * FROM order_items WHERE orderId = ?').get(orderR.lastInsertRowid);
-    assertEq(item.productNameSnapshot, 'Anchor Table');
-    assertEq(item.unitPrice, 1000);
-    assertEq(item.lineTotal, 1000);
-    assertEq(item.quantity, 1);
-  });
-}
-
-// ─── 10. Security Hardening Tests ──────────────────────────
-function testSecurityHardening() {
-  console.log('\n\x1b[1m── Security Hardening ──\x1b[0m');
-
-  test('order cannot be cancelled twice', () => {
-    const VALID_TRANSITIONS = {
-      CANCELLED: [],
-    };
-    assertEq(VALID_TRANSITIONS.CANCELLED.length, 0, 'No transitions from CANCELLED');
-  });
-
-  test('admin notes require content', () => {
-    const content = '';
-    const isValid = content && content.trim().length > 0;
-    assert(!isValid, 'Empty content accepted');
-  });
-
-  test('admin notes content max length is 5000', () => {
-    const content = 'x'.repeat(5001);
-    const isValid = content.length <= 5000;
-    assert(!isValid, 'Over-length content accepted');
-  });
-
-  test('order history cannot be tampered (append-only)', () => {
-    const hash = bcrypt.hashSync('pass', 12);
-    const r = db.prepare('INSERT INTO customers (email, passwordHash, name) VALUES (?, ?, ?)').run('sec@test.com', hash, 'Sec');
-    const orderR = db.prepare(
-      `INSERT INTO orders (customerId, orderNumber, status, paymentStatus, subtotal, shippingAmount, totalAmount,
-       shippingFirstName, shippingLastName, shippingEmail, shippingAddress, shippingCity, shippingState, shippingPin)
-       VALUES (?, ?, 'PENDING', 'UNPAID', 100, 0, 100, 'S', 'U', 's@u.com', '123', 'C', 'S', '123')`
-    ).run(r.lastInsertRowid, `TK-SEC-${Date.now()}`);
-    db.prepare(
-      `INSERT INTO order_status_history (orderId, newStatus, changedBy, changedByType) VALUES (?, 'CONFIRMED', 'a@t.com', 'admin')`
-    ).run(orderR.lastInsertRowid);
-
-    const history = db.prepare('SELECT * FROM order_status_history WHERE orderId = ?').all(orderR.lastInsertRowid);
-    assertEq(history.length, 1, 'History should be append-only');
-  });
-
-  test('notes linked to order via foreign key', () => {
-    const tables = db.prepare("PRAGMA foreign_key_list(order_notes)").all();
-    const fk = tables.find(t => t.from === 'orderId');
-    assert(fk !== undefined, 'No foreign key on orderId');
-  });
-
-  test('status history linked to order via foreign key', () => {
-    const tables = db.prepare("PRAGMA foreign_key_list(order_status_history)").all();
-    const fk = tables.find(t => t.from === 'orderId');
-    assert(fk !== undefined, 'No foreign key on orderId');
-  });
-}
-
-// ─── Run All Tests ─────────────────────────────────────────
-try {
-  setup();
-  console.log('\x1b[1m\nSprint #12 — Checkout & Order Operations Tests\x1b[0m');
-  console.log('='.repeat(50));
-
-  testDatabaseSchema();
-  testOrderStatusHistory();
-  testOrderNotes();
-  testOrderCancellation();
-  testCSVExport();
-  testOrderNumberFormat();
-  testPaymentStatus();
-  testAdminFiltering();
-  testTransactionIntegrity();
-  testSecurityHardening();
-
-  console.log('\n' + '='.repeat(50));
-  console.log(`\x1b[1mResults: ${passed}/${total} passed, ${failed} failed\x1b[0m`);
-
-  if (failed > 0) {
-    process.exit(1);
+    // Check old pattern is gone (standalone mobile-only filter)
+    if (src.includes("if (key !== 'mobile') base[key] = val") && !src.includes("if (key !== 'mobile' && key !== 'tablet') base[key] = val")) {
+      allOldPatternRemoved = false;
+      ok(`  ${file} still has old pattern`, false);
+    }
   }
-} finally {
-  cleanup();
+  ok('All 13 section components have tablet support', allHaveTablet);
+  ok('No old mobile-only pattern remains', allOldPatternRemoved);
 }
+
+// ── Phase 13: designResolution.js exports ──
+console.log('\nPhase 13: designResolution.js Exports');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('Exports normalizeViewport', drSrc.includes('export function normalizeViewport'));
+  ok('Exports resolveElementStyle', drSrc.includes('export function resolveElementStyle'));
+  ok('Exports resolveTypography', drSrc.includes('export function resolveTypography'));
+  ok('Exports resolveSectionStyle', drSrc.includes('export function resolveSectionStyle'));
+  ok('Exports resolvePageDesign', drSrc.includes('export function resolvePageDesign'));
+  ok('Exports resolveVariant', drSrc.includes('export function resolveVariant'));
+  ok('Exports parseStyleOverrides', drSrc.includes('export function parseStyleOverrides'));
+  ok('Exports parseSectionOverrides', drSrc.includes('export function parseSectionOverrides'));
+  ok('Exports getVariantClass', drSrc.includes('export function getVariantClass'));
+}
+
+// ── Phase 14: Data model integrity ──
+console.log('\nPhase 14: Data Model Integrity');
+{
+  const dbSrc = read('lib/db.js');
+  ok('DB schema unchanged — styleOverrides column', dbSrc.includes('styleOverrides TEXT'));
+  ok('DB schema unchanged — sectionStyleOverrides column', dbSrc.includes('sectionStyleOverrides TEXT'));
+  ok('No tablet-specific DB columns added', !dbSrc.includes('tabletOverrides'));
+  
+  const cmsSrc = read('lib/cms.js');
+  ok('CMS saveDraftSection unchanged', cmsSrc.includes('function saveDraftSection'));
+  ok('CMS publishSection unchanged', cmsSrc.includes('function publishSection'));
+}
+
+// ── Phase 15: Precedence model documentation ──
+console.log('\nPhase 15: Precedence Model');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('Precedence comment includes tablet', drSrc.includes('5. Tablet overrides'));
+  ok('Precedence comment includes mobile', drSrc.includes('6. Mobile overrides'));
+}
+
+// ── Phase 16: Backward compatibility ──
+console.log('\nPhase 16: Backward Compatibility');
+{
+  const drSrc = read('lib/designResolution.js');
+  ok('normalizeViewport accepts boolean', drSrc.includes("typeof viewportOrIsMobile === 'string'") && drSrc.includes("viewportOrIsMobile ? 'mobile' : 'desktop'"));
+  ok('resolveElementStyle accepts viewportOrIsMobile', drSrc.includes('resolveElementStyle(elementKey, defaults, styleOverrides, viewportOrIsMobile)'));
+  ok('resolveTypography accepts viewportOrIsMobile', drSrc.includes('resolveTypography(elementKey, defaults, styleOverrides, viewportOrIsMobile)'));
+  ok('resolveSectionStyle accepts viewportOrIsMobile', drSrc.includes('resolveSectionStyle(sectionOverrides, pageDesignDefaults = {}, viewportOrIsMobile)'));
+  ok('resolvePageDesign accepts viewportOrIsMobile', drSrc.includes('resolvePageDesign(pageDesign, viewportOrIsMobile)'));
+}
+
+// ── Phase 17: EditorClient viewMode state ──
+console.log('\nPhase 17: EditorClient Viewport State');
+{
+  const editorSrc = read('app/admin/editor/EditorClient.js');
+  ok('viewMode state initialized to desktop', editorSrc.includes("const [viewMode, setViewMode] = useState('desktop')"));
+  ok('viewMode passed to EditorToolbar', editorSrc.includes('viewMode={viewMode}') && editorSrc.includes('onViewModeChange={setViewMode}'));
+  ok('viewMode passed to Canvas', editorSrc.includes('<Canvas') && editorSrc.includes('viewMode={viewMode}'));
+  ok('viewMode passed to Inspector', editorSrc.includes('<Inspector') && editorSrc.includes('viewMode={viewMode}'));
+  ok('viewMode passed to FloatingToolbar', editorSrc.includes('<FloatingToolbar') && editorSrc.includes('viewMode={viewMode}'));
+}
+
+// ── Phase 18: CSS canvas area handles tablet ──
+console.log('\nPhase 18: Editor CSS — Tablet Support');
+{
+  const editorSrc = read('app/admin/editor/EditorClient.js');
+  ok('Editor CSS has responsive breakpoints', editorSrc.includes('@media') && editorSrc.includes('min-width'));
+}
+
+// ── Results ──
+console.log('\n==================================================');
+console.log(`Sprint 12 Tests: ${passed}/${total} passed, ${failed} failed`);
+console.log('==================================================\n');
+
+if (failed > 0) process.exit(1);

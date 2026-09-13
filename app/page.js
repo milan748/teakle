@@ -1,5 +1,5 @@
 import HomeClient from './HomeClient';
-import { getPublishedPageSections } from '@/lib/cms';
+import { getPublishedPageSections, seedDefaultSections, getPageDesignSettings } from '@/lib/cms';
 import { getHeroProduct } from './data/products';
 
 export const revalidate = 3600; // Revalidate homepage every hour
@@ -15,6 +15,11 @@ export default function HomePage() {
   let sections = [];
   try {
     sections = getPublishedPageSections('home');
+    // Seed default sections if CMS is missing new section types
+    if (sections.length > 0) {
+      seedDefaultSections('home');
+      sections = getPublishedPageSections('home');
+    }
   } catch {
     // CMS unavailable — use hardcoded fallback
   }
@@ -28,5 +33,12 @@ export default function HomePage() {
     }
   }
 
-  return <HomeClient cms={cms} cmsKeys={cmsKeys} heroProduct={getHeroProduct()} />;
+  let pageDesign = {};
+  try {
+    pageDesign = getPageDesignSettings('home') || {};
+  } catch {
+    // Page design unavailable — use defaults
+  }
+
+  return <HomeClient cms={cms} cmsKeys={cmsKeys} heroProduct={getHeroProduct()} pageDesign={pageDesign} />;
 }

@@ -5,7 +5,7 @@ import { log } from '@/lib/logger';
 import { withCsrf } from '@/lib/csrf';
 import { getDb } from '@/lib/db';
 
-// POST — Add a new section
+// POST — Add a new section or duplicate an existing one
 export const POST = withCsrf(async function POST(request, { params }) {
   const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
@@ -23,8 +23,40 @@ export const POST = withCsrf(async function POST(request, { params }) {
     return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { sectionKey, instanceId, sortOrder } = body;
+  const { sectionKey, instanceId, sortOrder, sourceInstanceId } = body;
 
+  // Handle duplicate action
+  if (sectionKey === '_duplicate') {
+    if (!sourceInstanceId) {
+      return NextResponse.json({ success: false, error: 'sourceInstanceId required for duplicate' }, { status: 400 });
+    }
+    if (!instanceId || typeof instanceId !== 'string' || instanceId.length > 128) {
+      return NextResponse.json({ success: false, error: 'Invalid instanceId' }, { status: 400 });
+    }
+
+    try {
+      const section = duplicateSection(page, sourceInstanceId, instanceId);
+
+      if (!section) {
+        return NextResponse.json({ success: false, error: 'Source section not found' }, { status: 404 });
+      }
+
+      try {
+        const db = getDb();
+        db.prepare('INSERT INTO admin_audit_logs (adminId, action, entityType, entityId, metadata) VALUES (?, ?, ?, ?, ?)').run(
+          auth.admin.id, 'cms_section_duplicate', 'cms_section', `${page}/${instanceId}`,
+          JSON.stringify({ page, sourceInstanceId, newInstanceId: instanceId })
+        );
+      } catch { /* audit log failure is non-blocking */ }
+
+      return NextResponse.json({ success: true, data: section });
+    } catch (error) {
+      log.error('CMS duplicateSection error:', error);
+      return NextResponse.json({ success: false, error: error.message || 'Internal server error' }, { status: 500 });
+    }
+  }
+
+  // Handle add action
   if (!sectionKey || !VALID_SECTIONS.includes(sectionKey)) {
     return NextResponse.json({ success: false, error: 'Invalid section key' }, { status: 400 });
   }

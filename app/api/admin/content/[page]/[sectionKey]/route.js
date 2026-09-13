@@ -96,6 +96,7 @@ export const PUT = withCsrf(async function PUT(request, { params }) {
       enabled: enabled,
       styleOverrides: body.styleOverrides,
       sectionStyleOverrides: body.sectionStyleOverrides,
+      variant: body.variant,
     }, body.instanceId);
 
     try {

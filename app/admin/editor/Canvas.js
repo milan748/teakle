@@ -41,7 +41,7 @@ export default function Canvas({ sections, selectedSection, onSelectSection, sel
     )
   }
   
-  const canvasWidth = viewMode === 'mobile' ? '375px' : '100%'
+  const canvasWidth = viewMode === 'mobile' ? '375px' : viewMode === 'tablet' ? '768px' : '100%'
   
   return (
     <div style={{
@@ -49,17 +49,17 @@ export default function Canvas({ sections, selectedSection, onSelectSection, sel
       overflow: 'auto',
       background: '#2a2a2a',
       display: 'flex',
-      justifyContent: viewMode === 'mobile' ? 'center' : 'stretch',
-      padding: viewMode === 'mobile' ? '20px 0' : '0',
+      justifyContent: viewMode === 'desktop' ? 'stretch' : 'center',
+      padding: viewMode === 'desktop' ? '0' : '20px 0',
     }}>
       <div
         style={{
           width: canvasWidth,
-          maxWidth: viewMode === 'mobile' ? '375px' : 'none',
+          maxWidth: viewMode === 'mobile' ? '375px' : viewMode === 'tablet' ? '768px' : 'none',
           background: '#F7F4EE',
           minHeight: '100%',
           position: 'relative',
-          boxShadow: viewMode === 'mobile' ? '0 0 40px rgba(0,0,0,0.3)' : 'none',
+          boxShadow: viewMode === 'desktop' ? 'none' : '0 0 40px rgba(0,0,0,0.3)',
         }}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
