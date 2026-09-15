@@ -1279,6 +1279,7 @@
 
 @media (max-width: 860px) {
   .v2-hero { min-height: 0; height: 100svh; }
+  .v2-hero-img { height: 100%; transform: none; animation: none; }
   .v2-hero-content { padding: 0 var(--space-lg) var(--space-2xl); padding-bottom: calc(var(--space-2xl) + 56px); margin-left: 0; margin-top: 0; max-width: 100%; }
   .v2-hero h1 { font-size: clamp(1.75rem, 7vw, 2.25rem); margin-bottom: var(--space-lg); line-height: 1.1; }
   .v2-hero-actions { gap: var(--space-sm); }
