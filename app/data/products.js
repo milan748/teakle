@@ -1432,11 +1432,11 @@ export const PRODUCTS = [
     buildTime: "~2.5 hours",
     images: [
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "Teak has been used in bathrooms for centuries — its natural oils make it resistant to moisture and humidity. The Vanity Tray brings this tradition to modern bathroom organisation.",
     craftsmanship: "Carved from a single board with compartments formed by careful removal of material. No joints or seams.",
@@ -1507,11 +1507,11 @@ export const PRODUCTS = [
     finish: "Teak oil",
     buildTime: "~1 hour",
     images: [
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=300",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The Soap Stone is the smallest expression of Teakle's philosophy — even the most humble object in your home deserves to be well-made.",
@@ -1820,11 +1820,11 @@ export const PRODUCTS = [
     buildTime: "~2 hours",
     images: [
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The live edge is the mark of a piece of wood that has been shaped with respect for its origins. The Serving Plank preserves the natural edge of the tree, planed flat on one side for function.",
     craftsmanship: "Each plank is cut from a single slab, with the live edge carefully cleaned and sealed. The flat surface is hand-planed to a smooth finish.",
@@ -1895,11 +1895,11 @@ export const PRODUCTS = [
     finish: "Food-safe oil",
     buildTime: "~2 hours",
     images: [
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The Carve Board's handle is shaped to fit the hand naturally — a small detail that makes a big difference when you're carrying it from kitchen to table.",
@@ -1972,11 +1972,11 @@ export const PRODUCTS = [
     buildTime: "~3 hours",
     images: [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The Tray is designed to be both functional and beautiful — it carries food from kitchen to table, then sits on the table as a serving piece.",
     craftsmanship: "Carved from a single board with the rim and handles formed by careful removal of material. No joints or seams.",

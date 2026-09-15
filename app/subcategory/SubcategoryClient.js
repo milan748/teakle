@@ -19,7 +19,7 @@ const CATS = {
       { key: 'cooking-essentials', name: 'Cooking Essentials', image: 'https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'dining-serving', name: 'Dining & Serving', image: 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'storage-organization', name: 'Storage & Organization', image: 'https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=900' },
-      { key: 'kitchen-decor', name: 'Kitchen Decor', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'kitchen-decor', name: 'Kitchen Decor', image: 'https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'baking-essentials', name: 'Baking Essentials', image: 'https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'pantry-organization', name: 'Pantry Organization', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
@@ -29,13 +29,13 @@ const CATS = {
     image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600',
     description: 'Serving boards, trays, and dining centrepieces for every occasion.',
     subs: [
-      { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'trays', name: 'Trays', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'bowls', name: 'Bowls', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'cutlery', name: 'Cutlery', image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'drinkware-accessories', name: 'Drinkware Accessories', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'table-centerpieces', name: 'Table Centerpieces', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
-      { key: 'dining-decor', name: 'Dining Decor', image: 'https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'dining-decor', name: 'Dining Decor', image: 'https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
   },
   living: {
@@ -84,7 +84,7 @@ const CATS = {
     description: 'Vanity organisers, soap dispensers, and toothbrush holders.',
     subs: [
       { key: 'vanity-organizers', name: 'Vanity Organizers', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
-      { key: 'soap-dispensers', name: 'Soap Dispensers', image: 'https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=900' },
+      { key: 'soap-dispensers', name: 'Soap Dispensers', image: 'https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'toothbrush-holders', name: 'Toothbrush Holders', image: 'https://images.pexels.com/photos/7055292/pexels-photo-7055292.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'bathroom-decor', name: 'Bathroom Decor', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
