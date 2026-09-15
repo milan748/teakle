@@ -2,7 +2,7 @@
 
 export default function EditorToolbar({ page, pageLabel, viewMode, onViewModeChange, message, saving, onBack, onUndo, onRedo, canUndo, canRedo, undoCount, redoCount, onSavePageTemplate, onPageDesign, showPageDesign }) {
   return (
-    <div style={{
+    <div role="toolbar" aria-label="Editor toolbar" style={{
       height: '48px',
       background: '#1a1a1a',
       borderBottom: '1px solid #333',
