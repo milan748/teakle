@@ -450,12 +450,12 @@ export default function StudioPage() {
             <img loading="lazy" src={origin.image || "https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900"} alt="An older craftsman examining a piece of raw timber in a workshop." width="900" height="1125" />
           </div>
           <div className="origin-text">
-            <span className="eyebrow reveal">{origin.eyebrow || 'Where We Started'}</span>
-            <h2 className="reveal">{origin.title || 'A carpentry practice that became a workshop, over three generations.'}</h2>
+            <span className="eyebrow reveal" suppressHydrationWarning>{origin.eyebrow || 'Where We Started'}</span>
+            <h2 className="reveal" suppressHydrationWarning>{origin.title || 'A carpentry practice that became a workshop, over three generations.'}</h2>
             {(origin.body ? origin.body.split('\n').filter(Boolean) : [
               'Teakle began as a small carpentry practice in India, taking on furniture repair and custom joinery for houses in the area. Over three generations, the same practice narrowed into something more deliberate — fewer commissions, more time per piece, and a refusal to use materials that would not hold up over decades.',
               'We still work the way the workshop always has. A piece is planned by hand, built by hand, and finished by hand. Nothing here is automated because nothing here needed to be.'
-            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
+            ]).map((p, i) => <p key={i} className="reveal" suppressHydrationWarning>{p}</p>)}
           </div>
         </div>
       </section>
@@ -471,12 +471,12 @@ export default function StudioPage() {
       >
         <div className="container">
           <div className="materials-header">
-            <span className="eyebrow reveal">{materials.eyebrow || 'Materials'}</span>
-            <h2 className="reveal">{materials.title || "Solid wood, and why we don't use anything else."}</h2>
+            <span className="eyebrow reveal" suppressHydrationWarning>{materials.eyebrow || 'Materials'}</span>
+            <h2 className="reveal" suppressHydrationWarning>{materials.title || "Solid wood, and why we don't use anything else."}</h2>
           </div>
           <div className="materials-grid">
             {materialItems.map((item, i) => (
-              <div key={i} className="material-item reveal">
+              <div key={i} className="material-item reveal" suppressHydrationWarning>
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
               </div>
@@ -490,8 +490,8 @@ export default function StudioPage() {
       <section className="process">
         <div className="container">
           <div className="process-header">
-            <span className="eyebrow reveal">The Journey</span>
-            <h2 className="reveal">From timber to finished object.</h2>
+            <span className="eyebrow reveal" suppressHydrationWarning>The Journey</span>
+            <h2 className="reveal" suppressHydrationWarning>From timber to finished object.</h2>
           </div>
           <div className="process-roadmap" id="processRoadmap">
             <div className="process-path-track"></div>
@@ -576,17 +576,17 @@ export default function StudioPage() {
       >
         <div className="container">
           <div className="gallery-header">
-            <span className="eyebrow reveal">{gallery.eyebrow || 'The Workshop'}</span>
-            <h2 className="reveal">{gallery.title || 'The people and tools behind every piece.'}</h2>
+            <span className="eyebrow reveal" suppressHydrationWarning>{gallery.eyebrow || 'The Workshop'}</span>
+            <h2 className="reveal" suppressHydrationWarning>{gallery.title || 'The people and tools behind every piece.'}</h2>
           </div>
           <div className="gallery-grid">
-            <div className="gallery-item img-zoom reveal">
+            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
             </div>
-            <div className="gallery-item img-zoom reveal">
+            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." width="700" height="467" />
             </div>
-            <div className="gallery-item img-zoom reveal">
+            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." width="700" height="467" />
             </div>
           </div>

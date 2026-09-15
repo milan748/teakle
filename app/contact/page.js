@@ -132,19 +132,19 @@ export default function ContactPage() {
       <section className="contact-section">
         <div className="container contact-grid">
           <div className="contact-details">
-            <div className="contact-info-block reveal">
+            <div className="contact-info-block reveal" suppressHydrationWarning>
               <h3>Email</h3>
               <p><a href="mailto:hello@teakle.in">hello@teakle.in</a></p>
             </div>
-            <div className="contact-info-block reveal">
+            <div className="contact-info-block reveal" suppressHydrationWarning>
               <h3>Response Time</h3>
               <p>{intro.subtitle || 'Within two working days'}</p>
             </div>
-            <div className="contact-info-block reveal">
+            <div className="contact-info-block reveal" suppressHydrationWarning>
               <h3>Workshop</h3>
               <p>India — visits by appointment only</p>
             </div>
-            <div className="contact-info-block reveal">
+            <div className="contact-info-block reveal" suppressHydrationWarning>
               <h3>For Trade &amp; Bulk Projects</h3>
               <p><a href="/trade" className="link-quiet" style={{ fontSize: 'var(--text-caption)' }}>Use the Trade Inquiry Form</a></p>
             </div>

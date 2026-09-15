@@ -39,7 +39,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="contact-form reveal" noValidate>
+    <form onSubmit={handleSubmit} className="contact-form reveal" suppressHydrationWarning noValidate>
       <div className="form-two-col">
         <div className="form-row">
           <label htmlFor="contactName">Name <span className="required" aria-hidden="true">*</span></label>
