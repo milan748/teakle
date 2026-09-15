@@ -1036,6 +1036,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
   const [specsOpen, setSpecsOpen] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const lastFocusedElRef = useRef(null);
   const addToCartBtnRef = useRef(null);
   const galleryMainRef = useRef(null);
@@ -1050,7 +1051,14 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     if (!window.TEAKLE_PRODUCTS) return;
     const p = window.TEAKLE_PRODUCTS.find((item) => item.id === productId);
     if (p) setProduct((prev) => ({ ...prev, ...p }));
-  }, [productId]);
+    /* Resolve related products client-side to avoid server/client hydration mismatch */
+    if (product?.relatedProducts?.length > 0) {
+      const resolved = product.relatedProducts
+        .map((rid) => window.TEAKLE_PRODUCTS.find((rp) => rp.id === rid))
+        .filter(Boolean);
+      setRelatedProducts(resolved);
+    }
+  }, [productId, product?.relatedProducts]);
 
   /* Wishlist state */
   useEffect(() => {
@@ -1273,25 +1281,24 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     </div>
   );
 
-  const renderRelated = () => (
-    <section className="pd-related">
-      <div className="container">
-        <div className="pd-related-head">
-          <span className="eyebrow">Curated</span>
-          <h2>Complete the Space</h2>
+  const renderRelated = () => {
+    if (relatedProducts.length === 0) return null;
+    return (
+      <section className="pd-related">
+        <div className="container">
+          <div className="pd-related-head">
+            <span className="eyebrow">Curated</span>
+            <h2>Complete the Space</h2>
+          </div>
+          <div className="pd-related-grid">
+            {relatedProducts.map((rp) => (
+              <ProductCard key={rp.id} product={rp} />
+            ))}
+          </div>
         </div>
-        <div className="pd-related-grid">
-          {(product.relatedProducts || []).map((rid) => {
-            const rp = typeof window !== 'undefined' ? window?.TEAKLE_PRODUCTS?.find((p) => p.id === rid) : null;
-            if (!rp) return null;
-            return (
-              <ProductCard key={rid} product={rp} />
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
   const renderRecentlyViewed = () => {
     if (!showRecentlyViewed || recentlyViewed.length === 0) return null;
