@@ -1,15 +1,81 @@
-'use client'
-
+﻿'use client'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
+import Head from 'next/head'
 import { PRODUCTS } from './data/products'
 import { resolvePageDesign, resolveVariant, parseStyleOverrides, parseSectionOverrides, resolveSectionStyle, resolveElementStyle, resolveTypography, getVariantClass, resolveFocalPoint, focalPointToObjectPosition } from '@/lib/designResolution'
 import './homepage.css'
 
-gsap.registerPlugin(ScrollTrigger)
+/* Critical CSS for Atelier Stories (injected at runtime to bypass build-time stripping) */
+const atelierCriticalCSS = `
+  /* Wrapper — clean container with uniform section gap */
+  .v2-atelier-wrapper { position: relative !important; padding-top: 15px !important; }
+  /* Title — centered, with generous gap below before product grid */
+  .v2-atelier-title { text-align: center !important; padding: 0 20px 26px !important; scroll-margin-top: 80px; }
+  .v2-atelier-title h2 { font-size: clamp(2rem, 4vw, 3.25rem) !important; font-weight: 400 !important; letter-spacing: 0.24em !important; text-transform: uppercase !important; color: #f5f0eb !important; margin: 0 0 8px !important; }
+  .v2-atelier-subtitle { display: block !important; font-size: clamp(0.55rem, 0.7vw, 0.7rem) !important; font-weight: 400 !important; font-style: italic !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: rgba(245,240,235,0.55) !important; margin-top: 6px !important; margin-bottom: 0 !important; }
+  /* Editorial container — matches top gap at bottom */
+  .v2-sig-editorial { background: transparent !important; padding: 0 0 15px !important; overflow: visible !important; scroll-margin-top: 80px; }
+  .v2-sig-editorial-inner { width: 100%; padding: 0; max-width: none; margin: 0; display: block; border-radius: 0; border: none; box-shadow: none; }
+  .v2-sig-editorial-inner::before { display: none; }
+  /* Grid */
+  .v2-sig-editorial-grid { position: static !important; display: grid !important; grid-template-columns: 590px 1fr !important; gap: 56px !important; align-items: start !important; justify-items: start !important; padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .v2-sig-editorial-img { position: static !important; width: auto !important; left: auto !important; top: auto !important; }
+  .v2-sig-editorial-text { position: static !important; width: auto !important; left: auto !important; top: auto !important; padding-top: 0; padding-right: 0; }
+  .v2-sig-editorial-img img { width: 100%; height: auto; display: block; }
+  /* Text column — all white/light */
+  .v2-sig-editorial-text h2 { font-family: var(--font-heading); font-size: clamp(28px, 2.5vw, 40px); font-weight: 600; letter-spacing: 0.18em; color: #f5f0eb; margin: 0 0 10px; text-transform: uppercase; }
+  .v2-sig-editorial-subtitle { font-family: var(--font-heading); font-size: clamp(14px, 1.1vw, 17px); font-weight: 400; color: rgba(245,240,235,0.7); margin-bottom: 16px; font-style: italic; }
+  .v2-sig-editorial-text p { font-family: var(--font-body); font-size: clamp(14px, 1vw, 16px); line-height: 1.7; color: rgba(245,240,235,0.65); margin: 0 0 24px; }
+  /* Icon-based metadata */
+  .v2-sig-editorial-meta-line { display: none !important; }
+  .v2-sig-meta-sep { display: none !important; }
+  .v2-sig-editorial-features { display: flex !important; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .v2-sig-feature { display: flex; align-items: center; gap: 10px; }
+  .v2-sig-feature-icon { width: 18px; height: 18px; flex-shrink: 0; color: rgba(245,240,235,0.6); }
+  .v2-sig-feature-label { font-family: var(--font-body); font-size: 13px; letter-spacing: 0.06em; color: rgba(245,240,235,0.8); }
+  /* Price */
+  .v2-sig-editorial-price { margin-bottom: 24px; }
+  .v2-sig-editorial-price-amount { font-family: var(--font-heading); font-size: clamp(24px, 2vw, 32px); font-weight: 600; color: #f5f0eb; }
+  .v2-sig-editorial-price-note { font-family: var(--font-body); font-size: 12px; color: rgba(245,240,235,0.5); letter-spacing: 0.04em; margin-top: 4px; }
+  /* CTAs */
+  .v2-sig-editorial-actions { display: flex; gap: 16px; margin-bottom: 20px; max-width: 674px; }
+  .v2-sig-btn-primary, .v2-sig-btn-outline { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; transition: all 0.3s ease; text-align: center; }
+  .v2-sig-btn-primary { background: #f5f0eb; color: #1a1714; border: 1px solid #f5f0eb; flex: 1; }
+  .v2-sig-btn-primary:hover { background: #e8e0d5; border-color: #e8e0d5; }
+  .v2-sig-btn-outline { background: transparent; color: #f5f0eb; border: 1px solid rgba(245,240,235,0.4); flex: 1; }
+  .v2-sig-btn-outline:hover { border-color: #f5f0eb; }
+  /* Past editions */
+  .v2-sig-editorial-past { font-family: var(--font-body); font-size: 13px; color: rgba(245,240,235,0.5); }
+  .v2-sig-editorial-past a { color: rgba(245,240,235,0.8); text-decoration: underline; text-underline-offset: 3px; }
+  /* Sculpture label (floating on image) */
+  .v2-sig-sculpture-label { display: none !important; }
+  .v2-sig-sculpture-label-title { font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #f5f0eb; line-height: 1.4; }
+  .v2-sig-sculpture-label-line { width: 1px; height: 40px; background: rgba(245,240,235,0.4); margin-left: 4px; }
+  .v2-sig-sculpture-label-desc { font-family: var(--font-body); font-size: 11px; line-height: 1.5; color: rgba(245,240,235,0.7); }
+  /* Thumbnails */
+  .v2-sig-editorial-gallery { margin-top: 16px; }
+  .v2-sig-editorial-thumbs { display: flex; gap: 8px; }
+  .v2-sig-editorial-thumb { width: 72px; height: 72px; padding: 0; border: 2px solid transparent; background: none; cursor: pointer; overflow: hidden; opacity: 0.6; transition: opacity 0.2s, border-color 0.2s; }
+  .v2-sig-editorial-thumb.is-active { border-color: #f5f0eb; opacity: 1; }
+  .v2-sig-editorial-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Trust badges removed */
+  .v2-sig-trust { display: none !important; }
+  /* Studio visit tab */
+  .v2-sig-studio-tab { position: fixed; right: 0; top: 50%; transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed; background: #1a1714; color: #f5f0eb; padding: 20px 12px; font-family: var(--font-body); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 10px; z-index: 50; transition: background 0.3s; }
+  .v2-sig-studio-tab:hover { background: #2a2520; }
+  .v2-sig-studio-tab svg { width: 16px; height: 16px; transform: rotate(-90deg); }
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .v2-sig-editorial-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+    .v2-sig-sculpture-label { left: 12px; }
+  }
+  @media (max-width: 768px) {
+    .v2-sig-editorial-actions { flex-direction: column; }
+    .v2-sig-studio-tab { display: none; }
+    .v2-sig-sculpture-label { display: none; }
+  }
+`;
 
 /* Check if viewport is mobile-sized */
 function useIsMobile() {
@@ -23,7 +89,7 @@ function useIsMobile() {
   return isMobile
 }
 
-/* ── JSON body parsers for array-based CMS sections ─────────────────────── */
+/* JSON body parsers for array-based CMS sections */
 function parseTrustItems(body) {
   try {
     const parsed = JSON.parse(body || '{}')
@@ -60,8 +126,6 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   const heroRef = useRef(null)
   const sigSectionRef = useRef(null)
   const carouselTrackRef = useRef(null)
-  const sigCompletedRef = useRef(false)
-  const prefersReducedMotionRef = useRef(false)
   const [galleryIdx, setGalleryIdx] = useState(0)
   const isMobile = useIsMobile()
 
@@ -117,136 +181,15 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   const carouselDisabled = cmsKeys.has('collection-carousel') && !cms['collection-carousel']
   const productGridDisabled = cmsKeys.has('product-grid') && !cms['product-grid']
 
-  /* ---- Hero parallax on scroll ---- */
+  /* Inject critical CSS for Atelier Stories (bypasses build-time stripping) */
   useEffect(() => {
-    const hero = heroRef.current
-    if (!hero) return
-    const img = hero.querySelector('.v2-hero-img')
-    if (!img) return
-
-    const heroHeight = hero.offsetHeight
-    let ticking = false
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const y = window.scrollY
-          if (y < heroHeight) {
-            const p = y / heroHeight
-            img.style.transform = `scale(${1.12 - p * 0.08}) translateY(${y * 0.25}px)`
-            img.style.opacity = String(0.9 - p * 0.35)
-          }
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    const style = document.createElement('style')
+    style.textContent = atelierCriticalCSS
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
   }, [])
 
-  /* ---- Reduced-motion check ---- */
-  useEffect(() => {
-    prefersReducedMotionRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  }, [])
-
-  /* ---- Signature section: GSAP ScrollTrigger pin + reveal ---- */
-  useGSAP(() => {
-    const section = sigSectionRef.current
-    if (!section) return
-
-    /* Block selectors in reveal order */
-    const blocks = [
-      '.v2-sig-editorial-img',
-      '.v2-sig-editorial-meta-line',
-      '.v2-sig-editorial-text h2',
-      '.v2-sig-editorial-subtitle',
-      '.v2-sig-editorial-text > p',
-      '.v2-sig-editorial-features',
-      '.v2-sig-editorial-price',
-      '.v2-sig-editorial-actions',
-      '.v2-sig-editorial-maker',
-      '.v2-sig-editorial-quote',
-    ]
-
-    /* Reduced motion: show everything immediately, skip scroll interaction */
-    if (prefersReducedMotionRef.current) {
-      gsap.set(blocks.map(s => section.querySelector(s)).filter(Boolean), {
-        opacity: 1, y: 0,
-      })
-      return
-    }
-
-    /* Set initial state: all blocks hidden */
-    const els = blocks.map(s => section.querySelector(s)).filter(Boolean)
-    gsap.set(els, { opacity: 0, y: 24 })
-
-    /* Build the reveal timeline — staggered across scroll progress */
-    const tl = gsap.timeline({ paused: true })
-    els.forEach((el, i) => {
-      tl.to(el, {
-        opacity: 1,
-        y: 0,
-        duration: 0.12,
-        ease: 'power2.out',
-      }, i * 0.08)
-    })
-
-    /*
-     * ScrollTrigger:
-     * - pin: '.v2-sig-editorial' (the OUTER section)
-     * - pinSpacing: true (creates space so scroll can continue past)
-     * - start: top of section reaches 85px from top (below fixed header)
-     * - end: "+=150%" of viewport height (short intentional hold)
-     * - scrub: 0.6 (scroll position drives timeline with smoothing)
-     *
-     * CRITICAL: The pin target is the outer section. Its transform is
-     * managed entirely by ScrollTrigger. We NEVER animate it manually.
-     * Only visual children (opacity, y) are animated by the timeline.
-     *
-     * No-rewind: onUpdate tracks max progress. Once the timeline reaches
-     * completion, we permanently lock the visual children at their final
-     * state using gsap.set(). This way, even if the scrub reverses, the
-     * blocks remain fully revealed. The pin lifecycle is NOT interrupted.
-     */
-    let maxProgress = 0
-    let lastProgress = 0
-    let locked = false
-    ScrollTrigger.create({
-      trigger: section,
-      pin: true,
-      start: 'top 85px',
-      end: '+=200%',
-      scrub: 0.6,
-      animation: tl,
-      onUpdate: (self) => {
-        /* Track scroll direction and max progress */
-        const scrollingDown = self.progress >= lastProgress
-        lastProgress = self.progress
-
-        if (self.progress > maxProgress) {
-          maxProgress = self.progress
-        }
-
-        /*
-         * No-rewind: once the timeline has reached completion, lock it
-         * at progress 1 so scrubbing backward does not reverse the
-         * visual reveal. The pin lifecycle is NOT interrupted — only
-         * the timeline progress is overridden.
-         */
-        if (maxProgress >= 1 && !locked) {
-          locked = true
-          gsap.set(els, { opacity: 1, y: 0, overwrite: true })
-        }
-
-        /* While locked and scrolling backward, keep timeline at end */
-        if (locked && !scrollingDown) {
-          tl.progress(1)
-        }
-      },
-    })
-  }, { scope: sigSectionRef })
-
-  /* ---- Editorial carousel ---- */
+  /* Editorial carousel */
   useEffect(() => {
     const track = carouselTrackRef.current
     if (!track) return
@@ -342,15 +285,13 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
   }, [sigImages.length])
 
   return (
-      <div>
-
-        {/* 1. Hero — variant-aware rendering */}
-        {!heroDisabled && (
+    <div>
+      {/* 1. Hero */}
+      {!heroDisabled && (
         <section
           className={`v2-hero ${getVariantClass('v2-hero', heroVariant?.id)}`}
           ref={heroRef}
           style={{
-            ...(heroSectionStyle.contentWidth ? { maxWidth: heroSectionStyle.contentWidth, margin: '0 auto' } : {}),
             ...(heroSectionStyle.paddingTop ? { paddingTop: heroSectionStyle.paddingTop } : {}),
             ...(heroSectionStyle.paddingBottom ? { paddingBottom: heroSectionStyle.paddingBottom } : {}),
           }}
@@ -412,10 +353,10 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
             </>
           )}
         </section>
-        )}
+      )}
 
-        {/* 2. Trust Bar — CMS-backed */}
-        {!trustBarDisabled && (
+      {/* 2. Trust Bar */}
+      {!trustBarDisabled && (
         <section className="v2-trust">
           <div className="container">
             <div className="v2-trust-inner">
@@ -428,10 +369,10 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
             </div>
           </div>
         </section>
-        )}
+      )}
 
-        {/* 3. Philosophy — variant-aware */}
-        {!philosophyDisabled && (
+      {/* 3. Philosophy */}
+      {!philosophyDisabled && (
         <section
           className={`v2-philosophy ${getVariantClass('v2-philosophy', philVariant?.id)}`}
           id="philosophy"
@@ -442,160 +383,112 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
           }}
         >
           <div className="v2-philosophy-inner">
-            <span className="eyebrow reveal" style={resolveTypography('eyebrow', {}, philOver, isMobile)}>{philosophy.eyebrow || 'Why We Exist'}</span>
-            <h2 className="reveal" style={resolveTypography('title', {}, philOver, isMobile)}>{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
+            <span className="eyebrow" style={resolveTypography('eyebrow', {}, philOver, isMobile)}>{philosophy.eyebrow || 'Why We Exist'}</span>
+            <h2 style={resolveTypography('title', {}, philOver, isMobile)}>{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
             {(philosophy.body || 'A piece of solid teak keeps changing long after it reaches your home \u2014 the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.\n\nThis is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.').split('\n\n').map((p, i) => (
-              <p key={i} className="reveal" style={resolveTypography('body', {}, philOver, isMobile)}>{p}</p>
+              <p key={i} style={resolveTypography('body', {}, philOver, isMobile)}>{p}</p>
             ))}
           </div>
         </section>
-        )}
+      )}
 
-        {/* 4. Signature Edition — Hero Product, variant-aware */}
-        {!signatureDisabled && (
-        <section
-          className={`v2-sig-editorial ${getVariantClass('v2-sig-editorial', sigVariant?.id)}`}
-          ref={sigSectionRef}
-          style={{
-            ...(sigSectionStyle.contentWidth ? { maxWidth: sigSectionStyle.contentWidth, margin: '0 auto' } : {}),
-            ...(sigSectionStyle.paddingTop ? { paddingTop: sigSectionStyle.paddingTop } : {}),
-            ...(sigSectionStyle.paddingBottom ? { paddingBottom: sigSectionStyle.paddingBottom } : {}),
-          }}
-        >
-          <div className="v2-sig-editorial-inner">
-            <div className="v2-sig-editorial-grid">
-              {/* Left: Product media */}
-              <div className="v2-sig-editorial-img">
-                <div className="v2-sig-badge">
-                  <span className="v2-sig-badge-label">One<br/>of<br/>One</span>
-                  <span className="v2-sig-badge-sub">Never to be<br/>recreated</span>
+      {/* 4. Signature Edition */}
+      {!signatureDisabled && (
+        <div className="v2-atelier-wrapper">
+          <div className="v2-atelier-title">
+            <h2>ATELIER STORIES</h2>
+            <span className="v2-atelier-subtitle">ONE OF ONE - SIGNATURE PIECES</span>
+          </div>
+          <section
+            className={`v2-sig-editorial ${getVariantClass('v2-sig-editorial', sigVariant?.id)}`}
+            ref={sigSectionRef}
+            style={{
+              ...(sigSectionStyle.paddingTop ? { paddingTop: sigSectionStyle.paddingTop } : {}),
+              ...(sigSectionStyle.paddingBottom ? { paddingBottom: sigSectionStyle.paddingBottom } : {}),
+            }}
+          >
+            <div className="v2-sig-editorial-inner">
+              <div className="v2-sig-editorial-grid">
+                {/* Left: Product media */}
+                <div className="v2-sig-editorial-img" style={{ gridColumn: 1 }}>
+                  <div className="v2-sig-sculpture-label">
+                    <span className="v2-sig-sculpture-label-title">Teak Wood<br/>Sculpture</span>
+                    <span className="v2-sig-sculpture-label-line"></span>
+                    <span className="v2-sig-sculpture-label-desc">Handcrafted from a<br/>solid block of premium<br/>teak wood.</span>
+                  </div>
+                  <img
+                    src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
+                    alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
+                    width="960" height="1200" loading="lazy"
+                    style={resolveElementStyle('image', {}, sigOver, isMobile)}
+                  />
+                  {hasGallery && (
+                    <div className="v2-sig-editorial-gallery">
+                      <div className="v2-sig-editorial-thumbs" role="radiogroup" aria-label="Product images">
+                        {sigThumbs.map((thumb, i) => (
+                          <button key={i} className={`v2-sig-editorial-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
+                            <img src={thumb} alt="" width="72" height="72" loading="lazy" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <img
-                  src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
-                  alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
-                  width="960" height="1200" loading="lazy"
-                  style={resolveElementStyle('image', {}, sigOver, isMobile)}
-                />
-                {hasGallery && (
-                  <div className="v2-sig-editorial-gallery">
-                    <div className="v2-sig-editorial-thumbs" role="radiogroup" aria-label="Product images">
-                      {sigThumbs.map((thumb, i) => (
-                        <button key={i} className={`v2-sig-editorial-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
-                          <img src={thumb} alt="" width="72" height="72" loading="lazy" />
-                        </button>
-                      ))}
+
+                {/* Right: Product information */}
+                <div className="v2-sig-editorial-text">
+                  <h2 style={resolveTypography('title', {}, sigOver, isMobile)}>THE MAFDET.</h2>
+                  <div className="v2-sig-editorial-subtitle">Solid Teak, Timeless Form.</div>
+                  <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
+
+                  {/* Metadata with icons */}
+                  <div className="v2-sig-editorial-features">
+                    <div className="v2-sig-feature">
+                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                      <span className="v2-sig-feature-label">{heroProduct?.buildTime || '~18 Hours'}</span>
+                    </div>
+                    <div className="v2-sig-feature">
+                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                      <span className="v2-sig-feature-label">Master Crafted</span>
+                    </div>
+                    <div className="v2-sig-feature">
+                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                      <span className="v2-sig-feature-label">{heroProduct?.material || 'Solid Teak'}</span>
+                    </div>
+                    <div className="v2-sig-feature">
+                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                      <span className="v2-sig-feature-label">One of One</span>
                     </div>
                   </div>
-                )}
-                {/* Trust badges */}
-                <div className="v2-sig-trust">
-                  <div className="v2-sig-trust-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <strong>100% Handcrafted</strong>
-                    <span>By master artisans</span>
+
+                  {/* Price */}
+                  <div className="v2-sig-editorial-price">
+                    <div className="v2-sig-editorial-price-amount">{heroProduct?.priceFormatted || '\u20B91,85,000'}</div>
+                    <div className="v2-sig-editorial-price-note">One of One &middot; Never to be recreated</div>
                   </div>
-                  <div className="v2-sig-trust-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <strong>Certificate of Authenticity</strong>
-                    <span>Signed & sealed</span>
+
+                  {/* CTAs */}
+                  <div className="v2-sig-editorial-actions">
+                    <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-primary">INQUIRE TO OWN</Link>
+                    <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-outline">WATCH THE PROCESS</Link>
                   </div>
-                  <div className="v2-sig-trust-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    <strong>Built to Last</strong>
-                    <span>Generations of legacy</span>
-                  </div>
-                  <div className="v2-sig-trust-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
-                    <strong>Sustainable & Rare</strong>
-                    <span>Responsibly sourced</span>
-                  </div>
+
+                  <p className="v2-sig-editorial-past">Looking for something from a past season? <Link href="/archive">See past editions</Link></p>
                 </div>
-              </div>
-
-              {/* Right: Product information */}
-              <div className="v2-sig-editorial-text">
-                <div className="v2-sig-editorial-meta-line">
-                  <span>Hero Edition</span>
-                  <span className="v2-sig-meta-sep"></span>
-                  <span>Piece No. 01</span>
-                </div>
-                <h2 style={resolveTypography('title', {}, sigOver, isMobile)}>{signature.title || 'The Anchor Table.'}</h2>
-                <div className="v2-sig-editorial-subtitle">Solid Teak, Timeless Form.</div>
-                <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
-
-                {/* Feature blocks */}
-                <div className="v2-sig-editorial-features">
-                  <div className="v2-sig-feature">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                    <span className="v2-sig-feature-label">{heroProduct?.buildTime || '~18 Hours'}</span>
-                    <span className="v2-sig-feature-text">of meticulous handcrafting</span>
-                  </div>
-                  <div className="v2-sig-feature">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                    <span className="v2-sig-feature-label">Master Crafted</span>
-                    <span className="v2-sig-feature-text">by skilled artisans in India</span>
-                  </div>
-                  <div className="v2-sig-feature">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    <span className="v2-sig-feature-label">{heroProduct?.material || 'Reclaimed Teak'}</span>
-                    <span className="v2-sig-feature-text">sustainable, rare & timeless</span>
-                  </div>
-                  <div className="v2-sig-feature">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                    <span className="v2-sig-feature-label">One of One</span>
-                    <span className="v2-sig-feature-text">never to be recreated</span>
-                  </div>
-                </div>
-
-                <div className="v2-sig-divider"></div>
-
-                {/* Price */}
-                <div className="v2-sig-editorial-price">
-                  <div className="v2-sig-editorial-price-amount">{heroProduct?.priceFormatted || '₹1,85,000'}</div>
-                  <div className="v2-sig-editorial-price-note">One of One · Never to be recreated</div>
-                </div>
-
-                {/* CTAs */}
-                <div className="v2-sig-editorial-actions">
-                  <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="btn-primary">Inquire to Own</Link>
-                  <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet">Book a Private Viewing</Link>
-                </div>
-
-                {/* Maker card */}
-                <div className="v2-sig-editorial-maker">
-                  <img className="v2-sig-maker-img" src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=200" alt="Master artisan" width="64" height="64" loading="lazy" />
-                  <div className="v2-sig-maker-info">
-                    <div className="v2-sig-maker-label">Crafted by Master Artisan</div>
-                    <div className="v2-sig-maker-name">Raghav Prasad</div>
-                    <div className="v2-sig-maker-desc">Third generation wood sculptor with 30+ years of experience.</div>
-                  </div>
-                  <Link href="/studio" className="v2-sig-maker-link">
-                    Meet the Maker
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-                  </Link>
-                </div>
-
-                {/* Quote */}
-                <div className="v2-sig-editorial-quote">
-                  <blockquote>&ldquo;We don&rsquo;t make furniture. We create heirlooms.&rdquo;</blockquote>
-                  <cite>— Teakle Studio</cite>
-                </div>
-
-                <p className="v2-sig-editorial-past" style={{marginTop: 'var(--space-lg)'}}>Looking for something from a past season? <Link href="/archive">See past editions</Link>.</p>
               </div>
             </div>
-          </div>
 
-          {/* Studio Visit vertical tab */}
-          <a href="/studio" className="v2-sig-studio-tab" aria-label="Book a studio visit">
-            Book a Studio Visit
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-          </a>
-        </section>
-        )}
+            {/* Studio Visit vertical tab */}
+            <a href="/studio" className="v2-sig-studio-tab" aria-label="Book a studio visit">
+              Book a Studio Visit
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </a>
+          </section>
+        </div>
+      )}
 
-        {/* 5. Craftsmanship — variant-aware */}
-        {!craftsmanshipDisabled && (
+      {/* 5. Craftsmanship */}
+      {!craftsmanshipDisabled && (
         <section
           className={`v2-craft ${getVariantClass('v2-craft', craftVariant?.id)}`}
           style={{
@@ -605,32 +498,32 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
           }}
         >
           <div className="v2-craft-grid">
-            <div className="v2-craft-img reveal">
+            <div className="v2-craft-img">
               <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) }} />
             </div>
             <div className="v2-craft-text">
-              <span className="eyebrow reveal" style={resolveTypography('eyebrow', {}, craftOver, isMobile)}>{craftsmanship.eyebrow || 'Craftsmanship'}</span>
-              <h2 className="reveal" style={resolveTypography('title', {}, craftOver, isMobile)}>{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
+              <span className="eyebrow" style={resolveTypography('eyebrow', {}, craftOver, isMobile)}>{craftsmanship.eyebrow || 'Craftsmanship'}</span>
+              <h2 style={resolveTypography('title', {}, craftOver, isMobile)}>{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
               {(craftsmanship.body || 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.').split('\n\n').map((p, i) => (
-                <p key={i} className="reveal" style={resolveTypography('body', {}, craftOver, isMobile)}>{p}</p>
+                <p key={i} style={resolveTypography('body', {}, craftOver, isMobile)}>{p}</p>
               ))}
-              <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet reveal">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
+              <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
             </div>
           </div>
         </section>
-        )}
+      )}
 
-        {/* 6. Collection Carousel — CMS-backed */}
-        {!carouselDisabled && (() => {
-          const carouselIds = parseProductIds(collectionCarousel.body)
-          const carouselProducts = resolveProducts(carouselIds)
-          return carouselProducts.length > 0 && (
+      {/* 6. Collection Carousel */}
+      {!carouselDisabled && (() => {
+        const carouselIds = parseProductIds(collectionCarousel.body)
+        const carouselProducts = resolveProducts(carouselIds)
+        return carouselProducts.length > 0 && (
           <section className="v2-carousel">
             <button className="v2-cprev" aria-label="Previous">&#8592;</button>
             <button className="v2-cnext" aria-label="Next">&#8594;</button>
             <div className="v2-ctrack" ref={carouselTrackRef}>
               {carouselProducts.map((p) => (
-                <Link key={p.id} href={`/shop/${p.id}`} className="v2-citem reveal">
+                <Link key={p.id} href={`/shop/${p.id}`} className="v2-citem">
                   <div className="v2-cimage"><img src={p.images?.[0] || ''} alt={p.name} loading="lazy" width="600" height="400" /></div>
                   <span className="v2-clabel">{p.name}</span>
                   <span className="v2-cbtn">Discover</span>
@@ -643,23 +536,23 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
               ))}
             </div>
           </section>
-          )
-        })()}
+        )
+      })()}
 
-        {/* 7. Product Grid — CMS-backed */}
-        {!productGridDisabled && (() => {
-          const gridIds = parseProductIds(productGrid.body)
-          const gridProducts = resolveProducts(gridIds)
-          return gridProducts.length > 0 && (
+      {/* 7. Product Grid */}
+      {!productGridDisabled && (() => {
+        const gridIds = parseProductIds(productGrid.body)
+        const gridProducts = resolveProducts(gridIds)
+        return gridProducts.length > 0 && (
           <section className="v2-products">
             <div className="container">
-              <div className="v2-products-head reveal">
+              <div className="v2-products-head">
                 <span className="eyebrow">{productGrid.eyebrow || 'From the Collection'}</span>
                 <h2>{productGrid.title || 'Pieces Built to Last'}</h2>
               </div>
               <div className="v2-pgrid">
                 {gridProducts.map((p) => (
-                  <Link key={p.id} href={`/shop/${p.id}`} className="v2-pcard reveal">
+                  <Link key={p.id} href={`/shop/${p.id}`} className="v2-pcard">
                     <div className="v2-pimg"><img src={p.images?.[0] || ''} alt={p.name} loading="lazy" width="600" height="400" /></div>
                     <div className="v2-pinfo">
                       <div>
@@ -673,40 +566,40 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                   </Link>
                 ))}
               </div>
-              <div className="v2-pcta reveal">
+              <div className="v2-pcta">
                 <Link href={productGrid.buttonUrl || '/gallery'} className="btn-primary">{productGrid.buttonLabel || 'Explore the Full Collection'}</Link>
               </div>
             </div>
           </section>
-          )
-        })()}
+        )
+      })()}
 
-        {/* 8. Story Block — Workshop */}
-        {!workshopDisabled && (
+      {/* 8. Story Block - Workshop */}
+      {!workshopDisabled && (
         <section className="v2-lifestyle">
           <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, workshopOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(workshopOver, 'image', isMobile)) }} />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal" style={resolveTypography('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
-            <h2 className="reveal" style={resolveTypography('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
-            <p className="reveal" style={resolveTypography('body', {}, workshopOver, isMobile)}>{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
-            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet reveal" style={resolveTypography('button', {}, workshopOver, isMobile)}>{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
+            <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
+            <h2 style={resolveTypography('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
+            <p style={resolveTypography('body', {}, workshopOver, isMobile)}>{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
+            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet" style={resolveTypography('button', {}, workshopOver, isMobile)}>{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
           </div>
         </section>
-        )}
+      )}
 
-        {/* 9. Story Block — Watch It Made */}
-        {!processDisabled && (
+      {/* 9. Story Block - Watch It Made */}
+      {!processDisabled && (
         <section className="v2-lifestyle">
           <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) }} />
           <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light reveal" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
-            <h2 className="reveal" style={resolveTypography('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
-            <p className="reveal" style={resolveTypography('body', {}, processOver, isMobile)}>{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
-            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet reveal" style={resolveTypography('button', {}, processOver, isMobile)}>{processStory.buttonLabel || 'Watch the Process'}</Link>
+            <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
+            <h2 style={resolveTypography('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
+            <p style={resolveTypography('body', {}, processOver, isMobile)}>{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
+            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet" style={resolveTypography('button', {}, processOver, isMobile)}>{processStory.buttonLabel || 'Watch the Process'}</Link>
           </div>
         </section>
-        )}
+      )}
 
-      </div>
+    </div>
   )
 }
