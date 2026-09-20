@@ -246,17 +246,25 @@ test('Search results show piece count', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 console.log('\n13. Mobile Header/Logo State');
 
-test('Logo switches between white and black based on scroll', () => {
-  assertIncludes(headerCode, '/assets/logo-white.webp', 'White logo for hero pages');
-  assertIncludes(headerCode, '/assets/logo-black.webp', 'Black logo for scrolled/non-hero');
+test('Logo switches between light and dark variants based on scroll', () => {
+  // Header uses SecondaryHorizontal component from LogoSystem which handles theme switching
+  assertIncludes(headerCode, 'SecondaryHorizontal', 'Uses SecondaryHorizontal component');
+  assertIncludes(headerCode, 'scrolled', 'Uses scroll state for theme switching');
+  
+  // Check logo-config has the secondaryHorizontal variant and getLogoSrc function builds paths
+  const logoConfig = fs.readFileSync(path.join(root, 'app', 'lib', 'logo-config.js'), 'utf8');
+  assertIncludes(logoConfig, 'secondary_horizontal', 'Secondary horizontal logo variant defined in config');
+  assertIncludes(logoConfig, 'getLogoSrc', 'getLogoSrc function builds theme-aware paths');
 });
 
 test('Logo src toggled by hasHero condition', () => {
-  const idx = headerCode.indexOf('logo-white.webp');
-  assert(idx >= 0, 'White logo path found');
-  const block = headerCode.slice(idx - 200, idx + 200);
-  assertIncludes(block, 'logo-black.webp', 'Black logo for scrolled');
-  assertIncludes(block, 'hasHero', 'Only switches on hero pages');
+  // Header uses SecondaryHorizontal for both hero and non-hero pages
+  assertIncludes(headerCode, 'SecondaryHorizontal', 'Uses SecondaryHorizontal component');
+  assertIncludes(headerCode, 'scrolled', 'Uses scroll state for theme');
+  // LogoSystem uses getLogoSrc which builds light/dark paths dynamically
+  const logoSystem = fs.readFileSync(path.join(root, 'app', 'components', 'LogoSystem.js'), 'utf8');
+  assertIncludes(logoSystem, 'getLogoSrc', 'LogoSystem uses getLogoSrc for dynamic paths');
+  assertIncludes(logoSystem, 'HeaderLogo', 'HeaderLogo component exported');
 });
 
 // ═══════════════════════════════════════════════════════════════════════════

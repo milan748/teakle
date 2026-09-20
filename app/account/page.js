@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { customerAuth, customerOrders, customerAddresses } from '@/lib/api';
+import { AuthLogo } from '../components/LogoSystem';
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1' },
@@ -1759,7 +1760,7 @@ export default function AccountPage() {
         {/* Desktop Sidebar */}
         <aside className="acct-sidebar">
           <div className="acct-sidebar-brand">
-            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
+            <AuthLogo size="lg" href="/" />
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (
@@ -1800,7 +1801,7 @@ export default function AccountPage() {
         <div className={`acct-drawer-overlay ${drawerOpen ? 'is-open' : ''}`} onClick={() => setDrawerOpen(false)}></div>
         <div className={`acct-drawer ${drawerOpen ? 'is-open' : ''}`}>
           <div className="acct-drawer-brand">
-            <Link href="/"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
+            <AuthLogo size="lg" href="/" />
           </div>
           <div className="acct-nav-label">Navigation</div>
           {NAV_ITEMS.map(item => (

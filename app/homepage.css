@@ -289,40 +289,40 @@
   -moz-osx-font-smoothing: grayscale;
 }
 .v2-atelier-title {
-  padding: 0.5rem var(--cin-gutter) 0;
+  padding: 0 0 3.5rem;
   text-align: center;
 }
 .v2-atelier-title h2 {
-  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-  font-weight: 300;
-  letter-spacing: 0.22em;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 400;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.95);
-  margin: 0 0 4px;
-  text-shadow: 0 2px 32px rgba(0,0,0,0.15);
+  color: #f5f0eb;
+  margin: 0 0 0.5rem;
 }
 .v2-atelier-subtitle {
   display: block;
-  font-size: clamp(0.5rem, 0.65vw, 0.625rem);
+  font-size: clamp(0.55rem, 0.7vw, 0.7rem);
   font-weight: 400;
   font-style: italic;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
-  margin-top: 4px;
-  margin-bottom: 24px;
+  color: rgba(245,240,235,0.55);
+  margin-top: 6px;
+  margin-bottom: 0;
 }
 
 /* ---- Signature Edition — Hero Product Editorial ---- */
 .v2-sig-editorial {
   background: transparent;
-  padding: 0 0 clamp(0.25rem, 0.5vw, 0.5rem);
+  padding: 0 0 1rem;
   overflow: visible;
 }
 .v2-sig-editorial-inner {
+  width: 100%;
+  padding: 0;
   max-width: none;
   margin: 0;
-  padding: 0;
   display: block;
   background: transparent;
   border-radius: 0;
@@ -331,23 +331,173 @@
 }
 .v2-sig-editorial-inner::before { display: none; }
 
+/* Grid — 2 columns: left (image + thumbs), right (content) */
 .v2-sig-editorial-grid {
-  position: relative;
-  margin-top: 120px;
+  display: grid;
+  grid-template-columns: 590px 1fr;
+  gap: 56px;
+  align-items: start;
+  justify-items: start;
+  padding: 0;
+  margin: 0;
+  max-width: none;
 }
+
+/* Left column — image stack (main image + thumbnails as one visual unit) */
 .v2-sig-editorial-img {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 590px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
+.v2-sig-editorial-img > img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+  display: block;
+}
+
+/* Thumbnails — aligned under main image, same width */
+.v2-sig-editorial-gallery { margin-top: 0; }
+.v2-sig-editorial-thumbs {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+.v2-sig-editorial-thumb {
+  flex: 1;
+  aspect-ratio: 1/1;
+  border: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0.5;
+  transition: opacity 0.2s, border-color 0.2s;
+  padding: 0;
+}
+.v2-sig-editorial-thumb.is-active { border-color: #f5f0eb; opacity: 1; }
+.v2-sig-editorial-thumb:hover { opacity: 0.8; }
+.v2-sig-editorial-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Right column — product content, vertically balanced */
 .v2-sig-editorial-text {
-  position: absolute;
-  left: 646px;
-  top: 0;
-  width: 674px;
-  padding: clamp(60px, 8vh, 96px) 0 clamp(80px, 7vh, 96px) 0;
+  width: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
+/* Content stack with consistent rhythm */
+.v2-sig-editorial-text h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(28px, 2.5vw, 40px);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #f5f0eb;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.v2-sig-editorial-subtitle {
+  font-family: var(--font-heading);
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 400;
+  color: rgba(245,240,235,0.7);
+  margin-bottom: 20px;
+  font-style: italic;
+  line-height: 1.25;
+}
+.v2-sig-editorial-text > p {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1vw, 16px);
+  line-height: 1.7;
+  color: rgba(245,240,235,0.65);
+  margin: 0 0 24px;
+  max-width: 674px;
+}
+
+/* Metadata row — hidden on desktop (shown inline in features) */
+.v2-sig-editorial-meta-line { display: none; }
+.v2-sig-meta-sep { display: none; }
+
+/* Feature blocks with icons — consistent gap */
+.v2-sig-editorial-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin-bottom: 28px;
+}
+.v2-sig-feature { display: flex; align-items: center; gap: 10px; }
+.v2-sig-feature-icon { width: 18px; height: 18px; flex-shrink: 0; color: rgba(245,240,235,0.6); }
+.v2-sig-feature-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: rgba(245,240,235,0.8);
+  line-height: 1.2;
+}
+
+/* Price */
+.v2-sig-editorial-price { margin-bottom: 28px; }
+.v2-sig-editorial-price-amount {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 2vw, 32px);
+  font-weight: 600;
+  color: #f5f0eb;
+  line-height: 1.1;
+}
+.v2-sig-editorial-price-note {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(245,240,235,0.5);
+  letter-spacing: 0.04em;
+  margin-top: 6px;
+}
+
+/* CTAs — equal width, aligned */
+.v2-sig-editorial-actions {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  max-width: 674px;
+}
+.v2-sig-btn-primary, .v2-sig-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-align: center;
+  flex: 1;
+  min-height: 48px;
+}
+.v2-sig-btn-primary { background: #f5f0eb; color: #1a1714; border: 1px solid #f5f0eb; }
+.v2-sig-btn-primary:hover { background: #e8e0d5; border-color: #e8e0d5; }
+.v2-sig-btn-outline { background: transparent; color: #f5f0eb; border: 1px solid rgba(245,240,235,0.4); }
+.v2-sig-btn-outline:hover { border-color: #f5f0eb; }
+
+/* Past editions link */
+.v2-sig-editorial-past {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: rgba(245,240,235,0.5);
+  line-height: 1.4;
+}
+.v2-sig-editorial-past a { color: rgba(245,240,235,0.8); text-decoration: underline; text-underline-offset: 3px; }
+.v2-sig-editorial-past a:hover { color: rgba(245,240,235,1); }
+
+/* Sculpture label (floating on image) — hidden in grid mode */
+.v2-sig-sculpture-label { display: none; }
+
+/* Trust badges removed */
+.v2-sig-trust { display: none; }
 
 /* ---- Left column: Product media ---- */
 .v2-sig-editorial-img > img {

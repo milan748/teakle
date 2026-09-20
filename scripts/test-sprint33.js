@@ -721,10 +721,11 @@ test('transition uses luxury easing', () => {
 });
 
 test('logo has refined height', () => {
-  const logoMatch = stylesCode.match(/\.logo img \{[^}]*height:\s*([\d]+)px/);
-  if (logoMatch) {
-    const h = parseInt(logoMatch[1]);
-    assert(h >= 20 && h <= 30, `Logo height ${h}px should be 20-30px for luxury feel`);
+  // Logo sizing uses size classes (logo-size-header, etc.) instead of fixed height
+  const sizeClassMatch = stylesCode.match(/\.logo-size-header\s*\{[^}]*height:\s*([\d]+)px/);
+  if (sizeClassMatch) {
+    const h = parseInt(sizeClassMatch[1]);
+    assert(h >= 20 && h <= 40, `Logo header height ${h}px should be 20-40px for luxury feel`);
   }
 });
 

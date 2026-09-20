@@ -20,22 +20,55 @@
   --bronze-on-dark: #C4A26E;   /* WCAG AA on --walnut: 5.03:1 */
   --stone: #C9C1B6;
 
-  /* Type — Montserrat: geometric, squared-off, premium weight */
+/* Type — Montserrat: geometric, squared-off, premium weight */
   --font-display: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-body: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  /* Type scale — editorial luxury proportions */
-  --text-caption: 0.625rem;    /* 10px — metadata, timestamps */
-  --text-label: 0.75rem;       /* 12px — eyebrows, nav, captions */
-  --text-body: 0.875rem;       /* 14px — body text */
-  --text-lede: 0.9375rem;      /* 15px — intro paragraphs */
-  --text-h4: 0.9375rem;        /* 15px — minor headings */
-  --text-h3: 1rem;             /* 16px — section subheadings */
-  --text-h2: 1.25rem;          /* 20px — section headings */
-  --text-h1: 1.75rem;          /* 28px — page headings */
-  --text-hero: 2.5rem;         /* 40px — hero display */
-  --text-display: 3rem;        /* 48px — editorial display */
-  --text-subhead: var(--text-h3);
+  /* ── Editorial Type Scale — quiet, premium, consistent ─────────────── */
+  /* Display / Main heading — restrained, never screams */
+  --text-display:     clamp(1.75rem, 3vw, 2.5rem);     /* ~28–40px */
+  --text-display-sm:  clamp(1.5rem, 2.5vw, 2rem);      /* ~24–32px */
+
+  /* Section heading (h2) — clearly smaller than main */
+  --text-h2:          clamp(1.125rem, 1.8vw, 1.375rem); /* ~18–22px */
+
+  /* Subheading (h3) — smaller than section heading */
+  --text-h3:          clamp(0.9375rem, 1.3vw, 1.0625rem); /* ~15–17px */
+
+  /* Minor heading (h4) — same as subheading or slightly smaller */
+  --text-h4:          clamp(0.875rem, 1.1vw, 1rem);       /* ~14–16px */
+
+  /* Subtitle / deck — clearly smaller than headings, readable */
+  --text-subtitle:    clamp(0.875rem, 1.1vw, 1rem);       /* ~14–16px */
+
+  /* Body text — small, highly readable, good line length */
+  --text-body:        clamp(0.8125rem, 0.9vw, 0.9375rem); /* ~13–15px */
+  --text-body-lg:     clamp(0.875rem, 1vw, 1rem);         /* ~14–16px */
+
+  /* Eyebrow / label — very small, subtle, uppercase */
+  --text-eyebrow:     0.625rem;                            /* 10px fixed */
+  --text-label:       0.625rem;                            /* 10px fixed */
+
+  /* Button / nav — compact, understated */
+  --text-button:      0.625rem;                            /* 10px */
+  --text-nav:         0.625rem;                            /* 10px */
+
+  /* Metadata / caption — smallest text */
+  --text-caption:     0.5625rem;                           /* 9px */
+  --text-meta:        0.5625rem;                           /* 9px */
+
+  /* Line heights — generous for readability */
+  --lh-display:       1.05;
+  --lh-heading:       1.15;
+  --lh-subtitle:      1.4;
+  --lh-body:          1.65;
+  --lh-tight:         1.1;
+
+  /* Semantic aliases for backward compat */
+  --text-h1:          var(--text-display);
+  --text-hero:        var(--text-display);
+  --text-lede:        var(--text-body-lg);
+  --text-subhead:     var(--text-h3);
 
   /* Spacing — whitespace as material */
   --space-2xs: 0.25rem;    /* 4px */
@@ -90,7 +123,7 @@
   --content-narrow: 680px;
   --content-wide: 960px;
 
-  /* ── Cinematic Editorial Tokens ─────────────────────────────── */
+/* ── Cinematic Editorial Tokens ─────────────────────────────── */
   /* Palette — easily replaceable; all homepage sections reference these */
   --cin-bg:           #F7F4EE;
   --cin-bg-warm:      #EFE8DC;
@@ -108,15 +141,15 @@
   --cin-overlay:      rgba(30, 21, 14, 0.72);
   --cin-overlay-deep: rgba(30, 21, 14, 0.88);
 
-  /* Type scale — cinematic editorial */
-  --cin-display:      clamp(2.75rem, 5.5vw, 4.5rem);
-  --cin-display-lg:   clamp(2.25rem, 4.5vw, 3.75rem);
-  --cin-h2:           clamp(1.5rem, 3vw, 2.5rem);
-  --cin-h3:           clamp(1.125rem, 2vw, 1.5rem);
-  --cin-body:         clamp(0.875rem, 1.1vw, 1.0625rem);
-  --cin-body-lg:      clamp(0.9375rem, 1.3vw, 1.1875rem);
-  --cin-eyebrow:      0.6875rem;
-  --cin-caption:      0.625rem;
+  /* Cinematic type scale — consistent with global scale */
+  --cin-display:       var(--text-display);
+  --cin-display-lg:    var(--text-display-sm);
+  --cin-h2:            var(--text-h2);
+  --cin-h3:            var(--text-h3);
+  --cin-body:          var(--text-body);
+  --cin-body-lg:       var(--text-body-lg);
+  --cin-eyebrow:       var(--text-eyebrow);
+  --cin-caption:       var(--text-caption);
 
   /* Spacing — generous editorial whitespace */
   --cin-section:      clamp(3rem, 6vw, 5rem);
@@ -440,7 +473,7 @@ em {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem var(--space-md);
+  padding: 0.25rem var(--space-md);
   min-width: 0;
   overflow: visible;
 }
@@ -471,15 +504,22 @@ em {
 }
 .logo img {
   display: block;
-  height: 24px;
   width: auto;
+  letter-spacing: 0.12em;
   transition: opacity var(--dur-fast) var(--ease);
 }
+/* Logo size scale — heights set here, width:auto preserves aspect ratio. letter-spacing adds editorial breathing room. */
+.logo-size-sm       { height: 18px; }
+.logo-size-default  { height: 28px; }
+.logo-size-lg       { height: 36px; }
+.logo-size-xl       { height: 48px; }
+.logo-size-xxl      { height: 64px; }
+.logo-size-header   { height: 60px; }
 .logo:hover img {
   opacity: 0.7;
 }
 .site-footer .logo img {
-  height: 22px;
+  height: 50px;
 }
 .nav-links {
   display: flex;
@@ -1028,6 +1068,82 @@ body.nav-drawer-open .nav-toggle { opacity: 0; pointer-events: none; }
   background: rgba(139,107,74,0.04);
 }
 
+/* Bottom nav — compact mobile bar */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--bg-primary);
+  border-top: 1px solid rgba(43,34,27,0.08);
+  padding: 4px 0 env(safe-area-inset-bottom, 4px);
+  align-items: center;
+  justify-content: space-around;
+  height: auto;
+}
+@media (max-width: 860px) {
+  .bottom-nav { display: flex; }
+}
+.bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  padding: 4px 0;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.5625rem;
+  font-family: var(--font-body);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color var(--dur-fast) var(--ease);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bottom-nav-link.active {
+  color: var(--bronze);
+}
+.bottom-nav-link svg {
+  flex-shrink: 0;
+}
+.bottom-nav-badge {
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--bronze);
+  color: #fff;
+  font-size: 0.5rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+/* Bottom nav brand logo */
+.bottom-nav-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) 0;
+  min-width: 44px;
+}
+.bottom-nav-brand img {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+
 /* Bottom nav avatar */
 .bottom-nav-avatar {
   width: 22px;
@@ -1118,7 +1234,7 @@ body[data-auth-page] .site-footer { display: none; }
 }
 .footer-brand .logo {
   display: block;
-  margin-bottom: var(--space-md);
+  margin-bottom: 0;
 }
 .footer-brand p {
   font-size: var(--text-body);
@@ -1420,27 +1536,35 @@ body[data-auth-page] .site-footer { display: none; }
 /* BottomNav removed in Sprint #34D */
 
 /* ============================================
-   Shared: Mobile Luxury System (≤860px)
-   Premium editorial mobile redesign
+   Shared: Tablet (≤860px) — tighter clamp ranges
    ============================================ */
 @media (max-width: 860px) {
   :root {
-    --text-caption: 0.625rem;     /* 10px */
-    --text-label: 0.6875rem;      /* 11px */
-    --text-body: 0.8125rem;       /* 13px */
-    --text-lede: 0.875rem;        /* 14px */
-    --text-h4: 0.875rem;          /* 14px */
-    --text-h3: 0.9375rem;         /* 15px */
-    --text-h2: 1.1875rem;         /* 19px */
-    --text-h1: 1.5rem;            /* 24px */
+    /* Tighter clamp ranges for tablet — no fixed overrides needed */
+    --text-display:     clamp(1.5rem, 4.5vw, 2rem);       /* ~24–32px */
+    --text-display-sm:  clamp(1.375rem, 3.5vw, 1.75rem);  /* ~22–28px */
+    --text-h2:          clamp(1rem, 2.5vw, 1.25rem);      /* ~16–20px */
+    --text-h3:          clamp(0.875rem, 2vw, 1rem);       /* ~14–16px */
+    --text-h4:          clamp(0.8125rem, 1.5vw, 0.9375rem); /* ~13–15px */
+    --text-subtitle:    clamp(0.8125rem, 1.5vw, 0.9375rem); /* ~13–15px */
+    --text-body:        clamp(0.8125rem, 1.3vw, 0.9375rem); /* ~13–15px */
+    --text-body-lg:     clamp(0.875rem, 1.4vw, 1rem);     /* ~14–16px */
+    --text-eyebrow:     0.5625rem;                         /* 9px */
+    --text-label:       0.5625rem;                         /* 9px */
+    --text-button:      0.5625rem;                         /* 9px */
+    --text-nav:         0.5625rem;                         /* 9px */
+    --text-caption:     0.5rem;                            /* 8px */
+    --text-meta:        0.5rem;                            /* 8px */
+
+    /* Spacing — slightly tighter */
     --space-2xs: 0.25rem;
     --space-xs: 0.375rem;
-    --space-sm: 0.625rem;
-    --space-md: 1rem;
-    --space-lg: 1.75rem;
-    --space-xl: 2.75rem;
-    --space-2xl: 4rem;
-    --space-3xl: 5.5rem;
+    --space-sm: 0.5rem;
+    --space-md: 0.875rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2.5rem;
+    --space-2xl: 3.75rem;
+    --space-3xl: 4.25rem;
   }
 
   body {
@@ -1457,7 +1581,7 @@ body[data-auth-page] .site-footer { display: none; }
   .container { padding-left: var(--space-md); padding-right: var(--space-md); }
 
   .eyebrow {
-    font-size: var(--text-label);
+    font-size: var(--text-eyebrow);
     letter-spacing: 0.14em;
     margin-bottom: var(--space-sm);
   }
@@ -1470,7 +1594,7 @@ body[data-auth-page] .site-footer { display: none; }
     width: 100%;
     min-height: 48px;
     padding: var(--space-sm) var(--space-lg);
-    font-size: var(--text-label);
+    font-size: var(--text-button);
     letter-spacing: 0.1em;
     text-align: center;
     text-transform: uppercase;
@@ -1909,12 +2033,12 @@ body[data-auth-page] .site-footer { display: none; }
     padding-bottom: var(--space-md);
   }
   .footer-brand {
-    margin-bottom: var(--space-md);
+    margin-bottom: 0;
     padding-bottom: var(--space-md);
     border-bottom: 1px solid rgba(43,34,27,0.06);
   }
-  .footer-brand .logo { display: inline-block; margin-bottom: var(--space-xs); }
-  .footer-brand .logo img { height: 18px; }
+  .footer-brand .logo { display: inline-block; margin-bottom: 0; }
+  .footer-brand .logo img { height: 40px; }
   .footer-brand p { max-width: none; font-size: var(--text-caption); line-height: 1.5; color: var(--text-tertiary); }
   .footer-social { justify-content: flex-start; margin-top: var(--space-sm); }
   .footer-social a { width: 44px; height: 44px; }
@@ -2029,16 +2153,25 @@ body[data-auth-page] .site-footer { display: none; }
 
 /* ============================================
    Shared: Phone Breakpoint (≤560px)
-   Tight, immersive mobile
+   Tight, immersive mobile — tighter clamp ranges
    ============================================ */
 @media (max-width: 560px) {
   :root {
-    --text-caption: 0.5625rem;    /* 9px */
-    --text-label: 0.625rem;       /* 10px */
-    --text-body: 0.8125rem;       /* 13px — was 12px */
-    --text-h3: 0.875rem;          /* 14px */
-    --text-h2: 1.125rem;          /* 18px — was 17px */
-    --text-h1: 1.375rem;          /* 22px — was 21px */
+    --text-display:     clamp(1.375rem, 5.5vw, 1.75rem);     /* ~22–28px */
+    --text-display-sm:  clamp(1.25rem, 4.5vw, 1.5rem);      /* ~20–24px */
+    --text-h2:          clamp(0.9375rem, 3.5vw, 1.125rem);  /* ~15–18px */
+    --text-h3:          clamp(0.8125rem, 2.8vw, 0.9375rem); /* ~13–15px */
+    --text-h4:          clamp(0.75rem, 2.2vw, 0.875rem);    /* ~12–14px */
+    --text-subtitle:    clamp(0.75rem, 2.2vw, 0.875rem);    /* ~12–14px */
+    --text-body:        clamp(0.8125rem, 1.8vw, 0.9375rem); /* ~13–15px */
+    --text-body-lg:     clamp(0.875rem, 2vw, 1rem);         /* ~14–16px */
+    --text-eyebrow:     0.5rem;                              /* 8px */
+    --text-label:       0.5rem;                              /* 8px */
+    --text-button:      0.5rem;                              /* 8px */
+    --text-nav:         0.5rem;                              /* 8px */
+    --text-caption:     0.4375rem;                           /* 7px */
+    --text-meta:        0.4375rem;                           /* 7px */
+
     --space-2xs: 0.25rem;
     --space-xs: 0.375rem;
     --space-sm: 0.5rem;
@@ -2070,26 +2203,42 @@ body[data-auth-page] .site-footer { display: none; }
   .page-hero--split .page-hero-content { padding: var(--space-lg); }
   .page-hero--minimal { min-height: 300px; }
 
-  .btn-primary { min-height: 44px; font-size: var(--text-label); }
+  .btn-primary { min-height: 44px; font-size: var(--text-button); }
 }
 
 /* ============================================
    Shared: Small Phone Breakpoint (≤430px)
-   Optimized for iPhone SE, 12 mini, etc.
+   Optimized for iPhone SE, 12 mini, etc. — tightest clamp ranges
    ============================================ */
 @media (max-width: 430px) {
+  :root {
+    --text-display:     clamp(1.25rem, 6vw, 1.5rem);       /* ~20–24px */
+    --text-display-sm:  clamp(1.125rem, 5vw, 1.375rem);    /* ~18–22px */
+    --text-h2:          clamp(0.875rem, 4vw, 1rem);        /* ~14–16px */
+    --text-h3:          clamp(0.75rem, 3.2vw, 0.875rem);   /* ~12–14px */
+    --text-h4:          clamp(0.6875rem, 2.5vw, 0.8125rem);/* ~11–13px */
+    --text-subtitle:    clamp(0.6875rem, 2.5vw, 0.8125rem);/* ~11–13px */
+    --text-body:        clamp(0.75rem, 2vw, 0.875rem);     /* ~12–14px */
+    --text-body-lg:     clamp(0.8125rem, 2.2vw, 0.9375rem);/* ~13–15px */
+    --text-eyebrow:     0.4375rem;                          /* 7px */
+    --text-label:       0.4375rem;                          /* 7px */
+    --text-button:      0.4375rem;                          /* 7px */
+    --text-nav:         0.4375rem;                          /* 7px */
+    --text-caption:     0.375rem;                           /* 6px */
+    --text-meta:        0.375rem;                           /* 6px */
+  }
+
   .container { padding-left: var(--space-md); padding-right: var(--space-md); }
+  h1 { font-size: var(--text-h1); line-height: 1.1; }
+  h2 { font-size: var(--text-h2); }
+  h3 { font-size: var(--text-h3); }
 
-  h1 { font-size: 1.1875rem; line-height: 1.1; }
-  h2 { font-size: 1rem; }
-  h3 { font-size: 0.8125rem; }
+  .page-header h1 { font-size: var(--text-h1); }
+  .page-header p { font-size: var(--text-body); }
 
-  .page-header h1 { font-size: 1.1875rem; }
-  .page-header p { font-size: 0.6875rem; }
+  .page-hero h1 { font-size: var(--text-h1); }
 
-  .page-hero h1 { font-size: 1.1875rem; }
-
-  .btn-primary { min-height: 40px; font-size: var(--text-label); }
+  .btn-primary { min-height: 40px; font-size: var(--text-button); }
 
   /* Footer — tighter */
   .footer-nav a { min-height: 32px; line-height: 32px; }

@@ -5,7 +5,9 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollTopBtn from './components/ScrollTopBtn';
 import ClientScripts from './components/ClientScripts';
+import BottomNav from './components/BottomNav';
 import StructuredData from './components/StructuredData';
+import { getLogoUrl } from './lib/logo-config';
 
 export const metadata = {
   title: {
@@ -58,7 +60,7 @@ const organizationSchema = {
   '@type': 'Organization',
   name: 'Teakle',
   url: 'https://teakle.in',
-  logo: 'https://teakle.in/assets/logo-black.png',
+  logo: getLogoUrl('dark'),
   sameAs: ['https://www.instagram.com/teaklestudio'],
   contactPoint: {
     '@type': 'ContactPoint',
@@ -84,15 +86,15 @@ export default async function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#F7F4EE" />
         <meta name="color-scheme" content="light" />
-        <link rel="icon" href="/assets/logo-black.png" />
-        <link rel="apple-touch-icon" href="/assets/logo-black.png" />
+        <link rel="icon" href="/assets/logos/brandmark_dark.png" />
+        <link rel="apple-touch-icon" href="/assets/logos/brandmark_dark.png" />
         <link rel="preconnect" href="https://images.pexels.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" as="style" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" />
         <link rel="preload" href="/assets/hero-luxury-entryway.avif" as="image" type="image/avif" />
-        <link rel="preload" href="/assets/logo-black.png" as="image" />
+        <link rel="preload" href="/assets/logos/brandmark_dark.png" as="image" />
         <noscript dangerouslySetInnerHTML={{__html: '<style>.reveal{opacity:1!important;transform:none!important;}</style>'}} />
         <StructuredData data={organizationSchema} />
         <StructuredData data={websiteSchema} />
@@ -106,6 +108,7 @@ export default async function RootLayout({ children }) {
           </main>
         )}
         {!isEditor && <Footer />}
+        {!isEditor && <BottomNav />}
         {!isEditor && <ScrollTopBtn />}
         {!isEditor && <ClientScripts />}
         <Script src="/app.js" strategy="beforeInteractive" />

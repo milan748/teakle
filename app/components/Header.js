@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { customerAuth } from '@/lib/api';
+import { SecondaryHorizontal } from './LogoSystem';
 
 function getInitials(name) {
   if (!name) return 'U';
@@ -31,7 +32,6 @@ function checkHasHero(pathname) {
 export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const [logoSrc, setLogoSrc] = useState('/assets/logo-black.webp');
   const [accountOpen, setAccountOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,6 +40,7 @@ export default function Header() {
   const [user, setUser] = useState(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -66,12 +67,9 @@ export default function Header() {
     if (!header) return;
 
     function onScroll() {
-      const scrolled = window.scrollY > 60;
-      header.classList.toggle('is-scrolled', scrolled);
-      if (hasHero) {
-        const newSrc = scrolled ? '/assets/logo-black.webp' : '/assets/logo-white.webp';
-        setLogoSrc((prev) => prev === newSrc ? prev : newSrc);
-      }
+      const isScrolled = window.scrollY > 60;
+      setScrolled(isScrolled);
+      header.classList.toggle('is-scrolled', isScrolled);
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -279,9 +277,11 @@ export default function Header() {
         <button className="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
           <span></span><span></span><span></span>
         </button>
-        <Link href="/" className="logo" aria-label="Teakle Home">
-          <img src={logoSrc} alt="Teakle" />
-        </Link>
+        {hasHero ? (
+          <SecondaryHorizontal aria-label="Teakle Home" size="header" theme={scrolled ? 'dark' : 'light'} />
+        ) : (
+          <SecondaryHorizontal aria-label="Teakle Home" size="header" theme="dark" />
+        )}
         <div className="header-mobile-actions">
           <button className="header-icon" aria-label="Search" onClick={openSearch}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { customerAuth } from '@/lib/api';
+import { AuthLogo } from '../components/LogoSystem';
 
 export default function LoginPage() {
   const [activeTab, setActiveTab] = useState('login');
@@ -282,7 +283,6 @@ export default function LoginPage() {
 
         .auth-logo {
           display: block;
-          width: 48px;
           height: auto;
           margin: 0 auto 1.5rem;
           opacity: 0.85;
@@ -815,7 +815,7 @@ export default function LoginPage() {
           .auth-section { padding: 4rem 1rem 2rem; }
           .auth-card { padding: 2rem 1.5rem; }
           .auth-brand { margin-bottom: 2rem; }
-          .auth-logo { width: 40px; }
+          .auth-logo { width: auto; }
         }
 
         @media (max-width: 430px) {
@@ -842,7 +842,7 @@ export default function LoginPage() {
         <div className="auth-card">
           {/* Brand */}
           <div className="auth-brand">
-            <img src="/assets/logo-black.webp" alt="Teakle" className="auth-logo" />
+            <AuthLogo size="xl" className="auth-logo" />
             <div className="auth-brand-line"></div>
           </div>
 

@@ -51,7 +51,7 @@ function buildArticleSchema(article) {
       name: 'Teakle',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://teakle.in/assets/logo-black.png',
+        url: 'https://teakle.in/assets/logos/brandmark_dark.png',
       },
     },
     mainEntityOfPage: {

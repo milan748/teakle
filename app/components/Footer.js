@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSiteSettings } from '@/lib/cms';
+import { SecondaryHorizontal } from './LogoSystem';
 
 function getSetting(settings, key, fallback) {
   const row = settings.find(s => s.key === key);
@@ -26,7 +27,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <Link href="/" className="logo"><img src="/assets/logo-black.webp" alt="Teakle" /></Link>
+            <SecondaryHorizontal aria-label="Teakle Home" theme="dark" />
             <p>{footerDescription}</p>
             <div className="footer-social">
               <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
