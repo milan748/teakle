@@ -1,0 +1,373 @@
+tasks:
+  - title: T07 - Refine Studio Material and Brand Story
+    completed: true
+    description: >
+      Refine the existing Teakle Studio page into a clear, premium brand and
+      material story that explains WHO Teakle is, WHY teak is central to the
+      brand, and HOW the material relates to Teakle's design philosophy.
+
+      IMPORTANT: This is an existing website. Refine the current Studio
+      implementation. Do not rebuild unrelated pages, change backend/business
+      logic, or invent brand history.
+
+      ============================================================ PRIMARY
+      OBJECTIVE ============================================================
+
+      The Studio page should answer three fundamental questions:
+
+      1. WHO IS TEAKLE? 2. WHY TEAK? 3. HOW DOES TEAKLE APPROACH DESIGN AND
+      CRAFT?
+
+      The page should feel like the brand's material and philosophy statement,
+      not a generic "About Us" page and not a technical timber encyclopedia.
+
+      The visitor should understand:
+
+      - what Teakle creates; - what Teakle values; - why teak is central to the
+      work; - how material selection influences the objects; - how craftsmanship
+      and design work together.
+
+      ============================================================ BRAND
+      POSITIONING ============================================================
+
+      Establish Teakle as a contemporary teak-focused design and craft brand.
+
+      Use the existing brand language, product data, Studio content and
+      established visual direction as the source of truth.
+
+      Do NOT invent:
+
+      - founding dates - founder biographies - workshop locations - number of
+      craftsmen - years of experience - production volumes - awards -
+      certifications - celebrity clients - historical partnerships - unsupported
+      sustainability claims
+
+      If the current Studio data already contains such information, preserve it
+      accurately.
+
+      ============================================================ WHY TEAK
+      ============================================================
+
+      Explain why Teakle chooses teak using concrete material qualities
+      supported by the existing Studio/product content.
+
+      Appropriate themes may include, where supported by the existing content:
+
+      - durability - natural strength - dimensional stability - distinctive
+      grain - tactile character - aging and patina - workability - suitability
+      for long-lived furniture and objects
+
+      Do NOT describe teak as universally "the best wood".
+
+      Do NOT make unsupported claims such as:
+
+      - teak is the best wood in the world; - teak only grows in Asia; - teak is
+      exclusively a Middle Eastern or Asian wood; - teak cannot be cultivated
+      elsewhere; - every teak product is automatically sustainable; - teak lasts
+      forever.
+
+      Use precise, defensible material language.
+
+      If geographic information is included, keep it accurate and appropriately
+      qualified.
+
+      Teak is associated with South and Southeast Asia and is also cultivated in
+      other regions. Do not present an inaccurate geographic exclusivity claim
+      merely to strengthen the brand story.
+
+      ============================================================
+      MATERIAL-FIRST STORY
+      ============================================================
+
+      The Studio page should make the material feel tangible.
+
+      Focus on:
+
+      - grain - texture - variation - natural color - joinery - surface - aging
+      - relationship between timber and finished object
+
+      Avoid turning the page into a generic list of wood properties.
+
+      Explain material qualities through Teakle's actual design/craft context.
+
+      ============================================================ BRAND
+      PHILOSOPHY ============================================================
+
+      Clarify the relationship between:
+
+      MATERIAL ↓ DESIGN ↓ CRAFT ↓ OBJECT ↓ LONG-TERM USE
+
+      The page should communicate that the finished object is the result of
+      decisions about material, proportion, construction, surface and use.
+
+      Use existing Teakle language wherever possible.
+
+      Do not introduce a completely new brand voice.
+
+      ============================================================ PAGE
+      STRUCTURE ============================================================
+
+      Establish a strong editorial hierarchy.
+
+      Suggested structure:
+
+      STUDIO
+
+      Short positioning statement about Teakle.
+
+      ------------------------------------------------------------
+
+      WHO WE ARE
+
+      Existing/source-supported brand story.
+
+      ------------------------------------------------------------
+
+      WHY TEAK
+
+      Material story explaining why teak is central to Teakle.
+
+      ------------------------------------------------------------
+
+      THE MATERIAL
+
+      Existing/source-supported details about grain, texture, durability, aging,
+      selection or related material qualities.
+
+      ------------------------------------------------------------
+
+      HOW WE WORK
+
+      Existing/source-supported explanation of design, making, finishing,
+      joinery or craftsmanship.
+
+      ------------------------------------------------------------
+
+      Closing brand statement / transition into the collection.
+
+      Use this structure as a conceptual guide, not as a requirement to add
+      sections that have no authentic content.
+
+      Do not manufacture copy just to fill every section.
+
+      ============================================================ VISUAL
+      DIRECTION ============================================================
+
+      The Studio page should feel:
+
+      - architectural - editorial - tactile - quiet - premium - material-focused
+      - spacious - contemporary - connected to the Atelier Stories aesthetic
+
+      Avoid:
+
+      - generic corporate About pages - SaaS layouts - excessive cards - icon
+      grids - decorative statistics - fake metrics - testimonial walls - generic
+      stock photography
+
+      ============================================================ IMAGE
+      COMPOSITION ============================================================
+
+      Use authentic existing Teakle imagery.
+
+      Prioritize images that communicate:
+
+      - teak material - finished objects - workshop/craftsmanship where
+      appropriate - grain and texture - making process - finished-to-material
+      relationship
+
+      Do not use unrelated product images merely to fill space.
+
+      Use varied image scale.
+
+      Where appropriate, use:
+
+      - extreme-left imagery - extreme-right imagery - large cinematic images -
+      close-up material imagery - asymmetric editorial compositions - occasional
+      ultra-wide imagery where authentic assets support it
+
+      Do not mechanically alternate images left and right.
+
+      Do not turn every image into a card.
+
+      ============================================================ MATERIAL
+      IMAGE STORY ============================================================
+
+      Where appropriate, visually connect:
+
+      raw / selected teak → working material → joinery / craft → finished Teakle
+      object
+
+      Only do this where authentic imagery exists.
+
+      Do not fabricate a manufacturing sequence.
+
+      ============================================================ TYPOGRAPHY
+      ============================================================
+
+      Preserve Instrument Sans and the existing Teakle typography system.
+
+      Establish clear hierarchy between:
+
+      - Studio display heading - major section headings - material subheadings -
+      body copy - captions - metadata
+
+      Do not make the page typography-heavy.
+
+      Keep body text readable.
+
+      Avoid excessive uppercase text.
+
+      ============================================================ DESKTOP
+      COMPOSITION ============================================================
+
+      Use the full available desktop viewport intentionally.
+
+      Avoid narrow centered text blocks when the content benefits from a wider
+      editorial composition.
+
+      Allow imagery to occupy meaningful portions of the viewport.
+
+      Use asymmetry and whitespace intentionally.
+
+      Avoid making the page look like a sequence of centered cards.
+
+      ============================================================ MOBILE
+      ============================================================
+
+      Recompose the Studio page intentionally for mobile.
+
+      Do not simply stack the desktop layout without considering hierarchy.
+
+      Ensure:
+
+      - headings remain readable; - body copy remains comfortable to read; -
+      material images retain their visual impact; - no horizontal overflow
+      exists; - image crops remain meaningful; - spacing remains intentional.
+
+      ============================================================ MOTION
+      ============================================================
+
+      Use restrained motion where it improves storytelling.
+
+      Appropriate:
+
+      - subtle image reveal - gentle section entrance - restrained image
+      movement - subtle transition between material/process imagery
+
+      Avoid:
+
+      - excessive parallax - constant movement - bouncing - decorative animation
+      - aggressive scroll effects
+
+      ============================================================ CONTENT
+      AUTHENTICITY ============================================================
+
+      Inspect the existing Studio content and project data before rewriting.
+
+      Preserve accurate existing statements.
+
+      Improve hierarchy and presentation rather than replacing authentic
+      information with invented marketing copy.
+
+      If an important claim is not supported by the existing content, do not add
+      it.
+
+      ============================================================ NAVIGATION
+      AND CTA ============================================================
+
+      Preserve the existing site navigation.
+
+      If the current Studio page contains valid links to:
+
+      - Gallery - Collection - Atelier Stories - Journal - Contact - other
+      existing destinations
+
+      preserve them where appropriate.
+
+      Do not invent new destinations.
+
+      The closing Studio section may naturally lead visitors toward the
+      collection or Atelier experience using an existing valid route.
+
+      ============================================================ FUNCTIONALITY
+      ============================================================
+
+      Preserve:
+
+      - navigation - responsive behavior - existing links - CMS/content
+      architecture - authentication - cart - wishlist - commerce functionality
+
+      Do not modify backend/business logic unnecessarily.
+
+      ============================================================
+      IMPLEMENTATION PROCESS
+      ============================================================
+
+      BEFORE CODING:
+
+      1. Inspect the current /studio page. 2. Identify its existing content/data
+      source. 3. Inspect existing Studio imagery. 4. Identify authentic
+      material/process imagery. 5. Identify existing brand statements. 6.
+      Identify existing typography and layout components. 7. Preserve useful
+      existing content.
+
+      THEN:
+
+      8. Refine the Studio page hierarchy. 9. Establish a clear WHO TEAKLE IS
+      story. 10. Establish a clear WHY TEAK story. 11. Establish the
+      material/design/craft relationship. 12. Improve image composition. 13.
+      Improve desktop spatial composition. 14. Recompose mobile intentionally.
+      15. Preserve valid functionality.
+
+      ============================================================ SCOPE
+      ============================================================
+
+      This task concerns the Studio page.
+
+      Do NOT redesign:
+
+      - Homepage - Atelier Stories - Gallery - Archive - Product pages -
+      Navigation - Footer
+
+      unless a minimal change is required to prevent a regression.
+
+      ============================================================ BROWSER
+      VERIFICATION ============================================================
+
+      Inspect /studio in the browser.
+
+      Verify:
+
+      1. The page clearly explains who Teakle is. 2. The page clearly explains
+      why teak is central to Teakle. 3. Material qualities are presented
+      accurately and without unsupported
+         superlatives.
+      4. No fabricated brand history or claims have been introduced. 5. Existing
+      authentic imagery is used appropriately. 6. Desktop composition uses the
+      available width intentionally. 7. Mobile composition is intentional. 8. No
+      horizontal overflow exists. 9. Existing navigation and links work. 10.
+      Browser console has no newly introduced errors.
+
+      ============================================================ BUILD
+      VERIFICATION ============================================================
+
+      Run:
+
+      npm run build
+
+      The build must complete successfully.
+
+      Do not report completion merely because the code compiles.
+
+      ============================================================ DEFINITION OF
+      DONE ============================================================
+
+      T07 is complete only when the Studio page communicates:
+
+      WHO TEAKLE IS + WHY TEAK + HOW MATERIAL, DESIGN AND CRAFT BECOME THE
+      FINISHED OBJECT
+
+      using authentic existing content and imagery, with a premium editorial
+      presentation across desktop and mobile.
+
+      Browser verification must pass and npm run build must pass.

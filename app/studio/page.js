@@ -36,6 +36,13 @@ export default function StudioPage() {
   let materialItems = [];
   try { materialItems = JSON.parse(materials.body || '{}').items || []; } catch (e) { console.warn('Failed to parse materials:', e.message); }
 
+  // WHY TEAK lead: elevate the existing "Why Teak" item verbatim into a
+  // wide editorial statement; the remaining items stay in THE MATERIAL grid.
+  // No copy is invented or duplicated — only re-hierarchied.
+  const whyTeakIdx = materialItems.findIndex((it) => /teak/i.test(it.title || ''));
+  const whyTeak = whyTeakIdx >= 0 ? materialItems[whyTeakIdx] : null;
+  const materialRest = whyTeakIdx >= 0 ? materialItems.filter((_, i) => i !== whyTeakIdx) : materialItems;
+
   // ── Design Resolution (shared with Homepage) ──────────────────────────────
   let pageDesign = {};
   try { pageDesign = getPageDesignSettings('studio') || {}; } catch (e) { console.warn('Failed to load page design:', e.message); }
@@ -88,53 +95,160 @@ export default function StudioPage() {
         }
       `}</style>
 
-      {/* Studio section styles */}
+      {/* Load editorial composition system */}
+      <link rel="stylesheet" href="/editorial-composition.css" />
+
+      {/* Studio section styles — refined with editorial composition */}
       <style>{`
+        /* ── Hero: full-bleed cinematic ── */
+        .studio-hero {
+          position: relative;
+          height: 65vh;
+          min-height: 520px;
+          overflow: hidden;
+          background: var(--walnut);
+        }
+        .studio-hero img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 18%;
+          opacity: 0.82;
+          transform: scale(1.04);
+          animation: pageHeroZoom 8s var(--ease-luxury) forwards;
+        }
+        .studio-hero::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(43,34,27,0.08) 0%, rgba(43,34,27,0.15) 40%, rgba(43,34,27,0.65) 100%);
+        }
+        .studio-hero-content {
+          position: absolute;
+          bottom: clamp(var(--space-lg), 8vh, var(--space-2xl));
+          left: 0;
+          z-index: 2;
+          padding: 0 var(--space-lg);
+          max-width: 680px;
+        }
+        .studio-hero .eyebrow { margin-bottom: var(--space-sm); }
+        .studio-hero h1 {
+          color: var(--bg-primary);
+          font-size: clamp(2rem, 4.5vw, var(--text-h1));
+          line-height: 1.08;
+          margin: 0;
+          letter-spacing: -0.025em;
+        }
+        .studio-hero p {
+          color: var(--stone);
+          font-size: var(--text-body);
+          max-width: 48ch;
+          margin-top: var(--space-sm);
+        }
+
+        /* ── Origin: asymmetric editorial grid with edge tension ── */
         .origin {
           background: var(--bg-primary);
-          padding: var(--studio-section-padding);
+          padding: var(--space-3xl) 0;
         }
         .origin-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: var(--studio-gap);
-          align-items: center;
-          max-width: var(--studio-content-width);
+          grid-template-columns: 1.15fr 0.85fr;
+          gap: clamp(var(--space-xl), 5vw, var(--space-3xl));
+          align-items: start;
+          max-width: none;
           margin: 0 auto;
-          padding: 0 var(--space-md);
+          padding: 0 var(--space-lg);
         }
-        .origin-image { aspect-ratio: 4 / 5; }
-        .origin-image img { width: 100%; height: 100%; object-fit: cover; }
+        .origin-grid .origin-image {
+          margin-left: calc(-1 * var(--space-lg));
+        }
+        .origin-image {
+          position: relative;
+          overflow: hidden;
+          aspect-ratio: 3 / 2;
+        }
+        .origin-image img { 
+          width: 100%; 
+          height: 100%; 
+          object-fit: cover; 
+          display: block; 
+          transition: transform 1.4s var(--ease-luxury);
+        }
+        .origin-image:hover img { transform: scale(1.02); }
+        .origin-text { max-width: 60ch; padding: var(--space-md) 0; }
         .origin-text h2 {
           font-size: clamp(1.75rem, calc(3.2vw * var(--studio-heading-scale, 1)), var(--text-h2));
           margin-bottom: var(--space-md);
           max-width: none;
+          text-wrap: balance;
         }
         .origin-text p { color: var(--text-secondary); margin-bottom: var(--space-sm); line-height: var(--lh-relaxed); }
 
+        /* ── Why Teak: wide editorial band ── */
+        .why-teak {
+          background: var(--walnut);
+          color: var(--bg-primary);
+          padding: clamp(72px, 9vw, 144px) 0;
+        }
+        .why-teak-inner {
+          max-width: var(--container-wide);
+          margin: 0 auto;
+          padding: 0 var(--space-lg);
+          display: grid;
+          grid-template-columns: minmax(180px, 240px) 1fr;
+          gap: clamp(24px, 4vw, 72px);
+          align-items: start;
+        }
+        .why-teak .eyebrow { color: var(--stone); }
+        .why-teak-label h2 {
+          font-size: var(--text-subhead);
+          font-weight: 600;
+          color: var(--bg-primary);
+          margin: 0;
+          max-width: none;
+        }
+        .why-teak-statement {
+          font-size: clamp(1.45rem, 2.6vw, 2.1rem);
+          line-height: 1.35;
+          letter-spacing: -0.01em;
+          color: var(--bg-primary);
+          max-width: 28ch;
+          text-wrap: pretty;
+        }
+
+        /* ── Materials: editorial grid with tactile detail crops ── */
         .materials {
           background: var(--bg-secondary);
-          padding: var(--studio-section-padding);
+          padding: var(--space-3xl) 0;
         }
         .materials-header {
-          max-width: 640px;
+          max-width: var(--container-wide);
           margin: 0 auto var(--space-xl);
-          text-align: center;
+          padding: 0 var(--space-lg);
+          text-align: left;
         }
         .materials-header h2 {
           font-size: clamp(1.75rem, calc(3.2vw * var(--studio-heading-scale, 1)), var(--text-h2));
           margin-top: var(--space-sm);
-          max-width: none;
+          max-width: 20ch;
+          text-wrap: balance;
         }
         .materials-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: var(--space-lg);
-          max-width: var(--studio-content-width);
-          margin: 0 auto;
-          padding: 0 var(--space-md);
+           display: grid;
+           grid-template-columns: 1.2fr 1fr 0.8fr;
+           gap: var(--space-lg);
+           max-width: var(--container-wide);
+           margin: 0 auto;
+           padding: 0 var(--space-lg);
+           align-items: start;
+         }
+        .material-item { 
+          border-top: var(--border-hair); 
+          padding-top: var(--space-md); 
         }
-        .material-item { border-top: var(--border-hair); padding-top: var(--space-md); }
         .material-item h3 {
           font-size: var(--text-subhead);
           margin-bottom: var(--space-xs);
@@ -142,29 +256,74 @@ export default function StudioPage() {
         }
         .material-item p { color: var(--text-secondary); font-size: var(--text-body); line-height: var(--lh-relaxed); }
 
+        /* Material detail image — tactile environmental shot with cinematic composition */
+         .material-lead-image {
+         margin: calc(-1 * var(--cin-gutter-wide)) 0 var(--space-3xl);
+         padding: 0;
+         background: var(--walnut);
+         max-width: none;
+         }
+         .material-lead-image .editorial-image {
+         position: relative;
+         overflow: hidden;
+         aspect-ratio: 21 / 9;
+         max-width: var(--container-wide);
+         margin: 0 auto;
+         }
+        .material-lead-image .editorial-image::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(43,34,27,0.08) 0%, rgba(43,34,27,0.15) 40%, rgba(43,34,27,0.65) 100%);
+        }
+        .material-lead-image img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 20%;
+          transition: transform 1.4s var(--ease-luxury), filter 0.4s var(--ease);
+        }
+        .material-lead-image:hover img {
+          transform: scale(1.02);
+          filter: brightness(1) saturate(1.1);
+        }
+
+        /* ── Process: cinematic roadmap with stage imagery ── */
         .process {
           background: var(--bg-primary);
-          padding: var(--space-2xl) 0 var(--space-xl);
+          padding: var(--space-3xl) 0 var(--space-2xl);
           overflow: hidden;
         }
         .process-header {
-          text-align: center;
+          text-align: left;
           margin-bottom: var(--space-xl);
+          max-width: var(--container-wide);
+          margin-left: auto;
+          margin-right: auto;
+          padding: 0 var(--space-lg);
         }
-        .process-header .eyebrow {
-          display: block;
-          margin-bottom: var(--space-sm);
-        }
+        .process-header .eyebrow { display: block; margin-bottom: var(--space-sm); }
         .process-header h2 {
           font-size: clamp(1.75rem, 3.2vw, var(--text-h2));
           max-width: none;
+          text-align: left;
+        }
+        .process-chain {
+          display: block;
+          margin-top: var(--space-md);
+          font-size: 0.72rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--text-muted);
         }
 
         .process-roadmap {
           position: relative;
-          max-width: 900px;
+          max-width: var(--container-wide);
           margin: 0 auto;
-          padding: var(--space-lg) 0;
+          padding: var(--space-lg) var(--space-lg);
         }
 
         .process-path-track {
@@ -220,35 +379,19 @@ export default function StudioPage() {
           position: relative;
           transition: transform 0.4s var(--ease), background 0.4s var(--ease), box-shadow 0.4s var(--ease);
         }
-        .process-milestone.is-visible .process-marker-dot {
-          transform: scale(1);
-        }
+        .process-milestone.is-visible .process-marker-dot { transform: scale(1); }
         .process-milestone.is-active .process-marker-dot {
           background: var(--bronze);
           box-shadow: 0 0 0 4px rgba(167, 134, 89, 0.15);
         }
 
-        .process-content {
-          padding: 0 var(--space-lg);
-        }
-        .process-content-inner {
-          max-width: 320px;
-        }
-        .process-milestone:nth-child(odd) .process-content-left {
-          text-align: right;
-        }
-        .process-milestone:nth-child(odd) .process-content-left .process-content-inner {
-          margin-left: auto;
-        }
-        .process-milestone:nth-child(odd) .process-content-right {
-          visibility: hidden;
-        }
-        .process-milestone:nth-child(even) .process-content-right {
-          text-align: left;
-        }
-        .process-milestone:nth-child(even) .process-content-left {
-          visibility: hidden;
-        }
+        .process-content { padding: 0 var(--space-lg); }
+        .process-content-inner { max-width: 320px; }
+        .process-milestone:nth-child(odd) .process-content-left { text-align: right; }
+        .process-milestone:nth-child(odd) .process-content-left .process-content-inner { margin-left: auto; }
+        .process-milestone:nth-child(odd) .process-content-right { visibility: hidden; }
+        .process-milestone:nth-child(even) .process-content-right { text-align: left; }
+        .process-milestone:nth-child(even) .process-content-left { visibility: hidden; }
 
         .process-duration {
           display: inline-block;
@@ -276,9 +419,7 @@ export default function StudioPage() {
           line-height: var(--lh-relaxed);
           max-width: 36ch;
         }
-        .process-milestone:nth-child(odd) .process-desc {
-          margin-left: auto;
-        }
+        .process-milestone:nth-child(odd) .process-desc { margin-left: auto; }
 
         .process-icon {
           display: block;
@@ -289,13 +430,8 @@ export default function StudioPage() {
           opacity: 0.6;
           transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
         }
-        .process-milestone.is-visible .process-icon {
-          opacity: 1;
-          transform: scale(1);
-        }
-        .process-milestone:nth-child(odd) .process-icon {
-          margin-left: auto;
-        }
+        .process-milestone.is-visible .process-icon { opacity: 1; transform: scale(1); }
+        .process-milestone:nth-child(odd) .process-icon { margin-left: auto; }
 
         @media (hover: hover) {
           .process-milestone:hover .process-marker-dot {
@@ -307,81 +443,17 @@ export default function StudioPage() {
           }
         }
 
-        @media (max-width: 860px) {
-          .process-roadmap {
-            max-width: 100%;
-            padding-left: 40px;
-          }
-          .process-path-track,
-          .process-path-fill {
-            left: 20px;
-            transform: none;
-          }
-          .process-milestone {
-            grid-template-columns: 40px 1fr;
-            gap: 0;
-          }
-          .process-marker {
-            justify-content: center;
-            padding-top: 6px;
-          }
-          .process-content-left {
-            display: none !important;
-          }
-          .process-content-right {
-            visibility: visible !important;
-            text-align: left !important;
-            padding: 0 var(--space-md) 0 var(--space-sm);
-          }
-          .process-milestone:nth-child(odd) .process-content-right {
-            visibility: visible !important;
-          }
-          .process-desc {
-            margin-left: 0 !important;
-            max-width: none;
-          }
-          .process-icon {
-            margin-left: 0 !important;
-          }
-        }
-
-        @media (max-width: 560px) {
-          .process-roadmap {
-            padding-left: 32px;
-          }
-          .process-path-track,
-          .process-path-fill {
-            left: 16px;
-          }
-          .process-milestone {
-            grid-template-columns: 32px 1fr;
-          }
-          .process-marker-dot {
-            width: 14px;
-            height: 14px;
-          }
-          .process-content-right {
-            padding: 0 var(--space-sm) 0 6px;
-          }
-          .origin--centered .origin-text h2 { font-size: clamp(1.5rem, 5vw, 1.75rem); }
-          .gallery--full .gallery-item { aspect-ratio: 4 / 3; }
-        }
-
-        @media (max-width: 860px) {
-          .origin-grid { grid-template-columns: 1fr; gap: var(--space-lg); max-width: 100%; }
-          .materials-grid { grid-template-columns: 1fr; gap: var(--space-md); max-width: 100%; }
-        }
-
+        /* ── Gallery: editorial hierarchy (hero + supporting pair) ── */
         .gallery {
           background: var(--walnut);
           color: var(--bg-primary);
-          padding: var(--studio-section-padding);
+          padding: var(--space-3xl) 0;
         }
         .gallery .eyebrow { color: var(--stone); }
         .gallery-header {
-          max-width: var(--studio-content-width);
+          max-width: var(--container-wide);
           margin: 0 auto;
-          padding: 0 var(--space-md);
+          padding: 0 var(--space-lg);
         }
         .gallery-header h2 {
           color: var(--bg-primary);
@@ -395,41 +467,163 @@ export default function StudioPage() {
           grid-template-rows: repeat(2, 1fr);
           gap: var(--space-sm);
           height: 640px;
-          max-width: var(--studio-content-width);
+          max-width: var(--container-wide);
           margin: 0 auto;
-          padding: 0 var(--space-md);
+          padding: 0 var(--space-lg);
         }
         .gallery-grid a:first-child { grid-row: 1 / 3; }
         .gallery-item { overflow: hidden; }
+         .gallery-item--hero { grid-row: 1 / 3; }
+         .gallery-item--supporting { aspect-ratio: 4 / 5; align-self: end; }
+         .gallery-item:first-child .gallery-item-img {
+            aspect-ratio: 3 / 4;
+          }
         .gallery-item img {
           width: 100%; height: 100%; object-fit: cover;
           transition: transform var(--dur-slow) var(--ease);
         }
         .gallery-item:hover img { transform: scale(1.02); }
 
+        /* ── Studio closing — quiet transition into the collection ── */
+        .studio-closing {
+          background: var(--bg-primary);
+          border-top: var(--border-hair);
+          padding: clamp(72px, 8vw, 128px) 0;
+        }
+        .studio-closing-inner {
+          max-width: var(--container-wide);
+          margin: 0 auto;
+          padding: 0 var(--space-lg);
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: var(--space-lg);
+          align-items: end;
+        }
+        .studio-closing h2 {
+          font-size: clamp(1.9rem, 3.4vw, var(--text-h2));
+          margin: var(--space-sm) 0 0;
+          max-width: 16ch;
+          text-wrap: balance;
+        }
+        .studio-closing-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          font-size: var(--text-body);
+          font-weight: 600;
+          color: var(--text-primary);
+          text-decoration: none;
+          border-bottom: 1px solid var(--bronze);
+          padding-bottom: 6px;
+          white-space: nowrap;
+        }
+        .studio-closing-link:hover { color: var(--bronze-text); }
+        .studio-closing-link span[aria-hidden="true"] { color: var(--bronze); }
+
+        /* ================================================================
+           RESPONSIVE — Mobile independent composition
+           ================================================================ */
         @media (max-width: 860px) {
-          .gallery-grid { grid-template-columns: 1fr; grid-template-rows: none; height: auto; }
+          .studio-hero { height: 55vh; min-height: 420px; }
+          .studio-hero-content { padding: 0 var(--space-md); bottom: var(--space-lg); }
+          
+          .origin-grid { 
+            grid-template-columns: 1fr; 
+            gap: var(--space-lg); 
+            max-width: 100%; 
+            padding: 0 var(--space-md); 
+          }
+          .origin-image { aspect-ratio: 4 / 3; }
+          .origin-text { max-width: none; padding: 0; }
+          .origin-text h2 { font-size: clamp(1.5rem, 6vw, 1.9rem); text-wrap: balance; }
+          
+          .why-teak-inner { grid-template-columns: 1fr; gap: var(--space-md); }
+          .why-teak-statement { font-size: clamp(1.3rem, 5.6vw, 1.6rem); max-width: none; }
+          
+          .materials-header { max-width: 100%; padding: 0 var(--space-md); }
+          .materials-grid { grid-template-columns: 1fr; gap: var(--space-md); max-width: 100%; }
+          
+          .process-header { text-align: left; padding: 0 var(--space-md); }
+          
+          .process-roadmap {
+            max-width: 100%;
+            padding-left: 40px;
+          }
+          .process-path-track,
+          .process-path-fill {
+            left: 20px;
+            transform: none;
+          }
+          .process-milestone {
+            grid-template-columns: 40px 1fr;
+            gap: 0;
+          }
+          .process-marker { justify-content: center; padding-top: 6px; }
+          .process-content-left { display: none !important; }
+          .process-content-right {
+            visibility: visible !important;
+            text-align: left !important;
+            padding: 0 var(--space-md) 0 var(--space-sm);
+          }
+          .process-milestone:nth-child(odd) .process-content-right {
+            visibility: visible !important;
+          }
+          .process-desc { margin-left: 0 !important; max-width: none; }
+          .process-icon { margin-left: 0 !important; }
+          
+          .gallery-grid { 
+            grid-template-columns: 1fr; 
+            grid-template-rows: none; 
+            height: auto; 
+            padding: 0 var(--space-md);
+          }
           .gallery-grid a:first-child { grid-row: auto; }
           .gallery-item { aspect-ratio: 4 / 3; }
-          .origin--centered .origin-grid { grid-template-columns: 1fr; }
-          .origin--centered .origin-image { max-width: 100%; }
-          .materials--compact .material-item { grid-template-columns: 1fr; }
-          .gallery--full .gallery-grid { grid-template-columns: 1fr; height: auto; }
+          
+          .studio-closing-inner { 
+            grid-template-columns: 1fr; 
+            align-items: start; 
+            gap: var(--space-md); 
+            padding: 0 var(--space-md);
+          }
+          .studio-closing-link { justify-self: start; }
+          
+          .material-lead-image { margin: 0 calc(-1 * var(--space-md)) var(--space-xl); padding: 0; }
+          .material-lead-image .editorial-image { aspect-ratio: 4 / 3; }
+        }
+
+        @media (max-width: 560px) {
+          .studio-hero { height: 50vh; min-height: 360px; }
+          .studio-hero h1 { font-size: clamp(1.75rem, 8vw, 2.25rem); }
+          
+          .process-roadmap { padding-left: 32px; }
+          .process-path-track,
+          .process-path-fill { left: 16px; }
+          .process-milestone { grid-template-columns: 32px 1fr; }
+          .process-marker-dot { width: 14px; height: 14px; }
+          .process-content-right { padding: 0 var(--space-sm) 0 6px; }
+          
+          .gallery-grid { gap: var(--space-xs); }
         }
       `}</style>
 
       {/* ── Hero Section (CMS-backed, variant-aware) ── */}
       {!heroDisabled && (
       <section
-        className={`page-hero ${getVariantClass('page-hero', heroVariant?.id)}`}
+        className={`studio-hero ${getVariantClass('page-hero', heroVariant?.id)}`}
         style={{
           ...(heroSectionStyle.contentWidth ? { maxWidth: heroSectionStyle.contentWidth, margin: '0 auto' } : {}),
           ...(heroSectionStyle.paddingTop ? { paddingTop: heroSectionStyle.paddingTop } : {}),
           ...(heroSectionStyle.paddingBottom ? { paddingBottom: heroSectionStyle.paddingBottom } : {}),
         }}
       >
-        <img fetchPriority="high" src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman planing a wooden board in natural light." width="1600" height="900" />
-        <div className="page-hero-content">
+        <img 
+          fetchPriority="high" 
+          src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} 
+          alt="A craftsman planing a wooden board in natural light." 
+          width="1600" height="900" 
+        />
+        <div className="studio-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Studio'}</span>
           <h1>{hero.title || 'Why we work in solid wood, and why it takes as long as it does.'}</h1>
           <p>{hero.subtitle || 'The materials, the process, and the workshop behind every Teakle piece.'}</p>
@@ -461,8 +655,34 @@ export default function StudioPage() {
       </section>
       )}
 
+      {/* ── Why Teak Section (CMS materials item, elevated verbatim) ── */}
+      {!materialsDisabled && whyTeak && (
+      <section className="why-teak" aria-label="Why teak">
+        <div className="why-teak-inner">
+          <div className="why-teak-label">
+            <h2 className="reveal" suppressHydrationWarning>{whyTeak.title}</h2>
+          </div>
+          <p className="why-teak-statement reveal" suppressHydrationWarning>{whyTeak.body}</p>
+        </div>
+      </section>
+      )}
+
+      {/* ── Material Lead Image — tactile environmental shot ── */}
+      {!materialsDisabled && materialRest.length > 0 && (
+      <section className="material-lead-image" aria-label="Material texture">
+        <div className="editorial-image">
+          <img 
+            loading="lazy" 
+            src="https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600" 
+            alt="Close-up of hand-cut joinery on a solid teak furniture piece, showing grain detail."
+            width="1600" height="1067"
+          />
+        </div>
+      </section>
+      )}
+
       {/* ── Materials Section (CMS-backed, variant-aware) ── */}
-      {!materialsDisabled && materialItems.length > 0 && (
+      {!materialsDisabled && materialRest.length > 0 && (
       <section
         className={`materials ${getVariantClass('materials', materialsVariant?.id)}`}
         style={{
@@ -475,8 +695,8 @@ export default function StudioPage() {
             <h2 className="reveal" suppressHydrationWarning>{materials.title || "Solid wood, and why we don't use anything else."}</h2>
           </div>
           <div className="materials-grid">
-            {materialItems.map((item, i) => (
-              <div key={i} className="material-item reveal" suppressHydrationWarning>
+            {materialRest.map((item, i) => (
+              <div key={i} className={i === 0 ? "material-item material-item--featured reveal" : i === materialRest.length - 1 ? "material-item material-item--detail reveal" : "material-item reveal"} suppressHydrationWarning>
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
               </div>
@@ -492,6 +712,7 @@ export default function StudioPage() {
           <div className="process-header">
             <span className="eyebrow reveal" suppressHydrationWarning>The Journey</span>
             <h2 className="reveal" suppressHydrationWarning>From timber to finished object.</h2>
+            <span className="process-chain reveal" suppressHydrationWarning>Material → Design → Craft → Object → Long-term use</span>
           </div>
           <div className="process-roadmap" id="processRoadmap">
             <div className="process-path-track"></div>
@@ -580,19 +801,31 @@ export default function StudioPage() {
             <h2 className="reveal" suppressHydrationWarning>{gallery.title || 'The people and tools behind every piece.'}</h2>
           </div>
           <div className="gallery-grid">
-            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
+            <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
             </div>
-            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
+            <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." width="700" height="467" />
             </div>
-            <div className="gallery-item img-zoom reveal" suppressHydrationWarning>
+            <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." width="700" height="467" />
             </div>
           </div>
         </div>
       </section>
       )}
+      {/* ── Closing — brand statement into the collection ── */}
+      <section className="studio-closing" aria-label="Explore the collection">
+        <div className="studio-closing-inner">
+          <div>
+            <span className="eyebrow reveal" suppressHydrationWarning>The Collection</span>
+            <h2 className="reveal" suppressHydrationWarning>Not furniture. Heirlooms.</h2>
+          </div>
+          <a className="studio-closing-link reveal" suppressHydrationWarning href="/gallery">
+            Explore the collection <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </section>
     </>
   )
 }

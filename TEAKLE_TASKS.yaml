@@ -1,0 +1,607 @@
+tasks:
+  - title: T01 — Audit and correct homepage product imagery
+    completed: true
+    description: >
+      PURPOSE:
+
+      Fix the highest-priority content-integrity problem on the Teakle homepage:
+
+      products must never display unrelated imagery.
+
+      SCOPE:
+
+      - Inspect the rendered homepage in agent-browser. - Inspect collection
+      carousel imagery. - Inspect featured-product imagery. - Inspect homepage
+      product grids. - Identify obviously incorrect associations such as cars,
+      construction
+        workers,
+        unrelated interiors, computers, or unrelated objects.
+      - Trace incorrect images to their actual verified source:
+        product data, CMS mapping, seed data, image metadata, or component mapping.
+      - Correct the actual source rather than randomly swapping presentation
+        images.
+      - Use authentic Teakle assets already present in the repository. - Do not
+      invent products, product information, prices, specifications, or
+        imagery.
+
+      DO NOT:
+
+      - redesign the homepage - modify backend architecture - modify Shopify
+      architecture - modify authentication - modify business logic - replace
+      real product imagery with unrelated stock imagery
+
+      ACCEPTANCE:
+
+      - Homepage product names correspond to the displayed products. - No
+      obviously unrelated imagery remains in the audited homepage product
+        areas.
+      - Existing product data and commerce controls remain intact. - Desktop and
+      mobile are checked. - Browser console is checked. - npm run build passes.
+
+      PRIORITY:
+
+      P0/P1 content integrity.
+  - title: T02 — Establish the global desktop spatial composition
+    completed: true
+    description: >
+      PURPOSE:
+
+      Make the existing Teakle homepage intentionally designed for large desktop
+      viewports instead of appearing like a narrow mobile composition stretched
+      across the screen.
+
+      SCOPE:
+
+      - Inspect the full rendered homepage at desktop width. - Identify
+      unnecessarily constrained sections. - Inspect max-width containers, grid
+      widths, section padding and column
+        ratios.
+      - Improve the global spatial system where necessary. - Allow major
+      editorial sections to use the available viewport
+        intentionally.
+      - Preserve existing visual identity and section content.
+
+      PRIORITY AREAS:
+
+      - overall page width - major section containers - horizontal composition -
+      text width - image width - section height - intentional whitespace
+
+      ACCEPTANCE:
+
+      - Major desktop sections no longer appear unnecessarily confined. - Full
+      viewport width is used intentionally where appropriate. - No new generic
+      dashboard/card layout is introduced. - Mobile behavior does not regress. -
+      Browser verification and build pass.
+
+      DEPENDENCY:
+
+      Complete T01 first.
+  - title: T03 — Refine the Philosophy section composition
+    completed: true
+    description: >
+      PURPOSE:
+
+      Correct the Philosophy section where content currently occupies too little
+      of the available desktop space.
+
+      SCOPE:
+
+      - Inspect the rendered Philosophy section on desktop. - Determine whether
+      the current half-width/narrow composition is
+        intentional.
+      - Recompose the section using a stronger editorial/architectural
+        relationship
+        between text, whitespace and imagery.
+      - Prefer a wider editorial text field or asymmetrical composition when
+        justified.
+      - Avoid arbitrary oversized text. - Preserve existing copy.
+
+      DESIGN DIRECTION:
+
+      - architectural - spacious - editorial - restrained - materially aware
+
+      ACCEPTANCE:
+
+      - Desktop composition uses available space intentionally. - Text has
+      appropriate editorial width. - Whitespace feels intentional rather than
+      unused. - Mobile has an independently sensible composition. - No content
+      is invented.
+
+      DEPENDENCY:
+
+      T02.
+  - title: T04 — Refine Atelier Stories into an editorial composition
+    completed: true
+    description: >
+      PURPOSE:
+
+      Reduce the catalogue/card feeling of the Atelier Stories section while
+      preserving its content and functionality.
+
+      SCOPE:
+
+      - Inspect the rendered Atelier Stories section. - Rework image/text
+      proportions where needed. - Avoid excessive rounded cards, shadows and
+      boxed UI. - Use stronger asymmetry or architectural spacing where
+      appropriate. - Preserve product name, price, availability and valid
+      commerce controls. - Do not remove purchasing functionality.
+
+      ACCEPTANCE:
+
+      - Section reads as an editorial story rather than a generic ecommerce
+        card.
+      - Product information remains usable. - Imagery feels important and
+      appropriately scaled. - Desktop and mobile are verified. - Build passes.
+
+      DEPENDENCY:
+
+      T03.
+  - title: T05 — Refine featured product presentation
+    completed: true
+    description: >
+      PURPOSE:
+
+      Make the featured product feel like a considered design object while
+      retaining functional commerce.
+
+      SCOPE:
+
+      - Inspect the featured product presentation. - Review background, scale,
+      whitespace, image crop, product positioning,
+        information hierarchy and CTA placement.
+      - Reduce catalogue-like treatment where appropriate. - Preserve product
+      name, price, availability, wishlist and purchase
+        controls.
+      - Do not hide commercial information to simulate luxury.
+
+      ACCEPTANCE:
+
+      - Product receives appropriate visual importance. - Presentation feels
+      sculptural/editorial rather than card-heavy. - Commerce remains
+      functional. - No product information is invented or removed.
+
+      DEPENDENCY:
+
+      T04.
+  - title: T06 — Refine craft, maker and workshop storytelling
+    completed: true
+    description: >
+      PURPOSE:
+
+      Strengthen Teakle's craftsmanship narrative using the existing craft,
+      maker and workshop/process sections.
+
+      SCOPE:
+
+      - Inspect craft/process imagery and text. - Inspect maker/craftsman
+      storytelling. - Improve section proportions, image scale, text hierarchy
+      and rhythm. - Use wide cinematic or extreme-edge imagery where the
+      existing assets
+        support it.
+      - Avoid introducing unrelated stock photography. - Preserve existing copy
+      and factual claims.
+
+      ACCEPTANCE:
+
+      - Craftsmanship feels central to the page. - Sections have stronger
+      editorial rhythm. - Repetitive image/text layouts are reduced where
+      appropriate. - Desktop and mobile remain coherent.
+
+      DEPENDENCY:
+
+      T05.
+  - title: T07A — Correct homepage editorial imagery
+    completed: true
+    description: |
+      Audit only the images currently used on the Teakle homepage.
+
+      Trace each homepage image to its actual source before changing anything.
+      Identify and remove unrelated imagery that does not represent Teakle,
+      teakwood products, craftsmanship, the workshop, or verified existing
+      brand imagery.
+
+      Do not invent products, imagery, photography, people, claims, or
+      content.
+      Do not introduce stock imagery merely to fill visual space.
+      Do not modify CMS architecture, product data, ecommerce logic, or routes.
+
+      Preserve legitimate existing Teakle imagery and correct only verified
+      mismatches.
+
+      Verify the homepage at desktop and mobile after implementation.
+      Check browser console for errors.
+      Run npm run build.
+
+      Completion requires an actual implementation and verification, not merely
+      an audit or recommendation.
+  - title: T07B — Establish cinematic homepage image composition
+    completed: true
+    description: |
+      Refine the composition of the homepage imagery using the existing verified
+      Teakle imagery.
+
+      Focus only on image scale, crop, aspect ratio, object positioning, and
+      spatial placement.
+
+      Establish the Teakle editorial image language:
+      - cinematic landscape imagery where appropriate
+      - intentional extreme-left or extreme-right placement
+      - wide central imagery where appropriate
+      - deliberate negative space
+      - strong relationship between image scale and surrounding typography
+      - no generic centered-card treatment
+      - no excessive image repetition
+
+      Desktop and mobile must be composed independently where necessary.
+      Do not invent imagery or modify product data.
+      Do not redesign unrelated sections.
+
+      Verify the homepage visually at desktop and mobile.
+      Check browser console for errors.
+      Run npm run build.
+
+      Completion requires actual implementation and verification.
+  - title: T08 — Establish one coherent global typography hierarchy
+    completed: true
+    description: >
+      PURPOSE:
+
+      Create a consistent typographic system across the existing Teakle website.
+
+      AUDIT:
+
+      - hero/display type - H1 - H2 - H3 - eyebrow/section labels - subtitles -
+      body text - metadata - navigation - utility controls - footer
+
+      REQUIREMENTS:
+
+      - Continue using Instrument Sans. - Do not introduce decorative, serif,
+      script or novelty fonts. - Do not arbitrarily enlarge every heading. -
+      Establish consistent relationships between sizes, line heights,
+        letter spacing and text widths.
+      - Preserve the existing brand palette.
+
+      ACCEPTANCE:
+
+      - Typography feels like one system rather than individually styled
+        sections.
+      - Hierarchy is immediately understandable. - Desktop and mobile remain
+      readable. - No content is rewritten merely to create visual change.
+
+      DEPENDENCY:
+
+      T07A and T07B.
+  - title: T09 — Refine responsive typography
+    completed: true
+    description: >
+      PURPOSE:
+
+      Correct the mobile typography system without simply shrinking desktop
+      text.
+
+      SCOPE:
+
+      - Inspect mobile homepage. - Inspect mobile headings, subtitles, body
+      text, metadata, navigation,
+        buttons and footer.
+      - Establish intentional responsive scaling. - Correct tiny text and
+      uncomfortable line lengths. - Preserve comfortable reading widths.
+
+      ACCEPTANCE:
+
+      - Important mobile headings remain visually important. - Body text is
+      readable. - Metadata and utility text remain subordinate but legible. - No
+      horizontal overflow is introduced. - Touch targets remain usable.
+
+      DEPENDENCY:
+
+      T08.
+  - title: T10 — Refine desktop header and navigation
+    completed: true
+    description: |
+      PURPOSE:
+
+      Improve the desktop navigation system while preserving every existing
+      navigation destination and commerce control.
+
+      AUDIT:
+
+      - logo placement
+      - header height
+      - transparent/scroll state
+      - navigation spacing
+      - search
+      - account
+      - wishlist
+      - cart
+      - active states
+      - icon scale
+      - alignment
+
+      REQUIREMENTS:
+
+      - Use the existing Teakle logo asset.
+      - Never redraw or replace the logo.
+      - Preserve all existing navigation functionality.
+      - Maintain the established Teakle palette.
+      - Keep commerce visually quiet but functional.
+
+      ACCEPTANCE:
+
+      - Header feels deliberate and premium.
+      - Scroll-state behavior is coherent.
+      - All existing controls continue working.
+
+      DEPENDENCY:
+
+      T09.
+  - title: T11 — Refine mobile header, drawer and bottom navigation
+    completed: true
+    description: >
+      PURPOSE:
+
+      Improve the mobile navigation experience as an independently designed
+      system.
+
+      AUDIT:
+
+      - mobile header - logo - menu trigger - drawer width - drawer hierarchy -
+      overlay - drawer animation - navigation icons - active states - bottom
+      navigation
+
+      REQUIREMENTS:
+
+      - Do not remove mobile bottom navigation. - Preserve
+      search/account/wishlist/cart functionality. - Maintain usable touch
+      targets. - Avoid app-like decorative treatment where unnecessary. - Use
+      restrained animation.
+
+      ACCEPTANCE:
+
+      - Drawer opens/closes reliably. - Navigation remains readable and usable.
+      - No clipping or overflow. - Bottom navigation remains functional. -
+      Desktop navigation is unaffected.
+
+      DEPENDENCY:
+
+      T10.
+  - title: T12 — Establish restrained Teakle motion
+    completed: true
+    description: |
+      PURPOSE:
+
+      Add or refine motion only where it improves the existing experience.
+
+      POTENTIAL AREAS:
+
+      - page entrance
+      - section reveals
+      - image reveals
+      - image movement
+      - hover states
+      - carousel transitions
+      - drawer transitions
+      - navigation transitions
+
+      RULES:
+
+      - Motion must be restrained.
+      - Prefer subtle opacity, transform and controlled image movement.
+      - Respect reduced-motion preferences where practical.
+      - Do not animate every element.
+      - No bouncing.
+      - No excessive parallax.
+      - No constant movement.
+      - No motion that interferes with reading or purchasing.
+
+      ACCEPTANCE:
+
+      - Motion feels intentional rather than decorative.
+      - Existing interaction behavior remains reliable.
+      - No performance or runtime errors are introduced.
+
+      DEPENDENCY:
+
+      T11.
+  - title: T13 — Recompose the mobile homepage independently
+    completed: true
+    description: |
+      PURPOSE:
+
+      Make mobile feel intentionally designed rather than a vertically stacked
+      desktop page.
+
+      SCOPE:
+
+      - inspect the entire mobile homepage
+      - identify repetitive or unnecessary sections
+      - preserve important storytelling
+      - preserve important product imagery
+      - simplify secondary copy where appropriate
+      - improve section ordering/composition when justified
+      - preserve commerce and navigation
+
+      IMPORTANT:
+
+      Do not delete content simply to make the page shorter.
+
+      Only simplify or restructure when the rendered experience benefits.
+
+      ACCEPTANCE:
+
+      - Mobile has its own deliberate composition.
+      - Important imagery remains prominent.
+      - Text is readable.
+      - Sections do not feel excessively repetitive.
+      - All important interactions remain available.
+
+      DEPENDENCY:
+
+      T12.
+  - title: T14 — Refine mobile image crops and spacing
+    completed: true
+    description: |
+      PURPOSE:
+
+      Resolve mobile image and spacing problems after the independent mobile
+      composition is established.
+
+      AUDIT:
+
+      - image crop
+      - focal point
+      - image height
+      - section spacing
+      - heading spacing
+      - CTA spacing
+      - carousel spacing
+      - product grid spacing
+      - footer density
+
+      ACCEPTANCE:
+
+      - Product and craft imagery remains recognizable.
+      - No awkward crops.
+      - No excessive dead vertical space.
+      - No cramped sections.
+      - No horizontal overflow.
+
+      DEPENDENCY:
+
+      T13.
+  - title: T15 — Accessibility and interaction quality pass
+    completed: true
+    description: >
+      PURPOSE:
+
+      Improve accessibility and interaction quality without changing business
+      logic.
+
+      AUDIT:
+
+      - semantic headings - image alt text - button/link labels - keyboard focus
+      - visible focus states - touch target sizes - contrast - carousel controls
+      - navigation controls - form labels
+
+      REQUIREMENTS:
+
+      - Do not invent content. - Do not change authentication or backend
+      architecture. - Preserve all established functionality.
+
+      ACCEPTANCE:
+
+      - Important interactive controls have clear accessible names. - Keyboard
+      navigation is usable where applicable. - Focus states are visible. -
+      Images have meaningful existing-context alt text where needed. - No visual
+      regression is introduced.
+
+      DEPENDENCY:
+
+      T14.
+  - title: T16 — Full responsive regression audit
+    completed: true
+    description: >
+      PURPOSE:
+
+      Perform a targeted regression pass after the visual refinements.
+
+      CHECK:
+
+      - desktop homepage - mobile homepage - relevant interior pages - header -
+      footer - mobile drawer - bottom navigation - carousels - product grids -
+      horizontal overflow - image loading - typography - console/runtime errors
+
+      RULE:
+
+      Only change something if a real regression or clearly verified problem is
+      found.
+
+      ACCEPTANCE:
+
+      - No major responsive regressions. - No horizontal overflow on supported
+      layouts. - No new console/runtime errors. - Existing navigation remains
+      functional.
+
+      DEPENDENCY:
+
+      T15.
+  - title: T17 — Commerce regression audit
+    completed: true
+    description: |
+      PURPOSE:
+
+      Verify that visual refinement has not damaged commerce functionality.
+
+      CHECK:
+
+      - product listing
+      - product detail
+      - prices
+      - availability
+      - wishlist
+      - account
+      - cart
+      - add-to-cart
+      - quantity controls
+      - product grids
+      - horizontal product carousels
+      - navigation to products
+
+      IMPORTANT:
+
+      Do not redesign backend or commerce architecture.
+
+      Fix only verified frontend regressions if found.
+
+      ACCEPTANCE:
+
+      - Product purchasing flow remains functional.
+      - Product information remains intact.
+      - Prices remain present where already required.
+      - Wishlist/account/cart controls remain usable.
+
+      DEPENDENCY:
+
+      T16.
+  - title: T18 — Final visual, runtime and build verification
+    completed: true
+    description: |
+      PURPOSE:
+
+      Perform the final convergence audit.
+
+      INSPECT:
+
+      - homepage
+      - desktop
+      - mobile
+      - navigation
+      - footer
+      - editorial imagery
+      - typography hierarchy
+      - section rhythm
+      - product presentation
+      - craft storytelling
+      - console/runtime
+      - responsive behavior
+      - commerce
+
+      FINAL RULE:
+
+      Do not make changes merely to create activity.
+
+      If the implementation already satisfies the requirement, leave it alone.
+
+      If a genuine final issue is discovered and is small and safe, fix it.
+      Otherwise perform verification only.
+
+      REQUIRED:
+
+      - npm run build
+      - browser verification
+      - console verification
+      - final report of observed/changed/verified/remaining state
+
+      DEPENDENCY:
+
+      T17.

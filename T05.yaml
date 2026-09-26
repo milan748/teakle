@@ -1,0 +1,195 @@
+tasks:
+  - title: T05 - Refine Gallery Product Presentation
+    completed: true
+    description: >
+      Refine the existing Teakle Gallery page into a clean, premium, editorial
+      product browsing experience.
+
+      IMPORTANT: This is an existing website. Refine the current Gallery
+      implementation. Do not rebuild unrelated pages, change the backend, or
+      alter commerce logic unnecessarily.
+
+      ============================================================ PRIMARY
+      OBJECTIVE ============================================================
+
+      Audit and refine the existing /gallery page.
+
+      The Gallery should feel like a curated Teakle product collection, not a
+      generic ecommerce catalogue.
+
+      Preserve the existing products, product data, authentic product images,
+      product routes and functionality.
+
+      ============================================================ REMOVE "SOLID
+      TEAK" FROM PRODUCT PRESENTATIONS
+      ============================================================
+
+      Remove the text:
+
+      "Solid Teak"
+
+      from the product presentation on the Gallery page.
+
+      This means it must NOT appear as a repeated material label underneath
+      every product.
+
+      Do NOT remove legitimate product material information from the actual
+      product page if it is required there.
+
+      This task specifically concerns the Gallery product presentation.
+
+      Do not replace "Solid Teak" with another invented material label.
+
+      ============================================================ PRODUCT GRID
+      ============================================================
+
+      Preserve the existing Gallery product selection and product data.
+
+      Improve the visual presentation so products feel like objects in a curated
+      collection.
+
+      Product imagery should remain the dominant element.
+
+      Avoid: - heavy card borders - excessive shadows - badges - marketplace
+      styling - dense specifications - unnecessary UI decoration
+
+      Product cards should have sufficient breathing room.
+
+      Product names should have clear hierarchy.
+
+      Existing price information may remain where currently supported.
+
+      Do not invent product descriptions, prices or specifications.
+
+      ============================================================ IMAGE
+      COMPOSITION ============================================================
+
+      Use authentic existing product imagery.
+
+      Do not replace images with placeholders.
+
+      Do not invent alternate product images.
+
+      Avoid destructive cropping.
+
+      Preserve important product details.
+
+      Where appropriate, use varied image scale and composition so the Gallery
+      feels editorial rather than mechanically repetitive.
+
+      However, maintain enough consistency that the collection remains easy to
+      browse.
+
+      ============================================================ FILTERING AND
+      CATEGORY NAVIGATION
+      ============================================================
+
+      Preserve the existing Gallery filtering functionality.
+
+      Ensure category/filter controls remain usable.
+
+      Do not remove existing valid categories.
+
+      Do not invent new categories.
+
+      Ensure the filter interface does not overlap or become visually attached
+      to unrelated header imagery.
+
+      Maintain clear separation between:
+
+      - page heading - category/filter controls - product collection
+
+      ============================================================ DESKTOP
+      ============================================================
+
+      Use the full available desktop width intentionally.
+
+      Do not constrain the Gallery into an unnecessarily narrow centered
+      container.
+
+      Maintain a sophisticated editorial rhythm between product images.
+
+      Product rows should feel deliberate rather than like a generic marketplace
+      grid.
+
+      Preserve enough whitespace around products for the objects to breathe.
+
+      ============================================================ MOBILE
+      ============================================================
+
+      Recompose the Gallery intentionally for mobile.
+
+      Do not simply shrink the desktop grid.
+
+      Ensure:
+
+      - product images remain large enough to understand; - product names remain
+      readable; - prices remain readable where applicable; - filters remain
+      accessible; - no horizontal page overflow exists; - product links remain
+      functional.
+
+      Preserve the mobile Gallery filtering experience.
+
+      ============================================================ FUNCTIONALITY
+      ============================================================
+
+      Preserve:
+
+      - product links - wishlist functionality - add-to-cart functionality -
+      existing product data - existing category filtering - navigation -
+      responsive behavior
+
+      Do not modify backend/business logic unnecessarily.
+
+      ============================================================ SCOPE
+      ============================================================
+
+      Do not redesign:
+
+      - homepage - Atelier Stories - Archive - Studio - Product pages -
+      navigation
+
+      unless a minimal change is required to prevent a regression from this
+      Gallery work.
+
+      This task is specifically the Gallery product presentation.
+
+      ============================================================ BROWSER
+      VERIFICATION ============================================================
+
+      Inspect /gallery in the browser.
+
+      Verify:
+
+      1. "Solid Teak" no longer appears as a repeated product label. 2. Product
+      images are authentic and correctly associated with products. 3. Product
+      names remain clear. 4. Product links work. 5. Existing category/filter
+      controls work. 6. Desktop composition uses the available width
+      appropriately. 7. Mobile composition is intentional. 8. No horizontal
+      overflow exists. 9. No unrelated functionality is broken. 10. Browser
+      console has no newly introduced errors.
+
+      Search the rendered Gallery page for "Solid Teak" to ensure the unwanted
+      repeated label has actually been removed.
+
+      ============================================================ BUILD
+      VERIFICATION ============================================================
+
+      Run:
+
+      npm run build
+
+      The build must complete successfully.
+
+      Do not report completion merely because the code compiles.
+
+      ============================================================ DEFINITION OF
+      DONE ============================================================
+
+      T05 is complete only when:
+
+      - Gallery product presentation is visually refined; - repeated "Solid
+      Teak" labels are removed from Gallery products; - authentic product images
+      remain intact; - filtering remains functional; - product navigation
+      remains functional; - desktop and mobile are verified; - no horizontal
+      overflow exists; - browser verification passes; - npm run build passes.

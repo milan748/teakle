@@ -1,0 +1,7 @@
+'use client'
+
+import { useRef, useState, useCallback } from 'react'
+import Link from 'next/link'
+import { PRODUCTS } from './data/products'
+import { resolvePageDesign, resolveVariant, parseStyleOverrides, parseSectionOverrides, resolveSectionStyle, resolveElementStyle, resolveTypography, getVariantClass, resolveFocalPoint, focalPointToObjectPosition } from '@/lib/designResolution'
+import './homepage.css'

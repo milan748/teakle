@@ -41,15 +41,15 @@ export const PRODUCTS = [
     seats: "6",
     images: [
       "https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/11112745/pexels-photo-11112745.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/11112740/pexels-photo-11112740.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/11112741/pexels-photo-11112741.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/11112742/pexels-photo-11112742.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
       "https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/11112745/pexels-photo-11112745.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/11112740/pexels-photo-11112740.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/11112741/pexels-photo-11112741.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/11112742/pexels-photo-11112742.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The Anchor Table began as a single teak log, selected from a managed plantation in southern India. The wood was left to settle in the workshop for several weeks before any cutting began. Each joint is cut by hand — mortise and tenon, locked without metal. The grain runs the full length of the top, unbroken, a record of the tree's growth.",
     craftsmanship: "Every joint is hand-cut using traditional mortise and tenon joinery. No metal fasteners, no screws — just wood meeting wood, as it has for centuries. The surface is planed by hand, not sanded, to preserve the grain's natural lustre. Multiple thin coats of food-safe oil are worked in by hand, each allowed to cure before the next.",
@@ -137,14 +137,10 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~12 hours",
     images: [
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "The Bearing Chair started as an experiment in single-block furniture. A craftsman took one solid piece of teak and carved away everything that wasn't a chair. What remains is a seamless form — seat, legs, and back flowing from one continuous surface.",
     craftsmanship: "Each chair is carved from a single timber block using traditional hand tools. The seat is shaped with adzes and chisels, then smoothed with hand planes. No joints, no glue, no fasteners — just one piece of wood, shaped by hand.",
@@ -223,14 +219,10 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~14 hours",
     images: [
-      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
-      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "Inspired by the circular workshops of traditional Indian woodturners, the Circle Table is shaped on a hand-operated lathe. The pedestal base is turned from a single block, while the top is carefully fitted and finished by hand.",
     craftsmanship: "The base is hand-turned on a traditional lathe, a process that requires steady hands and years of experience. The top is shaped separately and joined to the base with a concealed tenon joint.",
@@ -309,14 +301,10 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~10 hours",
     images: [
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     story: "Through-tenon joinery is one of the oldest techniques in woodworking — the end of the tenon is visible on the outside of the joint, proving that no fasteners are hidden inside. The Hollow Bench celebrates this tradition.",
     craftsmanship: "Each through-tenon is cut by hand, then dry-fitted before glue is applied. The visible end grain of the tenon becomes a design feature, a honest expression of how the piece is built.",

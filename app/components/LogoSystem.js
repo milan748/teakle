@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import Link from 'next/link';
 import {
   LOGO_VARIANTS,
   getLogoSrc,
@@ -37,7 +36,6 @@ export function Logo({
   size = 'default',
   className = '',
   alt,
-  href = '/',
   onError,
 } = {}) {
   const [imgError, setImgError] = React.useState(false);
@@ -74,11 +72,7 @@ export function Logo({
     />
   );
 
-  return href ? (
-    <Link href={href} className="logo" aria-label={resolvedAlt}>
-      {content}
-    </Link>
-  ) : content;
+  return content;
 }
 
 /* ── Convenience wrappers ────────────────────────────────── */

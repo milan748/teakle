@@ -1,0 +1,329 @@
+tasks:
+  - title: T06 - Refine Archive as Atelier Works
+    completed: true
+    description: >
+      Refine the existing Teakle Archive page into a curated record of previous
+      Atelier Stories works.
+
+      IMPORTANT: The Archive should feel like a quiet historical record of
+      previous Teakle Atelier pieces, not a normal ecommerce product catalogue.
+
+      This is an existing website. Refine the current Archive implementation.
+      Preserve existing routes, data, authentic imagery and functionality. Do
+      not rebuild unrelated pages or modify backend/business logic
+      unnecessarily.
+
+      ============================================================ PRIMARY
+      OBJECTIVE ============================================================
+
+      The Archive should represent previous Atelier Stories works and pieces
+      that belong to the site's existing archive/previous-editions data.
+
+      Its purpose is to communicate:
+
+      - previous works - previous Atelier pieces - visual history - objects that
+      are no longer part of the current featured collection,
+        where that status is actually supported by the existing data
+
+      The page should feel curated, editorial and archival.
+
+      It must NOT feel like another version of the Gallery page.
+
+      ============================================================ IMPORTANT
+      CONTENT RULE ============================================================
+
+      Do NOT automatically describe every archived product as:
+
+      - retired - one of one - never repeated - never restocked - permanently
+      unavailable - impossible to reproduce - discontinued
+
+      unless the existing product/archive data explicitly supports that claim.
+
+      Use the existing source data as the authority.
+
+      If the data only establishes that an item belongs to the Archive or
+      previous Atelier editions, communicate that fact without adding
+      unsupported scarcity or retirement language.
+
+      Do not invent historical context.
+
+      Do not invent dates.
+
+      Do not invent artists or makers.
+
+      Do not invent production quantities.
+
+      Do not invent reasons why an item left the collection.
+
+      ============================================================ ARCHIVE VS
+      CURRENT COLLECTION
+      ============================================================
+
+      The Archive should be clearly distinguished from the current Gallery and
+      current collection.
+
+      Avoid presenting archived pieces as ordinary currently available products.
+
+      If an archived item has an existing product page or historical detail
+      route, preserve that route where appropriate.
+
+      Do not add an "Add to Cart" action to an archived piece if the existing
+      data indicates that it is not currently purchasable.
+
+      Do not change commerce logic merely to make Archive items look available.
+
+      ============================================================ VISUAL
+      DIRECTION ============================================================
+
+      The Archive should feel:
+
+      - quiet - editorial - architectural - curated - tactile - mature - premium
+      - historical without becoming nostalgic - visually related to Teakle
+      Atelier Stories
+
+      It should NOT look like:
+
+      - a normal shop - a marketplace - a product inventory table - a card-heavy
+      ecommerce catalogue - a generic archive template
+
+      ============================================================ PAGE
+      HIERARCHY ============================================================
+
+      Establish a clear Archive introduction.
+
+      The hierarchy should include:
+
+      ARCHIVE
+
+      A concise existing/source-supported explanation of what the Archive
+      represents.
+
+      Then the archived works.
+
+      Use an editorial product/works presentation rather than ordinary ecommerce
+      cards.
+
+      Do not invent a long marketing paragraph.
+
+      Use existing content where available.
+
+      ============================================================ IMAGE
+      COMPOSITION ============================================================
+
+      Use authentic existing imagery belonging to the archived works.
+
+      Do not invent images.
+
+      Do not replace existing product images with unrelated lifestyle imagery.
+
+      Use varied image scale where appropriate.
+
+      The Archive should have a sense of visual rhythm.
+
+      Appropriate compositions may include:
+
+      - large featured archive work - smaller supporting works - asymmetric
+      image placement - varied image widths - occasional wide editorial image
+
+      However, do not create arbitrary visual variation that makes the page
+      difficult to browse.
+
+      Every image must remain clearly associated with the correct archived work.
+
+      ============================================================ EXTREME LEFT
+      / RIGHT COMPOSITION
+      ============================================================
+
+      Follow the existing Teakle editorial direction.
+
+      Where appropriate:
+
+      - allow images to reach toward the extreme left edge; - allow images to
+      reach toward the extreme right edge; - use varied image widths; - use
+      occasional very wide cinematic imagery where authentic imagery
+        supports it.
+
+      Do not force every image into the same centered card.
+
+      Do not mechanically alternate every item left/right.
+
+      Variation should feel intentional rather than algorithmic.
+
+      ============================================================ PRODUCT /
+      WORK INFORMATION
+      ============================================================
+
+      Show only information supported by the existing data.
+
+      Appropriate information may include:
+
+      - work/product name - existing category - material - existing archive
+      status - existing description - existing date only if actually stored -
+      existing historical metadata
+
+      Do not invent specifications.
+
+      Do not invent prices.
+
+      Do not invent availability.
+
+      Do not invent stories.
+
+      ============================================================ RETIRED /
+      PREVIOUS EDITION LANGUAGE
+      ============================================================
+
+      If the data explicitly identifies a work as retired, previous, archived,
+      discontinued or unavailable, communicate that appropriately.
+
+      If the data does not explicitly establish the status, use neutral archival
+      language.
+
+      Examples of safe framing where supported:
+
+      - ARCHIVE - PREVIOUS EDITION - FROM THE ATELIER - ARCHIVED WORK
+
+      Do not turn neutral archival status into artificial scarcity.
+
+      ============================================================ NAVIGATION
+      ============================================================
+
+      Preserve the existing Archive route.
+
+      Preserve navigation to valid historical/product detail pages.
+
+      Ensure links do not point to broken routes.
+
+      Do not remove the main site navigation.
+
+      ============================================================ MOBILE
+      ============================================================
+
+      Recompose the Archive intentionally for mobile.
+
+      Do not simply shrink the desktop layout.
+
+      Ensure:
+
+      - images remain meaningful; - work names remain readable; - archival
+      status remains understandable; - spacing remains intentional; - no
+      horizontal overflow exists; - links remain accessible.
+
+      Do not create a horizontal product carousel.
+
+      Do not require horizontal dragging to understand the Archive.
+
+      ============================================================ RELATIONSHIP
+      TO ATELIER STORIES
+      ============================================================
+
+      Atelier Stories presents the current featured signature object.
+
+      Archive presents previous Atelier works.
+
+      Make this relationship visually understandable.
+
+      Do not duplicate the current Anchor Table Atelier Stories presentation
+      into the Archive unless the underlying data explicitly identifies it as an
+      archived work.
+
+      Do not place the current featured Atelier hero/product into the Archive
+      merely to fill space.
+
+      ============================================================ RELATIONSHIP
+      TO GALLERY ============================================================
+
+      Gallery = current collection/product browsing.
+
+      Archive = previous Atelier works / archival record.
+
+      Do not make the Archive visually identical to Gallery.
+
+      Do not reuse a standard ecommerce grid if the existing Archive content
+      supports a more editorial composition.
+
+      ============================================================ FUNCTIONALITY
+      ============================================================
+
+      Preserve:
+
+      - Archive route - valid work/product links - navigation - existing
+      CMS/data connections - responsive behavior - wishlist/cart functionality
+      where legitimately applicable - existing product detail routes
+
+      Do not modify backend/business logic unnecessarily.
+
+      ============================================================
+      IMPLEMENTATION PROCESS
+      ============================================================
+
+      BEFORE CODING:
+
+      1. Inspect the current /archive implementation. 2. Identify the actual
+      data source feeding Archive works. 3. Determine which works are genuinely
+      archive/previous-edition items. 4. Inspect their existing images and
+      metadata. 5. Identify any unsupported scarcity/retirement language
+      currently
+         hardcoded into the Archive.
+      6. Preserve supported content and remove unsupported claims.
+
+      THEN:
+
+      7. Refine the Archive page. 8. Establish clear editorial hierarchy. 9.
+      Improve image composition. 10. Distinguish archived works from current
+      products. 11. Preserve valid routes and functionality. 12. Implement
+      intentional mobile composition.
+
+      ============================================================ SCOPE
+      ============================================================
+
+      Do NOT redesign:
+
+      - Homepage - Atelier Stories - Gallery - Studio - Product pages -
+      Navigation - Footer
+
+      unless a minimal change is required to prevent a regression caused by this
+      Archive work.
+
+      This task is specifically the Archive page.
+
+      ============================================================ BROWSER
+      VERIFICATION ============================================================
+
+      Inspect /archive in the browser.
+
+      Verify:
+
+      1. Archive clearly reads as previous Atelier works. 2. Current featured
+      products are not incorrectly presented as archived. 3. No unsupported
+      "retired", "one of one", "never repeated",
+         "never restocked" or similar claims have been added.
+      4. Existing supported archival information remains accurate. 5. Images
+      correspond to the correct works. 6. Product/work links work. 7. Desktop
+      composition feels editorial and spacious. 8. Image composition uses the
+      available width intentionally. 9. Mobile composition works. 10. No
+      horizontal overflow exists. 11. No horizontal carousel is introduced. 12.
+      Browser console has no newly introduced errors.
+
+      ============================================================ BUILD
+      VERIFICATION ============================================================
+
+      Run:
+
+      npm run build
+
+      The build must complete successfully.
+
+      Do not report completion merely because the code compiles.
+
+      ============================================================ DEFINITION OF
+      DONE ============================================================
+
+      T06 is complete only when:
+
+      - Archive clearly represents previous Atelier works; - current collection
+      and Archive are clearly differentiated; - unsupported scarcity/retirement
+      claims are not introduced; - authentic images and data are preserved; -
+      the visual presentation is editorial and premium; - desktop and mobile are
+      verified; - valid navigation remains functional; - browser verification
+      passes; - npm run build passes.

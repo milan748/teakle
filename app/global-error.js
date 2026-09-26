@@ -12,7 +12,7 @@ export default function GlobalError({ error, reset }) {
             justify-content: center;
             background: #F7F4EE;
             padding: 2rem;
-            font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Instrument Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
           }
           .ge-inner { text-align: center; max-width: 480px; }
           .ge-title {
@@ -29,7 +29,7 @@ export default function GlobalError({ error, reset }) {
           }
           .ge-btn {
             display: inline-block;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Instrument Sans', sans-serif;
             font-size: 0.6175rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;

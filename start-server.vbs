@@ -1,0 +1,1 @@
+CreateObject("Wscript.Shell").Run "cmd /C cd C:\Users\Milan\Desktop\TEAKLE && node .\node_modules\.bin\next dev --port 3099", 0, True

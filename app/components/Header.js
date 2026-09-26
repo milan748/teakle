@@ -278,17 +278,29 @@ export default function Header() {
           <span></span><span></span><span></span>
         </button>
         {hasHero ? (
-          <SecondaryHorizontal aria-label="Teakle Home" size="header" theme={scrolled ? 'dark' : 'light'} />
+          <Link href="/" aria-label="Teakle home" className="logo">
+            <SecondaryHorizontal size="header" theme={scrolled ? 'dark' : 'light'} />
+          </Link>
         ) : (
-          <SecondaryHorizontal aria-label="Teakle Home" size="header" theme="dark" />
+          <Link href="/" aria-label="Teakle home" className="logo">
+            <SecondaryHorizontal size="header" theme="dark" />
+          </Link>
         )}
         <div className="header-mobile-actions">
-          <button className="header-icon" aria-label="Search" onClick={openSearch}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </button>
+          <Link href="/wishlist" className="header-icon" aria-label="Wishlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span className="icon-badge" id="mobileWishlistCount" style={{display:'none'}}>0</span>
+          </Link>
           <Link href="/cart" className="header-icon" aria-label="Cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span className="icon-badge" id="mobileCartCount" style={{display:'none'}}>0</span>
+          </Link>
+          <Link href={isLoggedIn ? '/account' : '/login'} className="header-icon" aria-label="Account">
+            {isLoggedIn && user ? (
+              <span className="account-avatar-sm">{getInitials(user.name)}</span>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            )}
           </Link>
         </div>
         <nav aria-label="Main navigation">
@@ -306,11 +318,11 @@ export default function Header() {
                   autoComplete="off"
                 />
                 <button type="submit" className="nav-mobile-search-submit" aria-label="Submit search">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </button>
               </form>
               <button className="nav-mobile-close-btn" aria-label="Close menu" onClick={closeDrawer}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             {searchQuery.length >= 2 && searchResults.length > 0 && (
@@ -343,7 +355,7 @@ export default function Header() {
             <div className="nav-mobile-link-row">
               <Link href="/gallery" className={`nav-dropdown-desktop-link${isActive('/gallery') ? ' is-active' : ''}`} aria-current={isActive('/gallery') ? 'page' : undefined} onClick={closeDrawer}>Gallery</Link>
               <button className="nav-dropdown-mobile-link" aria-label="Toggle Gallery submenu" aria-expanded={galleryOpen} aria-controls="gallery-dropdown-menu" onClick={(e) => { e.preventDefault(); toggleGallery(); }}>
-                <svg className="nav-dropdown-mobile-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+                <svg className="nav-dropdown-mobile-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </div>
             <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
@@ -363,20 +375,20 @@ export default function Header() {
           <li><Link href="/studio" className={isActive('/studio') ? 'is-active' : undefined} aria-current={isActive('/studio') ? 'page' : undefined} onClick={closeDrawer}>Studio</Link></li>
           <li><Link href="/journal" className={isActive('/journal') ? 'is-active' : undefined} aria-current={isActive('/journal') ? 'page' : undefined} onClick={closeDrawer}>Journal</Link></li>
           <li><Link href="/custom" className={isActive('/custom') ? 'is-active' : undefined} aria-current={isActive('/custom') ? 'page' : undefined} onClick={closeDrawer}>Customize</Link></li>
-          <li className="nav-drawer-secondary"><Link href="/login" onClick={closeDrawer}>Account</Link></li>
-          <li className="nav-drawer-secondary"><Link href="/wishlist" onClick={closeDrawer}>Wishlist</Link></li>
+          <li className="nav-drawer-secondary"><Link href="/login" onClick={closeDrawer}><svg className="nav-mobile-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account</Link></li>
+          <li className="nav-drawer-secondary"><Link href="/wishlist" onClick={closeDrawer}><svg className="nav-mobile-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wishlist</Link></li>
         </ul>
         </nav>
         <div className="header-actions">
           <button className="header-icon" aria-label="Search" onClick={openSearch}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
           <Link href="/wishlist" className="header-icon" aria-label="Wishlist">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             <span className="icon-badge" id="wishlistCount" style={{display:'none'}}>0</span>
           </Link>
           <Link href="/cart" className="header-icon" aria-label="Cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span className="icon-badge" id="cartCount" style={{display:'none'}}>0</span>
           </Link>
 
@@ -392,7 +404,7 @@ export default function Header() {
               {isLoggedIn && user ? (
                 <span className="account-avatar-sm">{getInitials(user.name)}</span>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               )}
             </button>
 
@@ -509,12 +521,12 @@ export default function Header() {
                 />
                 {searchQuery.length > 0 && (
                   <button type="button" className="search-clear-btn" onClick={clearSearch} aria-label="Clear search">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                   </button>
                 )}
               </div>
               <button type="button" className="search-close-btn" onClick={closeSearch} aria-label="Close search">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 <span className="search-close-label">ESC</span>
               </button>
             </form>
@@ -564,7 +576,7 @@ export default function Header() {
                 <p className="search-hints-label">Popular searches</p>
                 <div className="search-hints-list">
                   {['Teak', 'Table', 'Bowl', 'Tray', 'Planter'].map((term) => (
-                    <button key={term} className="search-hint-pill" onMouseDown={(e) => { e.preventDefault(); setSearchQuery(term); searchFields(term); }}>
+                    <button key={term} className="search-hint-pill" onMouseDown={(e) => { e.preventDefault(); setSearchQuery(term); searchFields(term); }} onClick={() => { setSearchQuery(term); searchFields(term); searchInputRef.current?.focus(); }}>
                       {term}
                     </button>
                   ))}

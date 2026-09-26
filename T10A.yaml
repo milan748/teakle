@@ -1,0 +1,310 @@
+tasks:
+  - title: T10A - Correct Journal Extreme Left and Right Positioning
+    completed: true
+    description: >
+      Make a surgical visual correction to the existing Journal page (/journal).
+
+      IMPORTANT: The current Journal structure, editorial grid, typography,
+      spacing, tile sizes, article content, and centered landscape compositions
+      are already acceptable.
+
+      DO NOT redesign the Journal again.
+
+      The ONLY remaining issue is that the side-positioned article images are
+      not positioned far enough toward the extreme left and extreme right of the
+      Journal's editorial frame.
+
+      ============================================================ 1. PRIMARY
+      OBJECTIVE ============================================================
+
+      Correct the horizontal positioning of the existing side article
+      compositions.
+
+      LEFT-SIDE ARTICLES: - Move their images significantly toward the EXTREME
+      LEFT of the
+        Journal's overall editorial frame.
+      - They should occupy the outermost usable left-side grid columns. - They
+      should no longer appear visually centered or center-left. - Maintain a
+      small, intentional outer margin.
+
+      RIGHT-SIDE ARTICLES: - Move their images significantly toward the EXTREME
+      RIGHT of the
+        Journal's overall editorial frame.
+      - They should occupy the outermost usable right-side grid columns. - They
+      should no longer appear visually centered or center-right. - Maintain the
+      same intentional outer margin.
+
+      The desired visual relationship is:
+
+      LEFT ANCHORED                 CENTER                 RIGHT ANCHORED
+
+      [IMAGE]                         [WIDE IMAGE]                 [IMAGE]
+
+      not:
+
+      [IMAGE]              [WIDE IMAGE]              [IMAGE]
+
+      where all three elements feel trapped toward the center.
+
+      ============================================================ 2. EXTREME
+      LEFT / RIGHT DEFINITION
+      ============================================================
+
+      "Extreme left" and "extreme right" do NOT mean touching the browser
+      viewport.
+
+      Keep the existing overall Journal page margin.
+
+      Instead, the side images should move to the OUTERMOST USABLE COLUMNS
+      INSIDE THE EXISTING JOURNAL FRAME.
+
+      Conceptually:
+
+      ┌─────────────────────────────────────────────────────────────┐
+      │                                                             │ │ [LEFT
+      IMAGE]                                                │
+      │                                                             │
+      │                                             [RIGHT IMAGE]   │
+      │                                                             │
+      └─────────────────────────────────────────────────────────────┘
+
+      The left image should be visually close to the left boundary of the
+      editorial frame.
+
+      The right image should be visually close to the right boundary of the
+      editorial frame.
+
+      Do not increase the global page width to achieve this.
+
+      ============================================================ 3. USE THE
+      EXISTING GRID ============================================================
+
+      Inspect the existing Journal CSS/layout structure.
+
+      Do NOT solve this using arbitrary absolute positioning or random pixel
+      offsets.
+
+      Use the existing editorial grid and move the side compositions toward its
+      outermost columns.
+
+      If the current implementation uses a multi-column grid:
+
+      LEFT: - align the image to the first usable grid columns.
+
+      RIGHT: - align the image to the last usable grid columns.
+
+      Preserve the existing grid, gutters, and outer page margins.
+
+      Do NOT rebuild the entire grid.
+
+      ============================================================ 4. KEEP IMAGE
+      SIZES ============================================================
+
+      Do not redesign the current image dimensions.
+
+      Preserve: - image width - image height - aspect ratio - image crop - image
+      quality
+
+      unless a very minor responsive adjustment is required.
+
+      This task is primarily a HORIZONTAL POSITION correction.
+
+      ============================================================ 5. KEEP THE
+      CENTER LANDSCAPE IMAGES
+      ============================================================
+
+      The existing wide landscape image treatment is correct.
+
+      KEEP IT EXACTLY AS IT IS.
+
+      Do not: - move the landscape images left or right - change their width -
+      change their aspect ratio - change their crop - make them full bleed -
+      change their surrounding spacing
+
+      The final Journal should clearly have:
+
+      LEFT-SIDE ARTICLES → strongly left anchored
+
+      CENTER LANDSCAPE ARTICLES → centered and unchanged
+
+      RIGHT-SIDE ARTICLES → strongly right anchored
+
+      ============================================================ 6. KEEP IMAGE
+      + TEXT RELATIONSHIPS
+      ============================================================
+
+      When a side image moves outward, its associated article text must remain
+      correctly aligned with it.
+
+      LEFT composition:
+
+      [IMAGE] [ARTICLE INFORMATION]
+
+      RIGHT composition:
+
+      [ARTICLE INFORMATION] [IMAGE]
+
+      Do not leave article information floating in the middle after
+      repositioning the image.
+
+      The image and its article information should remain one coherent editorial
+      unit.
+
+      ============================================================ 7. DO NOT
+      CHANGE VERTICAL RHYTHM
+      ============================================================
+
+      Do NOT introduce additional large gaps.
+
+      Do not increase: - top margins - bottom margins - article-to-article
+      spacing - section heights
+
+      unless absolutely required by the existing layout.
+
+      The current vertical rhythm should remain intact.
+
+      This is a horizontal correction, not a spacing redesign.
+
+      ============================================================ 8. PRESERVE
+      CURRENT TILE VARIATION
+      ============================================================
+
+      Keep the existing mixture of: - large tiles - medium tiles - smaller tiles
+      - wide landscape tiles
+
+      Do not make every article the same size.
+
+      Do not introduce a new zigzag sequence.
+
+      The current tile-size hierarchy should remain unchanged.
+
+      ============================================================ 9. REMOVE
+      RANDOM OFFSET BEHAVIOR
+      ============================================================
+
+      Side images should feel intentionally anchored, not arbitrarily offset.
+
+      Do not use unrelated values such as:
+
+      translateX(-300px) translateX(250px)
+
+      simply to force visual placement.
+
+      Correct the actual: - grid column - grid span - alignment - wrapper
+      positioning
+
+      wherever possible.
+
+      ============================================================ 10. MOBILE
+      ============================================================
+
+      Do not force desktop extreme positioning onto mobile.
+
+      Mobile should retain: - safe side margins - readable text - no horizontal
+      overflow - appropriate image width - coherent image/text relationships
+
+      Preserve the existing mobile Journal composition unless a small adjustment
+      is necessary to prevent overflow.
+
+      ============================================================ 11. REMOVE
+      UNEXPLAINED "N" ELEMENTS
+      ============================================================
+
+      The Journal currently shows repeated small black circular "N" elements
+      along the left side.
+
+      If these are accidental/debug/editorial artifacts and have no essential
+      functional purpose, remove them.
+
+      Do not replace them with another decorative element.
+
+      If they are a required functional control, preserve the function but
+      ensure they are intentionally integrated into the UI.
+
+      ============================================================ 12. CONTENT
+      AND FUNCTIONALITY
+      ============================================================
+
+      Preserve all existing: - Journal articles - titles - categories -
+      descriptions - dates - images - article slugs - article detail routes -
+      header - footer - navigation - hover interactions - responsive behavior
+
+      Do not modify unrelated pages.
+
+      Do not modify commerce logic.
+
+      Do not add Shopify integration.
+
+      ============================================================ 13. CURRENT
+      RUNTIME ERROR ============================================================
+
+      Ensure the Journal has no remaining JavaScript runtime errors.
+
+      In particular, verify the previous:
+
+      ReferenceError: i is not defined
+
+      issue is resolved.
+
+      If ARTICLES.map uses the article index, the callback must explicitly
+      expose it, for example:
+
+      ARTICLES.map((article, i) => (
+
+      Do not introduce any new undefined variables.
+
+      ============================================================ 14. VISUAL
+      TARGET ============================================================
+
+      At desktop width the Journal should visually read as:
+
+      ┌─────────────────────────────────────────────────────────────┐
+      │                                                             │ │ [LEFT
+      ARTICLE]                                              │
+      │                                                             │
+      │                              [CENTER LANDSCAPE]             │
+      │                                                             │
+      │                                             [RIGHT ARTICLE] │
+      │                                                             │ │ [LEFT
+      ARTICLE]                                              │
+      │                                                             │
+      │                              [CENTER LANDSCAPE]             │
+      │                                                             │
+      │                                             [RIGHT ARTICLE] │
+      │                                                             │
+      └─────────────────────────────────────────────────────────────┘
+
+      This is a conceptual representation only.
+
+      The actual article sequence should remain based on the existing Journal
+      content.
+
+      The important requirement is that side compositions occupy the OUTER LEFT
+      and OUTER RIGHT zones while the landscape compositions remain centered.
+
+      ============================================================ 15. BROWSER
+      VERIFICATION ============================================================
+
+      Open /journal in the browser and inspect the entire page.
+
+      Verify:
+
+      - left-side images are visibly far left - right-side images are visibly
+      far right - centered landscape images remain unchanged - image/text
+      relationships remain aligned - tile sizes remain unchanged - vertical
+      spacing remains controlled - no horizontal overflow - no broken images -
+      no runtime errors - all article links still work
+
+      Check desktop and mobile.
+
+      Run:
+
+      npm run build
+
+      Resolve any errors introduced by this task.
+
+      COMPLETION REQUIREMENT: Only mark this task completed after actual browser
+      verification and a successful npm run build.
+
+      SCOPE: This is ONLY a horizontal positioning correction for the Journal.
+      Do not redesign the Journal again. Do not modify unrelated Teakle pages.

@@ -72,16 +72,19 @@ const galleryStyles = `
 .gal-page {
   background: var(--bg-primary);
   min-height: 100vh;
+  overflow-x: clip;
+  --gal-max: min(1520px, 100% - 3rem);
 }
 
 /* Category Navigation — Compact Pills */
 .gal-cat-nav {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: var(--space-xl) var(--space-md) var(--space-md);
+  padding: var(--space-xl) 0 var(--space-md);
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  border-bottom: var(--border-subtle);
 }
 .gal-cat-pill {
   font-family: var(--font-body);
@@ -114,14 +117,15 @@ const galleryStyles = `
 
 /* Toolbar — Sort + Filter Toggle */
 .gal-toolbar {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-lg);
+  padding: var(--space-md) 0 var(--space-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
   flex-wrap: wrap;
+  border-bottom: var(--border-subtle);
 }
 .gal-toolbar-left {
   display: flex;
@@ -180,19 +184,30 @@ const galleryStyles = `
 .gal-sort-select:hover {
   border-color: var(--bronze);
 }
+.gal-cat-pill:focus-visible,
+.gal-filter-toggle:focus-visible,
+.gal-sort-select:focus-visible,
+.gal-filter-clear:focus-visible,
+.gal-empty-btn:focus-visible,
+.gal-search-reset-btn:focus-visible,
+.gal-active-tag:focus-visible {
+  outline: 2px solid var(--bronze);
+  outline-offset: 2px;
+}
 
 /* Filter Panel */
 .gal-filters {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0;
   max-height: 0;
   overflow: hidden;
   transition: max-height 400ms var(--ease), padding 400ms var(--ease);
 }
 .gal-filters.is-open {
-  max-height: 300px;
+  max-height: 340px;
   padding-bottom: var(--space-md);
+  border-bottom: var(--border-subtle);
 }
 .gal-filters-inner {
   display: grid;
@@ -325,9 +340,9 @@ const galleryStyles = `
 
 /* Active Filters Bar */
 .gal-active-filters {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-sm);
+  padding: var(--space-sm) 0 0;
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;
@@ -357,21 +372,50 @@ const galleryStyles = `
   height: 10px;
 }
 
-/* Product Grid */
+/* Product Collection — curated editorial grid.
+   Wide full-bleed measure, three deliberate columns on desktop,
+   generous breathing room. No card chrome: imagery leads,
+   name carries hierarchy, price stays quiet. */
 .gal-grid {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-2xl);
+  padding: var(--space-xl) 0 var(--space-2xl);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2rem, 3.5vw, 3.5rem) clamp(1.5rem, 2.5vw, 2.5rem);
+}
+/* Gallery-scoped object presentation: image dominant, name + price only.
+   (No material label — intentionally omitted on Gallery.) */
+.gal-grid .pcard {
+  min-width: 0;
+}
+.gal-grid .pcard-img {
+  border: none;
+  box-shadow: none;
+  margin-bottom: 1rem;
+}
+.gal-grid .pcard-info {
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+.gal-grid .pcard-info h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.gal-grid .pcard-price {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
 }
 
 /* Empty State */
 .gal-empty {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: var(--space-2xl) var(--space-md);
+  padding: var(--space-2xl) 0;
   text-align: center;
 }
 .gal-empty h2 {
@@ -404,12 +448,11 @@ const galleryStyles = `
 /* Search Banner */
 .gal-search-banner {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
-  max-width: var(--container); margin: 0 auto;
-  padding: var(--space-md) var(--space-md);
+  max-width: var(--gal-max); margin: var(--space-md) auto 0;
+  padding: var(--space-md);
   background: rgba(167,134,89,0.06);
   border: 1px solid rgba(167,134,89,0.15);
   border-radius: var(--radius-md);
-  margin-bottom: var(--space-lg);
 }
 .gal-search-banner-inner { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
 .gal-search-banner-label { font-size: var(--text-caption); color: var(--text-secondary); }
@@ -429,9 +472,9 @@ const galleryStyles = `
 
 /* Note */
 .gal-note {
-  max-width: var(--container);
+  max-width: var(--gal-max);
   margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-xl);
+  padding: 0 0 var(--space-xl);
   text-align: center;
   font-size: var(--text-body);
   color: var(--text-secondary);
@@ -440,24 +483,35 @@ const galleryStyles = `
 .gal-note a { color: var(--bronze); border-bottom: 1px solid transparent; transition: border-color var(--dur-fast) var(--ease); }
 .gal-note a:hover { border-bottom-color: var(--bronze); }
 
-/* Responsive */
+/* Responsive — mobile is recomposed, not shrunk.
+   Two generous columns keep imagery large and names/prices readable. */
+@media (max-width: 1024px) {
+  .gal-grid { gap: var(--space-lg) var(--space-md); }
+}
 @media (max-width: 860px) {
+  .gal-page { --gal-max: min(1520px, 100% - 2rem); }
   .gal-cat-nav { padding-top: var(--space-md); }
-  .gal-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  .gal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg) var(--space-md); }
+  .gal-grid .pcard-info h3 { font-size: 0.9375rem; }
+  .gal-grid .pcard-price { font-size: 0.8125rem; }
   .gal-filters-inner { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
-  .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-sm); padding-left: var(--space-sm); padding-right: var(--space-sm); }
-  .gal-cat-pill { font-size: 12px; padding: 0.45em 0.9em; }
-  .gal-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .gal-page { --gal-max: min(1520px, 100% - 1.5rem); }
+  .gal-cat-nav { gap: 0.4rem; padding-top: var(--space-md); }
+  .gal-cat-pill { font-size: 12px; padding: 0.55em 1em; min-height: 40px; }
+  .gal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-md) var(--space-sm); padding-top: var(--space-lg); }
+  .gal-grid .pcard-img { margin-bottom: 0.75rem; }
+  .gal-grid .pcard-info h3 { font-size: 0.875rem; line-height: 1.35; }
+  .gal-grid .pcard-price { font-size: 0.8125rem; }
   .gal-filters-inner { grid-template-columns: 1fr; }
   .gal-toolbar { flex-direction: column; align-items: stretch; }
   .gal-toolbar-left { justify-content: space-between; }
   .gal-search-banner { padding: var(--space-xs) var(--space-sm); }
 }
 @media (max-width: 430px) {
-  .gal-grid { gap: var(--space-xs); }
-  .gal-cat-nav { max-width: none; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-left: var(--space-sm); padding-right: var(--space-sm); }
+  .gal-grid { gap: var(--space-md) var(--space-sm); }
+  .gal-cat-nav { max-width: none; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-left: 0.75rem; padding-right: 0.75rem; margin-left: -0.75rem; margin-right: -0.75rem; border-bottom: none; }
   .gal-cat-nav::-webkit-scrollbar { display: none; }
   .gal-cat-pill { flex-shrink: 0; }
 }
@@ -598,6 +652,7 @@ export default function GalleryClient({ products: serverProducts }) {
           <button
             className={`gal-cat-pill${activeCategory === 'all' ? ' is-active' : ''}`}
             onClick={() => setActiveCategory('all')}
+            aria-pressed={activeCategory === 'all'}
           >
             All<span className="pill-count">{categoryCounts.all}</span>
           </button>
@@ -606,6 +661,7 @@ export default function GalleryClient({ products: serverProducts }) {
               key={cat.key}
               className={`gal-cat-pill${activeCategory === cat.key ? ' is-active' : ''}`}
               onClick={() => setActiveCategory(cat.key)}
+              aria-pressed={activeCategory === cat.key}
             >
               {cat.title}<span className="pill-count">{categoryCounts[cat.key]}</span>
             </button>
@@ -748,7 +804,7 @@ export default function GalleryClient({ products: serverProducts }) {
         {filteredProducts.length > 0 ? (
           <div className="gal-grid">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} showMeta />
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (

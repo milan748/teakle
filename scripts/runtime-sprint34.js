@@ -90,11 +90,11 @@ async function freshCsrf(cookies) {
     return true;
   });
 
-  await check('Homepage references Montserrat font', async () => {
+  await check('Homepage references Instrument Sans font', async () => {
     if (!homeHtml) return 'no HTML';
-    if (homeHtml.includes('Montserrat') || homeHtml.includes('montserrat')) return true;
+    if (homeHtml.includes('Instrument Sans') || homeHtml.includes('instrument-sans')) return true;
     if (homeHtml.includes('googleapis.com')) return true;
-    return 'missing Montserrat in HTML';
+    return 'missing Instrument Sans in HTML';
   });
 
   await check('Homepage references bundled CSS', async () => {

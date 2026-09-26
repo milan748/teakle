@@ -57,8 +57,8 @@ test('has font-body variable', () => {
   assertIncludes(stylesCode, '--font-body:');
 });
 
-test('has Montserrat font import', () => {
-  assertIncludes(stylesCode, 'Montserrat');
+test('has Instrument Sans font import', () => {
+  assertIncludes(stylesCode, 'Instrument Sans');
 });
 
 test('has type scale variables', () => {

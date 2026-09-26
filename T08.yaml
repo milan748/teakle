@@ -1,0 +1,461 @@
+tasks:
+  - title: T08 - Refine Product Page Conversion Experience
+    completed: true
+    description: >
+      Refine the existing Teakle product page into a premium, high-conviction
+      product presentation that helps a visitor understand, inspect and
+      ultimately decide whether they want to own the object.
+
+      IMPORTANT: This is an existing product-page system. Refine the current
+      implementation. Do not rebuild the entire commerce architecture. Preserve
+      product data, routes, cart, wishlist, inquiry, authentication, checkout
+      and existing backend functionality.
+
+      ============================================================ PRIMARY
+      OBJECTIVE ============================================================
+
+      The product page should work as both:
+
+      1. A detailed product presentation. 2. A conversion/ownership page.
+
+      The visitor should naturally move through:
+
+      SEE THE OBJECT → INSPECT THE OBJECT → UNDERSTAND THE MATERIAL → UNDERSTAND
+      THE CRAFT / PROCESS → UNDERSTAND THE VALUE → DECIDE WHETHER TO OWN IT
+
+      The page should feel like a luxury furniture/product presentation, not a
+      generic ecommerce template.
+
+      ============================================================ PRODUCT IMAGE
+      GALLERY ============================================================
+
+      Audit the existing product-page image gallery.
+
+      Product pages must support multiple authentic images wherever the
+      product's existing media data contains them.
+
+      The primary product image should be visually dominant.
+
+      Supporting images should allow the visitor to inspect:
+
+      - different angles - proportions - material - surface - construction -
+      details
+
+      where authentic imagery exists.
+
+      Do NOT fabricate product images.
+
+      Do NOT invent alternate product views.
+
+      Do NOT use unrelated products or generic lifestyle images as product
+      gallery substitutes.
+
+      Preserve authentic image aspect ratios where practical.
+
+      Avoid destructive cropping.
+
+      ============================================================ GALLERY
+      INTERACTION ============================================================
+
+      If the existing product gallery already supports thumbnail selection,
+      refine it rather than replacing it unnecessarily.
+
+      If the current implementation lacks functional image selection, implement
+      a clean thumbnail-to-main-image interaction.
+
+      Clicking a supporting image should allow the customer to inspect that view
+      as the primary image.
+
+      Use restrained transitions.
+
+      Avoid unnecessary carousel complexity.
+
+      Do not introduce autoplay.
+
+      Do not make the user fight the gallery.
+
+      ============================================================ PRODUCT
+      INFORMATION HIERARCHY
+      ============================================================
+
+      Establish a clear hierarchy:
+
+      PRODUCT CATEGORY / EYEBROW
+
+      PRODUCT NAME
+
+      Short product description
+
+      Material / meaningful product metadata
+
+      Dimensions where existing data supports them
+
+      Build time where existing data supports it
+
+      Price
+
+      Availability where existing data supports it
+
+      PRIMARY OWNERSHIP / INQUIRY CTA
+
+      Supporting actions such as wishlist
+
+      The most important information should be immediately understandable.
+
+      Do not bury the product name or price in small text.
+
+      Do not overload the visitor with technical specifications above the
+      primary CTA.
+
+      ============================================================ STORY AND
+      VALUE ============================================================
+
+      A premium product page should explain WHY the object matters.
+
+      Where authentic existing product content exists, establish a narrative
+      around:
+
+      - material - design - craftsmanship - construction - use - longevity -
+      distinctive product details
+
+      Do NOT invent a story.
+
+      Do NOT invent an artist.
+
+      Do NOT invent production history.
+
+      Do NOT invent awards or certifications.
+
+      Do NOT invent sustainability claims.
+
+      Do NOT invent customer testimonials.
+
+      Do NOT make unsupported rarity claims.
+
+      Use the existing product description, metadata, process content and
+      related authentic content as the source of truth.
+
+      ============================================================ MATERIAL
+      PRESENTATION ============================================================
+
+      Material should feel tangible rather than being presented as a single
+      generic label.
+
+      Where existing content supports it, explain:
+
+      - material selection - grain - texture - surface - construction -
+      finishing - relationship between material and design
+
+      Do not repeatedly use generic phrases such as "premium quality" without
+      substantive information.
+
+      ============================================================ PROCESS /
+      CRAFT ============================================================
+
+      Where a dedicated process page exists for the product, provide a clear
+      path to it.
+
+      Use:
+
+      WATCH THE PROCESS
+
+      or the existing equivalent.
+
+      Verify that the CTA leads to the correct existing process route.
+
+      Do not invent a process route.
+
+      Do not duplicate the entire process page inside the product page.
+
+      The product page should create curiosity and provide a clear path to
+      deeper process information.
+
+      ============================================================ OWNERSHIP /
+      CONVERSION ============================================================
+
+      The primary conversion action should be visually clear.
+
+      For products that use an inquiry/ownership model, preserve:
+
+      INQUIRE TO OWN
+
+      or the existing valid equivalent.
+
+      For products that are directly purchasable, preserve the existing Add to
+      Cart / purchase flow.
+
+      Do NOT change the business model.
+
+      Do NOT replace inquiry with direct purchase.
+
+      Do NOT replace direct purchase with inquiry.
+
+      Use the product's existing commerce configuration as the source of truth.
+
+      ============================================================ PRICE
+      ============================================================
+
+      Preserve the existing authentic product price.
+
+      Do not invent or modify prices.
+
+      Present price clearly without making the page feel promotional.
+
+      Do not add discounts unless the existing commerce system explicitly
+      supports them.
+
+      Do not add artificial urgency.
+
+      ============================================================ WISHLIST
+      ============================================================
+
+      Preserve the existing wishlist functionality.
+
+      Ensure the control is:
+
+      - visible enough to discover; - visually consistent with Teakle; - not
+      more prominent than the primary ownership/purchase action; - functional.
+
+      ============================================================ SHARE BUTTON
+      ============================================================
+
+      Audit the existing product-page Share functionality.
+
+      If the Share button currently does not work, fix it.
+
+      The Share action should use the existing browser/device sharing capability
+      where supported, with a sensible fallback where necessary.
+
+      It must not produce an error.
+
+      Do not add a fake share interaction.
+
+      Do not create unnecessary social integrations.
+
+      ============================================================ PRODUCT
+      DETAILS ============================================================
+
+      Product details should be easy to scan.
+
+      Appropriate existing information may include:
+
+      - material - dimensions - build time - weight where supported -
+      availability - care information - shipping information - other existing
+      product metadata
+
+      Do not invent missing values.
+
+      Do not create a huge technical table if the current content does not
+      justify one.
+
+      ============================================================ RELATED
+      PRODUCTS ============================================================
+
+      If the existing product page contains related products, keep them visually
+      subordinate to the primary product presentation.
+
+      Do not allow related products to compete with the featured product.
+
+      Use only authentic existing products.
+
+      Do not invent recommendations.
+
+      ============================================================ VISUAL
+      DIRECTION ============================================================
+
+      The product page should feel:
+
+      - contemporary - architectural - editorial - tactile - quiet -
+      sophisticated - materially rich - premium
+
+      Avoid:
+
+      - generic ecommerce templates - marketplace styling - excessive cards -
+      excessive shadows - promotional badges - fake scarcity - countdowns -
+      aggressive sales language - unnecessary popups - excessive gradients
+
+      ============================================================ DESKTOP
+      COMPOSITION ============================================================
+
+      Use the full desktop viewport intentionally.
+
+      The primary product image/gallery should have significant visual weight.
+
+      Product information should remain easy to scan.
+
+      Avoid a tiny product image next to a huge block of text.
+
+      Avoid constraining the entire product page into a narrow centered
+      ecommerce container.
+
+      Use appropriate whitespace.
+
+      The product should feel like an object being presented, not merely a SKU
+      being sold.
+
+      ============================================================ MOBILE
+      ============================================================
+
+      Recompose the product page intentionally for mobile.
+
+      Recommended hierarchy:
+
+      Product image/gallery
+
+      Product name
+
+      Short description
+
+      Price / availability
+
+      Primary ownership/purchase CTA
+
+      Wishlist
+
+      Product details
+
+      Story
+
+      Process CTA
+
+      Related products
+
+      Do not mechanically stack every desktop element.
+
+      Ensure the primary CTA remains easy to access.
+
+      Ensure the gallery remains usable.
+
+      Ensure there is no horizontal overflow.
+
+      ============================================================ TYPOGRAPHY
+      ============================================================
+
+      Preserve Instrument Sans and the existing Teakle typography system.
+
+      Establish clear hierarchy between:
+
+      - product name - description - price - metadata - body story - CTA labels
+      - supporting information
+
+      Do not make product information excessively small.
+
+      Do not use unnecessary uppercase text everywhere.
+
+      ============================================================ IMAGE
+      COMPOSITION ============================================================
+
+      Product imagery should remain the primary visual language.
+
+      Use large product imagery.
+
+      Use varied image scale where authentic assets support it.
+
+      Do not crop important product details unnecessarily.
+
+      Do not substitute generic lifestyle photography for actual product
+      photography.
+
+      ============================================================ CONTENT
+      AUTHENTICITY ============================================================
+
+      Before modifying content, inspect:
+
+      - product data - product media - existing product description - process
+      data - existing metadata - existing product-page implementation
+
+      Reuse authentic content.
+
+      Do not invent:
+
+      - craftsmanship statistics - years of experience - artists - awards -
+      certifications - customer reviews - scarcity - historical claims -
+      production claims - sustainability claims
+
+      ============================================================ FUNCTIONALITY
+      PRESERVATION ============================================================
+
+      Preserve:
+
+      - Add to Cart - cart quantity behavior - wishlist - inquiry - checkout -
+      product variants if applicable - authentication - share functionality -
+      product routing - process routing - related products - existing CMS
+      integration
+
+      Do not modify backend/business logic unnecessarily.
+
+      ============================================================
+      IMPLEMENTATION PROCESS
+      ============================================================
+
+      BEFORE CODING:
+
+      1. Inspect the current product page implementation. 2. Identify the
+      product data source. 3. Identify the product media source. 4. Inspect the
+      existing gallery behavior. 5. Inspect the existing Share button. 6.
+      Inspect the current inquiry/cart behavior. 7. Identify the correct process
+      route for products that have one. 8. Identify the existing product
+      metadata and story content.
+
+      THEN:
+
+      9. Refine the product page hierarchy. 10. Improve the product gallery. 11.
+      Improve product information presentation. 12. Improve
+      story/material/process presentation. 13. Fix Share functionality if
+      broken. 14. Preserve the correct ownership/purchase flow. 15. Refine
+      mobile presentation. 16. Preserve all existing commerce functionality.
+
+      ============================================================ SCOPE
+      ============================================================
+
+      This task concerns product pages.
+
+      Do NOT redesign:
+
+      - Homepage - Atelier Stories - Gallery - Archive - Studio - Trade page
+
+      unless a minimal change is required to prevent a regression.
+
+      ============================================================ BROWSER
+      VERIFICATION ============================================================
+
+      Inspect at least one representative product page in the browser.
+
+      Preferably inspect a product with multiple authentic images and an
+      existing process route.
+
+      Verify:
+
+      1. Product imagery is prominent. 2. Multiple authentic product images can
+      be inspected. 3. Product name is immediately clear. 4. Price is
+      immediately understandable. 5. Correct purchase/inquiry action is visible.
+      6. Wishlist works. 7. Share works. 8. Process CTA leads to the correct
+      existing route where applicable. 9. Product details are readable. 10.
+      Story/value information is understandable. 11. No unsupported claims have
+      been added. 12. Desktop composition uses available space appropriately.
+      13. Mobile composition works. 14. No horizontal overflow exists. 15.
+      Browser console has no newly introduced errors.
+
+      Test the primary CTA enough to confirm the correct interaction exists, but
+      do not place an actual order or submit an irreversible transaction.
+
+      ============================================================ BUILD
+      VERIFICATION ============================================================
+
+      Run:
+
+      npm run build
+
+      The build must complete successfully.
+
+      ============================================================ DEFINITION OF
+      DONE ============================================================
+
+      T08 is complete only when the product page communicates:
+
+      SEE THE OBJECT → INSPECT THE OBJECT → UNDERSTAND THE MATERIAL → UNDERSTAND
+      THE CRAFT / PROCESS → UNDERSTAND THE VALUE → OWN / INQUIRE
+
+      while preserving all existing commerce and product functionality.
+
+      Browser verification must pass and npm run build must pass.

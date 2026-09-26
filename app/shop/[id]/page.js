@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getProductById, getAllProductIds } from '../../data/products';
+import { getProcessBySlug } from '../../data/process';
 import ShopDetailClient from './ShopDetailClient';
 import StructuredData from '../../components/StructuredData';
 
@@ -74,11 +75,13 @@ export default async function ShopDetailPage({ params }) {
   if (!product) notFound();
 
   const productSchema = buildProductSchema(product);
+  const processEntry = getProcessBySlug(id);
+  const processSlug = processEntry ? processEntry.slug : null;
 
   return (
     <>
       <StructuredData data={productSchema} />
-      <ShopDetailClient product={product} productId={id} />
+      <ShopDetailClient product={product} productId={id} processSlug={processSlug} />
     </>
   );
 }

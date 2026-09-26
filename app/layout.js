@@ -20,6 +20,9 @@ export const metadata = {
   creator: 'Teakle',
   publisher: 'Teakle',
   metadataBase: new URL('https://teakle.in'),
+  icons: {
+    icon: '/assets/logos/brandmark_dark.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_IN',
@@ -91,8 +94,8 @@ export default async function RootLayout({ children }) {
         <link rel="preconnect" href="https://images.pexels.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" as="style" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" />
+        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" as="style" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" />
         <link rel="preload" href="/assets/hero-luxury-entryway.avif" as="image" type="image/avif" />
         <link rel="preload" href="/assets/logos/brandmark_dark.png" as="image" />
         <noscript dangerouslySetInnerHTML={{__html: '<style>.reveal{opacity:1!important;transform:none!important;}</style>'}} />

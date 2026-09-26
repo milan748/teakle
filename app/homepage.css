@@ -15,6 +15,26 @@
   transform: none !important;
 }
 
+/* ---- Reveal section animations (for RevealOnMount) ---- */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 800ms var(--ease-luxury), transform 800ms var(--ease-luxury);
+}
+.reveal-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-section {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* ---- Hero ---- */
 .v2-hero {
   position: relative;
@@ -35,7 +55,30 @@
   object-position: center 30%;
   opacity: 0.85;
   filter: brightness(0.78) contrast(1.05) saturate(0.9);
-  /* No animation — static cinematic frame */
+  /* T12: one-shot settle on load — full variant only (see entrance below) */
+}
+/* ---- T12 hero entrance (restrained, full variant only) ----
+   Image settles from 1.04 while fading in; content rises 14px once
+   with a short stagger. Pure CSS so no-JS still shows final state. */
+@keyframes v2HeroImgIn {
+  from { opacity: 0; transform: scale(1.04); }
+  to { opacity: 0.85; transform: scale(1); }
+}
+@keyframes v2HeroContentIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-img {
+  animation: v2HeroImgIn 1.8s var(--ease-luxury) forwards;
+}
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-content > * {
+  animation: v2HeroContentIn 700ms var(--ease-luxury) both;
+}
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-content > *:nth-child(1) { animation-delay: 150ms; }
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-content > *:nth-child(2) { animation-delay: 250ms; }
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-content > *:nth-child(3) { animation-delay: 350ms; }
+.v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-scroll {
+  animation: v2HeroContentIn 700ms var(--ease-luxury) 600ms both;
 }
 /* Cinematic vignette overlay — deep edges, subtle center lift */
 .v2-hero::after {
@@ -56,24 +99,23 @@
   z-index: 2;
   padding: 0 var(--cin-gutter) clamp(var(--space-lg), 8vh, var(--space-2xl));
   padding-left: clamp(var(--space-lg), 5vw, var(--space-3xl));
-  max-width: clamp(420px, 50vw, 700px);
+  max-width: clamp(480px, 44vw, 760px);
 }
 .v2-hero-eyebrow {
-  font-size: 0.6875rem;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--cin-stone);
+  font-size: var(--cin-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bronze-text);
   margin-bottom: var(--space-xs);
   display: block;
   font-style: normal;
 }
 .v2-hero h1 {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  font-size: var(--cin-display);
+  font-weight: 500;
+  line-height: var(--lh-display);
+  letter-spacing: -0.02em;
   color: var(--cin-white);
   margin-bottom: var(--space-md);
 }
@@ -138,9 +180,9 @@
 }
 .v2-hero--split .v2-hero-split-text h1 {
   font-size: var(--cin-display);
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1.05;
+  font-weight: 500;
+  line-height: var(--lh-display);
+  letter-spacing: -0.02em;
   color: var(--cin-white);
   margin-bottom: var(--space-lg);
 }
@@ -181,9 +223,9 @@
 }
 .v2-hero--minimal .v2-hero-minimal h1 {
   font-size: var(--cin-display);
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1.05;
+  font-weight: 500;
+  line-height: var(--lh-display);
+  letter-spacing: -0.02em;
   color: var(--cin-white);
   margin-bottom: var(--space-lg);
 }
@@ -210,7 +252,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(var(--space-md), 2vw, var(--cin-gutter-wide));
-  max-width: var(--container);
+  max-width: var(--container-wide);
   margin: 0 auto;
   padding: 0 var(--cin-gutter);
 }
@@ -220,11 +262,12 @@
   justify-content: center;
   gap: 0.5rem;
   font-size: var(--cin-caption);
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--cin-text-muted);
-  font-weight: 500;
   text-align: center;
+  line-height: var(--lh-tight);
 }
 .v2-trust-item svg {
   width: 13px;
@@ -234,82 +277,126 @@
   opacity: 0.65;
 }
 
-/* ---- Philosophy ---- */
+/* ---- Philosophy ----
+   T03 editorial recomposition: an asymmetric two-field grid (statement +
+   body) on the wide measure, so desktop whitespace is structural rather
+   than leftover. Type scale is unchanged; the grid columns are the
+   measure. The centered variant keeps its intentional single column. */
 .v2-philosophy {
   background: var(--cin-bg);
-  padding: clamp(2rem, 4vw, 3.5rem) 0;
+  padding: clamp(3rem, 5vw, 5rem) 0;
 }
 .v2-philosophy-inner {
-  max-width: var(--content-narrow);
-  margin: 0;
+  max-width: var(--container-wide);
+  margin: 0 auto;
   text-align: left;
-  padding: 0 var(--cin-gutter);
+  padding: 0 var(--cin-gutter-wide);
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+}
+.v2-philosophy-statement {
+  min-width: 0;
+}
+.v2-philosophy-body {
+  min-width: 0;
+  border-top: 1px solid var(--cin-stone-light);
+  padding-top: var(--space-md);
+  margin-top: calc(var(--space-xs) + 2px);
 }
 .v2-philosophy .eyebrow {
   margin-bottom: var(--space-xs);
-  font-size: 0.5rem;
-  letter-spacing: 0.08em;
-  text-transform: none;
+  font-size: var(--cin-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--cin-text-muted);
-  font-weight: 400;
-  font-style: italic;
+  font-style: normal;
 }
 .v2-philosophy h2 {
-  font-size: clamp(1rem, 1.8vw, 1.375rem);
-  margin-bottom: var(--space-sm);
-  max-width: 50ch;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 1.35;
+  font-size: var(--cin-h2);
+  margin-bottom: 0;
+  max-width: 56ch;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: var(--lh-heading);
   color: var(--cin-text);
 }
 .v2-philosophy p {
-  max-width: 65ch;
-  font-size: clamp(0.625rem, 0.8vw, 0.8125rem);
+  max-width: 68ch;
+  font-size: var(--cin-body);
   color: var(--cin-text-muted);
-  line-height: 1.6;
+  line-height: var(--lh-body);
 }
 .v2-philosophy p + p {
-  margin-top: var(--space-xs);
+  margin-top: var(--space-md);
 }
 
-/* Philosophy variant: centered */
+/* Philosophy variant: centered (intentional single column, unchanged) */
 .v2-philosophy.v2-philosophy--centered .v2-philosophy-inner {
+  display: block;
   text-align: center;
   max-width: var(--content-narrow);
+  padding: 0 var(--cin-gutter);
 }
 .v2-philosophy.v2-philosophy--centered .v2-philosophy-inner .eyebrow {
   text-align: center;
 }
+.v2-philosophy.v2-philosophy--centered .v2-philosophy-body {
+  border-top: none;
+  padding-top: 0;
+  margin-top: var(--space-md);
+}
+.v2-philosophy.v2-philosophy--centered h2 {
+  margin-bottom: var(--space-md);
+}
 
-/* ---- ATELIER STORIES Section ---- */
+/* ---- ATELIER STORIES Section ----
+   Full-viewport editorial band: dark cinematic ground, intentional
+   side gutters + centered wide inner measure so the grid uses large
+   viewports instead of touching edges or freezing at a fixed pixel column. */
 .v2-atelier-wrapper {
-  background: #887a68;
+  background: var(--cin-dark-deep);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: clamp(4rem, 8vw, 7rem) var(--cin-gutter-wide);
 }
 .v2-atelier-title {
+  max-width: var(--container-wide);
+  margin: 0 auto;
   padding: 0 0 3.5rem;
-  text-align: center;
+  text-align: left;
 }
 .v2-atelier-title h2 {
-  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-size: var(--cin-display);
   font-weight: 400;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #f5f0eb;
-  margin: 0 0 0.5rem;
+  color: var(--cin-white);
+  margin: 0 0 0.75rem;
+  line-height: var(--lh-display);
 }
 .v2-atelier-subtitle {
   display: block;
-  font-size: clamp(0.55rem, 0.7vw, 0.7rem);
+  font-size: var(--cin-caption);
   font-weight: 400;
   font-style: italic;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(245,240,235,0.55);
+  color: var(--cin-bronze-light);
   margin-top: 6px;
   margin-bottom: 0;
+  line-height: var(--lh-tight);
+}
+/* Architectural rule: the section title opens the story, it does not
+   float as a detached centered banner above a two-column card. */
+.v2-atelier-title::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: rgba(245,240,235,0.2);
+  margin-top: 2.5rem;
 }
 
 /* ---- Signature Edition — Hero Product Editorial ---- */
@@ -321,8 +408,8 @@
 .v2-sig-editorial-inner {
   width: 100%;
   padding: 0;
-  max-width: none;
-  margin: 0;
+  max-width: var(--container-wide);
+  margin: 0 auto;
   display: block;
   background: transparent;
   border-radius: 0;
@@ -331,44 +418,59 @@
 }
 .v2-sig-editorial-inner::before { display: none; }
 
-/* Grid — 2 columns: left (image + thumbs), right (content) */
+/* Grid — asymmetric editorial: dominant image field + narrower text
+   field. The image carries the story; the text annotates it. */
 .v2-sig-editorial-grid {
   display: grid;
-  grid-template-columns: 590px 1fr;
-  gap: 56px;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2.5rem, 5vw, 5rem);
   align-items: start;
   justify-items: start;
   padding: 0;
-  margin: 0;
-  max-width: none;
+  margin: 0 auto;
+  max-width: var(--container-wide);
 }
 
-/* Left column — image stack (main image + thumbnails as one visual unit) */
+/* Left column — the object: dominant primary plate + same-product study strip.
+   The strip holds ONLY authentic views of the featured product (never
+   workshop, maker, or unrelated imagery). */
 .v2-sig-editorial-img {
   width: 100%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 .v2-sig-editorial-img > img {
   width: 100%;
-  aspect-ratio: 4/5;
+  aspect-ratio: 3/2;
   object-fit: cover;
+  object-position: 50% 100%;
   display: block;
+  border-radius: 0;
+  box-shadow: none;
+  transition: transform 1.2s var(--ease-luxury);
+}
+.v2-sig-editorial-img:hover > img {
+  transform: scale(1.02);
 }
 
-/* Thumbnails — aligned under main image, same width */
-.v2-sig-editorial-gallery { margin-top: 0; }
-.v2-sig-editorial-thumbs {
-  display: flex;
+/* Object-study strip — curated views of the SAME product, directly
+   associated with the primary plate. Renders only when the product data
+   holds additional unique views; a single-image product renders no strip
+   rather than a duplicate. Restrained selection, no ecommerce chrome. */
+.v2-sig-editorial-supporting {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  width: 100%;
+  margin-top: 4px;
 }
 .v2-sig-editorial-thumb {
-  flex: 1;
   aspect-ratio: 1/1;
   border: 2px solid transparent;
+  border-radius: 0;
   background: none;
+  box-shadow: none;
   cursor: pointer;
   overflow: hidden;
   opacity: 0.5;
@@ -377,41 +479,109 @@
 }
 .v2-sig-editorial-thumb.is-active { border-color: #f5f0eb; opacity: 1; }
 .v2-sig-editorial-thumb:hover { opacity: 0.8; }
+.v2-sig-editorial-thumb:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.5);
+  outline-offset: 2px;
+}
 .v2-sig-editorial-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Right column — product content, vertically balanced */
+/* Mobile recomposition head — object name leads on mobile only. */
+.v2-sig-mobile-head { display: none; }
+
+/* Archive continuation — secondary editorial footing below the object
+   study. Never competes with the featured product. */
+.v2-sig-archive-foot {
+  max-width: var(--container-wide);
+  margin: 2.5rem auto 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(245,240,235,0.22);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: baseline;
+}
+.v2-sig-archive-label {
+  font-family: var(--font-body);
+  font-size: var(--cin-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cin-bronze-light);
+  line-height: var(--lh-tight);
+}
+.v2-sig-archive-link {
+  font-family: var(--font-body);
+  font-size: var(--cin-body);
+  color: rgba(245,240,235,0.8);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  line-height: var(--lh-body);
+}
+.v2-sig-archive-link:hover { color: #f5f0eb; }
+
+/* Supporting story note — verified product copy under the imagery field,
+   separated by the same quiet hairline as the provenance rule. */
+.v2-sig-story-note {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(245,240,235,0.22);
+}
+.v2-sig-story-label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--cin-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cin-bronze-light);
+  line-height: var(--lh-tight);
+  margin-bottom: 10px;
+}
+.v2-sig-story-note p {
+  font-family: var(--font-body);
+  font-size: var(--cin-body);
+  line-height: var(--lh-body);
+  color: rgba(245,240,235,0.65);
+  margin: 0;
+  max-width: 62ch;
+}
+
+/* Right column — narrower annotation field, optically offset from the
+   image top so the two fields read as story + note, not twin cards */
 .v2-sig-editorial-text {
   width: auto;
-  padding: 0;
+  padding: clamp(4px, 1.5vw, 28px) 0 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 /* Content stack with consistent rhythm */
 .v2-sig-editorial-text h2 {
-  font-family: var(--font-heading);
-  font-size: clamp(28px, 2.5vw, 40px);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--cin-display-sm);
+  font-weight: 500;
   letter-spacing: 0.18em;
   color: #f5f0eb;
   margin: 0 0 12px;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: var(--lh-display);
 }
-.v2-sig-editorial-subtitle {
-  font-family: var(--font-heading);
-  font-size: clamp(14px, 1.1vw, 17px);
-  font-weight: 400;
-  color: rgba(245,240,235,0.7);
-  margin-bottom: 20px;
-  font-style: italic;
-  line-height: 1.25;
+/* Availability annotation — museum-label line above the object name.
+   Verified commerce (availabilityNote), never invented scarcity. */
+.v2-sig-edition-line {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--cin-caption);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.55);
+  margin: 0 0 14px;
+  line-height: var(--lh-tight);
 }
 .v2-sig-editorial-text > p {
   font-family: var(--font-body);
-  font-size: clamp(14px, 1vw, 16px);
-  line-height: 1.7;
+  font-size: var(--cin-body-lg);
+  line-height: var(--lh-body);
   color: rgba(245,240,235,0.65);
   margin: 0 0 24px;
   max-width: 674px;
@@ -421,44 +591,56 @@
 .v2-sig-editorial-meta-line { display: none; }
 .v2-sig-meta-sep { display: none; }
 
-/* Feature blocks with icons — consistent gap */
+/* Provenance line — quiet editorial rule (refined below) */
 .v2-sig-editorial-features {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px 24px;
+  row-gap: 8px;
   margin-bottom: 28px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(245,240,235,0.22);
+  border-bottom: 1px solid rgba(245,240,235,0.22);
 }
-.v2-sig-feature { display: flex; align-items: center; gap: 10px; }
-.v2-sig-feature-icon { width: 18px; height: 18px; flex-shrink: 0; color: rgba(245,240,235,0.6); }
+.v2-sig-feature { display: flex; align-items: baseline; gap: 0; }
+.v2-sig-feature-icon { display: none; }
+.v2-sig-feature + .v2-sig-feature::before {
+  content: "·";
+  color: rgba(245,240,235,0.45);
+  margin: 0 12px;
+}
 .v2-sig-feature-label {
   font-family: var(--font-body);
-  font-size: 13px;
-  letter-spacing: 0.06em;
+  font-size: var(--cin-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: rgba(245,240,235,0.8);
-  line-height: 1.2;
+  line-height: var(--lh-tight);
 }
 
 /* Price */
 .v2-sig-editorial-price { margin-bottom: 28px; }
 .v2-sig-editorial-price-amount {
-  font-family: var(--font-heading);
-  font-size: clamp(24px, 2vw, 32px);
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--cin-h2);
+  font-weight: 500;
   color: #f5f0eb;
-  line-height: 1.1;
+  line-height: var(--lh-heading);
 }
 .v2-sig-editorial-price-note {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--cin-caption);
   color: rgba(245,240,235,0.5);
   letter-spacing: 0.04em;
   margin-top: 6px;
+  line-height: var(--lh-tight);
 }
 
-/* CTAs — equal width, aligned */
+/* CTAs — restrained and left-aligned (refined below) */
 .v2-sig-editorial-actions {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
   margin-bottom: 24px;
   max-width: 674px;
 }
@@ -466,17 +648,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 32px;
+  padding: 14px 34px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--cin-caption);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
   transition: all 0.3s ease;
   text-align: center;
-  flex: 1;
+  flex: 0 1 auto;
+  min-width: 220px;
   min-height: 48px;
+  border-radius: 0;
+  box-shadow: none;
 }
 .v2-sig-btn-primary { background: #f5f0eb; color: #1a1714; border: 1px solid #f5f0eb; }
 .v2-sig-btn-primary:hover { background: #e8e0d5; border-color: #e8e0d5; }
@@ -486,9 +671,9 @@
 /* Past editions link */
 .v2-sig-editorial-past {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--cin-body);
   color: rgba(245,240,235,0.5);
-  line-height: 1.4;
+  line-height: var(--lh-body);
 }
 .v2-sig-editorial-past a { color: rgba(245,240,235,0.8); text-decoration: underline; text-underline-offset: 3px; }
 .v2-sig-editorial-past a:hover { color: rgba(245,240,235,1); }
@@ -499,15 +684,6 @@
 /* Trust badges removed */
 .v2-sig-trust { display: none; }
 
-/* ---- Left column: Product media ---- */
-.v2-sig-editorial-img > img {
-  width: 100%;
-  aspect-ratio: 3/2;
-  object-fit: cover;
-  display: block;
-  border-radius: 0;
-}
-
 /* SCULPTURE label overlay on main image */
 .v2-sig-sculpture-label {
   position: absolute;
@@ -517,7 +693,7 @@
 }
 .v2-sig-sculpture-label-title {
   display: block;
-  font-size: clamp(0.5625rem, 0.7vw, 0.6875rem);
+  font-size: var(--cin-caption);
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -534,57 +710,14 @@
 }
 .v2-sig-sculpture-label-desc {
   display: block;
-  font-size: clamp(0.4375rem, 0.5vw, 0.5rem);
+  font-size: var(--cin-caption);
   color: rgba(255,255,255,0.55);
   line-height: 1.5;
 }
 
-/* Thumbnail gallery */
-.v2-sig-editorial-gallery {
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-.v2-sig-editorial-thumbs {
-  display: flex;
-  gap: 10px;
-}
-.v2-sig-editorial-thumb {
-  flex: 1;
-  aspect-ratio: 1/1;
-  border: 1.5px solid rgba(255,255,255,0.15);
-  border-radius: 3px;
-  overflow: hidden;
-  cursor: pointer;
-  padding: 0;
-  background: none;
-  opacity: 0.6;
-  transition: opacity 0.25s ease, border-color 0.25s ease;
-  flex-shrink: 0;
-}
-.v2-sig-editorial-thumb:hover { opacity: 0.8; }
-.v2-sig-editorial-thumb.is-active {
-  opacity: 1;
-  border-color: rgba(255,255,255,0.4);
-}
-.v2-sig-editorial-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.v2-sig-editorial-thumb:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.5);
-  outline-offset: 2px;
-}
-
-/* Trust badges - hidden on desktop, moved inline to features */
-.v2-sig-trust {
-  display: none;
-}
-
 /* ---- Right column: Product information ---- */
 .v2-sig-editorial-text {
-  padding: clamp(60px, 8vh, 96px) 0 clamp(80px, 7vh, 96px) 0;
+  padding: clamp(4px, 1.5vw, 28px) 0 0;
 }
 
 /* Metadata line */
@@ -596,7 +729,7 @@
   flex-shrink: 0;
 }
 .v2-sig-editorial-meta-line span {
-  font-size: clamp(0.5rem, 0.55vw, 0.5625rem);
+  font-size: var(--cin-caption);
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -614,7 +747,7 @@
 /* Title */
 .v2-sig-editorial-text h2 {
   color: rgba(255,255,255,0.92);
-  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-size: var(--cin-display);
   font-weight: 400;
   font-style: normal;
   letter-spacing: -0.01em;
@@ -624,66 +757,52 @@
   flex-shrink: 0;
 }
 
-/* Subtitle */
-.v2-sig-editorial-subtitle {
-  font-size: clamp(1rem, 1.6vw, 1.375rem);
-  font-weight: 300;
-  font-style: italic;
-  color: #b8a88a;
-  margin-bottom: clamp(12px, 1.8vh, 20px);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  flex-shrink: 0;
-}
-
 /* Description */
 .v2-sig-editorial-text > p {
   color: rgba(255,255,255,0.55);
-  font-size: clamp(0.6875rem, 0.85vw, 0.875rem);
+  font-size: var(--cin-body);
   max-width: 80ch;
   margin-bottom: clamp(16px, 2.2vh, 24px);
   line-height: 1.6;
   flex-shrink: 0;
 }
 
-/* Feature blocks with inline icons + trust badges */
+/* Provenance line — one quiet editorial rule with hairlines instead of
+   icon badges. All four facts are preserved as text; the SVGs are
+   hidden so the row reads as a sentence, not a spec sheet. */
 .v2-sig-editorial-features {
   display: flex;
-  gap: clamp(var(--space-md), 2vw, var(--space-xl));
+  flex-wrap: wrap;
+  row-gap: 8px;
   margin-bottom: clamp(24px, 3vh, 36px);
   flex-shrink: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+  padding: 14px 0;
+  border-top: 1px solid rgba(245,240,235,0.22);
+  border-bottom: 1px solid rgba(245,240,235,0.22);
 }
 .v2-sig-feature {
   text-align: left;
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: baseline;
+  gap: 0;
 }
-.v2-sig-feature-icon {
-  width: 16px;
-  height: 16px;
-  color: rgba(255,255,255,0.5);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
+.v2-sig-feature-icon,
 .v2-sig-trust-icon {
-  width: 12px;
-  height: 12px;
-  color: rgba(255,255,255,0.35);
-  flex-shrink: 0;
-  margin-top: 3px;
-  opacity: 0.7;
+  display: none;
+}
+.v2-sig-feature + .v2-sig-feature::before {
+  content: "·";
+  color: rgba(245,240,235,0.45);
+  margin: 0 12px;
 }
 .v2-sig-feature-label {
   display: block;
-  font-size: clamp(0.5625rem, 0.65vw, 0.6875rem);
+  font-size: var(--cin-label);
   font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: rgba(255,255,255,0.85);
-  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.75);
+  line-height: var(--lh-tight);
 }
 
 /* Price */
@@ -692,25 +811,27 @@
   flex-shrink: 0;
 }
 .v2-sig-editorial-price-amount {
-  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  font-size: var(--cin-h2);
   font-weight: 400;
   color: rgba(255,255,255,0.88);
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 .v2-sig-editorial-price-note {
-  font-size: clamp(0.4375rem, 0.5vw, 0.5rem);
+  font-size: var(--cin-caption);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.35);
   margin-top: 6px;
 }
 
-/* CTAs */
+/* CTAs — restrained and left-aligned: one ownership action plus one
+   quiet process link. Neither stretches to fill the column. */
 .v2-sig-editorial-actions {
   display: flex;
-  align-items: stretch;
-  gap: clamp(20px, 2.8vw, 32px);
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 28px;
   margin-bottom: clamp(24px, 3.2vh, 36px);
   flex-shrink: 0;
 }
@@ -721,16 +842,19 @@
   background: rgba(255,255,255,0.88);
   color: #3d3428;
   border: 1px solid rgba(255,255,255,0.88);
-  padding: clamp(0.5rem, 0.8vh, 0.7rem) clamp(var(--space-lg), 2vw, var(--space-xl));
-  font-size: clamp(0.4375rem, 0.55vw, 0.5rem);
+  border-radius: 0;
+  padding: 14px 34px;
+  font-size: var(--cin-caption);
+  font-family: var(--font-body);
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: background var(--dur-fast) var(--ease);
-  flex: 1;
-  min-height: 40px;
+  flex: 0 1 auto;
+  min-width: 220px;
+  min-height: 48px;
 }
 .v2-sig-btn-primary:hover {
   background: #fff;
@@ -742,25 +866,70 @@
   background: transparent;
   color: rgba(255,255,255,0.7);
   border: 1px solid rgba(255,255,255,0.2);
-  padding: clamp(0.5rem, 0.8vh, 0.7rem) clamp(var(--space-lg), 2vw, var(--space-xl));
-  font-size: clamp(0.4375rem, 0.55vw, 0.5rem);
+  border-radius: 0;
+  padding: 14px 34px;
+  font-size: var(--cin-caption);
+  font-family: var(--font-body);
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
-  flex: 1;
-  min-height: 40px;
+  flex: 0 1 auto;
+  min-width: 220px;
+  min-height: 48px;
 }
 .v2-sig-btn-outline:hover {
   border-color: rgba(255,255,255,0.5);
   color: #fff;
 }
 
+/* Wishlist — quiet text control beneath the ownership actions.
+   Commerce stays visible but restrained: no card, no badge, no fill. */
+.v2-sig-wishlist {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 12px 0;
+  margin: 0 0 20px;
+  min-height: 44px;
+  font-family: var(--font-body);
+  font-size: var(--cin-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,240,235,0.65);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(245,240,235,0.35);
+  cursor: pointer;
+}
+.v2-sig-wishlist:hover {
+  color: #f5f0eb;
+  text-decoration-color: #f5f0eb;
+}
+.v2-sig-wishlist:focus-visible {
+  outline: 2px solid #f5f0eb;
+  outline-offset: 3px;
+}
+.v2-sig-wishlist svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.v2-sig-wishlist.is-active svg {
+  fill: currentColor;
+}
+
 /* Past editions link */
 .v2-sig-editorial-past {
-  font-size: clamp(0.5rem, 0.55vw, 0.5625rem);
+  font-size: var(--cin-caption);
   letter-spacing: 0.03em;
   color: rgba(255,255,255,0.4);
   flex-shrink: 0;
@@ -845,23 +1014,40 @@
     max-height: none;
     min-height: 0;
     aspect-ratio: 3/2;
+    object-position: 50% 100%;
     width: 100%;
   }
-  .v2-sig-editorial-gallery {
-    margin-top: var(--space-sm);
+  /* Mobile recomposition: object name leads, primary follows, study strip
+     stays attached to the plate, story + details + price + CTAs after. */
+  .v2-sig-mobile-head {
+    display: block;
+    max-width: var(--container-wide);
+    margin: 0 auto 16px;
   }
-  .v2-sig-editorial-thumbs {
-    gap: 6px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: var(--space-xs);
+  .v2-sig-mobile-head h2 {
+    font-family: var(--font-display);
+    font-size: var(--cin-display-sm);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cin-white);
+    margin: 0 0 8px;
+    line-height: var(--lh-heading);
   }
-  .v2-sig-editorial-thumb {
-    flex: 1;
-    aspect-ratio: 1/1;
-    flex-shrink: 0;
+  .v2-sig-title-desktop { display: none; }
+  .v2-sig-edition-line-desktop { display: none; }
+  .v2-sig-editorial-supporting {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
+  .v2-sig-story-note {
+    margin-top: 4px;
+    padding-top: 16px;
+  }
+  .v2-sig-story-note p {
+    max-width: 60ch;
+  }
+  .v2-sig-archive-foot { margin-top: 20px; }
 
   .v2-sig-trust {
     display: none;
@@ -891,42 +1077,45 @@
     margin-bottom: var(--space-sm);
   }
   .v2-sig-editorial-meta-line span {
-    font-size: 0.6875rem;
+    font-size: var(--cin-caption);
   }
 
   .v2-sig-editorial-text h2 {
-    font-size: clamp(1rem, 4vw, 1.5rem);
+    font-size: var(--cin-display-sm);
     margin-bottom: var(--space-xs);
-    line-height: 1.15;
+    line-height: var(--lh-heading);
   }
-  .v2-sig-editorial-subtitle {
-    font-size: clamp(0.6875rem, 2vw, 0.875rem);
-    margin-bottom: var(--space-xs);
-    line-height: 1.2;
+  .v2-sig-edition-line {
+    font-size: var(--cin-caption);
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
   }
   .v2-sig-editorial-text > p {
-    font-size: clamp(0.5625rem, 1.5vw, 0.75rem);
+    font-size: var(--cin-body);
     max-width: 50ch;
     margin-bottom: var(--space-sm);
-    line-height: 1.4;
+    line-height: var(--lh-body);
   }
   .v2-sig-editorial-features {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-sm);
+    row-gap: 8px;
     margin-bottom: var(--space-sm);
-    padding-bottom: var(--space-xs);
+    padding: 12px 0;
   }
   .v2-sig-feature-icon {
-    width: 14px;
-    height: 14px;
-    color: rgba(255,255,255,0.5);
+    display: none;
   }
-  .v2-sig-feature-label { font-size: 0.5625rem; margin-bottom: 1px; line-height: 1.2; }
+  .v2-sig-feature-label {
+    font-size: var(--cin-label);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: var(--lh-normal);
+  }
   .v2-sig-divider { margin-bottom: var(--space-sm); }
   .v2-sig-editorial-price { margin-bottom: var(--space-sm); }
-  .v2-sig-editorial-price-amount { font-size: clamp(0.875rem, 3vw, 1.125rem); }
-  .v2-sig-editorial-price-note { font-size: 0.5rem; margin-top: var(--space-xs); }
+  .v2-sig-editorial-price-amount { font-size: var(--cin-h2); }
+  .v2-sig-editorial-price-note { font-size: var(--cin-caption); margin-top: var(--space-xs); }
   .v2-sig-editorial-actions {
     flex-direction: row;
     align-items: center;
@@ -937,7 +1126,7 @@
   .v2-sig-editorial-actions .link-quiet {
     text-align: center;
     padding: var(--space-sm) var(--space-lg);
-    font-size: 0.8125rem;
+    font-size: var(--cin-button);
     min-height: 44px;
     display: flex;
     align-items: center;
@@ -990,11 +1179,14 @@
     gap: var(--space-xs);
   }
   .v2-sig-editorial-text h2 {
-    font-size: clamp(0.875rem, 3.5vw, 1.25rem);
+    font-size: var(--cin-display-sm);
   }
-  .v2-sig-editorial-subtitle {
-    font-size: clamp(0.5625rem, 2vw, 0.75rem);
+  .v2-sig-edition-line {
+    font-size: var(--cin-caption);
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
   }
+  .v2-sig-wishlist { align-self: flex-start; min-height: 44px; }
   .v2-sig-editorial-features {
     display: flex;
     flex-wrap: wrap;
@@ -1007,9 +1199,9 @@
   }
   .v2-sig-editorial-actions .btn-primary,
   .v2-sig-editorial-actions .link-quiet {
-    font-size: 0.375rem;
+    font-size: var(--cin-button);
     padding: var(--space-xs) var(--space-sm);
-    min-height: 32px;
+    min-height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1017,19 +1209,21 @@
   }
 }
 
-/* ---- Craftsmanship ---- */
+/* ---- Craftsmanship ----
+   Extreme-right editorial composition: the image runs flush to the
+   viewport edge while the text holds a normal measure on the left. */
 .v2-craft {
   background: var(--cin-bg);
-  padding: var(--cin-section) 0;
+  padding: var(--cin-section) 0 clamp(2rem, 3vw, 3rem) var(--cin-gutter-wide);
 }
 .v2-craft-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--cin-gutter-wide);
+  grid-template-columns: minmax(0, 62ch) 1fr;
+  gap: clamp(var(--space-xl), 6vw, 7rem);
   align-items: center;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--cin-gutter);
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 .v2-craft-img {
   position: relative;
@@ -1038,18 +1232,27 @@
 .v2-craft-img img {
   width: 100%;
   height: 100%;
+  min-height: min(68vh, 640px);
   object-fit: cover;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: auto;
   filter: brightness(0.92) saturate(0.9);
-  /* No hover zoom — static */
+  transition: transform 1.2s var(--ease-luxury), filter 0.4s var(--ease);
+}
+.v2-craft-img:hover img {
+  transform: scale(1.02);
+  filter: brightness(0.95) saturate(0.95);
+}
+.v2-craft-text {
+  max-width: 62ch;
 }
 .v2-craft-text h2 {
   font-size: var(--cin-h2);
   margin-bottom: var(--space-lg);
-  max-width: none;
+  max-width: 22ch;
+  text-wrap: balance;
   font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  letter-spacing: -0.015em;
+  line-height: var(--lh-heading);
 }
 .v2-craft-text p {
   max-width: 48ch;
@@ -1072,10 +1275,13 @@
   border-color: var(--cin-bronze);
 }
 
-/* ---- Editorial Carousel ---- */
-.v2-carousel {
+/* ---- Editorial Carousel ----
+   Intentionally full-bleed: the track uses the viewport width with
+   generous gutters, and items scale with vw so they hold presence
+   on large desktop instead of reading as small thumbnails. */
+.carousel {
   background: var(--cin-bg);
-  padding: var(--cin-section) var(--cin-gutter);
+  padding: var(--cin-section-sm) var(--cin-gutter-wide);
   overflow: hidden;
   position: relative;
 }
@@ -1117,12 +1323,12 @@
 }
 .v2-ctrack::-webkit-scrollbar { display: none; }
 .v2-citem {
-  flex: 0 0 180px;
+  flex: 0 0 clamp(280px, 22vw, 360px);
   scroll-snap-align: start;
-  text-align: center;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-sm);
 }
 .v2-citem img {
@@ -1141,7 +1347,11 @@
   height: 100%;
   object-fit: cover;
   filter: brightness(0.92) saturate(0.9);
-  /* No hover zoom — static */
+  transition: transform 0.8s var(--ease-luxury), filter 0.4s var(--ease);
+}
+.v2-citem:hover .v2-cimage img {
+  transform: scale(1.03);
+  filter: brightness(0.98) saturate(1);
 }
 .v2-clabel {
   font-size: var(--cin-eyebrow);
@@ -1151,7 +1361,7 @@
   font-weight: 500;
 }
 .v2-cbtn {
-  display: inline-block;
+  display: none;
   font-size: var(--cin-eyebrow);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1180,10 +1390,15 @@
 }
 .v2cdot.active { background: var(--text-primary); }
 
-/* ---- Products ---- */
+/* ---- Products ----
+   Major editorial section: uses the wide measure so the 3-up grid
+   holds presence on large desktop. Mobile keeps its 2-up rhythm. */
 .v2-products {
   background: var(--cin-bg);
-  padding: var(--cin-section) 0;
+  padding: var(--cin-section-sm) 0 clamp(2rem, 3vw, 3rem) 0;
+}
+.v2-products .container {
+  max-width: var(--container-wide);
 }
 .v2-products-head {
   margin-bottom: var(--cin-gutter-wide);
@@ -1195,18 +1410,18 @@
   font-weight: 500;
   letter-spacing: -0.01em;
 }
-.v2-pgrid {
+.pgrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--cin-gutter-wide);
+  gap: clamp(2rem, 3.5vw, 3rem);
 }
-.v2-pcard {
+.pcard {
   display: block;
   background: var(--cin-bg);
   padding-bottom: var(--space-sm);
 }
 .v2-pimg {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   background: var(--cin-stone);
   overflow: hidden;
   margin-bottom: var(--space-md);
@@ -1217,20 +1432,26 @@
   height: 100%;
   object-fit: cover;
   filter: brightness(0.95) saturate(0.9);
-  /* No hover zoom — static */
+  transition: transform 0.8s var(--ease-luxury), filter 0.4s var(--ease);
+}
+.v2-pcard:hover .v2-pimg img {
+  transform: scale(1.03);
+  filter: brightness(1) saturate(1);
 }
 .v2-pinfo {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-sm);
+  padding-top: var(--space-xs);
+  border-top: 1px solid rgba(0,0,0,0.06);
 }
 .v2-pinfo h3 {
-  font-size: 0.9375rem;
+  font-size: var(--cin-h3);
   font-weight: 500;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   max-width: none;
-  line-height: 1.3;
+  line-height: var(--lh-heading);
   color: var(--cin-text);
 }
 .v2-pmeta {
@@ -1243,17 +1464,54 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--cin-text-muted);
-  line-height: 1.3;
+  line-height: var(--lh-tight);
   font-weight: 500;
 }
 .v2-pprice {
-  font-size: var(--cin-eyebrow);
+  font-size: var(--cin-caption);
   color: var(--cin-text-muted);
   letter-spacing: 0.02em;
+  line-height: var(--lh-tight);
 }
 .v2-pcta {
   text-align: center;
   margin-top: var(--cin-gutter-wide);
+}
+
+/* ---- T04 editorial product groups (static 3 + 3, no carousel) ----
+   Two intentional groups of exactly three. Full-bleed wide measure so
+   the three columns hold presence on desktop; single-column stack on
+   mobile so images stay large and groups stay distinct. Reuses the
+   quiet v2-pcard object presentation (image, name, category, price). */
+.v2-edit-groups {
+  background: var(--cin-bg);
+  padding: var(--cin-section-sm) var(--cin-gutter-wide);
+  overflow-x: clip;
+}
+.v2-edit-group {
+  max-width: var(--container-wide);
+  margin: 0 auto;
+}
+.v2-edit-group--second {
+  margin-top: clamp(3.5rem, 7vw, 6rem);
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+.v2-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(2rem, 3.5vw, 3rem);
+}
+@media (max-width: 860px) {
+  .v2-edit-grid {
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 6vw, 2.75rem);
+    max-width: 560px;
+  }
+  .v2-edit-group--second {
+    margin-top: clamp(3rem, 9vw, 4rem);
+    padding-top: clamp(2rem, 7vw, 3rem);
+  }
 }
 
 /* ---- Lifestyle (Story Block) ---- */
@@ -1265,14 +1523,23 @@
   display: flex;
   align-items: flex-end;
 }
+/* T07B cinematic focal defaults (CSS governs; a CMS-authored focal, when
+   set, is emitted inline and wins). Workshop source is portrait — the
+   mallet-and-hands action lives in the upper third, so the wide frame
+   favours it and leaves the text zone calm. */
 .v2-lifestyle-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 18%;
   filter: brightness(0.75) saturate(0.85);
-  /* No hover zoom — static cinematic frame */
+  transition: transform 1.5s var(--ease-luxury), filter 0.6s var(--ease);
+}
+.v2-lifestyle:hover .v2-lifestyle-bg {
+  transform: scale(1.015);
+  filter: brightness(0.8) saturate(0.9);
 }
 .v2-lifestyle::after {
   content: '';
@@ -1285,10 +1552,10 @@
 .v2-lifestyle-content {
   position: relative;
   z-index: 2;
-  padding: var(--cin-gutter-wide) var(--cin-gutter);
-  max-width: 640px;
+  padding: var(--cin-gutter-wide);
+  max-width: min(760px, 100%);
 }
-.v2-lifestyle .eyebrow { color: var(--cin-stone); margin-bottom: var(--space-sm); font-size: var(--cin-eyebrow); letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+.v2-lifestyle .eyebrow { color: var(--bronze-text); margin-bottom: var(--space-sm); font-size: var(--cin-eyebrow); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 500; }
 .v2-lifestyle h2 {
   color: var(--cin-white);
   font-size: var(--cin-h2);
@@ -1308,6 +1575,33 @@
 .v2-lifestyle .link-quiet { color: var(--cin-white); border-color: rgba(247,244,238,0.3); }
 .v2-lifestyle .link-quiet:hover { color: var(--cin-bronze-light); border-color: var(--cin-bronze-light); }
 
+/* ---- Lifestyle alt (Watch It Made) ----
+   Breaks the back-to-back repetition: shorter cinematic frame with the
+   editorial content held to the extreme right and a mirrored grade. */
+.v2-lifestyle--alt {
+  height: 76vh;
+  min-height: 500px;
+}
+/* T07B: process source holds the maker mid-frame — favour the full
+   figure and bench so the subject reads against the right-held text. */
+.v2-lifestyle--alt .v2-lifestyle-bg {
+  object-position: 50% 62%;
+  transition: transform 1.5s var(--ease-luxury), filter 0.6s var(--ease);
+}
+.v2-lifestyle--alt:hover .v2-lifestyle-bg {
+  transform: scale(1.015);
+  filter: brightness(0.8) saturate(0.9);
+}
+.v2-lifestyle--alt::after {
+  background:
+    radial-gradient(ellipse 120% 100% at 70% 70%, transparent 20%, rgba(30,21,14,0.5) 100%),
+    linear-gradient(270deg, rgba(30,21,14,0.88) 0%, rgba(30,21,14,0.35) 55%, transparent 100%);
+}
+.v2-lifestyle--alt .v2-lifestyle-content {
+  margin-left: auto;
+  margin-right: var(--cin-gutter-wide);
+}
+
 /* ================================================================
    RESPONSIVE
    ================================================================ */
@@ -1315,11 +1609,13 @@
 @media (max-width: 860px) {
   .v2-hero { min-height: 0; height: 100svh; }
   .v2-hero-img { height: 100%; transform: none; animation: none; filter: brightness(0.78) contrast(1.05) saturate(0.9); }
+  /* T12: keep the mobile frame static — the entrance settle is desktop only */
+  .v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-img { animation: none; }
   .v2-hero-content { padding: 0 var(--space-lg) var(--space-2xl); padding-bottom: calc(var(--space-2xl) + 56px); padding-left: var(--space-lg); max-width: 100%; }
-  .v2-hero h1 { font-size: clamp(1.375rem, 5vw, 2rem); margin-bottom: var(--space-md); line-height: 1.1; }
+  .v2-hero h1 { font-size: var(--text-display); margin-bottom: var(--space-md); line-height: var(--lh-display); }
   .v2-hero-actions { gap: var(--space-sm); }
-  .v2-hero-actions .btn-primary { min-height: 40px; padding: 0.4rem calc(var(--space-md) + var(--space-xs)); font-size: 0.5625rem; letter-spacing: 0.08em; }
-  .v2-hero-eyebrow { font-size: 0.625rem; letter-spacing: 0.04em; margin-bottom: var(--space-xs); font-weight: 400; text-transform: none; }
+  .v2-hero-actions .btn-primary { min-height: 40px; padding: 0.4rem calc(var(--space-md) + var(--space-xs)); font-size: var(--text-button); letter-spacing: 0.08em; }
+  .v2-hero-eyebrow { font-size: var(--text-eyebrow); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; text-transform: uppercase; }
   .v2-scroll { display: none; }
 
   /* Hero split variant: stack on tablet */
@@ -1334,8 +1630,9 @@
   }
   .v2-trust-item { font-size: var(--text-caption); }
 
+  .v2-atelier-wrapper { padding: 0; }
   .v2-atelier-title { padding: clamp(1rem, 2vw, 1.5rem) var(--space-lg); }
-  .v2-atelier-title h2 { font-size: clamp(1.125rem, 3vw, 1.75rem); letter-spacing: 0.1em; }
+  .v2-atelier-title h2 { font-size: var(--text-display-sm); letter-spacing: 0.1em; }
 
   .v2-sig-editorial-grid {
     grid-template-columns: 1fr;
@@ -1343,27 +1640,27 @@
   }
 
   .v2-philosophy { padding: clamp(1.5rem, 3vw, 2.5rem) 0; }
-  .v2-philosophy-inner { padding: 0 var(--space-lg); max-width: 100%; text-align: left; }
-  .v2-philosophy .eyebrow { margin-bottom: var(--space-xs); font-size: 0.5rem; }
-  .v2-philosophy h2 { font-size: clamp(0.9375rem, 3vw, 1.25rem); margin-bottom: var(--space-sm); line-height: 1.25; max-width: none; }
+  .v2-philosophy-inner { display: block; padding: 0 var(--space-lg); max-width: 100%; text-align: left; }
+  .v2-philosophy .eyebrow { margin-bottom: var(--space-xs); font-size: var(--text-eyebrow); }
+  .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: 0; line-height: var(--lh-heading); max-width: none; }
+  .v2-philosophy-body { border-top: none; padding-top: 0; margin-top: var(--space-sm); }
   .v2-philosophy p {
     max-width: none;
-    font-size: clamp(0.5625rem, 1.5vw, 0.75rem);
+    font-size: var(--text-body);
     color: var(--text-secondary);
-    line-height: 1.5;
+    line-height: var(--lh-relaxed);
   }
 
   .v2-craft { padding: var(--space-xl) 0; }
-  .v2-craft-grid { grid-template-columns: 1fr; gap: 0; }
+  /* T13: mobile leads with craft imagery — an independent composition
+     (desktop keeps text-left/image-right). The maker photo hooks the
+     section, then headline, then process copy. Nothing removed. */
+  .v2-craft-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
   .v2-craft-img { order: -1; }
-  .v2-craft-img img { aspect-ratio: 4/3; }
-  .v2-craft-text { padding: var(--space-lg) var(--space-lg) 0; }
-  .v2-craft-text h2 { font-size: var(--text-h2); line-height: 1.25; }
+  .v2-craft-img img { aspect-ratio: 4/3; min-height: 0; }
+  .v2-craft-text { padding: 0 var(--space-lg); max-width: none; }
+  .v2-craft-text h2 { font-size: var(--text-h2); line-height: var(--lh-heading); max-width: none; }
   .v2-craft-text p {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
     max-width: none;
     font-size: var(--text-body);
     color: var(--text-secondary);
@@ -1371,9 +1668,16 @@
   }
   .v2-craft-text .link-quiet { margin-top: var(--space-sm); }
 
-  .v2-citem { flex: 0 0 140px; }
-  .v2-ctrack { gap: var(--space-sm); }
+  /* T13: carousel reads as a distinct horizontal feature strip on mobile
+     (large snap cards), not a miniature repeat of the 2-up product grid.
+     Swipe, arrows and dots all remain functional. */
+  .v2-citem { flex: 0 0 clamp(230px, 68vw, 300px); }
+  .v2-ctrack { gap: var(--space-md); }
 
+  /* T13: the two story blocks get independent mobile treatments so they no
+     longer read as the same overlay card twice. Workshop stays a
+     full-bleed cinematic overlay; Watch-It-Made becomes a light editorial
+     (image + static text). All copy, imagery and links are preserved. */
   .v2-lifestyle {
     position: relative;
     display: block;
@@ -1381,52 +1685,76 @@
     min-height: 0;
     background: transparent;
     overflow: hidden;
-    padding: 0 var(--space-lg) var(--space-lg);
+    padding: 0 0 var(--space-lg);
   }
   .v2-lifestyle + .v2-lifestyle { margin-top: 0; padding-top: 0; }
   .v2-lifestyle-bg {
     position: relative;
     width: 100%;
-    height: 380px;
+    height: 460px;
     object-fit: cover;
     transform: none;
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     display: block;
   }
+  /* T14: favor the hand/chisel action on narrow frames
+     (desktop holds 50% 18% for the wide cinematic frame). */
+  .v2-lifestyle:not(.v2-lifestyle--alt) .v2-lifestyle-bg { object-position: 50% 30%; }
   .v2-lifestyle:hover .v2-lifestyle-bg { transform: none; }
   .v2-lifestyle::after {
     content: '';
     display: block;
     position: absolute;
-    left: var(--space-lg);
-    right: var(--space-lg);
+    left: 0;
+    right: 0;
     bottom: var(--space-lg);
     top: auto;
-    height: 260px;
-    background: linear-gradient(0deg, rgba(51,38,29,0.7) 0%, rgba(51,38,29,0.12) 55%, transparent 100%);
-    border-radius: var(--radius-sm);
+    height: 420px;
+    background: linear-gradient(0deg, rgba(51,38,29,0.75) 0%, rgba(51,38,29,0.15) 55%, transparent 100%);
+    border-radius: 0;
     z-index: 1;
     pointer-events: none;
   }
+  .v2-lifestyle--alt { height: auto; min-height: 0; padding: 0 var(--space-lg) var(--space-lg); }
+  .v2-lifestyle--alt .v2-lifestyle-bg { height: 340px; border-radius: var(--radius-sm); }
+  .v2-lifestyle--alt::after { display: none; }
   .v2-lifestyle-content {
     position: absolute;
-    bottom: var(--space-lg);
+    bottom: calc(var(--space-lg) + var(--space-md));
     left: var(--space-lg);
     right: var(--space-lg);
     z-index: 2;
     padding: 0;
     max-width: 100%;
   }
-  .v2-lifestyle .eyebrow { color: rgba(247,244,238,0.85); font-size: var(--text-caption); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; }
-  .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h3); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 28ch; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-  .v2-lifestyle p { display: none; }
+  .v2-lifestyle .eyebrow { color: var(--bronze-on-dark); font-size: var(--text-eyebrow); letter-spacing: 0.16em; margin-bottom: var(--space-xs); font-weight: 500; text-transform: uppercase; }
+  .v2-lifestyle h2 { color: var(--bg-primary); font-size: var(--text-h3); line-height: 1.2; margin-bottom: var(--space-xs); max-width: 28ch; font-weight: 500; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .v2-lifestyle p {
+    /* T13: full copy on mobile — no line-clamp truncation. */
+    color: rgba(247,244,238,0.85);
+    font-size: var(--text-body);
+    line-height: var(--lh-relaxed);
+    max-width: 38ch;
+    margin-bottom: var(--space-sm);
+  }
   .v2-lifestyle .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); font-size: var(--text-caption); letter-spacing: 0.08em; }
+  /* Alt block: static editorial text on the page background. */
+  .v2-lifestyle--alt .v2-lifestyle-content {
+    position: static;
+    padding: var(--space-md) 0 0;
+    margin: 0;
+    max-width: 100%;
+  }
+  .v2-lifestyle--alt .eyebrow { color: var(--cin-text-muted); }
+  .v2-lifestyle--alt h2 { color: var(--cin-text); text-shadow: none; }
+  .v2-lifestyle--alt p { color: var(--cin-text-muted); }
+  .v2-lifestyle--alt .link-quiet { color: var(--cin-text); border-color: var(--cin-stone); }
 
-  .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+  .pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
   .v2-pcard { padding-bottom: 0; }
   .v2-pimg { margin-bottom: var(--space-xs); }
   .v2-pinfo { flex-direction: column; align-items: flex-start; gap: var(--space-2xs); }
-  .v2-pinfo h3 { font-size: var(--text-body); }
+  .v2-pinfo h3 { font-size: var(--text-h3); }
   .v2-pcat { font-size: var(--text-caption); }
   .v2-pprice { font-size: var(--text-caption); }
 
@@ -1438,78 +1766,86 @@
 @media (max-width: 560px) {
   .v2-hero { height: 100svh; min-height: 340px; }
   .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 52px); padding-left: var(--space-md); }
-  .v2-hero h1 { font-size: clamp(1.125rem, 5vw, 1.75rem); margin-bottom: var(--space-sm); letter-spacing: -0.01em; line-height: 1.1; }
+  .v2-hero h1 { font-size: var(--text-display); margin-bottom: var(--space-sm); letter-spacing: -0.01em; line-height: var(--lh-display); }
   .v2-hero-actions { flex-direction: row; gap: var(--space-xs); align-items: center; }
-  .v2-hero-actions .btn-primary { flex: 1; min-height: 36px; font-size: 0.5rem; width: auto; padding: 0.3rem var(--space-xs); }
-  .v2-hero-actions .link-quiet { font-size: 0.5rem; white-space: nowrap; }
+  .v2-hero-actions .btn-primary { flex: 1; min-height: 36px; font-size: var(--text-button); width: auto; padding: 0.3rem var(--space-xs); }
+  .v2-hero-actions .link-quiet { font-size: var(--text-button); white-space: nowrap; }
 
   /* Hero split variant: stack on mobile */
   .v2-hero--split .v2-hero-split { grid-template-columns: 1fr; min-height: auto; }
   .v2-hero--split .v2-hero-split-text { padding: var(--space-lg) var(--space-md); }
   .v2-hero--split .v2-hero-split-image { max-height: 300px; }
-  .v2-hero--split .v2-hero-split-text h1 { font-size: clamp(1.125rem, 5vw, 1.75rem); }
+  .v2-hero--split .v2-hero-split-text h1 { font-size: var(--text-display); }
   .v2-hero--minimal { min-height: 340px; }
   .v2-hero--minimal .v2-hero-minimal { padding: var(--space-lg) var(--space-md); }
-  .v2-hero--minimal .v2-hero-minimal h1 { font-size: clamp(1.125rem, 5vw, 1.75rem); }
+  .v2-hero--minimal .v2-hero-minimal h1 { font-size: var(--text-display); }
 
   .v2-sig-editorial-thumb { flex: 1; aspect-ratio: 1/1; }
-  .v2-sig-editorial-text { padding: 0; }
-  .v2-sig-editorial-text h2 { font-size: clamp(0.875rem, 3.5vw, 1.25rem); }
-  .v2-sig-editorial-features { display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-xs); }
+  .v2-sig-editorial-text { padding: 0 var(--space-md); }
+  .v2-sig-editorial-text h2 { font-size: var(--text-display-sm); }
+  /* T14: features as a 2-up grid so wrapped "·" separators never orphan. */
+  .v2-sig-editorial-features { display: grid; grid-template-columns: 1fr 1fr; gap: 6px var(--space-sm); }
+  .v2-sig-feature + .v2-sig-feature::before { display: none; }
   .v2-sig-editorial-actions { flex-direction: row; gap: var(--space-xs); }
-  .v2-sig-btn-primary { flex: 1; min-height: 32px; font-size: 0.375rem; }
-  .v2-sig-btn-outline { flex: 1; min-height: 32px; font-size: 0.375rem; }
+  /* T14: legible CTAs with full touch targets (was 7px type, 32px high). */
+  .v2-sig-btn-primary { flex: 1; min-height: 44px; font-size: 0.75rem; letter-spacing: 0.08em; line-height: 1.4; text-align: center; padding: var(--space-xs) var(--space-2xs); }
+  .v2-sig-btn-outline { flex: 1; min-height: 44px; font-size: 0.75rem; letter-spacing: 0.08em; line-height: 1.4; text-align: center; padding: var(--space-xs) var(--space-2xs); }
   .v2-sig-trust { display: none; grid-template-columns: repeat(2, 1fr); }
 
   .v2-craft { padding: var(--space-xl) 0; }
-  .v2-craft-text { padding: var(--space-md) var(--space-md) 0; }
+  .v2-craft-text { padding: 0 var(--space-md); }
 
-  .v2-carousel { padding: var(--space-xl) var(--space-xs); }
-  .v2-citem { flex: 0 0 120px; }
+  .carousel { padding: var(--space-lg) var(--space-xs); }
+  .v2-citem { flex: 0 0 clamp(210px, 66vw, 260px); }
   .v2-clabel { font-size: var(--text-caption); }
-  .v2-cbtn { font-size: var(--text-caption); padding: 0.4em 1em; min-height: 32px; }
+  .v2-cbtn { display: none; }
 
-  .v2-lifestyle { padding: 0 var(--space-md) var(--space-md); }
-  .v2-lifestyle-bg { height: 300px; }
-  .v2-lifestyle::after { left: var(--space-md); right: var(--space-md); bottom: var(--space-md); height: 200px; }
-  .v2-lifestyle-content { bottom: var(--space-md); left: var(--space-md); right: var(--space-md); padding: 0; }
+  .v2-lifestyle { padding: 0 0 var(--space-md); }
+  .v2-lifestyle-bg { height: 420px; }
+  .v2-lifestyle::after { left: 0; right: 0; bottom: var(--space-md); height: 380px; }
+  .v2-lifestyle--alt { padding: 0 var(--space-md) var(--space-md); }
+  .v2-lifestyle--alt .v2-lifestyle-bg { height: 300px; }
+  .v2-lifestyle:not(.v2-lifestyle--alt) .v2-lifestyle-content { bottom: calc(var(--space-md) + var(--space-md)); left: var(--space-md); right: var(--space-md); padding: 0; }
   .v2-lifestyle h2 { font-size: var(--text-h3); margin-bottom: var(--space-xs); max-width: 26ch; }
 
   .v2-products { padding: var(--space-xl) 0; }
   .v2-products-head { margin-bottom: var(--space-md); }
-  .v2-pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .pgrid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
   .v2-pimg { aspect-ratio: 4 / 5; margin-bottom: var(--space-2xs); }
   .v2-pinfo { gap: 1px; }
-  .v2-pinfo h3 { font-size: var(--text-body); }
-  .v2-pcat { font-size: var(--text-label); }
-  .v2-pprice { font-size: var(--text-label); }
+  .v2-pinfo h3 { font-size: var(--text-h3); }
+  .v2-pcat { font-size: var(--text-caption); }
+  .v2-pprice { font-size: var(--text-caption); }
 
   .v2-philosophy { padding: clamp(1.25rem, 2.5vw, 2rem) 0; }
-  .v2-philosophy-inner { padding: 0 var(--space-md); text-align: left; }
-  .v2-philosophy h2 { font-size: clamp(0.875rem, 3.5vw, 1.125rem); margin-bottom: var(--space-xs); }
+  .v2-philosophy-inner { display: block; padding: 0 var(--space-md); text-align: left; }
+  .v2-philosophy h2 { font-size: var(--text-h2); margin-bottom: 0; }
 
   .v2-atelier-title { padding: clamp(0.75rem, 1.5vw, 1rem) var(--space-md); }
-  .v2-atelier-title h2 { font-size: clamp(0.9375rem, 3vw, 1.5rem); letter-spacing: 0.08em; }
+  .v2-atelier-title h2 { font-size: var(--text-display-sm); letter-spacing: 0.08em; }
 
   .v2-pcta { margin-top: var(--space-md); }
 }
 
 @media (max-width: 430px) {
-  .v2-hero h1 { font-size: 1.75rem; margin-bottom: var(--space-md); }
+  .v2-hero h1 { font-size: var(--text-display); margin-bottom: var(--space-md); }
   .v2-hero-content { padding: 0 var(--space-md) var(--space-lg); padding-bottom: calc(var(--space-lg) + 48px); }
-  .v2-hero-actions .btn-primary { min-height: 40px; font-size: 0.5625rem; }
-  .v2-hero-actions .link-quiet { font-size: var(--text-label); }
-  .v2-pgrid { gap: var(--space-sm); }
-  .v2-pinfo h3 { font-size: 0.875rem; }
+  .v2-hero-actions .btn-primary { min-height: 40px; font-size: var(--text-button); }
+  .v2-hero-actions .link-quiet { font-size: var(--text-button); }
+  .pgrid { gap: var(--space-sm); }
+  .v2-pinfo h3 { font-size: var(--text-h3); }
   .v2-lifestyle h2 { font-size: var(--text-h3); max-width: 28ch; }
-  .v2-lifestyle-bg { height: 300px; }
-  .v2-lifestyle::after { height: 200px; }
-  .v2-philosophy h2 { font-size: var(--text-h3); }
-  .v2-citem { flex: 0 0 120px; }
+  .v2-lifestyle-bg { height: 380px; }
+  .v2-lifestyle--alt .v2-lifestyle-bg { height: 280px; }
+  .v2-lifestyle::after { height: 340px; }
+  .v2-philosophy h2 { font-size: var(--text-h2); }
+  .v2-citem { flex: 0 0 clamp(200px, 64vw, 240px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .v2-hero-img { animation: none; transform: none; }
+  .v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-hero-content > *,
+  .v2-hero:not(.v2-hero--split):not(.v2-hero--minimal) .v2-scroll { animation: none; opacity: 1; transform: none; }
   .v2-hero-eyebrow, .v2-hero h1, .v2-hero-actions, .v2-scroll { animation: none; opacity: 1; transform: none; }
   /* Reduced motion: show all signature blocks immediately */
   .v2-sig-editorial-img,
@@ -1523,5 +1859,23 @@
   .v2-sig-editorial-maker,
   .v2-sig-editorial-quote {
     opacity: 1 !important; transform: none !important;
+  }
+  /* Disable hover transforms and transitions */
+  .v2-sig-editorial-img > img,
+  .v2-craft-img img,
+  .v2-cimage img,
+  .v2-pimg img,
+  .v2-lifestyle-bg {
+    transition: none !important;
+    transform: none !important;
+  }
+  .v2-sig-editorial-img:hover > img,
+  .v2-craft-img:hover img,
+  .v2-citem:hover .v2-cimage img,
+  .v2-pcard:hover .v2-pimg img,
+  .v2-lifestyle:hover .v2-lifestyle-bg,
+  .v2-lifestyle--alt:hover .v2-lifestyle-bg {
+    transform: none !important;
+    filter: none !important;
   }
 }

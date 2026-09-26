@@ -3,201 +3,94 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import { PRODUCTS } from './data/products'
-import { resolvePageDesign, resolveVariant, parseStyleOverrides, parseSectionOverrides, resolveSectionStyle, resolveElementStyle, resolveTypography, getVariantClass, resolveFocalPoint, focalPointToObjectPosition } from '@/lib/designResolution'
+import { resolvePageDesign, resolveVariant, parseStyleOverrides, parseSectionOverrides, resolveSectionStyle, resolveElementStyle, resolveTypography, getVariantClass, resolveFocalPoint, focalPointToObjectPosition, hasExplicitFocal } from '@/lib/designResolution'
+import RevealOnMount from './components/RevealOnMount'
 import './homepage.css'
 
-/* Critical CSS for Atelier Stories (injected at runtime to bypass build-time stripping) */
+/* Critical CSS for Atelier Stories — object-study editorial (single-product gallery only) */
 const atelierCriticalCSS = `
-  /* Wrapper — clean container */
-  .v2-atelier-wrapper { position: relative !important; padding-top: 0 !important; }
-  /* Title block — centered, increased gap to content */
-  .v2-atelier-title { text-align: center !important; padding: 0 20px 56px !important; scroll-margin-top: 80px; }
-  .v2-atelier-title h2 { font-size: clamp(2rem, 4vw, 3.25rem) !important; font-weight: 400 !important; letter-spacing: 0.24em !important; text-transform: uppercase !important; color: #f5f0eb !important; margin: 0 0 8px !important; }
-  .v2-atelier-subtitle { display: block !important; font-size: clamp(0.55rem, 0.7vw, 0.7rem) !important; font-weight: 400 !important; font-style: italic !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: rgba(245,240,235,0.55) !important; margin-top: 6px !important; margin-bottom: 0 !important; }
-  /* Editorial container */
-  .v2-sig-editorial { background: transparent !important; padding: 0 0 15px !important; overflow: visible !important; scroll-margin-top: 80px; }
-  .v2-sig-editorial-inner { width: 100%; padding: 0; max-width: none; margin: 0; display: block; border-radius: 0; border: none; box-shadow: none; }
-  .v2-sig-editorial-inner::before { display: none; }
-  /* Grid — 2 columns: left (image + thumbs), right (content) */
-  .v2-sig-editorial-grid {
-    position: static !important;
-    display: grid !important;
-    grid-template-columns: 590px 1fr !important;
-    gap: 56px !important;
-    align-items: start !important;
-    justify-items: start !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: none !important;
-  }
-  /* Left column — image stack (main image + thumbnails as one visual unit) */
-  .v2-sig-editorial-img {
-    position: static !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-  }
-  .v2-sig-editorial-img > img {
-    width: 100% !important;
-    aspect-ratio: 4/5 !important;
-    object-fit: cover !important;
-    display: block !important;
-  }
-  /* Thumbnails — aligned under main image, same width */
-  .v2-sig-editorial-gallery { margin-top: 0 !important; }
-  .v2-sig-editorial-thumbs {
-    display: flex !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-  .v2-sig-editorial-thumb {
-    flex: 1 !important;
-    aspect-ratio: 1/1 !important;
-    border: 2px solid transparent !important;
-    background: none !important;
-    cursor: pointer !important;
-    overflow: hidden !important;
-    opacity: 0.5 !important;
-    transition: opacity 0.2s, border-color 0.2s !important;
-    padding: 0 !important;
-  }
+  .v2-atelier-wrapper { background: var(--cin-dark-deep) !important; padding: clamp(4rem, 8vw, 7rem) var(--cin-gutter-wide) !important; }
+  .v2-atelier-title { max-width: var(--container-wide); margin: 0 auto; padding: 0 0 3.5rem !important; text-align: left !important; }
+  .v2-atelier-title h2 { font-size: var(--cin-display) !important; font-weight: 400 !important; letter-spacing: 0.24em !important; text-transform: uppercase !important; color: var(--cin-white) !important; margin: 0 0 0.75rem !important; line-height: var(--lh-display) !important; }
+  .v2-atelier-subtitle { display: block !important; font-size: var(--cin-caption) !important; font-weight: 400 !important; font-style: italic !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: var(--cin-bronze-light) !important; margin-top: 6px !important; margin-bottom: 0 !important; line-height: var(--lh-tight) !important; }
+  .v2-atelier-title::after { content: "" !important; display: block !important; height: 1px !important; background: rgba(245,240,235,0.2) !important; margin-top: 2.5rem !important; }
+  .v2-sig-editorial { background: transparent !important; padding: 0 0 1rem !important; overflow: visible !important; }
+  .v2-sig-editorial-grid { display: grid !important; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr) !important; gap: clamp(2.5rem, 5vw, 5rem) !important; align-items: start !important; justify-items: start !important; max-width: var(--container-wide) !important; margin: 0 auto !important; }
+  .v2-sig-mobile-head { display: none !important; }
+  .v2-sig-editorial-img { width: 100% !important; display: flex !important; flex-direction: column !important; gap: 16px !important; min-width: 0 !important; }
+  .v2-sig-editorial-img > img { width: 100% !important; aspect-ratio: 3/2 !important; object-fit: cover !important; object-position: 50% 100% !important; display: block !important; border-radius: 0 !important; box-shadow: none !important; transition: transform 1.2s var(--ease-luxury) !important; }
+  .v2-sig-editorial-img:hover > img { transform: scale(1.02) !important; }
+  .v2-sig-editorial-supporting { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; margin-top: 4px !important; }
+  .v2-sig-editorial-thumb { aspect-ratio: 1/1 !important; border: 2px solid transparent !important; background: none !important; cursor: pointer !important; overflow: hidden !important; opacity: 0.5 !important; transition: opacity 0.2s, border-color 0.2s !important; padding: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
   .v2-sig-editorial-thumb.is-active { border-color: #f5f0eb !important; opacity: 1 !important; }
   .v2-sig-editorial-thumb:hover { opacity: 0.8 !important; }
   .v2-sig-editorial-thumb img { width: 100% !important; height: 100% !important; object-fit: cover !important; display: block !important; }
-  /* Right column — product content, vertically balanced */
-  .v2-sig-editorial-text {
-    position: static !important;
-    width: auto !important;
-    padding: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-  }
-  /* Content stack with consistent rhythm */
-  .v2-sig-editorial-text h2 {
-    font-family: var(--font-heading) !important;
-    font-size: clamp(28px, 2.5vw, 40px) !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.18em !important;
-    color: #f5f0eb !important;
-    margin: 0 0 12px !important;
-    text-transform: uppercase !important;
-    line-height: 1.1 !important;
-  }
-  .v2-sig-editorial-subtitle {
-    font-family: var(--font-heading) !important;
-    font-size: clamp(14px, 1.1vw, 17px) !important;
-    font-weight: 400 !important;
-    color: rgba(245,240,235,0.7) !important;
-    margin-bottom: 20px !important;
-    font-style: italic !important;
-    line-height: 1.25 !important;
-  }
-  .v2-sig-editorial-text > p {
-    font-family: var(--font-body) !important;
-    font-size: clamp(14px, 1vw, 16px) !important;
-    line-height: 1.7 !important;
-    color: rgba(245,240,235,0.65) !important;
-    margin: 0 0 24px !important;
-    max-width: 674px !important;
-  }
-  /* Metadata row — hidden on desktop (shown inline in features) */
-  .v2-sig-editorial-meta-line { display: none !important; }
-  .v2-sig-meta-sep { display: none !important; }
-  /* Feature blocks with icons — consistent gap */
-  .v2-sig-editorial-features {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 16px 24px !important;
-    margin-bottom: 28px !important;
-  }
-  .v2-sig-feature { display: flex !important; align-items: center !important; gap: 10px !important; }
-  .v2-sig-feature-icon { width: 18px !important; height: 18px !important; flex-shrink: 0 !important; color: rgba(245,240,235,0.6) !important; }
-  .v2-sig-feature-label {
-    font-family: var(--font-body) !important;
-    font-size: 13px !important;
-    letter-spacing: 0.06em !important;
-    color: rgba(245,240,235,0.8) !important;
-    line-height: 1.2 !important;
-  }
-  /* Price */
+  .v2-sig-story-note { margin-top: 12px !important; padding-top: 20px !important; border-top: 1px solid rgba(245,240,235,0.22) !important; }
+  .v2-sig-story-label { display: block !important; font-family: var(--font-body) !important; font-size: var(--cin-label) !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: var(--cin-bronze-light) !important; line-height: var(--lh-tight) !important; margin-bottom: 10px !important; }
+  .v2-sig-story-note p { font-family: var(--font-body) !important; font-size: var(--cin-body) !important; line-height: var(--lh-body) !important; color: rgba(245,240,235,0.65) !important; margin: 0 !important; max-width: 62ch !important; }
+  .v2-sig-editorial-text { width: auto !important; padding: clamp(4px, 1.5vw, 28px) 0 0 !important; display: flex !important; flex-direction: column !important; justify-content: flex-start !important; min-width: 0 !important; }
+  .v2-sig-editorial-text h2 { font-family: var(--font-display) !important; font-size: var(--cin-display-sm) !important; font-weight: 500 !important; letter-spacing: 0.18em !important; color: var(--cin-white) !important; margin: 0 0 12px !important; text-transform: uppercase !important; line-height: var(--lh-display) !important; }
+  .v2-sig-edition-line { display: block !important; font-family: var(--font-body) !important; font-size: var(--cin-caption) !important; font-weight: 500 !important; letter-spacing: 0.22em !important; text-transform: uppercase !important; color: var(--cin-bronze-light) !important; margin: 0 0 14px !important; line-height: var(--lh-tight) !important; }
+  .v2-sig-editorial-text > p { font-family: var(--font-body) !important; font-size: var(--cin-body-lg) !important; line-height: var(--lh-body) !important; color: rgba(245,240,235,0.65) !important; margin: 0 0 24px !important; max-width: 674px !important; }
+  .v2-sig-editorial-features { display: flex !important; flex-wrap: wrap !important; row-gap: 8px !important; margin-bottom: 28px !important; padding: 14px 0 !important; border-top: 1px solid rgba(245,240,235,0.22) !important; border-bottom: 1px solid rgba(245,240,235,0.22) !important; }
+  .v2-sig-feature { display: flex !important; align-items: baseline !important; gap: 0 !important; }
+  .v2-sig-feature-icon { display: none !important; }
+  .v2-sig-feature + .v2-sig-feature::before { content: "·" !important; color: rgba(245,240,235,0.45) !important; margin: 0 12px !important; }
+  .v2-sig-feature-label { font-family: var(--font-body) !important; font-size: var(--cin-label) !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: rgba(245,240,235,0.8) !important; line-height: var(--lh-tight) !important; }
   .v2-sig-editorial-price { margin-bottom: 28px !important; }
-  .v2-sig-editorial-price-amount {
-    font-family: var(--font-heading) !important;
-    font-size: clamp(24px, 2vw, 32px) !important;
-    font-weight: 600 !important;
-    color: #f5f0eb !important;
-    line-height: 1.1 !important;
-  }
-  .v2-sig-editorial-price-note {
-    font-family: var(--font-body) !important;
-    font-size: 12px !important;
-    color: rgba(245,240,235,0.5) !important;
-    letter-spacing: 0.04em !important;
-    margin-top: 6px !important;
-  }
-  /* CTAs — equal width, aligned */
-  .v2-sig-editorial-actions {
-    display: flex !important;
-    gap: 16px !important;
-    margin-bottom: 24px !important;
-    max-width: 674px !important;
-  }
-  .v2-sig-btn-primary, .v2-sig-btn-outline {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 14px 32px !important;
-    font-family: var(--font-body) !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.14em !important;
-    text-transform: uppercase !important;
-    text-decoration: none !important;
-    transition: all 0.3s ease !important;
-    text-align: center !important;
-    flex: 1 !important;
-    min-height: 48px !important;
-  }
+  .v2-sig-editorial-price-amount { font-family: var(--font-display) !important; font-size: var(--cin-h2) !important; font-weight: 500 !important; color: var(--cin-white) !important; line-height: var(--lh-heading) !important; }
+  .v2-sig-editorial-price-note { font-family: var(--font-body) !important; font-size: var(--cin-caption) !important; color: rgba(245,240,235,0.5) !important; letter-spacing: 0.04em !important; margin-top: 6px !important; line-height: var(--lh-tight) !important; }
+  .v2-sig-editorial-actions { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 12px 28px !important; margin-bottom: 24px !important; max-width: 674px !important; }
+  .v2-sig-btn-primary, .v2-sig-btn-outline { display: inline-flex !important; align-items: center !important; justify-content: center !important; padding: 14px 34px !important; font-family: var(--font-body) !important; font-size: var(--cin-caption) !important; font-weight: 600 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; text-decoration: none !important; transition: all 0.3s ease !important; text-align: center !important; flex: 0 1 auto !important; min-width: 220px !important; min-height: 48px !important; border-radius: 0 !important; box-shadow: none !important; }
   .v2-sig-btn-primary { background: #f5f0eb !important; color: #1a1714 !important; border: 1px solid #f5f0eb !important; }
   .v2-sig-btn-primary:hover { background: #e8e0d5 !important; border-color: #e8e0d5 !important; }
   .v2-sig-btn-outline { background: transparent !important; color: #f5f0eb !important; border: 1px solid rgba(245,240,235,0.4) !important; }
   .v2-sig-btn-outline:hover { border-color: #f5f0eb !important; }
-  /* Past editions link */
-  .v2-sig-editorial-past {
-    font-family: var(--font-body) !important;
-    font-size: 13px !important;
-    color: rgba(245,240,235,0.5) !important;
-    line-height: 1.4 !important;
-  }
+  .v2-sig-editorial-past { font-family: var(--font-body) !important; font-size: var(--cin-body) !important; color: rgba(245,240,235,0.5) !important; line-height: var(--lh-body) !important; }
   .v2-sig-editorial-past a { color: rgba(245,240,235,0.8) !important; text-decoration: underline !important; text-underline-offset: 3px !important; }
   .v2-sig-editorial-past a:hover { color: rgba(245,240,235,1) !important; }
-  /* Sculpture label (floating on image) — hidden in grid mode */
-  .v2-sig-sculpture-label { display: none !important; }
-  /* Trust badges removed */
-  .v2-sig-trust { display: none !important; }
-  /* Studio visit tab */
-  .v2-sig-studio-tab { position: fixed; right: 0; top: 50%; transform: translateY(-50%); writing-mode: vertical-rl; text-orientation: mixed; background: #1a1714; color: #f5f0eb; padding: 20px 12px; font-family: var(--font-body); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 10px; z-index: 50; transition: background 0.3s; }
-  .v2-sig-studio-tab:hover { background: #2a2520; }
-  .v2-sig-studio-tab svg { width: 16px; height: 16px; transform: rotate(-90deg); }
-  /* Responsive */
-  @media (max-width: 1024px) {
-    .v2-sig-editorial-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-    .v2-sig-editorial-text { justify-content: flex-start !important; }
-    .v2-sig-sculpture-label { display: block !important; left: 12px; }
+  .v2-sig-archive-foot { max-width: var(--container-wide) !important; margin: 2.5rem auto 0 !important; padding-top: 20px !important; border-top: 1px solid rgba(245,240,235,0.22) !important; display: flex !important; flex-wrap: wrap !important; gap: 8px 16px !important; align-items: baseline !important; }
+  .v2-sig-archive-label { font-family: var(--font-body) !important; font-size: var(--cin-label) !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: var(--cin-bronze-light) !important; line-height: var(--lh-tight) !important; }
+  .v2-sig-archive-link { font-family: var(--font-body) !important; font-size: var(--cin-body) !important; color: rgba(245,240,235,0.8) !important; text-decoration: underline !important; text-underline-offset: 3px !important; line-height: var(--lh-body) !important; }
+  .v2-sig-wishlist { display: inline-flex !important; align-items: center !important; align-self: flex-start !important; gap: 10px !important; background: transparent !important; border: none !important; border-radius: 0 !important; box-shadow: none !important; padding: 12px 0 !important; margin: 0 0 20px !important; min-height: 44px !important; font-family: var(--font-body) !important; font-size: var(--cin-label) !important; font-weight: 500 !important; letter-spacing: 0.14em !important; text-transform: uppercase !important; color: rgba(245,240,235,0.65) !important; text-decoration: underline !important; text-underline-offset: 4px !important; text-decoration-color: rgba(245,240,235,0.35) !important; cursor: pointer !important; }
+  .v2-sig-wishlist:hover { color: #f5f0eb !important; text-decoration-color: #f5f0eb !important; }
+  .v2-sig-wishlist svg { width: 14px !important; height: 14px !important; flex-shrink: 0 !important; }
+  .v2-sig-wishlist.is-active svg { fill: currentColor !important; }
+  .v2-sig-studio-tab { display: none !important; }
+  @media (max-width: 860px) {
+    .v2-sig-editorial-grid { grid-template-columns: 1fr !important; gap: var(--space-sm) !important; }
+    .v2-sig-mobile-head { display: block !important; max-width: var(--container-wide) !important; margin: 0 auto 16px !important; }
+    .v2-sig-mobile-head h2 { font-family: var(--font-display) !important; font-size: var(--cin-display-sm) !important; font-weight: 500 !important; letter-spacing: 0.18em !important; text-transform: uppercase !important; color: var(--cin-white) !important; margin: 0 0 8px !important; line-height: var(--lh-heading) !important; }
+    .v2-sig-title-desktop { display: none !important; }
+    .v2-sig-edition-line-desktop { display: none !important; }
+    .v2-sig-editorial-img > img { aspect-ratio: 3/2 !important; }
+    .v2-sig-editorial-supporting { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .v2-sig-story-note { margin-top: 4px !important; padding-top: 16px !important; }
+    .v2-sig-story-note p { max-width: 60ch !important; }
+    .v2-sig-editorial-text { padding: var(--space-sm) !important; }
+    .v2-sig-editorial-text > p { font-size: var(--cin-body) !important; max-width: 50ch !important; margin-bottom: var(--space-sm) !important; line-height: var(--lh-body) !important; }
+    .v2-sig-editorial-features { display: flex !important; flex-wrap: wrap !important; row-gap: 8px !important; margin-bottom: var(--space-sm) !important; padding: 12px 0 !important; }
+    .v2-sig-feature-icon { display: none !important; }
+    .v2-sig-editorial-actions { flex-direction: column !important; align-items: stretch !important; gap: var(--space-sm) !important; margin-bottom: var(--space-md) !important; }
+    .v2-sig-editorial-actions .v2-sig-btn-primary, .v2-sig-editorial-actions .v2-sig-btn-outline { text-align: center !important; padding: var(--space-sm) var(--space-lg) !important; font-size: var(--cin-button) !important; min-height: 44px !important; display: flex !important; align-items: center !important; justify-content: center !important; width: 100% !important; }
+    .v2-sig-archive-foot { margin-top: 20px !important; }
+    .v2-sig-sculpture-label { display: none !important; }
+    .v2-sig-studio-tab { display: none !important; }
   }
   @media (max-width: 768px) {
-    .v2-atelier-title { padding: 0 16px 40px !important; }
-    .v2-sig-editorial-grid { gap: 32px !important; }
-    .v2-sig-editorial-thumbs { gap: 8px !important; }
-    .v2-sig-editorial-features { gap: 12px 16px !important; }
-    .v2-sig-editorial-actions { flex-direction: column !important; }
-    .v2-sig-btn-primary, .v2-sig-btn-outline { min-height: 44px !important; width: 100% !important; }
-    .v2-sig-studio-tab { display: none; }
-    .v2-sig-sculpture-label { display: none; }
+    .v2-sig-editorial-text { padding: 0 var(--space-md) !important; }
+    .v2-sig-editorial-actions { flex-direction: column !important; align-items: stretch !important; gap: var(--space-sm) !important; }
+    .v2-sig-editorial-actions .v2-sig-btn-primary, .v2-sig-editorial-actions .v2-sig-btn-outline { width: 100% !important; }
+    .v2-sig-sculpture-label { display: none !important; }
+    .v2-sig-studio-tab { display: none !important; }
   }
-`;
+  @media (max-width: 560px) {
+    .v2-sig-wishlist { align-self: flex-start !important; min-height: 44px !important; }
+    .v2-sig-editorial-features { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: var(--space-2xs) var(--space-xs) !important; }
+    .v2-sig-feature + .v2-sig-feature::before { display: none !important; }
+    .v2-sig-editorial-actions .btn-primary, .v2-sig-editorial-actions .link-quiet { font-size: var(--cin-button) !important; padding: var(--space-xs) var(--space-sm) !important; min-height: 44px !important; display: flex !important; align-items: center !important; justify-content: center !important; flex: 1 !important; }
+  }
+`
 
 /* Check if viewport is mobile-sized */
 function useIsMobile() {
@@ -236,18 +129,17 @@ function resolveProducts(ids) {
 }
 
 const TRUST_ICONS = {
-  shield: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-  check: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="20 6 9 17 4 12"/></svg>,
-  truck: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-  heart: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>,
-  clock: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
-  star: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+  shield: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  check: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>,
+  truck: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
+  heart: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>,
+  clock: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
+  star: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
 }
 
 export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct = null, pageDesign = {} }) {
   const heroRef = useRef(null)
   const sigSectionRef = useRef(null)
-  const carouselTrackRef = useRef(null)
   const [galleryIdx, setGalleryIdx] = useState(0)
   const isMobile = useIsMobile()
 
@@ -311,100 +203,52 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
     return () => document.head.removeChild(style)
   }, [])
 
-  /* Editorial carousel */
-  useEffect(() => {
-    const track = carouselTrackRef.current
-    if (!track) return
-
-    const prev = track.parentElement.querySelector('.v2-cprev')
-    const next = track.parentElement.querySelector('.v2-cnext')
-    const items = track.querySelectorAll('.v2-citem')
-    const dots = track.parentElement.querySelectorAll('.v2cdot')
-    if (!items.length) return
-
-    let idx = 0, hovered = false, userPause = false, pauseTimer = null
-
-    function updateDots(i) {
-      dots.forEach((d, j) => { d.classList.toggle('active', j === i) })
-    }
-
-    function go(i) {
-      const w = items[0].offsetWidth + 32
-      track.scrollTo({ left: i * w, behavior: 'smooth' })
-      idx = i
-      updateDots(i)
-    }
-
-    function tick() {
-      if (hovered || userPause) return
-      idx = idx >= items.length - 1 ? 0 : idx + 1
-      go(idx)
-    }
-
-    function userInteract() {
-      userPause = true
-      clearTimeout(pauseTimer)
-      pauseTimer = setTimeout(() => { userPause = false }, 14000)
-    }
-
-    const timer = setInterval(tick, 8000)
-
-    track.addEventListener('mouseenter', () => { hovered = true })
-    track.addEventListener('mouseleave', () => { hovered = false })
-
-    const onPrev = () => { userInteract(); go(idx <= 0 ? items.length - 1 : idx - 1) }
-    const onNext = () => { userInteract(); go(idx >= items.length - 1 ? 0 : idx + 1) }
-    if (prev) prev.addEventListener('click', onPrev)
-    if (next) next.addEventListener('click', onNext)
-
-    let sx = 0, dragging = false
-    const ts = (e) => { sx = e.touches[0].clientX; dragging = true }
-    const tm = (e) => { if (dragging && Math.abs(sx - e.touches[0].clientX) > 5) e.preventDefault() }
-    const te = (e) => {
-      if (!dragging) return; dragging = false
-      userInteract()
-      const d = sx - e.changedTouches[0].clientX
-      if (d > 50) go(Math.min(idx + 1, items.length - 1))
-      else if (d < -50) go(Math.max(idx - 1, 0))
-    }
-
-    track.addEventListener('touchstart', ts)
-    track.addEventListener('touchmove', tm, { passive: false })
-    track.addEventListener('touchend', te)
-
-    function onScroll() {
-      const w = items[0].offsetWidth + 32
-      const si = Math.round(track.scrollLeft / w)
-      if (si !== idx && si >= 0 && si < items.length) {
-        idx = si
-        updateDots(idx)
-      }
-    }
-    track.addEventListener('scroll', onScroll, { passive: true })
-
-    return () => {
-      clearInterval(timer)
-      clearTimeout(pauseTimer)
-      if (prev) prev.removeEventListener('click', onPrev)
-      if (next) next.removeEventListener('click', onNext)
-      track.removeEventListener('touchstart', ts)
-      track.removeEventListener('touchmove', tm)
-      track.removeEventListener('touchend', te)
-      track.removeEventListener('scroll', onScroll)
-    }
-  }, [])
+  /* T04: homepage product presentation is a static two-group editorial
+     layout (3 + 3). No carousel behavior remains here. */
 
   const sigImages = heroProduct?.images || []
   const sigThumbs = heroProduct?.thumbnails || sigImages
-  const hasGallery = sigImages.length > 1
+  /* Object-study strip: SAME featured product only. Every entry is an
+     authentic heroProduct view; show all 4 thumbnails so user can switch
+     between views. Workshop, maker, process, and unrelated product
+     imagery never enters this list — those stories live in the dedicated
+     craftsmanship / process sections further down the homepage. */
+  const sigPrimarySrc = sigImages[galleryIdx] || heroProduct?.images?.[0]
+  /* Thumbnails carry different size params for the same photo, so compare
+     by photo identity (Pexels photo id, else URL without query). */
+  const sigPhotoKey = (u) => {
+    const m = String(u || '').match(/photos\/(\d+)\//)
+    return m ? m[1] : String(u || '').split('?')[0]
+  }
+  const sigPrimaryKey = sigPhotoKey(sigPrimarySrc)
+  const sigSupporting = sigThumbs.map((t, i) => ({
+    src: t,
+    idx: sigImages.findIndex((s) => sigPhotoKey(s) === sigPhotoKey(t))
+  }))
 
-  const sigPrev = useCallback(() => {
-    setGalleryIdx(i => (i <= 0 ? sigImages.length - 1 : i - 1))
-  }, [sigImages.length])
-
-  const sigNext = useCallback(() => {
-    setGalleryIdx(i => (i >= sigImages.length - 1 ? 0 : i + 1))
-  }, [sigImages.length])
+  /* Featured-product wishlist — same store API as the product page */
+  const [sigWishlisted, setSigWishlisted] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !heroProduct) return
+    try {
+      if (window.Teakle && window.Teakle.isInWishlist) {
+        setSigWishlisted(window.Teakle.isInWishlist(heroProduct.id))
+      }
+    } catch {}
+  }, [heroProduct])
+  const handleSigWishlist = useCallback(() => {
+    if (!heroProduct || typeof window === 'undefined') return
+    if (window.Teakle && window.Teakle.requireAuth && !window.Teakle.requireAuth()) return
+    if (window.Teakle && window.Teakle.toggleWishlist) {
+      const result = window.Teakle.toggleWishlist({
+        id: heroProduct.id,
+        name: heroProduct.name,
+        price: heroProduct.priceFormatted,
+        image: heroProduct.images?.[0],
+      })
+      setSigWishlisted(!!result.added)
+    }
+  }, [heroProduct])
 
   return (
     <div>
@@ -433,7 +277,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                 </div>
               </div>
               <div className="v2-hero-split-image">
-                <img src={hero.image || '/assets/hero-luxury-entryway.png'} alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" style={{ ...resolveElementStyle('image', {}, heroOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(heroOver, 'image', isMobile)) }} />
+                <img src={hero.image || '/assets/hero-luxury-entryway.png'} alt="Warmly lit entryway with dark timber furniture, sculptural wood decor and soft directional light." width="1200" height="800" fetchPriority="high" style={{ ...resolveElementStyle('image', {}, heroOver, isMobile), ...(hasExplicitFocal(heroOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(heroOver, 'image', isMobile)) } : {}) }} />
               </div>
             </div>
           ) : heroVariant?.id === 'minimal' ? (
@@ -455,7 +299,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
               <picture>
                 <source srcSet="/assets/hero-luxury-entryway.avif" type="image/avif" />
                 <source srcSet="/assets/hero-luxury-entryway.webp" type="image/webp" />
-                <img className="v2-hero-img" src={hero.image || '/assets/hero-luxury-entryway.png'} alt="A woodworker's hands finishing the grain of a solid timber surface in natural light." width="1200" height="800" fetchPriority="high" style={{ ...resolveElementStyle('image', {}, heroOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(heroOver, 'image', isMobile)) }} />
+                <img className="v2-hero-img" src={hero.image || '/assets/hero-luxury-entryway.png'} alt="Warmly lit entryway with dark timber furniture, sculptural wood decor and soft directional light." width="1200" height="800" fetchPriority="high" style={{ ...resolveElementStyle('image', {}, heroOver, isMobile), ...(hasExplicitFocal(heroOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(heroOver, 'image', isMobile)) } : {}) }} />
               </picture>
               <div className="v2-hero-content">
                 <span className="eyebrow eyebrow-light v2-hero-eyebrow" style={resolveTypography('eyebrow', {}, heroOver, isMobile)}>{hero.eyebrow || 'An Indian Workshop'}</span>
@@ -495,198 +339,233 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
 
       {/* 3. Philosophy */}
       {!philosophyDisabled && (
-        <section
-          className={`v2-philosophy ${getVariantClass('v2-philosophy', philVariant?.id)}`}
-          id="philosophy"
-          style={{
-            ...(philSectionStyle.contentWidth ? { maxWidth: philSectionStyle.contentWidth, margin: '0 auto' } : {}),
-            ...(philSectionStyle.paddingTop ? { paddingTop: philSectionStyle.paddingTop } : {}),
-            ...(philSectionStyle.paddingBottom ? { paddingBottom: philSectionStyle.paddingBottom } : {}),
-          }}
-        >
-          <div className="v2-philosophy-inner">
-            <span className="eyebrow" style={resolveTypography('eyebrow', {}, philOver, isMobile)}>{philosophy.eyebrow || 'Why We Exist'}</span>
-            <h2 style={resolveTypography('title', {}, philOver, isMobile)}>{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
-            {(philosophy.body || 'A piece of solid teak keeps changing long after it reaches your home \u2014 the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.\n\nThis is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.').split('\n\n').map((p, i) => (
-              <p key={i} style={resolveTypography('body', {}, philOver, isMobile)}>{p}</p>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* 4. Signature Edition */}
-      {!signatureDisabled && (
-        <div className="v2-atelier-wrapper">
-          <div className="v2-atelier-title">
-            <h2>ATELIER STORIES</h2>
-            <span className="v2-atelier-subtitle">ONE OF ONE - SIGNATURE PIECES</span>
-          </div>
+        <RevealOnMount threshold={0.15} className="reveal-section">
           <section
-            className={`v2-sig-editorial ${getVariantClass('v2-sig-editorial', sigVariant?.id)}`}
-            ref={sigSectionRef}
+            className={`v2-philosophy ${getVariantClass('v2-philosophy', philVariant?.id)}`}
+            id="philosophy"
             style={{
-              ...(sigSectionStyle.paddingTop ? { paddingTop: sigSectionStyle.paddingTop } : {}),
-              ...(sigSectionStyle.paddingBottom ? { paddingBottom: sigSectionStyle.paddingBottom } : {}),
+              ...(philSectionStyle.contentWidth ? { maxWidth: philSectionStyle.contentWidth, margin: '0 auto' } : {}),
+              ...(philSectionStyle.paddingTop ? { paddingTop: philSectionStyle.paddingTop } : {}),
+              ...(philSectionStyle.paddingBottom ? { paddingBottom: philSectionStyle.paddingBottom } : {}),
             }}
           >
-            <div className="v2-sig-editorial-inner">
-              <div className="v2-sig-editorial-grid">
-                {/* Left: Product media */}
-                <div className="v2-sig-editorial-img" style={{ gridColumn: 1 }}>
-                  <div className="v2-sig-sculpture-label">
-                    <span className="v2-sig-sculpture-label-title">Teak Wood<br/>Sculpture</span>
-                    <span className="v2-sig-sculpture-label-line"></span>
-                    <span className="v2-sig-sculpture-label-desc">Handcrafted from a<br/>solid block of premium<br/>teak wood.</span>
-                  </div>
-                  <img
-                    src={sigImages[galleryIdx] || heroProduct?.images?.[0] || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
-                    alt={`${heroProduct?.name || 'Teakle furniture'}, handcrafted teak dining table`}
-                    width="960" height="1200" loading="lazy"
-                    style={resolveElementStyle('image', {}, sigOver, isMobile)}
-                  />
-                  {hasGallery && (
-                    <div className="v2-sig-editorial-gallery">
-                      <div className="v2-sig-editorial-thumbs" role="radiogroup" aria-label="Product images">
-                        {sigThumbs.map((thumb, i) => (
-                          <button key={i} className={`v2-sig-editorial-thumb${i === galleryIdx ? ' is-active' : ''}`} onClick={() => setGalleryIdx(i)} aria-label={`View image ${i + 1}`} role="radio" aria-checked={i === galleryIdx}>
-                            <img src={thumb} alt="" width="72" height="72" loading="lazy" />
+            <div className="v2-philosophy-inner">
+              <div className="v2-philosophy-statement">
+                <span className="eyebrow" style={resolveTypography('eyebrow', {}, philOver, isMobile)}>{philosophy.eyebrow || 'Why We Exist'}</span>
+                <h2 style={resolveTypography('title', {}, philOver, isMobile)}>{philosophy.title || 'We make objects that are not finished when they leave the workshop.'}</h2>
+              </div>
+              <div className="v2-philosophy-body">
+                {(philosophy.body || 'A piece of solid teak keeps changing long after it reaches your home \u2014 the grain deepens, the surface catches light differently with each year of use. We build for that slow change, not against it.\n\nThis is a small family workshop in India, run by the same hands for three generations. We make fewer things, more carefully, and we are in no hurry to make more.').split('\n\n').map((p, i) => (
+                  <p key={i} style={resolveTypography('body', {}, philOver, isMobile)}>{p}</p>
+                ))}
+              </div>
+            </div>
+          </section>
+        </RevealOnMount>
+      )}
+
+      {/* 4. Atelier Stories — object-study editorial (one object, same-product views, story, ownership) */}
+      {!signatureDisabled && (
+        <RevealOnMount threshold={0.15} className="reveal-section">
+          <div className="v2-atelier-wrapper">
+            <div className="v2-atelier-title">
+              <h2>ATELIER STORIES</h2>
+              <span className="v2-atelier-subtitle">ONE OF ONE - SIGNATURE PIECES</span>
+            </div>
+            <section
+              className={`v2-sig-editorial ${getVariantClass('v2-sig-editorial', sigVariant?.id)}`}
+              ref={sigSectionRef}
+              aria-label={`Atelier Stories: ${heroProduct?.name || 'signature piece'}`}
+              style={{
+                ...(sigSectionStyle.paddingTop ? { paddingTop: sigSectionStyle.paddingTop } : {}),
+                ...(sigSectionStyle.paddingBottom ? { paddingBottom: sigSectionStyle.paddingBottom } : {}),
+              }}
+            >
+              {/* Mobile recomposition: object name leads, image follows. Desktop
+                  keeps the name in the annotation column; this head shows on
+                  mobile only. */}
+              <div className="v2-sig-mobile-head">
+                {heroProduct?.availabilityNote && (
+                  <span className="v2-sig-edition-line">{heroProduct.availabilityNote}</span>
+                )}
+                <h2>{heroProduct?.name ? `${heroProduct.name.toUpperCase()}.` : 'TEAKLE ATELIER.'}</h2>
+              </div>
+              <div className="v2-sig-editorial-inner">
+                <div className="v2-sig-editorial-grid">
+                  {/* Left: the object — dominant primary plate + same-product study strip.
+                      Strip renders ONLY authentic heroProduct views (active primary
+                      filtered out). Single-image products render no strip rather
+                      than a duplicate; workshop/process/maker imagery never appears
+                      here — it lives in the craftsmanship/process sections below. */}
+                  <div className="v2-sig-editorial-img">
+                    <img
+                      src={sigPrimarySrc || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
+                      alt={`${heroProduct?.name || signature.title || 'Teakle Atelier signature piece'}, handcrafted solid teak`}
+                      width="1200" height="800" loading="lazy"
+                      style={resolveElementStyle('image', {}, sigOver, isMobile)}
+                    />
+                    {sigSupporting.length > 0 && (
+                      <div className="v2-sig-editorial-supporting" role="radiogroup" aria-label="More views">
+                        {sigSupporting.slice(0, 4).map((t, i) => (
+                          <button key={i} type="button" className={`v2-sig-editorial-thumb${(t.idx >= 0 ? t.idx : i) === galleryIdx ? ' is-active' : ''}`} onClick={() => { if (t.idx >= 0) setGalleryIdx(t.idx) }} role="radio" aria-checked={(t.idx >= 0 ? t.idx : i) === galleryIdx} aria-label={`View image ${i + 1}`}>
+                            <img src={t.src} alt="" width="300" height="300" loading="lazy" />
                           </button>
                         ))}
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Product information */}
-                <div className="v2-sig-editorial-text">
-                  <h2 style={resolveTypography('title', {}, sigOver, isMobile)}>THE MAFDET.</h2>
-                  <div className="v2-sig-editorial-subtitle">Solid Teak, Timeless Form.</div>
-                  <p>{heroProduct?.shortDescription ? `${heroProduct.shortDescription} Never restocked. Never repeated.` : signature.body || 'One sculptural centrepiece, carved from a single reclaimed timber block. It is never restocked and never discounted \u2014 once it\u2019s gone, the next edition begins.'}</p>
-
-                  {/* Metadata with icons */}
-                  <div className="v2-sig-editorial-features">
-                    <div className="v2-sig-feature">
-                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                      <span className="v2-sig-feature-label">{heroProduct?.buildTime || '~18 Hours'}</span>
-                    </div>
-                    <div className="v2-sig-feature">
-                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                      <span className="v2-sig-feature-label">Master Crafted</span>
-                    </div>
-                    <div className="v2-sig-feature">
-                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                      <span className="v2-sig-feature-label">{heroProduct?.material || 'Solid Teak'}</span>
-                    </div>
-                    <div className="v2-sig-feature">
-                      <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-                      <span className="v2-sig-feature-label">One of One</span>
-                    </div>
+                    )}
+                    {/* Concise editorial footnote — verified product copy only. */}
                   </div>
 
-                  {/* Price */}
-                  <div className="v2-sig-editorial-price">
-                    <div className="v2-sig-editorial-price-amount">{heroProduct?.priceFormatted || '\u20B91,85,000'}</div>
-                    <div className="v2-sig-editorial-price-note">One of One &middot; Never to be recreated</div>
-                  </div>
+                  {/* Right: annotation column — product info, price, CTAs, then THE STORY. */}
+                  <div className="v2-sig-editorial-text">
+                    {heroProduct?.availabilityNote && (
+                      <span className="v2-sig-edition-line v2-sig-edition-line-desktop">{heroProduct.availabilityNote}</span>
+                    )}
+                    <h2 className="v2-sig-title-desktop" style={resolveTypography('title', {}, sigOver, isMobile)}>{heroProduct?.name ? `${heroProduct.name.toUpperCase()}.` : 'TEAKLE ATELIER.'}</h2>
+                    <p>{heroProduct?.shortDescription || signature.body || 'A signature teak piece from the Teakle workshop.'}</p>
 
-                  {/* CTAs */}
-                  <div className="v2-sig-editorial-actions">
-                    <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-primary">INQUIRE TO OWN</Link>
-                    <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-outline">WATCH THE PROCESS</Link>
-                  </div>
+                    {/* Metadata — preserved as quiet hairline rule */}
+                    <div className="v2-sig-editorial-features">
+                      <div className="v2-sig-feature">
+                        <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <span className="v2-sig-feature-label">{heroProduct?.buildTime || '~18 Hours'}</span>
+                      </div>
+                      <div className="v2-sig-feature">
+                        <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span className="v2-sig-feature-label">Master Crafted</span>
+                      </div>
+                      <div className="v2-sig-feature">
+                        <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        <span className="v2-sig-feature-label">{heroProduct?.material || 'Solid Teak'}</span>
+                      </div>
+                      <div className="v2-sig-feature">
+                        <svg className="v2-sig-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                        <span className="v2-sig-feature-label">One of One</span>
+                      </div>
+                    </div>
 
-                  <p className="v2-sig-editorial-past">Looking for something from a past season? <Link href="/archive">See past editions</Link></p>
+                    {/* Price */}
+                    <div className="v2-sig-editorial-price">
+                      <div className="v2-sig-editorial-price-amount">{heroProduct?.priceFormatted || '\u20B91,85,000'}</div>
+                      {(heroProduct?.availabilityNote || heroProduct?.dimensions) && (
+                        <div className="v2-sig-editorial-price-note">{[heroProduct?.availabilityNote, heroProduct?.dimensions].filter(Boolean).join(' \u00B7 ')}</div>
+                      )}
+                    </div>
+
+                    {/* CTAs — ownership + process. Watch the Process links to the existing
+                        dedicated process page for this exact piece. */}
+                    <div className="v2-sig-editorial-actions">
+                      <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-primary">INQUIRE TO OWN</Link>
+                      <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-outline">WATCH THE PROCESS</Link>
+                    </div>
+
+                    <button
+                      type="button"
+                      className={`v2-sig-wishlist${sigWishlisted ? ' is-active' : ''}`}
+                      onClick={handleSigWishlist}
+                      aria-pressed={sigWishlisted}
+                      aria-label={sigWishlisted ? `Remove ${heroProduct?.name || 'this piece'} from wishlist` : `Save ${heroProduct?.name || 'this piece'} to wishlist`}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                      {sigWishlisted ? 'Saved to Wishlist' : 'Save to Wishlist'}
+                    </button>
+
+                    <p className="v2-sig-editorial-past">Looking for something from a past season? <Link href="/archive">See past editions</Link></p>
+
+                    {/* THE STORY — moved to right side, under product info/CTAs */}
+                    {heroProduct?.story && (
+                      <div className="v2-sig-story-note">
+                        <span className="v2-sig-story-label">The story</span>
+                        <p>{heroProduct.story}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Studio Visit vertical tab */}
-            <a href="/studio" className="v2-sig-studio-tab" aria-label="Book a studio visit">
-              Book a Studio Visit
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-            </a>
-          </section>
-        </div>
+            </section>
+          </div>
+        </RevealOnMount>
       )}
 
       {/* 5. Craftsmanship */}
       {!craftsmanshipDisabled && (
-        <section
-          className={`v2-craft ${getVariantClass('v2-craft', craftVariant?.id)}`}
-          style={{
-            ...(craftSectionStyle.contentWidth ? { maxWidth: craftSectionStyle.contentWidth, margin: '0 auto' } : {}),
-            ...(craftSectionStyle.paddingTop ? { paddingTop: craftSectionStyle.paddingTop } : {}),
-            ...(craftSectionStyle.paddingBottom ? { paddingBottom: craftSectionStyle.paddingBottom } : {}),
-          }}
-        >
-          <div className="v2-craft-grid">
-            <div className="v2-craft-img">
-              <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) }} />
-            </div>
-            <div className="v2-craft-text">
-              <span className="eyebrow" style={resolveTypography('eyebrow', {}, craftOver, isMobile)}>{craftsmanship.eyebrow || 'Craftsmanship'}</span>
-              <h2 style={resolveTypography('title', {}, craftOver, isMobile)}>{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
-              {(craftsmanship.body || 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.').split('\n\n').map((p, i) => (
-                <p key={i} style={resolveTypography('body', {}, craftOver, isMobile)}>{p}</p>
-              ))}
-              <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* 6. Collection Carousel */}
-      {!carouselDisabled && (() => {
-        const carouselIds = parseProductIds(collectionCarousel.body)
-        const carouselProducts = resolveProducts(carouselIds)
-        return carouselProducts.length > 0 && (
-          <section className="v2-carousel">
-            <button className="v2-cprev" aria-label="Previous">&#8592;</button>
-            <button className="v2-cnext" aria-label="Next">&#8594;</button>
-            <div className="v2-ctrack" ref={carouselTrackRef}>
-              {carouselProducts.map((p) => (
-                <Link key={p.id} href={`/shop/${p.id}`} className="v2-citem">
-                  <div className="v2-cimage"><img src={p.images?.[0] || ''} alt={p.name} loading="lazy" width="600" height="400" /></div>
-                  <span className="v2-clabel">{p.name}</span>
-                  <span className="v2-cbtn">Discover</span>
-                </Link>
-              ))}
-            </div>
-            <div className="v2-cdots">
-              {carouselProducts.map((_, i) => (
-                <span key={i} className={`v2cdot${i === 0 ? ' active' : ''}`}></span>
-              ))}
+        <RevealOnMount threshold={0.15} className="reveal-section">
+          <section
+            className={`v2-craft ${getVariantClass('v2-craft', craftVariant?.id)}`}
+            style={{
+              ...(craftSectionStyle.contentWidth ? { maxWidth: craftSectionStyle.contentWidth, margin: '0 auto' } : {}),
+              ...(craftSectionStyle.paddingTop ? { paddingTop: craftSectionStyle.paddingTop } : {}),
+              ...(craftSectionStyle.paddingBottom ? { paddingBottom: craftSectionStyle.paddingBottom } : {}),
+            }}
+          >
+            <div className="v2-craft-grid">
+              <div className="v2-craft-text">
+                <span className="eyebrow" style={resolveTypography('eyebrow', {}, craftOver, isMobile)}>{craftsmanship.eyebrow || 'Craftsmanship'}</span>
+                <h2 style={resolveTypography('title', {}, craftOver, isMobile)}>{craftsmanship.title || 'Every piece passes through one pair of hands, start to finish.'}</h2>
+                {(craftsmanship.body || 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.').split('\n\n').map((p, i) => (
+                  <p key={i} style={resolveTypography('body', {}, craftOver, isMobile)}>{p}</p>
+                ))}
+                <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
+              </div>
+              <div className="v2-craft-img">
+                <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), ...(hasExplicitFocal(craftOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) } : {}) }} />
+              </div>
             </div>
           </section>
-        )
-      })()}
+        </RevealOnMount>
+      )}
 
-      {/* 7. Product Grid */}
-      {!productGridDisabled && (() => {
+      {/* 6+7. Editorial product presentation — T04 static 3 + 3.
+          No carousel: two distinct groups of exactly three authentic
+          products each. Group 1 honours the collection-carousel CMS
+          selection; Group 2 honours the product-grid CMS selection,
+          backfilled from the authoritative product dataset so the two
+          groups stay distinct (no invented products). */}
+      {(!carouselDisabled || !productGridDisabled) && (() => {
+        const FALLBACK_IDS = ['anchor-table', 'bearing-chair', 'circle-table', 'hollow-bench', 'drift-sculpture', 'hourglass-vase']
+        const carouselIds = parseProductIds(collectionCarousel.body)
         const gridIds = parseProductIds(productGrid.body)
-        const gridProducts = resolveProducts(gridIds)
-        return gridProducts.length > 0 && (
-          <section className="v2-products">
-            <div className="container">
+        const seen = new Set()
+        const orderedIds = []
+        for (const id of [...carouselIds, ...gridIds, ...FALLBACK_IDS]) {
+          if (!seen.has(id)) { seen.add(id); orderedIds.push(id) }
+        }
+        const six = resolveProducts(orderedIds).slice(0, 6)
+        if (six.length < 6) return null
+        const group1 = six.slice(0, 3)
+        const group2 = six.slice(3, 6)
+        const renderCard = (p) => (
+          <Link key={p.id} href={`/shop/${p.id}`} className="v2-pcard">
+            <div className="v2-pimg"><img src={p.images?.[0] || ''} alt={p.name} loading="lazy" width="600" height="400" /></div>
+            <div className="v2-pinfo">
+              <div>
+                <h3>{p.name}</h3>
+                <div className="v2-pmeta">
+                  <span className="v2-pcat">{p.categoryName || p.category}</span>
+                  <span className="v2-pprice">{p.priceFormatted}</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        )
+        return (
+          <section className="v2-edit-groups" aria-label="Featured products">
+            <div className="v2-edit-group" data-group="1">
+              <div className="v2-products-head">
+                <span className="eyebrow">{collectionCarousel.eyebrow || 'The Collection'}</span>
+                <h2>{collectionCarousel.title || 'Select Pieces'}</h2>
+              </div>
+              <div className="v2-edit-grid">
+                {group1.map(renderCard)}
+              </div>
+            </div>
+            <div className="v2-edit-group v2-edit-group--second" data-group="2">
               <div className="v2-products-head">
                 <span className="eyebrow">{productGrid.eyebrow || 'From the Collection'}</span>
                 <h2>{productGrid.title || 'Pieces Built to Last'}</h2>
               </div>
-              <div className="v2-pgrid">
-                {gridProducts.map((p) => (
-                  <Link key={p.id} href={`/shop/${p.id}`} className="v2-pcard">
-                    <div className="v2-pimg"><img src={p.images?.[0] || ''} alt={p.name} loading="lazy" width="600" height="400" /></div>
-                    <div className="v2-pinfo">
-                      <div>
-                        <h3>{p.name}</h3>
-                        <div className="v2-pmeta">
-                          <span className="v2-pcat">{p.categoryName || p.category}</span>
-                          <span className="v2-pprice">{p.priceFormatted}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+              <div className="v2-edit-grid">
+                {group2.map(renderCard)}
               </div>
               <div className="v2-pcta">
                 <Link href={productGrid.buttonUrl || '/gallery'} className="btn-primary">{productGrid.buttonLabel || 'Explore the Full Collection'}</Link>
@@ -698,28 +577,32 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
 
       {/* 8. Story Block - Workshop */}
       {!workshopDisabled && (
-        <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="A craftsman's weathered hands sanding a wooden surface in the workshop." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, workshopOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(workshopOver, 'image', isMobile)) }} />
-          <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
-            <h2 style={resolveTypography('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
-            <p style={resolveTypography('body', {}, workshopOver, isMobile)}>{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
-            <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet" style={resolveTypography('button', {}, workshopOver, isMobile)}>{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
-          </div>
-        </section>
+        <RevealOnMount threshold={0.15} className="reveal-section">
+          <section className="v2-lifestyle">
+            <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Close-up of a craftsman's hand guiding a chisel in the workshop." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, workshopOver, isMobile), ...(hasExplicitFocal(workshopOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(workshopOver, 'image', isMobile)) } : {}) }} />
+            <div className="v2-lifestyle-content">
+              <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
+              <h2 style={resolveTypography('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
+              <p style={resolveTypography('body', {}, workshopOver, isMobile)}>{workshopStory.body || 'The tools are old. The hands are patient. Nothing here is made to a deadline \u2014 a piece is finished when it is ready, and not before.'}</p>
+              <Link href={workshopStory.buttonUrl || '/studio'} className="link-quiet" style={resolveTypography('button', {}, workshopOver, isMobile)}>{workshopStory.buttonLabel || 'Read About Our Process'}</Link>
+            </div>
+          </section>
+        </RevealOnMount>
       )}
 
       {/* 9. Story Block - Watch It Made */}
       {!processDisabled && (
-        <section className="v2-lifestyle">
-          <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) }} />
-          <div className="v2-lifestyle-content">
-            <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
-            <h2 style={resolveTypography('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
-            <p style={resolveTypography('body', {}, processOver, isMobile)}>{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
-            <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet" style={resolveTypography('button', {}, processOver, isMobile)}>{processStory.buttonLabel || 'Watch the Process'}</Link>
-          </div>
-        </section>
+        <RevealOnMount threshold={0.15} className="reveal-section">
+          <section className="v2-lifestyle v2-lifestyle--alt">
+            <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), ...(hasExplicitFocal(processOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) } : {}) }} />
+            <div className="v2-lifestyle-content">
+              <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
+              <h2 style={resolveTypography('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>
+              <p style={resolveTypography('body', {}, processOver, isMobile)}>{processStory.body || 'We don\u2019t ask you to imagine the process \u2014 we film it. Wood selection, joinery, finishing, and the hours each one takes, so you know exactly what you\u2019re buying before you buy it.'}</p>
+              <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="link-quiet" style={resolveTypography('button', {}, processOver, isMobile)}>{processStory.buttonLabel || 'Watch the Process'}</Link>
+            </div>
+          </section>
+        </RevealOnMount>
       )}
 
     </div>

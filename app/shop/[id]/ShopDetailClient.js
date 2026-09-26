@@ -33,9 +33,11 @@ const pageStyles = `
 
 /* ---- Type B: Standard Product Grid ---- */
 .pd-section { background: var(--bg-primary); padding: var(--space-md) 0 var(--space-xl); }
+/* Present the object, not a narrow SKU column — use the desktop viewport. */
+.pd-section .container { max-width: min(1400px, 100% - 3rem); }
 .pd-grid {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1.2fr 0.8fr;
   gap: var(--space-2xl);
   align-items: start;
 }
@@ -54,6 +56,11 @@ const pageStyles = `
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: pd-fade 450ms var(--ease);
+}
+@keyframes pd-fade {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
 }
 .pd-gallery-main.is-zoomed { cursor: zoom-out; }
 .pd-gallery-main.is-zoomed img { transform: scale(1.8); }
@@ -153,11 +160,21 @@ const pageStyles = `
 
 /* Details Panel */
 .pd-details { position: sticky; top: 100px; }
+.pd-details .eyebrow { display: block; margin-bottom: var(--space-xs); }
+.pd-meta {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+  letter-spacing: 0.01em;
+  margin-bottom: var(--space-sm);
+  max-width: 52ch;
+}
 .pd-title {
-  font-size: clamp(1.8rem, 3vw, var(--text-h1));
+  font-size: var(--text-display);
   font-weight: 500;
   margin-bottom: 0.35rem;
   letter-spacing: -0.02em;
+  line-height: var(--lh-display);
 }
 .pd-short-desc {
   color: var(--text-secondary);
@@ -174,7 +191,7 @@ const pageStyles = `
 }
 .pd-price {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: var(--text-display-sm);
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -352,9 +369,11 @@ const pageStyles = `
 .pd-craft-img:hover img { transform: scale(1.03); }
 .pd-craft-text .eyebrow { margin-bottom: var(--space-sm); }
 .pd-craft-text h2 {
-  font-size: clamp(1.5rem, 3vw, var(--text-h2));
+  font-size: var(--text-h2);
   margin-bottom: var(--space-md);
   max-width: none;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.015em;
 }
 .pd-craft-text p {
   color: var(--text-secondary);
@@ -376,8 +395,10 @@ const pageStyles = `
   margin-bottom: var(--space-lg);
 }
 .pd-care-head h2 {
-  font-size: clamp(1.5rem, 3vw, var(--text-h2));
+  font-size: var(--text-h2);
   max-width: none;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.015em;
 }
 .pd-care-grid {
   display: grid;
@@ -612,6 +633,7 @@ const pageStyles = `
   height: 100%;
   object-fit: cover;
   transition: opacity 600ms var(--ease);
+  animation: pd-fade 450ms var(--ease);
 }
 .sig-hero-overlay {
   position: absolute;
@@ -996,11 +1018,11 @@ const pageStyles = `
 
 @media (prefers-reduced-motion: reduce) {
   .sig-craft-bg, .sig-progress-item img, .pd-piece-img img { transition: none; }
-  .pd-gallery-main img, .sig-hero-gallery img { transition: none; }
+  .pd-gallery-main img, .sig-hero-gallery img { transition: none; animation: none; }
 }
 `;
 
-export default function ShopDetailClient({ product: initialProduct, productId: initialProductId }) {
+export default function ShopDetailClient({ product: initialProduct, productId: initialProductId, processSlug = null }) {
   const productId = initialProductId;
 
   const [product, setProduct] = useState({
@@ -1045,12 +1067,44 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
 
   const isSignature = product?.isHero === true;
 
-  /* Sync product from window.TEAKLE_PRODUCTS for extended fields (fallback if server data incomplete) */
+  /* Path to the dedicated process page when one exists for this product. */
+  const processHref = processSlug ? `/process/${processSlug}` : null;
+
+  /* First sentence of a text — clean editorial heading without mid-word cuts. */
+  const firstSentence = (text) => {
+    if (!text) return '';
+    const idx = text.indexOf('. ');
+    if (idx !== -1) return text.slice(0, idx + 1);
+    return text.length > 120 ? text.slice(0, 120).trimEnd() + '…' : text;
+  };
+
+  /* Sync product from window.TEAKLE_PRODUCTS for extended fields (fallback if server data incomplete).
+     Server props are authoritative (full media + story). The browser dataset is
+     a lightweight subset, so only fill gaps — never overwrite populated fields.
+     (A stale browser copy once truncated the gallery to a single image.) */
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!window.TEAKLE_PRODUCTS) return;
     const p = window.TEAKLE_PRODUCTS.find((item) => item.id === productId);
-    if (p) setProduct((prev) => ({ ...prev, ...p }));
+    if (p) {
+      setProduct((prev) => {
+        const next = { ...prev };
+        let changed = false;
+        for (const [key, value] of Object.entries(p)) {
+          if (value === undefined) continue;
+          const current = next[key];
+          const isEmpty =
+            current === undefined ||
+            current === null ||
+            current === '' ||
+            (Array.isArray(current) && current.length === 0);
+          if (!isEmpty) continue;
+          next[key] = value;
+          changed = true;
+        }
+        return changed ? next : prev;
+      });
+    }
     /* Resolve related products client-side to avoid server/client hydration mismatch */
     if (product?.relatedProducts?.length > 0) {
       const resolved = product.relatedProducts
@@ -1192,16 +1246,41 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     }
   }, [product]);
 
-  /* Share */
-  const handleShare = useCallback(() => {
+  /* Share — native share where supported, clipboard fallback, never errors. */
+  const handleShare = useCallback(async () => {
     if (typeof window === 'undefined') return;
+    const url = window.location.href;
     if (navigator.share) {
-      navigator.share({ title: product?.name, text: product?.shortDescription, url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        setShareCopied(true);
-        setTimeout(() => setShareCopied(false), 2000);
-      });
+      try {
+        await navigator.share({
+          title: product?.name || 'Teakle',
+          text: product?.shortDescription || '',
+          url,
+        });
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return; // user dismissed — not an error
+      }
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        // Legacy fallback for contexts without the async clipboard API.
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'absolute';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch (e) {
+      // Sharing unavailable — leave the control untouched, never raise.
     }
   }, [product]);
 
@@ -1478,7 +1557,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <img src={product.images[currentImageIdx]} alt={`${product.name}, image ${currentImageIdx + 1} of ${product.images.length}`} onLoad={() => setIsGalleryLoading(false)} />
+          <img key={currentImageIdx} src={product.images[currentImageIdx]} alt={`${product.name}, image ${currentImageIdx + 1} of ${product.images.length}`} onLoad={() => setIsGalleryLoading(false)} />
           <div className="sig-hero-overlay"></div>
           <div className="sig-hero-info">
             <span className="sig-hero-tag">Signature Piece</span>
@@ -1535,9 +1614,13 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
           <img className="sig-craft-bg" src={product.images[2] || product.images[0]} alt="The making process" loading="lazy" />
           <div className="sig-craft-content">
             <span className="eyebrow">The Craft</span>
-            <h2>{product.craftsmanship?.substring(0, 80)}...</h2>
+            <h2>{firstSentence(product.craftsmanship)}</h2>
             <p>{product.story}</p>
-            <Link href="/studio" className="link-quiet">Visit the Studio</Link>
+            {processHref ? (
+              <Link href={processHref} className="link-quiet">Watch the Process</Link>
+            ) : (
+              <Link href="/studio" className="link-quiet">Visit the Studio</Link>
+            )}
           </div>
         </section>
 
@@ -1622,6 +1705,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 20, height: 20, color: 'var(--text-primary)' }}><polyline points="9 18 15 12 9 6" /></svg>
               </button>
               <img
+                key={currentImageIdx}
                 src={product.images[currentImageIdx]}
                 alt={product.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -1645,10 +1729,16 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
             </div>
           </div>
 
-          {/* Details — Purchase Hierarchy: Name → Desc → Price → Avail → Qty → Add to Cart → Wishlist → Share */}
+          {/* Details — Purchase Hierarchy: Eyebrow → Name → Desc → Material/Metadata → Price/Avail → CTA */}
           <div className="pd-details">
-            <h2 className="pd-title">{product.name}</h2>
+            <span className="eyebrow">{cat ? cat.name : product.categoryName}</span>
+            <h1 className="pd-title">{product.name}</h1>
             <p className="pd-short-desc">{product.shortDescription}</p>
+            {(product.material || product.dimensions || product.buildTime) && (
+              <p className="pd-meta">
+                {[product.material, product.dimensions, product.buildTime].filter(Boolean).join('  ·  ')}
+              </p>
+            )}
             <div className="pd-price-row">
               <span className="pd-price">{product.priceFormatted}</span>
               <span className={`pd-avail ${product.availability === 'Limited Edition' ? 'is-limited' : ''}`}>{product.availabilityNote}</span>
@@ -1663,7 +1753,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
       {renderCraftSection(
         product.images[1] || product.images[0],
         'Craftsmanship',
-        product.craftsmanship?.substring(0, 80) + '...',
+        firstSentence(product.craftsmanship),
         product.craftsmanship
       )}
 

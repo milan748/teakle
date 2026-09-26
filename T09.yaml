@@ -1,0 +1,170 @@
+tasks:
+  - title: T09 - Refine Watch the Process Experience
+    completed: true
+    description: >
+      Refine Teakle's Watch the Process experience into a premium, editorial
+      craftsmanship/process page or experience using the existing Teakle
+      content, media, product data, and routes.
+
+      CONTEXT: T09 follows the Atelier Stories and product-page refinements. The
+      purpose of this experience is to let a visitor understand how a Teakle
+      object moves from material to finished piece.
+
+      CORE EXPERIENCE: The experience should communicate, in a clear visual
+      sequence:
+
+      MATERIAL → MAKING → TIME / EFFORT → FINISHED OBJECT
+
+      The page should feel like an atelier journal or documentary experience
+      rather than a generic ecommerce information page.
+
+      1. HERO / IMMEDIATE VIDEO - The process experience must open with strong
+      immediate visual
+        impact.
+      - Use an authentic existing Teakle process video/media asset if
+        one exists.
+      - Inspect the existing repository/media source before selecting
+        imagery or video.
+      - Do not invent or fabricate footage. - If an existing video is available,
+      make it visually dominant
+        and immediately understandable.
+      - Provide appropriate playback controls and accessible fallback
+        behavior.
+      - Avoid autoplay with sound. - If no suitable process video exists, create
+      an equally strong
+        editorial opening using authentic existing process imagery
+        rather than inventing media.
+
+      2. PROCESS STORY - Explain the actual making process using only
+      information that
+        exists in the repository/CMS/product data.
+      - Structure the content around meaningful stages such as:
+        material selection, preparation, shaping, joining, finishing,
+        detailing, and final inspection ONLY where the existing data
+        supports those stages.
+      - Do not invent manufacturing techniques, workshop traditions,
+        artisan identities, tools, timelines, locations, or production
+        claims.
+
+      3. TIME / EFFORT / VALUE - Where authentic product data contains build
+      time or other
+        measurable information, surface it editorially.
+      - Explain value through documented material, construction,
+        craftsmanship, process, and time.
+      - Do not use generic luxury marketing claims. - Do not invent labor hours,
+      artisan counts, production quantities,
+        rarity, heritage, awards, certifications, or provenance.
+
+      4. CONNECTION TO THE OBJECT - Clearly connect the process back to the
+      finished Teakle object. - Use authentic imagery of the relevant product
+      wherever available. - Make the visitor understand why the finished object
+      looks and
+        feels the way it does because of the process.
+
+      5. EDITORIAL IMAGE COMPOSITION - Follow the established Teakle visual
+      direction. - Use cinematic landscape imagery where appropriate. - Allow
+      images to extend toward extreme left/right edges. - Use varied image
+      scales instead of identical cards. - Use occasional ultra-wide
+      compositions where the source image
+        supports it.
+      - Avoid a repetitive mechanically alternating left/right grid. - Avoid
+      card-heavy ecommerce presentation. - Preserve generous negative space and
+      intentional pacing.
+
+      6. INSTAGRAM / SHARING - Include an appropriate way to share the process
+      content. - If the existing business/content model supports Instagram
+      sharing,
+        provide a clear Instagram-oriented CTA/link using existing
+        Teakle information.
+      - Do not fabricate an Instagram handle or URL. - If an existing Instagram
+      destination exists in the project,
+        use that exact destination.
+      - Ensure the share interaction itself works or gracefully falls
+        back to supported browser/device sharing.
+
+      7. NAVIGATION / CTA - Include a clear route back to the relevant
+      product/object where
+        applicable.
+      - Preserve existing Gallery, Archive, Studio, Customize, Cart,
+        Wishlist, Account, and other navigation behavior.
+      - Do not create duplicate navigation systems. - The process experience
+      should feel connected to the product page
+        and Atelier Stories rather than like an unrelated microsite.
+
+      8. TYPOGRAPHY - Follow the global typography hierarchy established in
+      earlier
+        Phase 2 tasks.
+      - Use strong editorial hierarchy for:
+        eyebrow/label,
+        page title,
+        section headings,
+        process descriptions,
+        metadata,
+        CTAs.
+      - Do not introduce a new font system. - Avoid excessive oversized text
+      that compromises readability.
+
+      9. RESPONSIVE DESIGN DESKTOP: - Use the full available viewport
+      intentionally. - Do not constrain the entire experience into a narrow
+      centered
+        column.
+      - Maintain cinematic image scale and editorial pacing.
+
+      MOBILE: - Treat mobile as an intentionally composed experience. - Do not
+      simply stack the desktop layout mechanically. - Keep video/media
+      immediately understandable. - Maintain readable typography and comfortable
+      spacing. - Preserve process sequence and CTAs. - Ensure no horizontal
+      overflow. - Ensure video controls, navigation, and share interactions
+      remain
+        usable.
+
+      10. MOTION - Use restrained motion for media reveals, section transitions,
+        image movement, or scrolling where appropriate.
+      - Motion should support craftsmanship and pacing. - Avoid excessive
+      parallax, bouncing, continuous animation, or
+        decorative motion.
+
+      11. DATA / CONTENT INTEGRITY - Inspect existing product data, CMS content,
+      media files, and
+        routes before making content decisions.
+      - Use only authentic existing Teakle information. - Do not invent:
+        founders,
+        artisans,
+        workshop locations,
+        heritage claims,
+        dates,
+        certifications,
+        awards,
+        production numbers,
+        material origins,
+        manufacturing methods,
+        build times,
+        or social accounts.
+      - If information is unavailable, omit it rather than fabricate it.
+
+      12. FUNCTIONALITY PRESERVATION - Preserve all existing commerce and
+      navigation functionality. - Do not break product links, wishlist, cart,
+      account, checkout,
+        authentication, CMS behavior, or existing routes.
+      - Do not modify unrelated pages unless a shared component must be
+        changed for this task.
+      - Do not add Shopify integration. - Do not replace the existing
+      product/content data model.
+
+      13. VISUAL QA - Run the development server and inspect the actual rendered
+      page
+        in the browser.
+      - Test desktop and mobile layouts. - Inspect browser console for errors
+      introduced by this task. - Test video/media behavior. - Test every
+      CTA/link introduced or modified. - Verify there is no horizontal overflow.
+      - Verify navigation remains functional. - Run npm run build and resolve
+      any build errors caused by this task.
+
+      SCOPE CONTROL: This is a focused refinement of the Watch the Process
+      experience. Do not redesign the entire Teakle website. Do not undo
+      accepted Phase 2 work from T01-T08. Do not change unrelated pages or
+      components without a concrete dependency on this task.
+
+      COMPLETION REQUIREMENT: Only mark this task completed after the
+      implementation has been actually verified in the browser and npm run build
+      succeeds.

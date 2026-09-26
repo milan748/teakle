@@ -27,15 +27,15 @@ var TEAKLE_PRODUCTS = [
     "shortDescription": "Solid teak dining table, hand-finished from a single selected block.",
     "images": [
       "https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/11112745/pexels-photo-11112745.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/11112740/pexels-photo-11112740.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/11112741/pexels-photo-11112741.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/11112742/pexels-photo-11112742.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
       "https://images.pexels.com/photos/11112739/pexels-photo-11112739.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/11112745/pexels-photo-11112745.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/11112740/pexels-photo-11112740.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/11112741/pexels-photo-11112741.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/11112742/pexels-photo-11112742.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "dining",
@@ -59,14 +59,10 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Hand-carved dining chair from a single timber block.",
     "images": [
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "chair",
@@ -90,14 +86,10 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Round coffee table, solid teak with hand-turned base.",
     "images": [
-      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
-      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4564013/pexels-photo-4564013.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8251295/pexels-photo-8251295.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "coffee-table",
@@ -121,14 +113,10 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Hand-jointed teak bench with visible through-tenon joinery.",
     "images": [
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
-      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/29546532/pexels-photo-29546532.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/12233290/pexels-photo-12233290.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "bench",
@@ -530,11 +518,11 @@ var TEAKLE_PRODUCTS = [
     "shortDescription": "Teak vanity tray with three compartments.",
     "images": [
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "bathroom",
@@ -558,11 +546,11 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak soap dish with drainage grooves.",
     "images": [
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
-      "https://images.pexels.com/photos/8005393/pexels-photo-8005393.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=300",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
@@ -675,11 +663,11 @@ var TEAKLE_PRODUCTS = [
     "shortDescription": "Live-edge teak serving plank, hand-finished.",
     "images": [
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
       "https://images.pexels.com/photos/6480204/pexels-photo-6480204.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "outdoor",
@@ -703,11 +691,11 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak serving board with hand-shaped handle.",
     "images": [
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300",
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300",
       "https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
@@ -733,11 +721,11 @@ var TEAKLE_PRODUCTS = [
     "shortDescription": "Solid teak serving tray with raised rim.",
     "images": [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=1200"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=300",
-      "https://images.pexels.com/photos/4750280/pexels-photo-4750280.jpeg?auto=compress&cs=tinysrgb&w=300"
+      "https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=300"
     ],
     "tags": [
       "dining",
