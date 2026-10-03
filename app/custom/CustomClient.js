@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { inquiries } from '@/lib/api';
 
 export default function CustomClient({ cms = {}, cmsKeys = [] }) {
   const formRef = useRef(null);
@@ -84,7 +85,7 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
     }
   }, [uploadedFiles, formErrors.details]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     const form = formRef.current;
@@ -92,6 +93,9 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
 
     const name = form.elements.name.value.trim();
     const email = form.elements.email.value.trim();
+    const phone = form.elements.phone ? form.elements.phone.value.trim() : '';
+    const size = form.elements.size && form.elements.size.value ? form.elements.size.value : '';
+    const dimensions = form.elements.custom_size ? form.elements.custom_size.value.trim() : '';
     const details = form.elements.details.value.trim();
     const hasFiles = uploadedFiles.length > 0;
     const errors = {};
@@ -108,9 +112,24 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
 
     setFormErrors({});
     setIsSubmitting(true);
-    setFormStatus('submitted');
-    form.reset();
-    setUploadedFiles([]);
+    setFormStatus('');
+    const result = await inquiries.customOrder({
+      name,
+      email,
+      phone,
+      size,
+      dimensions,
+      description: details,
+      referenceFile: hasFiles ? uploadedFiles.map((f) => f.name).join(', ') : '',
+    });
+    setIsSubmitting(false);
+    if (result && result.ok) {
+      setFormStatus('submitted');
+      form.reset();
+      setUploadedFiles([]);
+    } else {
+      setFormErrors({ submit: (result && result.error) || 'Something went wrong. Please try again or email hello@teakle.in.' });
+    }
   }
 
   function handleFiles(files) {
@@ -360,15 +379,15 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
 
             {formStatus === 'submitted' ? (
               <div className="form-success" role="status">
-                <p><strong>Demo mode — backend integration required.</strong></p>
-                <p>In production, your custom order request would be sent to our workshop team for review. We will review your request and respond with feasibility, pricing, and estimated timeline.</p>
+                <p><strong>Request received.</strong></p>
+                <p>We will review your request and respond with feasibility, pricing, and estimated timeline. If you have reference images, please email them to <a href="mailto:hello@teakle.in">hello@teakle.in</a>.</p>
                 <button type="button" className="btn-primary form-submit" onClick={() => setFormStatus('')}>Submit Another Request</button>
               </div>
             ) : (
               <>
-                <button type="submit" className="btn-primary form-submit">Request a Quote</button>
+                {formErrors.submit && <span className="form-error" role="alert">{formErrors.submit}</span>}
+                <button type="submit" className="btn-primary form-submit" disabled={isSubmitting}>{isSubmitting ? 'Sending...' : 'Request a Quote'}</button>
                 <p className="form-privacy-note">By submitting this form, you acknowledge that your information will be handled in accordance with our <Link href="/privacy">Privacy Policy</Link>.</p>
-                <p className="form-note">Demo mode — no data is submitted. Backend integration required.</p>
               </>
             )}
           </form>

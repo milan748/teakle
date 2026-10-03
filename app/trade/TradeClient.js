@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { inquiries } from '@/lib/api';
 
 export default function TradeClient({ cms = {}, cmsKeys = [] }) {
   const formRef = useRef(null);
@@ -16,21 +17,32 @@ export default function TradeClient({ cms = {}, cmsKeys = [] }) {
     const status = statusRef.current;
     if (!form || !status) return;
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
       e.preventDefault();
       const btn = form.querySelector('button[type="submit"]');
       const originalText = btn.textContent;
       btn.textContent = 'Sending...';
       btn.disabled = true;
 
-      setTimeout(() => {
-        status.textContent = 'Received. We will reply within a few days. (Demo mode — backend integration required.)';
+      const data = new FormData(form);
+      const result = await inquiries.trade({
+        name: (data.get('name') || '').toString().trim(),
+        email: (data.get('email') || '').toString().trim(),
+        projectType: (data.get('type') || '').toString(),
+        details: (data.get('details') || '').toString().trim(),
+      });
+
+      if (result && result.ok) {
+        status.textContent = 'Received. We will reply within a few days.';
         status.classList.add('is-visible');
         form.reset();
-        btn.textContent = originalText;
-        btn.disabled = false;
         setTimeout(() => status.classList.remove('is-visible'), 5000);
-      }, 1000);
+      } else {
+        status.textContent = (result && result.error) || 'Something went wrong. Please try again or email hello@teakle.in.';
+        status.classList.add('is-visible');
+      }
+      btn.textContent = originalText;
+      btn.disabled = false;
     }
 
     form.addEventListener('submit', handleSubmit);

@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { inquiries } from '@/lib/api';
 
 export default function ContactForm() {
   const [status, setStatus] = useState('idle');
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
 
   function validate(form) {
     const e = {};
@@ -21,7 +23,7 @@ export default function ContactForm() {
     return e;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
     const validationErrors = validate(form);
@@ -30,13 +32,24 @@ export default function ContactForm() {
       return;
     }
     setErrors({});
+    setSubmitError('');
     setStatus('sending');
 
-    setTimeout(() => {
+    const result = await inquiries.contact({
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      subject: form.subject.value.trim(),
+      message: form.message.value.trim(),
+    });
+
+    if (result && result.ok) {
       setStatus('success');
       form.reset();
       setTimeout(() => setStatus('idle'), 5000);
-    }, 1000);
+    } else {
+      setStatus('idle');
+      setSubmitError((result && result.error) || 'Something went wrong. Please try again or email hello@teakle.in.');
+    }
   }
 
   return (
@@ -66,11 +79,11 @@ export default function ContactForm() {
       <button type="submit" className="btn-primary contact-submit" disabled={status === 'sending'}>
         {status === 'sending' ? 'Sending...' : 'Send Message'}
       </button>
+      {submitError ? <p className="form-error" role="alert" style={{ marginTop: '0.5rem' }}>{submitError}</p> : null}
       <p className="form-privacy-note">By submitting this form, you acknowledge that your information will be handled in accordance with our <Link href="/privacy">Privacy Policy</Link>.</p>
       {status === 'success' && (
         <p className="contact-form-status is-visible" role="status">
           Message received. We will reply within two working days.
-          <br /><small style={{opacity:0.7}}>Demo mode — backend integration required to send messages.</small>
         </p>
       )}
     </form>

@@ -2,19 +2,23 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
-import ProductCard from '../../components/ProductCard';
 
 /* ============================================
-   PRODUCT PAGE — Type A (Hero) + Type B (Standard)
-   Refined v2 — improved hierarchy, gallery, mobile
+   PRODUCT PAGE — Editorial Catalogue Template
+   Single unified layout for every product:
+   01 Hero · 02 Key Details · 03 Story · 04 Detail Images ·
+   05 Specifications · 06 Lifestyle · 07 Related
+   Data: app/data/products.js only. Missing optional fields
+   are omitted, never fabricated.
+   Behaviour preserved: gallery (switch/zoom/fullscreen/swipe/
+   keyboard), quantity (hero = one of one), cart, wishlist,
+   share, mobile sticky CTA, recently viewed, related products.
    ============================================ */
 
 const pageStyles = `
 /* ================================================================
-   SHARED STYLES
+   BREADCRUMB
    ================================================================ */
-
-/* Breadcrumb */
 .pd-breadcrumb {
   padding: calc(var(--space-xl) + var(--space-sm)) 0 var(--space-sm);
   background: var(--bg-primary);
@@ -30,23 +34,125 @@ const pageStyles = `
 }
 .pd-breadcrumb .bc-sep { color: var(--stone); }
 .pd-breadcrumb .bc-current { color: var(--text-primary); }
+.pd-breadcrumb a { transition: color var(--dur-fast) var(--ease); }
+.pd-breadcrumb a:hover { color: var(--bronze); }
 
-/* ---- Type B: Standard Product Grid ---- */
-.pd-section { background: var(--bg-primary); padding: var(--space-md) 0 var(--space-xl); }
-/* Present the object, not a narrow SKU column — use the desktop viewport. */
-.pd-section .container { max-width: min(1400px, 100% - 3rem); }
-.pd-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: var(--space-2xl);
-  align-items: start;
+/* ================================================================
+   SECTION MARKERS + SHARED EDITORIAL BITS
+   ================================================================ */
+.pde-page { background: var(--bg-primary); overflow-x: clip; }
+.pde-num {
+  font-size: var(--text-caption);
+  letter-spacing: 0.14em;
+  color: var(--stone);
+  font-weight: 400;
+  flex-shrink: 0;
+}
+.pde-strip-num {
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: var(--space-sm);
+}
+.pde-eyebrow-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+.pde-sec-head {
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto var(--space-lg);
+}
+.pde-sec-head h2 {
+  font-size: var(--text-h2);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: var(--lh-heading);
+  max-width: none;
+  margin: var(--space-xs) 0 0;
 }
 
+/* ================================================================
+   01 — HERO
+   ================================================================ */
+.pde-hero { background: var(--bg-primary); padding: var(--space-md) 0 var(--space-xl); }
+.pde-hero-inner {
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  align-items: start;
+}
+.pde-info-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+.pde-title {
+  font-size: var(--text-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-display);
+  margin: 0 0 0.35rem;
+  max-width: none;
+}
+.pde-short-desc {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+  margin: 0 0 var(--space-sm);
+  max-width: 50ch;
+}
+.pde-meta {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-sm);
+  max-width: 52ch;
+}
+.pde-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+.pde-price {
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.pde-avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--text-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--forest);
+}
+.pde-avail::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--forest);
+  border-radius: var(--radius-full);
+}
+.pde-avail.is-limited { color: var(--bronze); }
+.pde-avail.is-limited::before { background: var(--bronze); }
+
 /* Gallery */
-.pd-gallery { position: relative; }
+.pd-gallery { position: relative; min-width: 0; }
 .pd-gallery-main {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--bg-secondary);
   margin-bottom: var(--space-sm);
@@ -64,6 +170,20 @@ const pageStyles = `
 }
 .pd-gallery-main.is-zoomed { cursor: zoom-out; }
 .pd-gallery-main.is-zoomed img { transform: scale(1.8); }
+
+/* Desktop: fit the whole product in one viewport. The frame is sized
+   by viewport height (not column width) and the image is contained,
+   so the complete product is visible without scrolling, cropping,
+   or distortion. Mobile keeps the aspect-driven presentation. */
+@media (min-width: 861px) {
+  .pd-gallery-main {
+    aspect-ratio: auto;
+    height: 640px;
+    height: clamp(320px, calc(100vh - 270px), 760px);
+    height: clamp(320px, calc(100svh - 270px), 760px);
+  }
+  .pd-gallery-main img { object-fit: contain; }
+}
 .pd-gallery-badge {
   position: absolute;
   top: var(--space-sm);
@@ -81,7 +201,6 @@ const pageStyles = `
   bottom: var(--space-sm);
   right: var(--space-sm);
   background: rgba(43,34,27,0.65);
-  backdrop-filter: blur(4px);
   color: var(--bg-primary);
   font-size: var(--text-caption);
   letter-spacing: 0.06em;
@@ -104,7 +223,8 @@ const pageStyles = `
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease);
 }
-.pd-gallery-main:hover .pd-gallery-nav { opacity: 1; }
+.pd-gallery-main:hover .pd-gallery-nav,
+.pd-gallery-main:focus-within .pd-gallery-nav { opacity: 1; }
 .pd-gallery-nav:active { background: rgba(255,255,255,0.7); }
 .pd-gallery-prev { left: var(--space-sm); }
 .pd-gallery-next { right: var(--space-sm); }
@@ -128,7 +248,6 @@ const pageStyles = `
   bottom: var(--space-sm);
   left: var(--space-sm);
   background: rgba(43,34,27,0.65);
-  backdrop-filter: blur(4px);
   color: var(--bg-primary);
   font-size: var(--text-caption);
   letter-spacing: 0.06em;
@@ -151,94 +270,19 @@ const pageStyles = `
   cursor: pointer;
   overflow: hidden;
   border: 1.5px solid transparent;
+  background: none;
+  padding: 0;
   opacity: 0.65;
   transition: border-color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
 }
 .pd-thumb.is-active { border-color: var(--bronze); opacity: 1; }
 .pd-thumb:hover { opacity: 1; }
-.pd-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.pd-thumb:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
+.pd-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-/* Details Panel */
-.pd-details { position: sticky; top: 100px; }
-.pd-details .eyebrow { display: block; margin-bottom: var(--space-xs); }
-.pd-meta {
-  color: var(--text-secondary);
-  font-size: var(--text-body);
-  line-height: var(--lh-relaxed);
-  letter-spacing: 0.01em;
-  margin-bottom: var(--space-sm);
-  max-width: 52ch;
-}
-.pd-title {
-  font-size: var(--text-display);
-  font-weight: 500;
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.02em;
-  line-height: var(--lh-display);
-}
-.pd-short-desc {
-  color: var(--text-secondary);
-  font-size: var(--text-body);
-  line-height: var(--lh-relaxed);
-  margin-bottom: var(--space-sm);
-  max-width: 50ch;
-}
-.pd-price-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
-}
-.pd-price {
-  font-family: var(--font-display);
-  font-size: var(--text-display-sm);
-  font-weight: 500;
-  color: var(--text-primary);
-}
-.pd-avail {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: var(--text-label);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--forest);
-}
-.pd-avail::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: var(--forest);
-  border-radius: var(--radius-full);
-}
-.pd-avail.is-limited { color: var(--bronze); }
-.pd-avail.is-limited::before { background: var(--bronze); }
-
-/* Product Info Sections */
-.pd-info-sections {
-  border-top: var(--border-hair);
-  margin: var(--space-md) 0;
-}
-.pd-info-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-md);
-  padding: 0.6rem 0;
-  border-bottom: var(--border-hair);
-  font-size: var(--text-body);
-}
-.pd-info-label {
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-.pd-info-value {
-  color: var(--text-primary);
-  text-align: right;
-  font-weight: 500;
-}
-
-/* Purchase Section */
+/* Purchase (integrated, no card) */
+.pde-info { position: sticky; top: 100px; min-width: 0; }
+.pde-info .eyebrow { display: block; margin-bottom: 0; }
 .pd-qty {
   display: flex;
   align-items: center;
@@ -281,7 +325,6 @@ const pageStyles = `
   height: 44px;
   line-height: 44px;
 }
-
 .pd-actions { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: var(--space-md); }
 .pd-btn-add {
   display: flex;
@@ -304,10 +347,8 @@ const pageStyles = `
 .pd-btn-add:hover { background: var(--forest); border-color: var(--forest); }
 .pd-btn-add:active { transform: scale(0.97); }
 .pd-btn-add.is-added { background: var(--forest); border-color: var(--forest); }
-
-.pd-actions-row2 { display: flex; gap: 0.6rem; }
 .pd-btn-secondary {
-  flex: 1;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,13 +366,37 @@ const pageStyles = `
 }
 .pd-btn-secondary:hover { color: var(--bronze); border-color: var(--bronze); }
 .pd-btn-secondary.is-active { color: var(--bronze); border-color: var(--bronze); }
-
+.pde-quiet-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+.pde-quiet-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.pde-quiet-link:hover { color: var(--bronze); border-bottom-color: var(--bronze); }
 .pd-delivery {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: var(--space-md);
-  background: var(--bg-secondary);
+  padding: var(--space-md) 0;
+  border-top: var(--border-hair);
 }
 .pd-delivery-row {
   display: flex;
@@ -342,104 +407,275 @@ const pageStyles = `
   line-height: 1.5;
 }
 
-/* ---- Craftsmanship Section (Standard) ---- */
-.pd-craft {
-  background: var(--bg-secondary);
-  padding: var(--space-xl) 0;
-}
-.pd-craft-inner {
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-  align-items: center;
-}
-.pd-craft-img {
-  position: relative;
-  overflow: hidden;
-}
-.pd-craft-img img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  transition: transform 1.2s var(--ease);
-}
-.pd-craft-img:hover img { transform: scale(1.03); }
-.pd-craft-text .eyebrow { margin-bottom: var(--space-sm); }
-.pd-craft-text h2 {
-  font-size: var(--text-h2);
-  margin-bottom: var(--space-md);
-  max-width: none;
-  line-height: var(--lh-heading);
-  letter-spacing: -0.015em;
-}
-.pd-craft-text p {
-  color: var(--text-secondary);
-  line-height: var(--lh-relaxed);
-  max-width: 48ch;
-}
-
-/* ---- Care Guide ---- */
-.pd-care {
+/* ================================================================
+   02 — KEY DETAILS
+   ================================================================ */
+.pde-keys {
   background: var(--bg-primary);
-  padding: var(--space-xl) 0;
+  border-top: var(--border-hair);
+  border-bottom: var(--border-hair);
+  padding: var(--space-lg) 0;
 }
-.pd-care-inner {
-  max-width: var(--container);
+.pde-keys-inner {
+  max-width: min(1400px, 100% - 3rem);
   margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-.pd-care-head {
-  margin-bottom: var(--space-lg);
-}
-.pd-care-head h2 {
-  font-size: var(--text-h2);
-  max-width: none;
-  line-height: var(--lh-heading);
-  letter-spacing: -0.015em;
-}
-.pd-care-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-md);
 }
-.pd-care-card {
-  padding: var(--space-md);
-  background: var(--bg-secondary);
-  border: var(--border-subtle);
-}
-.pd-care-icon {
-  width: 36px;
-  height: 36px;
+.pde-key { display: flex; gap: var(--space-sm); align-items: flex-start; min-width: 0; }
+.pde-key-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
   color: var(--bronze);
-  margin-bottom: var(--space-sm);
+  margin-top: 2px;
 }
-.pd-care-card h3 {
-  font-size: var(--text-body);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+.pde-key-label {
+  display: block;
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin-bottom: var(--space-xs);
-}
-.pd-care-card p {
-  font-size: var(--text-body);
   color: var(--text-secondary);
-  line-height: var(--lh-relaxed);
+  margin-bottom: 0.2rem;
+}
+.pde-key-value {
+  display: block;
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
 }
 
-/* ---- Accordions ---- */
-.pd-accordions {
-  background: var(--bg-primary);
-  padding: 0 0 var(--space-xl);
-  border-top: var(--border-hair);
+/* ================================================================
+   03 — STORY
+   ================================================================ */
+.pde-story { background: var(--bg-primary); padding: var(--space-2xl) 0; }
+.pde-story-inner {
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+  align-items: center;
 }
-.pd-accordions-inner {
-  max-width: 900px;
+.pde-story-text .eyebrow { display: block; margin-bottom: var(--space-sm); }
+.pde-story-text h2 {
+  font-size: var(--text-h1);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: var(--lh-heading);
+  max-width: 16ch;
+  margin: 0 0 var(--space-md);
+}
+.pde-story-text p {
+  color: var(--text-secondary);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+  max-width: 52ch;
+  margin: 0;
+}
+.pde-story-img { overflow: hidden; background: var(--bg-secondary); }
+.pde-story-img img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s var(--ease);
+}
+.pde-story-img:hover img { transform: scale(1.02); }
+
+/* ================================================================
+   04 — DETAIL IMAGES
+   ================================================================ */
+.pde-details { background: var(--bg-primary); padding: 0 0 var(--space-2xl); }
+.pde-details-grid {
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--space-sm);
+}
+.pde-detail { overflow: hidden; background: var(--bg-secondary); }
+.pde-detail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s var(--ease);
+}
+.pde-detail:hover img { transform: scale(1.02); }
+.pde-detail:first-child { aspect-ratio: 4 / 3; }
+.pde-detail:last-child { aspect-ratio: 1 / 1; }
+.pde-details-grid:has(> :only-child) { grid-template-columns: 1fr; }
+.pde-details-grid:has(> :only-child) .pde-detail:first-child { aspect-ratio: 21 / 9; }
+
+/* ================================================================
+   05 — SPECIFICATIONS
+   ================================================================ */
+.pde-specs { background: var(--bg-secondary); padding: var(--space-2xl) 0; }
+.pde-specs-inner {
+  max-width: 860px;
   margin: 0 auto;
   padding: 0 var(--space-md);
 }
+.pd-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  padding: 0.7rem 0;
+  border-bottom: var(--border-hair);
+  font-size: var(--text-body);
+}
+.pd-info-row:first-of-type { border-top: var(--border-hair); }
+.pd-info-label { color: var(--text-secondary); flex-shrink: 0; }
+.pd-info-value { color: var(--text-primary); text-align: right; font-weight: 500; }
+
+/* ================================================================
+   06 — LIFESTYLE
+   ================================================================ */
+.pde-life {
+  position: relative;
+  min-height: 72vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--walnut);
+}
+.pde-life img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.pde-life::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(43,34,27,0) 30%, rgba(43,34,27,0.55) 100%);
+}
+.pde-life-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: min(1400px, 100% - 3rem);
+  margin: 0 auto;
+  padding: 0 0 var(--space-2xl);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+.pde-life-text .eyebrow { color: var(--stone); display: block; margin-bottom: var(--space-sm); }
+.pde-life-text h2 {
+  color: var(--bg-primary);
+  font-size: var(--text-h2);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: var(--lh-heading);
+  max-width: 22ch;
+  margin: 0 0 var(--space-sm);
+}
+.pde-life-text p {
+  color: rgba(247,244,238,0.85);
+  font-size: var(--text-body);
+  line-height: var(--lh-relaxed);
+  max-width: 52ch;
+  margin: 0;
+}
+.pde-life-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+.pde-life .pde-num { color: rgba(247,244,238,0.65); }
+.pde-life-cta {
+  color: var(--bg-primary);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(247,244,238,0.5);
+  padding-bottom: 4px;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+.pde-life-cta:hover { color: var(--bronze); border-color: var(--bronze); }
+
+/* ================================================================
+   07 — RELATED
+   ================================================================ */
+.pde-related { background: var(--bg-primary); padding: var(--space-2xl) 0; }
+.pde-related-inner { max-width: min(1400px, 100% - 3rem); margin: 0 auto; }
+.pde-related-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.pde-related-head h2 {
+  font-size: clamp(1.4rem, 2.5vw, var(--text-h2));
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  max-width: none;
+  margin: 0;
+}
+.pde-related-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: var(--text-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color var(--dur-fast) var(--ease);
+}
+.pde-related-more:hover { color: var(--bronze); }
+.pde-rel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+.pde-rel-card { text-decoration: none; display: block; min-width: 0; }
+.pde-rel-card:focus-visible { outline: 2px solid var(--bronze); outline-offset: 3px; }
+.pde-rel-img { overflow: hidden; background: var(--bg-secondary); margin-bottom: 0.75rem; }
+.pde-rel-img img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.2s var(--ease);
+}
+.pde-rel-card:hover .pde-rel-img img { transform: scale(1.03); }
+.pde-rel-card h3 {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 0.15rem;
+  line-height: 1.35;
+  transition: color var(--dur-fast) var(--ease);
+}
+.pde-rel-card:hover h3 { color: var(--bronze); }
+.pde-rel-card p {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* ================================================================
+   MOBILE ACCORDIONS (details disclosure on small screens)
+   ================================================================ */
+.pde-acc { display: none; }
+.pd-accordions { background: var(--bg-primary); padding: 0 0 var(--space-xl); border-top: var(--border-hair); }
+.pd-accordions-inner { max-width: 900px; margin: 0 auto; padding: 0 var(--space-md); }
 .pd-accordion { border-bottom: var(--border-hair); }
 .pd-accordion:last-child { border-bottom: none; }
 .pd-accordion-btn {
@@ -457,6 +693,7 @@ const pageStyles = `
   color: var(--text-primary);
   text-align: left;
   gap: var(--space-sm);
+  min-height: 44px;
   transition: color var(--dur-fast) var(--ease);
 }
 .pd-accordion-btn:hover { color: var(--bronze); }
@@ -469,10 +706,7 @@ const pageStyles = `
   flex-shrink: 0;
 }
 .pd-accordion-btn.is-open::after { transform: rotate(45deg); }
-.pd-accordion-body {
-  overflow: hidden;
-  transition: max-height 400ms var(--ease), opacity 300ms var(--ease);
-}
+.pd-accordion-body { overflow: hidden; transition: max-height 400ms var(--ease), opacity 300ms var(--ease); }
 .pd-accordion-body.is-open { max-height: 2000px; opacity: 1; }
 .pd-accordion-body:not(.is-open) { max-height: 0; opacity: 0; }
 .pd-accordion-inner {
@@ -481,37 +715,13 @@ const pageStyles = `
   color: var(--text-secondary);
   line-height: var(--lh-relaxed);
 }
-.pd-accordion-inner p { margin-bottom: var(--space-sm); }
+.pd-accordion-inner p { margin: 0 0 var(--space-sm); }
 .pd-accordion-inner p:last-child { margin-bottom: 0; }
-.pd-accordion-inner h4 {
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
+.pd-accordion-inner .pd-info-row { font-size: var(--text-body); }
 
-/* ---- Related / Recently Viewed ---- */
-.pd-related {
-  background: var(--bg-primary);
-  padding: var(--space-xl) 0;
-}
-.pd-related-head {
-  margin-bottom: var(--space-lg);
-}
-.pd-related-head h2 {
-  font-size: clamp(1.4rem, 2.5vw, var(--text-h2));
-  max-width: none;
-  margin-top: var(--space-xs);
-}
-.pd-related-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
-}
-
-/* ---- Gallery Overlay ---- */
+/* ================================================================
+   OVERLAY + MOBILE STICKY CTA
+   ================================================================ */
 .pd-overlay {
   position: fixed;
   inset: 0;
@@ -538,11 +748,7 @@ const pageStyles = `
   z-index: 2;
 }
 .pd-overlay-close:active { opacity: 0.7; }
-.pd-overlay img {
-  max-width: 90vw;
-  max-height: 85vh;
-  object-fit: contain;
-}
+.pd-overlay img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
 .pd-overlay-nav {
   position: absolute;
   top: 50%;
@@ -569,20 +775,19 @@ const pageStyles = `
   letter-spacing: 0.1em;
   color: var(--stone);
 }
-
-/* ---- Mobile Sticky CTA ---- */
 .pd-mobile-cta {
   position: fixed;
-  bottom: 56px;
+  bottom: 0;
   left: 0;
   right: 0;
   z-index: 160;
   background: var(--bg-primary);
   border-top: 1px solid var(--stone);
   padding: var(--space-sm) var(--space-md);
-  gap: var(--space-sm);
+  padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
   display: flex;
   align-items: center;
+  gap: var(--space-sm);
   transform: translateY(100%);
   opacity: 0;
   transition: transform var(--dur-slow) var(--ease), opacity var(--dur-slow) var(--ease);
@@ -615,410 +820,75 @@ const pageStyles = `
 }
 
 /* ================================================================
-   TYPE A: SIGNATURE — Editorial Product Showcase
-   ================================================================ */
-.sig-hero-gallery {
-  position: relative;
-  width: 100%;
-  height: 85vh;
-  min-height: 600px;
-  overflow: hidden;
-  background: var(--walnut);
-  touch-action: pan-y;
-}
-.sig-hero-gallery img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: opacity 600ms var(--ease);
-  animation: pd-fade 450ms var(--ease);
-}
-.sig-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(43,34,27,0) 0%, rgba(43,34,27,0.6) 100%);
-  z-index: 1;
-}
-.sig-hero-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  padding: var(--space-2xl) var(--space-md) var(--space-xl);
-  max-width: var(--container);
-  margin: 0 auto;
-}
-.sig-hero-info h1 {
-  color: var(--bg-primary);
-  font-size: clamp(2.5rem, 6vw, var(--text-hero));
-  font-weight: 300;
-  font-style: italic;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: var(--space-sm);
-}
-.sig-hero-tag {
-  display: inline-block;
-  font-size: var(--text-caption);
-  letter-spacing: 0.08em;
-  color: var(--bronze);
-  border: 1px solid color-mix(in srgb, var(--bronze), transparent 60%);
-  padding: 0.5rem 1rem;
-  margin-bottom: var(--space-md);
-}
-.sig-hero-price {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
-  font-weight: 400;
-  color: var(--bg-primary);
-  margin-bottom: var(--space-md);
-}
-.sig-hero-thumbs {
-  display: flex;
-  gap: var(--space-sm);
-  position: absolute;
-  bottom: var(--space-md);
-  right: var(--space-md);
-  z-index: 2;
-}
-.sig-hero-thumb {
-  width: 60px;
-  height: 60px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  overflow: hidden;
-  opacity: 0.6;
-  transition: border-color var(--dur-fast) var(--ease), opacity var(--dur-fast) var(--ease);
-}
-.sig-hero-thumb.is-active { border-color: var(--bronze); opacity: 1; }
-.sig-hero-thumb:hover { opacity: 1; }
-.sig-hero-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.sig-hero-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  background: rgba(255,255,255,0.15);
-  border: none;
-  cursor: pointer;
-  color: var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  opacity: 0;
-  transition: opacity var(--dur-fast) var(--ease);
-}
-.sig-hero-gallery:hover .sig-hero-nav { opacity: 1; }
-.sig-hero-nav:active { background: rgba(255,255,255,0.25); }
-.sig-hero-prev { left: var(--space-md); }
-.sig-hero-next { right: var(--space-md); }
-.sig-hero-counter {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
-  z-index: 2;
-  background: rgba(255,255,255,0.9);
-  border: none;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-/* Signature: Product Info Section */
-.sig-info {
-  background: var(--bg-primary);
-  padding: var(--space-2xl) 0;
-}
-.sig-info-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: calc(var(--space-2xl) * 0.8);
-  align-items: start;
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-.sig-info-left h2 {
-  font-size: clamp(1.8rem, 3.5vw, var(--text-h1));
-  font-weight: 300;
-  font-style: italic;
-  line-height: 1.2;
-  margin-bottom: var(--space-md);
-  max-width: none;
-}
-.sig-info-left p {
-  font-size: var(--text-body);
-  color: var(--text-secondary);
-  line-height: var(--lh-relaxed);
-  max-width: 50ch;
-  margin-bottom: var(--space-md);
-}
-.sig-info-left .sig-avail {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: var(--text-label);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--forest);
-  margin-bottom: var(--space-md);
-}
-.sig-info-left .sig-avail::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: var(--forest);
-  border-radius: var(--radius-full);
-}
-.sig-specs-table {
-  width: 100%;
-  border-top: var(--border-hair);
-}
-.sig-specs-table .pd-info-row {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-md);
-  padding: 0.65rem 0;
-  border-bottom: var(--border-hair);
-  font-size: var(--text-body);
-}
-
-/* Signature: Purchase Panel */
-.sig-purchase {
-  position: sticky;
-  top: 100px;
-  padding: var(--space-lg);
-  background: var(--bg-secondary);
-}
-.sig-purchase-price {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: var(--space-md);
-}
-.sig-purchase .pd-actions { margin-bottom: var(--space-md); }
-.sig-purchase-delivery {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: var(--space-md);
-  border-top: var(--border-hair);
-}
-.sig-purchase-delivery .pd-delivery-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  font-size: var(--text-body);
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* Signature: Craftsmanship Story */
-.sig-craft {
-  position: relative;
-  height: 80vh;
-  min-height: 500px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-.sig-craft-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1.4s var(--ease);
-}
-.sig-craft:hover .sig-craft-bg { transform: scale(1.03); }
-.sig-craft::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(43,34,27,0.88) 0%, rgba(43,34,27,0.4) 50%, rgba(43,34,27,0.1) 100%);
-}
-.sig-craft-content {
-  position: relative;
-  z-index: 2;
-  padding: var(--space-2xl) var(--space-md);
-  max-width: 560px;
-  margin-left: 8vw;
-}
-.sig-craft .eyebrow { color: var(--stone); margin-bottom: var(--space-md); }
-.sig-craft h2 {
-  color: var(--bg-primary);
-  font-size: clamp(1.8rem, 4vw, var(--text-h1));
-  font-weight: 300;
-  font-style: italic;
-  line-height: 1.2;
-  margin-bottom: var(--space-md);
-  max-width: none;
-}
-.sig-craft p {
-  color: var(--stone);
-  font-size: var(--text-body);
-  max-width: 44ch;
-  line-height: var(--lh-relaxed);
-  margin-bottom: var(--space-sm);
-}
-.sig-craft .link-quiet { color: var(--bg-primary); border-color: rgba(247,244,238,0.4); }
-.sig-craft .link-quiet:hover { color: var(--bronze); border-color: var(--bronze); }
-
-/* Signature: Progress Gallery */
-.sig-progress {
-  background: var(--bg-secondary);
-  padding: var(--space-2xl) 0;
-}
-.sig-progress-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-.sig-progress-item {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  cursor: pointer;
-}
-.sig-progress-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 1.2s var(--ease);
-}
-.sig-progress-item:hover img { transform: scale(1.06); }
-.sig-progress-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(0deg, rgba(43,34,27,0.6) 0%, transparent 60%);
-}
-.sig-progress-label {
-  position: absolute;
-  bottom: var(--space-sm);
-  left: var(--space-sm);
-  z-index: 2;
-  font-size: var(--text-caption);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--bg-primary);
-}
-
-/* Signature: Care Guide */
-.sig-care {
-  background: var(--bg-primary);
-  padding: var(--space-xl) 0;
-}
-.sig-care-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-md);
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
-}
-
-.pd-recently-viewed {
-  background: var(--bg-primary);
-  padding: var(--space-xl) 0;
-  border-top: var(--border-hair);
-}
-
-/* ================================================================
    RESPONSIVE
    ================================================================ */
+@media (max-width: 1280px) {
+  .pde-hero-inner,
+  .pde-keys-inner,
+  .pde-story-inner,
+  .pde-details-grid,
+  .pde-life-content,
+  .pde-related-inner,
+  .pde-strip-num,
+  .pde-sec-head { max-width: min(1200px, 100% - 2.5rem); }
+}
+@media (max-width: 1024px) {
+  .pde-hero-inner { grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+  .pde-rel-grid { grid-template-columns: repeat(2, 1fr); }
+  .pde-story-text h2 { font-size: var(--text-h2); }
+  .pde-life { min-height: 64vh; }
+}
 @media (max-width: 860px) {
-  .pd-grid { grid-template-columns: 1fr; gap: var(--space-md); }
-  .pd-details { position: static; }
-  .pd-gallery-main { aspect-ratio: 4/5; }
-  .pd-thumbs { grid-template-columns: repeat(4, 1fr); gap: var(--space-xs); }
-  .pd-related-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-
-  .pd-craft-inner { grid-template-columns: 1fr; gap: var(--space-lg); }
-  .pd-craft-img img { aspect-ratio: 16 / 9; }
-  .pd-care-grid { grid-template-columns: repeat(2, 1fr); }
-
-  .sig-hero-gallery { height: 70vh; min-height: 480px; }
-  .sig-hero-info h1 { font-size: var(--text-h1); }
-  .sig-hero-thumbs { bottom: auto; top: var(--space-md); right: auto; left: var(--space-md); }
-  .sig-hero-thumb { width: 48px; height: 48px; }
-
-  .sig-info { padding: var(--space-xl) 0; }
-  .sig-info-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
-  .sig-purchase { position: static; }
-
-  .sig-craft { height: auto; min-height: 0; display: block; background: var(--bg-primary); }
-  .sig-craft-bg { position: relative; width: 100%; height: 340px; }
-  .sig-craft:hover .sig-craft-bg { transform: none; }
-  .sig-craft::after { display: none; }
-  .sig-craft-content { padding: var(--space-lg); max-width: 100%; }
-  .sig-craft .eyebrow { color: var(--bronze); }
-  .sig-craft h2 { color: var(--text-primary); font-size: var(--text-h2); }
-  .sig-craft p { color: var(--text-secondary); max-width: none; }
-  .sig-craft .link-quiet { color: var(--bronze); border-color: var(--bronze); }
-
-  .sig-progress-grid { grid-template-columns: repeat(2, 1fr); }
-  .sig-care-grid { grid-template-columns: repeat(2, 1fr); }
+  .pde-info { position: static; }
+  .pde-hero-inner { grid-template-columns: 1fr; }
+  .pd-gallery-main { aspect-ratio: 4 / 5; }
+  .pd-gallery-nav { opacity: 1; }
+  .pde-keys-inner { grid-template-columns: repeat(2, 1fr); gap: var(--space-md) var(--space-sm); }
+  .pde-story-inner { grid-template-columns: 1fr; gap: var(--space-md); }
+  .pde-story-img img { aspect-ratio: 16 / 10; }
+  .pde-story-text h2 { font-size: var(--text-h2); }
+  .pde-details-grid { grid-template-columns: 1fr 1fr; }
+  .pde-life { min-height: 78vh; }
+  .pde-life-content { flex-direction: column; align-items: flex-start; }
+  .pde-life-side { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+  .pde-acc { display: block; }
+  .pde-rel-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md) var(--space-sm); }
 }
-
 @media (max-width: 560px) {
-  .pd-section { padding: var(--space-sm) 0 var(--space-lg); }
-  .pd-gallery-main { aspect-ratio: 3/4; }
-  .pd-gallery-nav { width: 40px; height: 40px; }
-  .pd-gallery-fullscreen { width: 36px; height: 36px; }
-  .pd-title { font-size: var(--text-h1); }
-  .pd-price { font-size: 1.3rem; }
-  .pd-actions-row2 { flex-direction: column; }
-  .pd-related-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
-  .pd-mobile-cta { display: flex; }
-  body { padding-bottom: 110px; }
-
-  .pd-care-grid { grid-template-columns: 1fr; }
-
-  .sig-hero-gallery { height: 65vh; min-height: 400px; }
-  .sig-hero-info { padding: var(--space-xl) var(--space-md) var(--space-lg); }
-  .sig-hero-info h1 { font-size: var(--text-h1); }
-  .sig-hero-price { font-size: 1.3rem; }
-  .sig-hero-thumb { width: 42px; height: 42px; }
-
-  .sig-progress-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xs); }
-  .sig-care-grid { grid-template-columns: 1fr; }
+  .pde-hero { padding-top: 0; }
+  .pde-hero-inner,
+  .pde-keys-inner,
+  .pde-story-inner,
+  .pde-details-grid,
+  .pde-related-inner,
+  .pde-strip-num,
+  .pde-sec-head { max-width: none; margin-left: 0; margin-right: 0; padding-left: var(--space-md); padding-right: var(--space-md); }
+  .pde-life-content { padding-left: var(--space-md); padding-right: var(--space-md); }
+  .pde-title { font-size: var(--text-h1); }
+  .pde-price { font-size: 1.35rem; }
+  .pde-story { padding: var(--space-xl) 0; }
+  .pde-details { padding-bottom: var(--space-xl); }
+  .pde-specs { padding: var(--space-xl) 0; }
+  .pde-life { min-height: 82vh; }
+  .pde-rel-img img { aspect-ratio: 1 / 1; }
+  .pd-overlay-nav { width: 44px; height: 44px; }
 }
-
 @media (max-width: 430px) {
-  .pd-title { font-size: 1.25rem; }
-  .pd-price { font-size: 1.15rem; }
-  .pd-gallery-main { aspect-ratio: 3/4; }
-  .pd-thumbs img { min-height: 56px; }
-  .pd-related-grid { grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
-  .pd-mobile-cta { bottom: 52px; }
-  body { padding-bottom: 104px; }
-
-  .sig-hero-gallery { height: 60vh; min-height: 360px; }
-  .sig-hero-info h1 { font-size: var(--text-h2); }
-  .sig-hero-price { font-size: 1.15rem; }
+  .pde-title { font-size: 1.65rem; }
+  .pde-keys-inner { gap: var(--space-sm); }
+  .pde-key-icon { width: 24px; height: 24px; }
+  .pde-life { min-height: 84vh; }
 }
-
 @media (hover: none) {
   .pd-gallery-nav { opacity: 1; }
-  .sig-hero-nav { opacity: 1; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .sig-craft-bg, .sig-progress-item img, .pd-piece-img img { transition: none; }
-  .pd-gallery-main img, .sig-hero-gallery img { transition: none; animation: none; }
+  .pd-gallery-main img { animation: none; }
+  .pde-story-img img,
+  .pde-detail img,
+  .pde-rel-img img { transition: none; }
+  .pd-accordion-body { transition: none; }
+  .pd-mobile-cta { transition: none; }
 }
 `;
 
@@ -1054,8 +924,10 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
   const [showRecentlyViewed, setShowRecentlyViewed] = useState(false);
   const [mobileStickyVisible, setMobileStickyVisible] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [storyOpen, setStoryOpen] = useState(false);
-  const [specsOpen, setSpecsOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [materialsOpen, setMaterialsOpen] = useState(false);
+  const [dimensionsOpen, setDimensionsOpen] = useState(false);
+  const [careOpen, setCareOpen] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -1280,7 +1152,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
     } catch (e) {
-      // Sharing unavailable — leave the control untouched, never raise.
+      // Sharing unavailable — leave the control untouched, never raises.
     }
   }, [product]);
 
@@ -1299,104 +1171,65 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     );
   }
 
-  /* ---- Shared purchase panel ---- */
-  const renderPurchasePanel = (className = '') => (
-    <div className={className}>
-      <div className="pd-qty">
-        {isSignature ? (
-          <>
-            <span className="pd-qty-label">Availability</span>
-            <div className="pd-qty-ctrl" style={{ border: 'none' }}>
-              <span className="pd-qty-val" style={{ width: 'auto', border: 'none', fontWeight: 500, color: 'var(--bronze)' }}>One of one</span>
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="pd-qty-label">Quantity</span>
-            <div className="pd-qty-ctrl">
-              <button className="pd-qty-btn" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>&minus;</button>
-              <span className="pd-qty-val">{qty}</span>
-              <button className="pd-qty-btn" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(10, q + 1))}>+</button>
-            </div>
-          </>
-        )}
-      </div>
-      <div className="pd-actions">
-        <button ref={addToCartBtnRef} className={`pd-btn-add ${isAdded ? 'is-added' : ''}`} onClick={handleAddToCart}>
-          {isAdded ? (
-            <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><polyline points="20 6 9 17 4 12" /></svg> Added to Cart</>
-          ) : (
-            <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg> Add to Cart</>
-          )}
-        </button>
-        <div className="pd-actions-row2">
-          <button className={`pd-btn-secondary ${isWishlisted ? 'is-active' : ''}`} onClick={handleWishlist}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-            Wishlist
-          </button>
-          <button className="pd-btn-secondary" onClick={handleShare}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
-            {shareCopied ? 'Copied!' : 'Share'}
-          </button>
-        </div>
+  const images = Array.isArray(product.images) ? product.images : [];
+  const thumbs = Array.isArray(product.thumbnails) && product.thumbnails.length ? product.thumbnails : images;
+  const safeIdx = images.length ? currentImageIdx % images.length : 0;
+  const detailImages = images.slice(2);
+  const storyImage = images[1] || images[0];
+  const lifestyleImage = images[0];
+  const specs = Array.isArray(product.specifications) ? product.specifications : [];
+
+  /* 02 — Key details, from top-level attributes only. Missing fields omitted. */
+  const keyDetails = [
+    product.material ? { label: 'Material', value: product.material, icon: 'material' } : null,
+    product.dimensions ? { label: 'Dimensions', value: product.dimensions, icon: 'dimensions' } : null,
+    product.buildTime ? { label: 'Build Time', value: product.buildTime, icon: 'time' } : null,
+    product.finish ? { label: 'Finish', value: product.finish, icon: 'finish' } : null,
+  ].filter(Boolean);
+
+  const keyIcon = (kind) => {
+    const common = { viewBox: '0 0 28 28', fill: 'none', stroke: 'currentColor', strokeWidth: '1.5', 'aria-hidden': 'true', className: 'pde-key-icon' };
+    if (kind === 'dimensions') {
+      return (<svg {...common}><path d="M4 10h20M4 10l3-3M4 10l3 3M24 10l-3-3M24 10l-3 3M7 18h14M7 18l2.5-2.5M7 18l2.5 2.5M21 18l-2.5-2.5M21 18l-2.5 2.5" /></svg>);
+    }
+    if (kind === 'time') {
+      return (<svg {...common}><circle cx="14" cy="14" r="9" /><polyline points="14 8.5 14 14 18.5 16.5" /></svg>);
+    }
+    if (kind === 'finish') {
+      return (<svg {...common}><path d="M14 3.5l7.5 7.5a9.5 9.5 0 1 1-15 0z" /></svg>);
+    }
+    return (<svg {...common}><path d="M4 9.5l10-5 10 5-10 5z" /><path d="M4 9.5V18l10 5 10-5V9.5" /><path d="M14 14.5V23.5" /></svg>);
+  };
+
+  /* Mobile accordion groups, each rendered only with real content. */
+  const accDetails = [product.description, product.craftsmanship].filter(Boolean);
+  const accMaterials = [product.materials, product.finish ? `Finish — ${product.finish}` : ''].filter(Boolean);
+  const accDimensions = [
+    product.dimensions ? `Dimensions — ${product.dimensions}` : '',
+    product.weight ? `Weight — ${product.weight}` : '',
+    product.seats ? `Seats — ${product.seats}` : '',
+  ].filter(Boolean);
+
+  const renderAccordion = (title, open, setOpen, body) => (
+    <div className="pd-accordion">
+      <button className={`pd-accordion-btn ${open ? 'is-open' : ''}`} aria-expanded={open} onClick={() => setOpen(!open)}>
+        {title}
+      </button>
+      <div className={`pd-accordion-body ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+        <div className="pd-accordion-inner">{body}</div>
       </div>
     </div>
   );
 
-  const renderDelivery = () => (
-    <div className="pd-delivery">
-      <div className="pd-delivery-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
-        <span>White-glove delivery available.</span>
+  const renderRelatedCard = (rp) => (
+    <Link key={rp.id} href={`/shop/${rp.id}`} className="pde-rel-card">
+      <div className="pde-rel-img">
+        <img loading="lazy" src={rp.images?.[0]} alt={rp.name} />
       </div>
-      <div className="pd-delivery-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
-        <span>Handcrafted in India. Ships worldwide.</span>
-      </div>
-      <div className="pd-delivery-row">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><polyline points="20 6 9 17 4 12" /></svg>
-        <span>{product.returns}</span>
-      </div>
-    </div>
+      <h3>{rp.name}</h3>
+      <p>{rp.subcategoryName || rp.categoryName || ''}</p>
+    </Link>
   );
-
-  const renderRelated = () => {
-    if (relatedProducts.length === 0) return null;
-    return (
-      <section className="pd-related">
-        <div className="container">
-          <div className="pd-related-head">
-            <span className="eyebrow">Curated</span>
-            <h2>Complete the Space</h2>
-          </div>
-          <div className="pd-related-grid">
-            {relatedProducts.map((rp) => (
-              <ProductCard key={rp.id} product={rp} />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  };
-
-  const renderRecentlyViewed = () => {
-    if (!showRecentlyViewed || recentlyViewed.length === 0) return null;
-    return (
-      <section className="pd-recently-viewed">
-        <div className="container">
-          <div className="pd-related-head">
-            <span className="eyebrow">Browsing History</span>
-            <h2>Recently Viewed</h2>
-          </div>
-          <div className="pd-related-grid">
-            {recentlyViewed.map((rp) => (
-              <ProductCard key={rp.id} product={rp} />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  };
 
   const renderOverlay = () => (
     <div
@@ -1409,14 +1242,14 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
       <button className="pd-overlay-close" aria-label="Close fullscreen" onClick={closeOverlay}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 24, height: 24 }}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
       </button>
-      <button className="pd-overlay-nav pd-overlay-prev" aria-label="Previous image" onClick={(e) => { e.stopPropagation(); setOverlayIdx((prev) => (prev - 1 + product.images.length) % product.images.length); }}>
+      <button className="pd-overlay-nav pd-overlay-prev" aria-label="Previous image" onClick={(e) => { e.stopPropagation(); setOverlayIdx((prev) => (prev - 1 + images.length) % images.length); }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 24, height: 24 }}><polyline points="15 18 9 12 15 6" /></svg>
       </button>
-      <img src={product.images[overlayIdx]} alt={`${product.name} image ${overlayIdx + 1}`} />
-      <button className="pd-overlay-nav pd-overlay-next" aria-label="Next image" onClick={(e) => { e.stopPropagation(); setOverlayIdx((prev) => (prev + 1) % product.images.length); }}>
+      <img src={images[overlayIdx]} alt={`${product.name} image ${overlayIdx + 1}`} />
+      <button className="pd-overlay-nav pd-overlay-next" aria-label="Next image" onClick={(e) => { e.stopPropagation(); setOverlayIdx((prev) => (prev + 1) % images.length); }}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 24, height: 24 }}><polyline points="9 18 15 12 9 6" /></svg>
       </button>
-      <span className="pd-overlay-counter">{overlayIdx + 1} / {product.images.length}</span>
+      <span className="pd-overlay-counter">{overlayIdx + 1} / {images.length}</span>
     </div>
   );
 
@@ -1430,235 +1263,10 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     </div>
   );
 
-  const renderCareGuide = () => (
-    <section className="pd-care">
-      <div className="pd-care-inner">
-        <div className="pd-care-head">
-          <span className="eyebrow">Care Guide</span>
-          <h2>Caring for Your Piece</h2>
-        </div>
-        <div className="pd-care-grid">
-          <div className="pd-care-card">
-            <svg className="pd-care-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z" /></svg>
-            <h3>Cleaning</h3>
-            <p>Wipe with a soft, damp cloth. Avoid abrasive cleaners or harsh chemicals that may damage the oil finish.</p>
-          </div>
-          <div className="pd-care-card">
-            <svg className="pd-care-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></svg>
-            <h3>Moisture</h3>
-            <p>Blot spills immediately. Teak is naturally moisture-resistant, but prolonged exposure may affect the finish.</p>
-          </div>
-          <div className="pd-care-card">
-            <svg className="pd-care-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
-            <h3>Sunlight</h3>
-            <p>Avoid placing in direct, prolonged sunlight. UV exposure may cause the wood to lighten or the finish to dry.</p>
-          </div>
-          <div className="pd-care-card">
-            <svg className="pd-care-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-            <h3>Storage</h3>
-            <p>Keep in a stable environment. Avoid extreme temperature changes. Reapply oil every 12–18 months for lasting protection.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  const metaBits = [product.material, product.dimensions, product.buildTime].filter(Boolean);
 
-  const renderAccordions = () => (
-    <section className="pd-accordions">
-      <div className="pd-accordions-inner">
-        <div className="pd-accordion">
-          <button className={`pd-accordion-btn ${storyOpen ? 'is-open' : ''}`} aria-expanded={storyOpen} onClick={() => setStoryOpen(!storyOpen)}>
-            Our Craft — Story, Materials & Care
-          </button>
-          <div className={`pd-accordion-body ${storyOpen ? 'is-open' : ''}`} aria-hidden={!storyOpen}>
-            <div className="pd-accordion-inner">
-              <h4>The Story</h4>
-              <p>{product.story}</p>
-              <h4>Craftsmanship</h4>
-              <p>{product.craftsmanship}</p>
-              <h4>Materials</h4>
-              <p>{product.materials}</p>
-              <h4>Care Instructions</h4>
-              <p>{product.careInstructions}</p>
-            </div>
-          </div>
-        </div>
-        <div className="pd-accordion">
-          <button className={`pd-accordion-btn ${specsOpen ? 'is-open' : ''}`} aria-expanded={specsOpen} onClick={() => setSpecsOpen(!specsOpen)}>
-            Specifications
-          </button>
-          <div className={`pd-accordion-body ${specsOpen ? 'is-open' : ''}`} aria-hidden={!specsOpen}>
-            <div className="pd-accordion-inner">
-              {product.specifications.map((s, i) => (
-                <div key={i} className="pd-info-row">
-                  <span className="pd-info-label">{s.label}</span>
-                  <span className="pd-info-value">{s.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="pd-accordion">
-          <button className={`pd-accordion-btn ${shippingOpen ? 'is-open' : ''}`} aria-expanded={shippingOpen} onClick={() => setShippingOpen(!shippingOpen)}>
-            Shipping & Returns
-          </button>
-          <div className={`pd-accordion-body ${shippingOpen ? 'is-open' : ''}`} aria-hidden={!shippingOpen}>
-            <div className="pd-accordion-inner">
-              <h4>Shipping</h4>
-              <p>{product.shipping}</p>
-              <h4>Returns</h4>
-              <p>{product.returns}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderCraftSection = (img, eyebrow, heading, text) => (
-    <section className="pd-craft">
-      <div className="pd-craft-inner">
-        <div className="pd-craft-img">
-          <img src={img} alt="The making process" loading="lazy" />
-        </div>
-        <div className="pd-craft-text">
-          <span className="eyebrow">{eyebrow}</span>
-          <h2>{heading}</h2>
-          <p>{text}</p>
-        </div>
-      </div>
-    </section>
-  );
-
-  /* ================================================================
-     TYPE A: SIGNATURE PRODUCT
-     ================================================================ */
-  if (isSignature) {
-    return (
-      <>
-        <style>{pageStyles}</style>
-
-        {/* Breadcrumb */}
-        <section className="pd-breadcrumb">
-          <div className="container">
-            <nav aria-label="Breadcrumb">
-              <Link href="/">Home</Link>
-              <span className="bc-sep">/</span>
-              <Link href="/gallery">Gallery</Link>
-              <span className="bc-sep">/</span>
-              <span className="bc-current">{product.name}</span>
-            </nav>
-          </div>
-        </section>
-
-        {/* Hero Gallery */}
-        <section
-          className="sig-hero-gallery"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <img key={currentImageIdx} src={product.images[currentImageIdx]} alt={`${product.name}, image ${currentImageIdx + 1} of ${product.images.length}`} onLoad={() => setIsGalleryLoading(false)} />
-          <div className="sig-hero-overlay"></div>
-          <div className="sig-hero-info">
-            <span className="sig-hero-tag">Signature Piece</span>
-            <h1>{product.name}</h1>
-            <p className="sig-hero-price">{product.priceFormatted}</p>
-          </div>
-          <button className="sig-hero-nav sig-hero-prev" aria-label="Previous image" onClick={goToPrev}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 24, height: 24 }}><polyline points="15 18 9 12 15 6" /></svg>
-          </button>
-          <button className="sig-hero-nav sig-hero-next" aria-label="Next image" onClick={goToNext}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 24, height: 24 }}><polyline points="9 18 15 12 9 6" /></svg>
-          </button>
-          <div className="sig-hero-thumbs">
-            {product.thumbnails.map((thumb, i) => (
-              <div key={i} className={`sig-hero-thumb ${i === currentImageIdx ? 'is-active' : ''}`} onClick={() => setActiveImage(i)}>
-                <img loading="lazy" src={thumb} alt={`${product.name} view ${i + 1}`} />
-              </div>
-            ))}
-          </div>
-          <button className="sig-hero-counter" aria-label="View fullscreen" onClick={() => openOverlay(currentImageIdx)}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 18, height: 18, color: 'var(--text-primary)' }}>
-              <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
-            </svg>
-          </button>
-        </section>
-
-        {/* Product Info */}
-        <section className="sig-info">
-          <div className="sig-info-grid">
-            <div className="sig-info-left">
-              <span className="eyebrow" style={{ marginBottom: 'var(--space-md)' }}>About This Piece</span>
-              <h2>{product.shortDescription}</h2>
-              <p>{product.description}</p>
-              <span className="sig-avail">{product.availabilityNote}</span>
-              <div className="sig-specs-table">
-                {product.specifications.map((s, i) => (
-                  <div key={i} className="pd-info-row">
-                    <span className="pd-info-label">{s.label}</span>
-                    <span className="pd-info-value">{s.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="sig-purchase">
-              <p className="sig-purchase-price">{product.priceFormatted}</p>
-              {renderPurchasePanel()}
-              {renderDelivery()}
-            </div>
-          </div>
-        </section>
-
-        {/* Craftsmanship Story */}
-        <section className="sig-craft">
-          <img className="sig-craft-bg" src={product.images[2] || product.images[0]} alt="The making process" loading="lazy" />
-          <div className="sig-craft-content">
-            <span className="eyebrow">The Craft</span>
-            <h2>{firstSentence(product.craftsmanship)}</h2>
-            <p>{product.story}</p>
-            {processHref ? (
-              <Link href={processHref} className="link-quiet">Watch the Process</Link>
-            ) : (
-              <Link href="/studio" className="link-quiet">Visit the Studio</Link>
-            )}
-          </div>
-        </section>
-
-        {/* Progress Gallery */}
-        <section className="sig-progress">
-          <div style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '0 var(--space-md) var(--space-lg)' }}>
-            <span className="eyebrow">Progress</span>
-            <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, var(--text-h2))', marginTop: 'var(--space-sm)' }}>From timber to finish.</h2>
-          </div>
-          <div className="sig-progress-grid">
-            {product.images.map((img, i) => (
-              <div key={i} className="sig-progress-item" onClick={() => openOverlay(i)}>
-                <img loading="lazy" src={img} alt={`Process step ${i + 1}`} />
-                <span className="sig-progress-label">Step {i + 1}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Care Guide */}
-        {renderCareGuide()}
-
-        {/* Accordions */}
-        {renderAccordions()}
-
-        {renderRelated()}
-        {renderRecentlyViewed()}
-        {renderOverlay()}
-        {renderMobileCta()}
-      </>
-    );
-  }
-
-  /* ================================================================
-     TYPE B: STANDARD PRODUCT
-     ================================================================ */
   return (
-    <>
+    <div className="pde-page">
       <style>{pageStyles}</style>
 
       {/* Breadcrumb */}
@@ -1678,10 +1286,9 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
         </div>
       </section>
 
-      {/* Product Section */}
-      <section className="pd-section">
-        <div className="container pd-grid">
-          {/* Gallery */}
+      {/* 01 — HERO */}
+      <section className="pde-hero">
+        <div className="pde-hero-inner">
           <div className="pd-gallery">
             <div
               ref={galleryMainRef}
@@ -1691,9 +1298,9 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
               onTouchEnd={handleTouchEnd}
             >
               <span className="pd-gallery-badge">{badgeText}</span>
-              <span className="pd-gallery-counter" aria-label={`Image ${currentImageIdx + 1} of ${product.images.length}`}>{currentImageIdx + 1} / {product.images.length}</span>
+              <span className="pd-gallery-counter" aria-label={`Image ${safeIdx + 1} of ${images.length}`}>{safeIdx + 1} / {images.length}</span>
               <span className="pd-gallery-zoom-hint">Click to zoom</span>
-              <button className="pd-gallery-fullscreen" aria-label="View fullscreen" onClick={(e) => { e.stopPropagation(); openOverlay(currentImageIdx); }}>
+              <button className="pd-gallery-fullscreen" aria-label="View fullscreen" onClick={(e) => { e.stopPropagation(); openOverlay(safeIdx); }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 18, height: 18, color: 'var(--text-primary)' }}>
                   <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
                 </svg>
@@ -1704,69 +1311,266 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
               <button className="pd-gallery-nav pd-gallery-next" aria-label="Next image" onClick={(e) => { e.stopPropagation(); goToNext(); }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 20, height: 20, color: 'var(--text-primary)' }}><polyline points="9 18 15 12 9 6" /></svg>
               </button>
-              <img
-                key={currentImageIdx}
-                src={product.images[currentImageIdx]}
-                alt={product.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                onLoad={() => setIsGalleryLoading(false)}
-              />
+              {images.length > 0 ? (
+                <img
+                  key={safeIdx}
+                  src={images[safeIdx]}
+                  alt={product.name}
+                  style={{ width: '100%', height: '100%' }}
+                  onLoad={() => setIsGalleryLoading(false)}
+                />
+              ) : null}
             </div>
-            <div className="pd-thumbs">
-              {product.thumbnails.map((thumb, i) => (
-                <div
-                  key={i}
-                  className={`pd-thumb ${i === currentImageIdx ? 'is-active' : ''}`}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`View image ${i + 1}`}
-                  onClick={() => setActiveImage(i)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveImage(i); } }}
-                >
-                  <img loading="lazy" src={thumb} alt={`${product.name} view ${i + 1}`} />
-                </div>
-              ))}
-            </div>
+            {thumbs.length > 1 ? (
+              <div className="pd-thumbs">
+                {thumbs.map((thumb, i) => (
+                  <div
+                    key={i}
+                    className={`pd-thumb ${i === safeIdx ? 'is-active' : ''}`}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`View image ${i + 1}`}
+                    onClick={() => setActiveImage(i)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveImage(i); } }}
+                  >
+                    <img loading="lazy" src={thumb} alt={`${product.name} view ${i + 1}`} />
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          {/* Details — Purchase Hierarchy: Eyebrow → Name → Desc → Material/Metadata → Price/Avail → CTA */}
-          <div className="pd-details">
-            <span className="eyebrow">{cat ? cat.name : product.categoryName}</span>
-            <h1 className="pd-title">{product.name}</h1>
-            <p className="pd-short-desc">{product.shortDescription}</p>
-            {(product.material || product.dimensions || product.buildTime) && (
-              <p className="pd-meta">
-                {[product.material, product.dimensions, product.buildTime].filter(Boolean).join('  ·  ')}
-              </p>
-            )}
-            <div className="pd-price-row">
-              <span className="pd-price">{product.priceFormatted}</span>
-              <span className={`pd-avail ${product.availability === 'Limited Edition' ? 'is-limited' : ''}`}>{product.availabilityNote}</span>
+          <div className="pde-info">
+            <div className="pde-info-top">
+              <span className="eyebrow">{cat ? cat.name : product.categoryName}</span>
+              <span className="pde-num" aria-hidden="true">01</span>
             </div>
-            {renderPurchasePanel()}
-            {renderDelivery()}
+            <h1 className="pde-title">{product.name}</h1>
+            {product.shortDescription ? (
+              <p className="pde-short-desc">{product.shortDescription}</p>
+            ) : null}
+            {metaBits.length > 0 ? (
+              <p className="pde-meta">{metaBits.join('  ·  ')}</p>
+            ) : null}
+            <div className="pde-price-row">
+              <span className="pde-price">{product.priceFormatted}</span>
+              {product.availabilityNote ? (
+                <span className={`pde-avail ${product.availability === 'Limited Edition' ? 'is-limited' : ''}`}>{product.availabilityNote}</span>
+              ) : null}
+            </div>
+            <div className="pd-qty">
+              {isSignature ? (
+                <>
+                  <span className="pd-qty-label">Availability</span>
+                  <div className="pd-qty-ctrl" style={{ border: 'none' }}>
+                    <span className="pd-qty-val" style={{ width: 'auto', border: 'none', fontWeight: 500, color: 'var(--bronze)' }}>One of one</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="pd-qty-label">Quantity</span>
+                  <div className="pd-qty-ctrl">
+                    <button className="pd-qty-btn" aria-label="Decrease quantity" onClick={() => setQty((q) => Math.max(1, q - 1))}>&minus;</button>
+                    <span className="pd-qty-val">{qty}</span>
+                    <button className="pd-qty-btn" aria-label="Increase quantity" onClick={() => setQty((q) => Math.min(10, q + 1))}>+</button>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="pd-actions">
+              <button ref={addToCartBtnRef} className={`pd-btn-add ${isAdded ? 'is-added' : ''}`} onClick={handleAddToCart}>
+                {isAdded ? (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><polyline points="20 6 9 17 4 12" /></svg> Added to Cart</>
+                ) : (
+                  <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg> Add to Cart</>
+                )}
+              </button>
+              <button className={`pd-btn-secondary ${isWishlisted ? 'is-active' : ''}`} onClick={handleWishlist}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+                Add to Wishlist
+              </button>
+              <div className="pde-quiet-row">
+                <Link href="/contact" className="pde-quiet-link">
+                  Enquire about this piece
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                </Link>
+                <button className="pde-quiet-link" onClick={handleShare}>
+                  {shareCopied ? 'Copied!' : 'Share'}
+                </button>
+              </div>
+            </div>
+            <div className="pd-delivery">
+              <div className="pd-delivery-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
+                <span>White-glove delivery available.</span>
+              </div>
+              <div className="pd-delivery-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                <span>Handcrafted in India. Ships worldwide.</span>
+              </div>
+              {product.returns ? (
+                <div className="pd-delivery-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16, flexShrink: 0, marginTop: 1, color: 'var(--bronze)' }}><polyline points="20 6 9 17 4 12" /></svg>
+                  <span>{product.returns}</span>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Craftsmanship */}
-      {renderCraftSection(
-        product.images[1] || product.images[0],
-        'Craftsmanship',
-        firstSentence(product.craftsmanship),
-        product.craftsmanship
-      )}
+      {/* 02 — KEY DETAILS */}
+      {keyDetails.length > 0 ? (
+        <section className="pde-keys" aria-label="Key details">
+          <div className="pde-strip-num"><span className="pde-num" aria-hidden="true">02</span></div>
+          <div className="pde-keys-inner">
+            {keyDetails.map((k) => (
+              <div key={k.label} className="pde-key">
+                {keyIcon(k.icon)}
+                <div>
+                  <span className="pde-key-label">{k.label}</span>
+                  <span className="pde-key-value">{k.value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
-      {/* Care Guide */}
-      {renderCareGuide()}
+      {/* 03 — STORY */}
+      {product.story ? (
+        <section className="pde-story">
+          <div className="pde-story-inner">
+            <div className="pde-story-text">
+              <div className="pde-eyebrow-row">
+                <span className="eyebrow">The Story</span>
+                <span className="pde-num" aria-hidden="true">03</span>
+              </div>
+              <h2>{firstSentence(product.story)}</h2>
+              <p>{product.story}</p>
+            </div>
+            {storyImage ? (
+              <div className="pde-story-img">
+                <img loading="lazy" src={storyImage} alt={`${product.name} in the workshop`} />
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
-      {/* Accordions */}
-      {renderAccordions()}
+      {/* 04 — DETAIL IMAGES */}
+      {detailImages.length > 0 ? (
+        <section className="pde-details" aria-label="Detail images">
+          <div className="pde-strip-num"><span className="pde-num" aria-hidden="true">04</span></div>
+          <div className="pde-details-grid">
+            {detailImages.map((src, i) => (
+              <div key={i} className="pde-detail" onClick={() => openOverlay(images.indexOf(src))} role="button" tabIndex={0} aria-label={`View detail image ${i + 1} fullscreen`} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openOverlay(images.indexOf(src)); } }}>
+                <img loading="lazy" src={src} alt={`${product.name} detail ${i + 1}`} />
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
-      {renderRelated()}
-      {renderRecentlyViewed()}
+      {/* 05 — SPECIFICATIONS */}
+      {specs.length > 0 ? (
+        <section className="pde-specs">
+          <div className="pde-specs-inner">
+            <div className="pde-eyebrow-row">
+              <span className="eyebrow">Specifications</span>
+              <span className="pde-num" aria-hidden="true">05</span>
+            </div>
+            <div style={{ marginTop: 'var(--space-md)' }}>
+              {specs.map((s, i) => (
+                <div key={i} className="pd-info-row">
+                  <span className="pd-info-label">{s.label}</span>
+                  <span className="pd-info-value">{s.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 06 — LIFESTYLE */}
+      {lifestyleImage ? (
+        <section className="pde-life">
+          <img loading="lazy" src={lifestyleImage} alt={`${product.name} in the home`} />
+          <div className="pde-life-content">
+            <div className="pde-life-text">
+              <span className="eyebrow">{product.subcategoryName || product.categoryName}</span>
+              <h2>{firstSentence(product.description)}</h2>
+              <p>{product.description}</p>
+            </div>
+            <div className="pde-life-side">
+              <span className="pde-num" aria-hidden="true">06</span>
+              {processHref ? (
+                <Link href={processHref} className="pde-life-cta">Watch the Process</Link>
+              ) : (
+                <Link href="/studio" className="pde-life-cta">Visit the Studio</Link>
+              )}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* MOBILE ACCORDIONS */}
+      <div className="pde-acc">
+        <section className="pd-accordions">
+          <div className="pd-accordions-inner">
+            {accDetails.length > 0 ? renderAccordion('Details', detailsOpen, setDetailsOpen, <>{accDetails.map((t, i) => <p key={i}>{t}</p>)}</>) : null}
+            {accMaterials.length > 0 ? renderAccordion('Materials & Finish', materialsOpen, setMaterialsOpen, <>{accMaterials.map((t, i) => <p key={i}>{t}</p>)}</>) : null}
+            {accDimensions.length > 0 ? renderAccordion('Dimensions', dimensionsOpen, setDimensionsOpen, <>{accDimensions.map((t, i) => <p key={i}>{t}</p>)}</>) : null}
+            {product.careInstructions ? renderAccordion('Care', careOpen, setCareOpen, <p>{product.careInstructions}</p>) : null}
+            {(product.shipping || product.returns) ? renderAccordion('Shipping & Returns', shippingOpen, setShippingOpen, <>{product.shipping ? <p>{product.shipping}</p> : null}{product.returns ? <p>{product.returns}</p> : null}</>) : null}
+          </div>
+        </section>
+      </div>
+
+      {/* 07 — RELATED */}
+      {relatedProducts.length > 0 ? (
+        <section className="pde-related">
+          <div className="pde-related-inner">
+            <div className="pde-related-head">
+              <div>
+                <div className="pde-eyebrow-row">
+                  <span className="eyebrow">Curated</span>
+                  <span className="pde-num" aria-hidden="true">07</span>
+                </div>
+                <h2>You may also like</h2>
+              </div>
+              <Link href="/gallery" className="pde-related-more" aria-label="View the full collection">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 18, height: 18 }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+              </Link>
+            </div>
+            <div className="pde-rel-grid">
+              {relatedProducts.map((rp) => renderRelatedCard(rp))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* RECENTLY VIEWED (preserved) */}
+      {showRecentlyViewed && recentlyViewed.length > 0 ? (
+        <section className="pde-related">
+          <div className="pde-related-inner">
+            <div className="pde-related-head">
+              <div>
+                <div className="pde-eyebrow-row">
+                  <span className="eyebrow">Browsing History</span>
+                </div>
+                <h2>Recently Viewed</h2>
+              </div>
+            </div>
+            <div className="pde-rel-grid">
+              {recentlyViewed.map((rp) => renderRelatedCard(rp))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {renderOverlay()}
       {renderMobileCta()}
-    </>
+    </div>
   );
 }

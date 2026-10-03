@@ -645,17 +645,9 @@ export default function AccountPage() {
               </div>
             )}
           </div>
-          <div className="detail-row">
-            <span className="detail-label">Newsletter</span>
-            <label className="acct-toggle">
-              <input type="checkbox" defaultChecked disabled title="Requires Shopify customer accounts" />
-              <span className="toggle-slider"></span>
-              <span className="toggle-text">Receive workshop updates</span>
-            </label>
           </div>
         </div>
-      </div>
-    );
+      );
   }
 
   function renderSecurity() {

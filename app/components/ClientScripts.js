@@ -148,7 +148,8 @@ export default function ClientScripts() {
     }
 
     /* Footer newsletter form — requires the unchecked-by-default
-       marketing consent box before accepting the signup. */
+       marketing consent box, then posts to the real subscription
+       endpoint (validated + rate-limited server-side). */
     const footerForm = document.getElementById('footerNewsletterForm');
     if (footerForm) {
       footerForm.addEventListener('submit', function(e) {
@@ -162,15 +163,50 @@ export default function ClientScripts() {
         }
         if (hint) hint.classList.remove('is-visible');
         const btn = this.querySelector('button[type="submit"]');
+        const emailInput = this.querySelector('input[type="email"]');
         const originalText = btn.textContent;
-        btn.textContent = 'Demo Only';
+        btn.textContent = 'Sending...';
         btn.disabled = true;
-        this.querySelector('input[type="email"]').value = '';
-        if (consentBox) consentBox.checked = true;
-        setTimeout(() => {
-          btn.textContent = originalText;
+
+        function getCsrf() {
+          const m = document.cookie.match(/(?:^|;\s*)teakle_csrf=([^;]*)/);
+          return m ? decodeURIComponent(m[1]) : null;
+        }
+        function post(email, csrf) {
+          const headers = { 'Content-Type': 'application/json' };
+          if (csrf) headers['x-csrf-token'] = csrf;
+          return fetch('/api/newsletter', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: headers,
+            body: JSON.stringify({ email: email }),
+          }).then((res) => res.json().then((data) => ({ res: res, data: data })).catch(() => ({ res: res, data: {} })));
+        }
+        function done(ok, message) {
+          btn.textContent = ok ? 'Subscribed' : originalText;
           btn.disabled = false;
-        }, 3000);
+          if (ok) {
+            emailInput.value = '';
+            if (consentBox) consentBox.checked = true;
+            setTimeout(() => { btn.textContent = originalText; }, 3000);
+          } else if (hint) {
+            hint.textContent = message || 'Something went wrong. Please try again.';
+            hint.classList.add('is-visible');
+          }
+        }
+
+        const email = (emailInput.value || '').trim();
+        const csrf = getCsrf();
+        if (!csrf) {
+          fetch('/api/csrf', { method: 'GET', credentials: 'same-origin' })
+            .then(() => post(email, getCsrf()))
+            .then(({ res, data }) => done(res.ok && data.success !== false, data.error))
+            .catch(() => done(false));
+        } else {
+          post(email, csrf)
+            .then(({ res, data }) => done(res.ok && data.success !== false, data.error))
+            .catch(() => done(false));
+        }
       });
     }
 
