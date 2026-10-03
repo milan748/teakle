@@ -24,6 +24,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${process.title} — Teakle`,
       description,
+      url: `https://teakle.in/process/${slug}`,
       images: process.heroImage ? [{ url: process.heroImage, width: 1600, height: 900, alt: process.heroImageAlt }] : [],
     },
     twitter: {

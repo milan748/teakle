@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 export default function CustomClient({ cms = {}, cmsKeys = [] }) {
@@ -196,7 +197,7 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
         .form-error {
           display: block;
           font-size: var(--text-caption);
-          color: #b54a4a;
+          color: #c0392b;
           margin-top: 0.3rem;
           letter-spacing: 0.02em;
         }
@@ -300,7 +301,7 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
       <section className="page-hero">
         <img src={hero.image || "https://images.pexels.com/photos/5974327/pexels-photo-5974327.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman hand-shaping a wooden surface in the workshop." />
         <div className="page-hero-content">
-          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Custom Orders'}</span>
+          <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Commission'}</span>
           <h1>{hero.title || 'Custom Wooden Creations'}</h1>
           <p>{hero.subtitle || "Have a unique idea? Upload a reference image or describe your vision. Our artisans will review your request and get back to you with feasibility, pricing, and estimated completion time."}</p>
         </div>
@@ -310,25 +311,7 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
       {!introDisabled && (
       <section className="custom-section">
         <div className="container custom-grid">
-          <div className="custom-text">
-            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
-            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'Every piece starts with a conversation.'}</h2>
-            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
-              "Tell us what you have in mind \u2014 whether it\u2019s a sculpture, a piece of furniture, a religious idol, a nameplate, or a gift item. You don\u2019t need perfect dimensions or technical drawings. A photo, a sketch, or a few sentences is enough to start.",
-              "Our artisans will review your idea and respond with what\u2019s possible, what wood and finish would work best, and a realistic price and timeline."
-            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
-
-            <div className="custom-list reveal">
-              <div className="custom-list-item"><strong>Architects</strong> — custom wooden elements for residential and commercial projects.</div>
-              <div className="custom-list-item"><strong>Interior Designers</strong> — handcrafted furniture, fixtures, and decorative pieces for client spaces.</div>
-              <div className="custom-list-item"><strong>Homeowners</strong> — personalised nameplates, gift items, and statement pieces for your home.</div>
-              <div className="custom-list-item"><strong>Art Collectors</strong> — hand-carved sculptures, wall art, and limited-edition works.</div>
-              <div className="custom-list-item"><strong>Hospitality &amp; Retail</strong> — custom furniture, signage, and fit-outs for hotels, cafés, and stores.</div>
-              <div className="custom-list-item"><strong>Corporate Gifting</strong> — branded wooden gifts and keepsakes for clients and employees.</div>
-            </div>
-          </div>
-
-          <form ref={formRef} className="custom-form reveal" id="customForm" noValidate onSubmit={handleSubmit}>
+          <form ref={formRef} className="custom-form reveal" id="customForm" noValidate onSubmit={handleSubmit} suppressHydrationWarning>
             <div className="form-two-col">
               <div className="form-row">
                 <label htmlFor="customName">Name</label>
@@ -384,10 +367,29 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
             ) : (
               <>
                 <button type="submit" className="btn-primary form-submit">Request a Quote</button>
+                <p className="form-privacy-note">By submitting this form, you acknowledge that your information will be handled in accordance with our <Link href="/privacy">Privacy Policy</Link>.</p>
                 <p className="form-note">Demo mode — no data is submitted. Backend integration required.</p>
               </>
             )}
           </form>
+
+          <div className="custom-text">
+            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
+            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'Every piece starts with a conversation.'}</h2>
+            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
+              "Tell us what you have in mind \u2014 whether it\u2019s a sculpture, a piece of furniture, a religious idol, a nameplate, or a gift item. You don\u2019t need perfect dimensions or technical drawings. A photo, a sketch, or a few sentences is enough to start.",
+              "Our artisans will review your idea and respond with what\u2019s possible, what wood and finish would work best, and a realistic price and timeline."
+            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
+
+            <div className="custom-list reveal">
+              <div className="custom-list-item"><strong>Architects</strong> — custom wooden elements for residential and commercial projects.</div>
+              <div className="custom-list-item"><strong>Interior Designers</strong> — handcrafted furniture, fixtures, and decorative pieces for client spaces.</div>
+              <div className="custom-list-item"><strong>Homeowners</strong> — personalised nameplates, gift items, and statement pieces for your home.</div>
+              <div className="custom-list-item"><strong>Art Collectors</strong> — hand-carved sculptures, wall art, and limited-edition works.</div>
+              <div className="custom-list-item"><strong>Hospitality &amp; Retail</strong> — custom furniture, signage, and fit-outs for hotels, cafés, and stores.</div>
+              <div className="custom-list-item"><strong>Corporate Gifting</strong> — branded wooden gifts and keepsakes for clients and employees.</div>
+            </div>
+          </div>
         </div>
       </section>
       )}

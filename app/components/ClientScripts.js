@@ -107,21 +107,21 @@ export default function ClientScripts() {
       backdrop.addEventListener('click', closeNav);
     }
 
-    /* Bottom nav badge sync */
+    /* Header icon badge sync (wishlist/cart counts) */
     function syncBottomBadges() {
       try {
         const cart = JSON.parse(localStorage.getItem('teakle_cart') || '[]');
         const wish = JSON.parse(localStorage.getItem('teakle_wishlist') || '[]');
         const cartCount = cart.reduce((s, i) => s + (i.qty || 1), 0);
         const wishCount = wish.length;
-        const bc = document.getElementById('bottomCartCount');
-        const bw = document.getElementById('bottomWishlistCount');
         const hc = document.getElementById('cartCount');
         const hw = document.getElementById('wishlistCount');
-        if (bc) { bc.textContent = cartCount; bc.style.display = cartCount > 0 ? '' : 'none'; }
-        if (bw) { bw.textContent = wishCount; bw.style.display = wishCount > 0 ? '' : 'none'; }
+        const mc = document.getElementById('mobileCartCount');
+        const mw = document.getElementById('mobileWishlistCount');
         if (hc) { hc.textContent = cartCount; hc.style.display = cartCount > 0 ? '' : 'none'; }
         if (hw) { hw.textContent = wishCount; hw.style.display = wishCount > 0 ? '' : 'none'; }
+        if (mc) { mc.textContent = cartCount; mc.style.display = cartCount > 0 ? '' : 'none'; }
+        if (mw) { mw.textContent = wishCount; mw.style.display = wishCount > 0 ? '' : 'none'; }
       } catch (e) {}
     }
 
@@ -147,16 +147,26 @@ export default function ClientScripts() {
       var _teakleCleanup = () => { clearTimeout(retryTimer); clearTimeout(retryTimer2); };
     }
 
-    /* Footer newsletter form */
+    /* Footer newsletter form — requires the unchecked-by-default
+       marketing consent box before accepting the signup. */
     const footerForm = document.getElementById('footerNewsletterForm');
     if (footerForm) {
       footerForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const btn = this.querySelector('button');
+        const consentBox = this.querySelector('#footer-newsletter-consent');
+        const hint = document.getElementById('footerNewsletterHint');
+        if (consentBox && !consentBox.checked) {
+          if (hint) hint.classList.add('is-visible');
+          consentBox.focus();
+          return;
+        }
+        if (hint) hint.classList.remove('is-visible');
+        const btn = this.querySelector('button[type="submit"]');
         const originalText = btn.textContent;
         btn.textContent = 'Demo Only';
         btn.disabled = true;
-        this.querySelector('input').value = '';
+        this.querySelector('input[type="email"]').value = '';
+        if (consentBox) consentBox.checked = true;
         setTimeout(() => {
           btn.textContent = originalText;
           btn.disabled = false;
@@ -164,7 +174,17 @@ export default function ClientScripts() {
       });
     }
 
+    /* Cookie-preferences reopen (footer legal link). */
+    function openCookiePrefs(e) {
+      const trigger = e.target && e.target.closest ? e.target.closest('[data-open-cookie-prefs]') : null;
+      if (!trigger) return;
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('teakle-open-cookie-prefs'));
+    }
+    document.addEventListener('click', openCookiePrefs);
+
     return () => {
+      document.removeEventListener('click', openCookiePrefs);
       if (typeof _teakleCleanup === 'function') _teakleCleanup();
     };
   }, []);

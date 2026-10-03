@@ -819,8 +819,10 @@ export default function LoginPage() {
         }
 
         @media (max-width: 430px) {
-          .auth-section { padding: 3.5rem 1rem 1.5rem; }
+          .auth-section { padding: 3.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom, 0px)); }
           .auth-card { padding: 1.75rem 1.25rem; }
+          /* Keep the wordmark proportionate on small phones */
+          .auth-brand .logo-size-xl { height: 38px; }
         }
       `}</style>
 

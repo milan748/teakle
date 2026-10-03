@@ -30,6 +30,8 @@ export default function CheckoutPage() {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [saveAddressChecked, setSaveAddressChecked] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -114,6 +116,12 @@ export default function CheckoutPage() {
   }
 
   async function handlePlaceOrder() {
+    if (!termsAccepted) {
+      setTermsError(true);
+      setOrderError(null);
+      return;
+    }
+    setTermsError(false);
     setIsProcessing(true);
     setOrderError(null);
 
@@ -836,7 +844,18 @@ export default function CheckoutPage() {
                           Your order will be placed with payment pending. A payment provider will be connected in a future update.
                         </p>
                       </div>
-                      <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }} disabled={isGuest}>
+                      <label className="terms-check" htmlFor="checkout-terms">
+                        <input
+                          type="checkbox"
+                          id="checkout-terms"
+                          checked={termsAccepted}
+                          onChange={(e) => { setTermsAccepted(e.target.checked); if (e.target.checked) setTermsError(false); }}
+                          aria-describedby={termsError ? 'checkout-terms-error' : undefined}
+                        />
+                        <span>I agree to the <Link href="/terms">Terms &amp; Conditions</Link> and acknowledge the <Link href="/privacy">Privacy Policy</Link>.</span>
+                      </label>
+                      {termsError && <p className="terms-error" id="checkout-terms-error" role="alert">Please agree to the Terms &amp; Conditions to place your order.</p>}
+                      <button className="checkout-next" onClick={handlePlaceOrder} style={{ marginTop: 'var(--space-sm)' }} disabled={isGuest || isProcessing}>
                         Place Order &mdash; {formatPrice(subtotal)}
                       </button>
                       <button className="checkout-back" onClick={prevStep}>Back to Review</button>

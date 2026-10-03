@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
   return {
     title: col.name,
     description: col.description,
-    openGraph: { title: `${col.name} — Teakle`, description: col.description, images: [{ url: col.image, width: 1200, height: 630, alt: col.name }] },
+    openGraph: { title: `${col.name} — Teakle`, description: col.description, url: `https://teakle.in/collection/${slug}`, images: [{ url: col.image, width: 1200, height: 630, alt: col.name }] },
     alternates: { canonical: `https://teakle.in/collection/${slug}` },
   };
 }

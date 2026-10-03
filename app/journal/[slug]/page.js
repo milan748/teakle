@@ -21,6 +21,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${article.title} \u2014 Teakle Journal`,
       description: article.excerpt,
+      url: `https://teakle.in/journal/${article.slug}`,
       images: [{ url: article.image, width: 1200, height: 630, alt: article.imageAlt }],
       type: 'article',
       publishedTime: article.dateISO,
@@ -67,10 +68,20 @@ export default async function JournalArticlePage({ params }) {
   if (!article) notFound();
 
   const articleSchema = buildArticleSchema(article);
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://teakle.in/' },
+      { '@type': 'ListItem', position: 2, name: 'Journal', item: 'https://teakle.in/journal' },
+      { '@type': 'ListItem', position: 3, name: article.title, item: `https://teakle.in/journal/${article.slug}` },
+    ],
+  };
 
   return (
     <>
       <StructuredData data={articleSchema} />
+      <StructuredData data={breadcrumbSchema} />
       <JournalArticleClient article={article} allArticles={JOURNAL} allProducts={PRODUCTS} />
     </>
   );

@@ -21,6 +21,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${product.name} \u2014 Teakle`,
       description: product.shortDescription,
+      url: `https://teakle.in/shop/${product.id}`,
       images: [{ url: product.images[0], width: 1200, height: 630, alt: product.name }],
       type: 'website',
       siteName: 'Teakle',
@@ -75,12 +76,22 @@ export default async function ShopDetailPage({ params }) {
   if (!product) notFound();
 
   const productSchema = buildProductSchema(product);
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://teakle.in/' },
+      { '@type': 'ListItem', position: 2, name: 'Gallery', item: 'https://teakle.in/gallery' },
+      { '@type': 'ListItem', position: 3, name: product.name, item: `https://teakle.in/shop/${product.id}` },
+    ],
+  };
   const processEntry = getProcessBySlug(id);
   const processSlug = processEntry ? processEntry.slug : null;
 
   return (
     <>
       <StructuredData data={productSchema} />
+      <StructuredData data={breadcrumbSchema} />
       <ShopDetailClient product={product} productId={id} processSlug={processSlug} />
     </>
   );

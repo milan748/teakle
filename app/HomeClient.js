@@ -593,7 +593,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
       {/* 9. Story Block - Watch It Made */}
       {!processDisabled && (
         <RevealOnMount threshold={0.15} className="reveal-section">
-          <section className="v2-lifestyle v2-lifestyle--alt">
+          <section className="v2-lifestyle v2-lifestyle--watch">
             <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), ...(hasExplicitFocal(processOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) } : {}) }} />
             <div className="v2-lifestyle-content">
               <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>

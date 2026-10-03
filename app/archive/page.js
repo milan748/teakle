@@ -7,7 +7,12 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Archive',
   description: 'Past collections from Teakle. A record of objects made, editions released, and craft explored.',
-  openGraph: { title: 'Archive — Teakle', description: 'Past collections from Teakle.' },
+  openGraph: {
+    title: 'Archive — Teakle',
+    description: 'Past collections from Teakle.',
+    url: 'https://teakle.in/archive',
+  },
+  alternates: { canonical: 'https://teakle.in/archive' },
 };
 
 // Archive = previous Atelier editions. The only works the existing dataset

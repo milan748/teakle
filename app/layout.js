@@ -5,7 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollTopBtn from './components/ScrollTopBtn';
 import ClientScripts from './components/ClientScripts';
-import BottomNav from './components/BottomNav';
+import CookieConsent from './components/CookieConsent';
 import StructuredData from './components/StructuredData';
 import { getLogoUrl } from './lib/logo-config';
 
@@ -111,9 +111,9 @@ export default async function RootLayout({ children }) {
           </main>
         )}
         {!isEditor && <Footer />}
-        {!isEditor && <BottomNav />}
         {!isEditor && <ScrollTopBtn />}
         {!isEditor && <ClientScripts />}
+        {!isEditor && <CookieConsent />}
         <Script src="/app.js" strategy="beforeInteractive" />
         <Script src="/products-browser.js" strategy="afterInteractive" />
       </body>

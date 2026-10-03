@@ -103,6 +103,7 @@ export default function JournalPage() {
         .journal-featured {
           background: var(--bg-primary);
           padding: var(--space-3xl) 0;
+          overflow-x: clip;
         }
         .featured-editorial {
           display: grid;
@@ -127,11 +128,8 @@ export default function JournalPage() {
         .featured-text { padding: var(--space-md) 0; }
         .featured-text .eyebrow { display: block; margin-bottom: var(--space-sm); }
         .featured-text h2 {
-          font-size: clamp(1.75rem, 3.4vw, var(--text-h2));
           margin-bottom: var(--space-sm);
           max-width: none;
-          line-height: 1.25;
-          transition: color var(--dur-fast) var(--ease);
         }
         .featured-editorial:hover .featured-text h2 { color: var(--bronze); }
         .featured-text p { color: var(--text-secondary); margin-bottom: var(--space-md); line-height: var(--lh-relaxed); }
@@ -153,6 +151,7 @@ export default function JournalPage() {
         .journal-editorial {
           background: var(--bg-primary);
           padding: var(--journal-row-rhythm) 0 var(--journal-section-gap);
+          overflow-x: clip;
         }
         .journal-editorial-grid {
           display: grid;
@@ -193,10 +192,12 @@ export default function JournalPage() {
           align-self: start;
         }
         .article-text .eyebrow { display: block; }
-        .article-text h3 {
+        .article-text h3,
+        .featured-text h2 {
           font-size: clamp(1.25rem, 2.5vw, var(--text-h3));
           font-weight: 500;
           line-height: 1.3;
+          letter-spacing: -0.02em;
           transition: color var(--dur-fast) var(--ease);
         }
         .article-card:hover .article-text h3 { color: var(--bronze); }
@@ -304,6 +305,51 @@ export default function JournalPage() {
           border-left: 1px solid rgba(43,34,27,0.15);
         }
 
+        /* ── Edge-anchored compositions (desktop): side images sit flush
+           to the viewport edge while image + text travel as one unit.
+           Relative offsets never change box sizes; the panorama,
+           featured block, and all tablet/mobile layouts are untouched. ── */
+        @media (min-width: 1025px) {
+          :root {
+            --journal-edge: calc(var(--journal-gutter) + max(0px, (100vw - var(--journal-grid-max)) / 2));
+          }
+          /* Featured "Wood Facts": text left, image right and flush to
+             the viewport edge. Column weights are preserved, so the
+             image keeps its exact size; only its side changes. */
+          .featured-editorial {
+            grid-template-columns: 0.75fr 1.25fr;
+          }
+          .featured-editorial .featured-text {
+            grid-column: 1;
+            grid-row: 1;
+            align-self: center;
+            position: relative;
+            left: var(--journal-edge);
+          }
+          .featured-editorial .featured-image {
+            grid-column: 2;
+            grid-row: 1;
+            position: relative;
+            left: var(--journal-edge);
+          }
+          .article-card--left-large .article-image,
+          .article-card--left-detail .article-image,
+          .article-card--left-medium .article-image,
+          .article-card--left-large .article-text,
+          .article-card--left-detail .article-text,
+          .article-card--left-medium .article-text {
+            position: relative;
+            left: calc(-1 * var(--journal-edge));
+          }
+          .article-card--right-medium .article-image,
+          .article-card--right-large .article-image,
+          .article-card--right-medium .article-text,
+          .article-card--right-large .article-text {
+            position: relative;
+            left: var(--journal-edge);
+          }
+        }
+
         /* ── Responsive: Tablet (≤1024px) ── */
         @media (max-width: 1024px) {
           :root {
@@ -409,14 +455,15 @@ export default function JournalPage() {
             text-align: left;
             width: 100%;
           }
-          .article-text h3 { font-size: var(--text-subhead); }
+          .article-text h3,
+          .featured-text h2 { font-size: var(--text-subhead); }
           .article-text p { font-size: var(--text-body); }
           .article-meta { flex-wrap: wrap; }
         }
 
         @media (max-width: 560px) {
           .journal-hero { height: 40vh; min-height: 320px; }
-          .journal-hero h1 { font-size: var(--text-h2); }
+          .journal-hero h1 { font-size: var(--text-display); }
           .featured-image img { aspect-ratio: 1 / 1; }
         }
 
@@ -440,7 +487,7 @@ export default function JournalPage() {
       )}
 
       <section className="journal-featured">
-        <div className="featured-editorial reveal">
+        <div className="featured-editorial reveal" suppressHydrationWarning>
           <div className="featured-image img-zoom">
             <img loading="lazy" src={FEATURED.image} alt={FEATURED.imageAlt} />
           </div>
@@ -460,7 +507,7 @@ export default function JournalPage() {
           {ARTICLES.map((article, i) => {
             const comp = compositions[i % compositions.length];
             return (
-              <article key={article.slug} className={`article-card article-card--${comp.type} reveal`}>
+              <article key={article.slug} className={`article-card article-card--${comp.type} reveal`} suppressHydrationWarning>
                 <Link href={`/journal/${article.slug}`} className="article-card-link" style={{ display: 'contents' }}>
                   <div className="article-image img-zoom">
                     <img loading="lazy" src={article.image} alt={article.imageAlt} />

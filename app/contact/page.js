@@ -89,7 +89,8 @@ export default function ContactPage() {
         }
         .form-error {
           display: block;
-          font-size: 12px;
+          font-size: var(--text-caption);
+          letter-spacing: 0.02em;
           color: #c0392b;
           margin-top: 0.3rem;
         }
@@ -131,6 +132,8 @@ export default function ContactPage() {
       {!introDisabled && (
       <section className="contact-section">
         <div className="container contact-grid">
+          <ContactForm />
+
           <div className="contact-details">
             <div className="contact-info-block reveal" suppressHydrationWarning>
               <h3>Email</h3>
@@ -148,9 +151,11 @@ export default function ContactPage() {
               <h3>For Trade &amp; Bulk Projects</h3>
               <p><a href="/trade" className="link-quiet" style={{ fontSize: 'var(--text-caption)' }}>Use the Trade Inquiry Form</a></p>
             </div>
+            <div className="contact-info-block reveal" suppressHydrationWarning>
+              <h3>Complaints &amp; Grievances</h3>
+              <p><a href="/grievance" className="link-quiet" style={{ fontSize: 'var(--text-caption)' }}>How to raise and track a complaint</a></p>
+            </div>
           </div>
-
-          <ContactForm />
         </div>
       </section>
       )}

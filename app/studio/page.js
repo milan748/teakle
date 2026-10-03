@@ -7,7 +7,13 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Studio',
   description: 'Inside the Teakle workshop. How our objects are designed, crafted, and finished by hand.',
-  openGraph: { title: 'Studio — Teakle', description: 'Inside the Teakle workshop.' },
+  openGraph: {
+    title: 'Studio — Teakle',
+    description: 'Inside the Teakle workshop.',
+    url: 'https://teakle.in/studio',
+    images: [{ url: 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200', alt: 'A craftsman planing a wooden board in natural light.' }],
+  },
+  alternates: { canonical: 'https://teakle.in/studio' },
 };
 
 export default function StudioPage() {
@@ -471,13 +477,14 @@ export default function StudioPage() {
           margin: 0 auto;
           padding: 0 var(--space-lg);
         }
-        .gallery-grid a:first-child { grid-row: 1 / 3; }
-        .gallery-item { overflow: hidden; }
-         .gallery-item--hero { grid-row: 1 / 3; }
-         .gallery-item--supporting { aspect-ratio: 4 / 5; align-self: end; }
-         .gallery-item:first-child .gallery-item-img {
-            aspect-ratio: 3 / 4;
-          }
+        .gallery-item { overflow: hidden; min-width: 0; min-height: 0; }
+        .gallery-item--hero { grid-row: 1 / 3; align-self: stretch; }
+        .gallery-item--supporting { align-self: stretch; }
+        .gallery-item img {
+          width: 100%; height: 100%; object-fit: cover;
+          transition: transform var(--dur-slow) var(--ease);
+        }
+        .gallery-item:hover img { transform: scale(1.02); }
         .gallery-item img {
           width: 100%; height: 100%; object-fit: cover;
           transition: transform var(--dur-slow) var(--ease);
@@ -560,6 +567,25 @@ export default function StudioPage() {
           }
           .process-marker { justify-content: center; padding-top: 6px; }
           .process-content-left { display: none !important; }
+          /* Odd milestones carry their copy in the LEFT cell on desktop.
+             On mobile that cell moves into the single text column so no
+             step loses its content; the marker keeps column 1. */
+          .process-milestone:nth-child(odd) .process-content-left {
+            display: block !important;
+            visibility: visible !important;
+            grid-column: 2;
+            grid-row: 1;
+            text-align: left !important;
+            padding: 0 var(--space-md) 0 var(--space-sm);
+          }
+          .process-milestone:nth-child(odd) .process-content-left .process-content-inner { margin-left: 0; }
+          .process-milestone:nth-child(odd) .process-marker {
+            grid-column: 1;
+            grid-row: 1;
+          }
+          .process-milestone:nth-child(odd) .process-content-right {
+            display: none !important;
+          }
           .process-content-right {
             visibility: visible !important;
             text-align: left !important;
@@ -579,6 +605,7 @@ export default function StudioPage() {
           }
           .gallery-grid a:first-child { grid-row: auto; }
           .gallery-item { aspect-ratio: 4 / 3; }
+          .gallery-item--hero { grid-row: auto; }
           
           .studio-closing-inner { 
             grid-template-columns: 1fr; 
@@ -801,7 +828,7 @@ export default function StudioPage() {
             <h2 className="reveal" suppressHydrationWarning>{gallery.title || 'The people and tools behind every piece.'}</h2>
           </div>
           <div className="gallery-grid">
-            <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
+            <div className="gallery-item gallery-item--hero img-zoom reveal" suppressHydrationWarning>
               <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
             </div>
             <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>

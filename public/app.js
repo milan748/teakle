@@ -163,14 +163,14 @@ var Teakle = (function () {
   function updateCounts() {
     var cartBadge = document.getElementById('cartCount');
     var wishBadge = document.getElementById('wishlistCount');
-    var bottomCart = document.getElementById('bottomCartCount');
-    var bottomWish = document.getElementById('bottomWishlistCount');
+    var mobileCart = document.getElementById('mobileCartCount');
+    var mobileWish = document.getElementById('mobileWishlistCount');
     var c = cartCount();
     var w = wishlistCount();
     if (cartBadge) { cartBadge.textContent = c; cartBadge.style.display = c > 0 ? '' : 'none'; }
     if (wishBadge) { wishBadge.textContent = w; wishBadge.style.display = w > 0 ? '' : 'none'; }
-    if (bottomCart) { bottomCart.textContent = c; bottomCart.style.display = c > 0 ? '' : 'none'; }
-    if (bottomWish) { bottomWish.textContent = w; bottomWish.style.display = w > 0 ? '' : 'none'; }
+    if (mobileCart) { mobileCart.textContent = c; mobileCart.style.display = c > 0 ? '' : 'none'; }
+    if (mobileWish) { mobileWish.textContent = w; mobileWish.style.display = w > 0 ? '' : 'none'; }
   }
 
   function updateHeaderAuth() {
@@ -189,6 +189,35 @@ var Teakle = (function () {
       authLink.href = '/login';
       authLink.onclick = null;
     }
+  }
+
+  /* ---------- CONSENT (cookie preferences) ----------
+     Minimal store for the cookie banner. Necessary storage (session and
+     CSRF cookies, cart/wishlist localStorage) always runs — the site
+     cannot work without it. Optional analytics/tracking must call
+     consentAllows('analytics') before running; it defaults to denied
+     until the visitor opts in. No analytics scripts exist yet, so this
+     gate currently denies nothing — it exists so anything added later
+     (including a future WordPress/WooCommerce layer reusing the
+     'teakle_consent' key) respects the stored choice. */
+  var CONSENT_KEY = 'teakle_consent';
+  function getConsent() {
+    try {
+      var c = JSON.parse(localStorage.getItem(CONSENT_KEY));
+      if (c && typeof c.analytics === 'boolean') return c;
+    } catch (e) {}
+    return null;
+  }
+  function setConsent(analytics) {
+    try {
+      localStorage.setItem(CONSENT_KEY, JSON.stringify({ necessary: true, analytics: !!analytics, ts: Date.now() }));
+    } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent('teakle-consent-changed')); } catch (e) {}
+  }
+  function consentAllows(kind) {
+    if (kind !== 'analytics') return true;
+    var c = getConsent();
+    return !!(c && c.analytics);
   }
 
   /* ---------- INIT ---------- */
@@ -215,6 +244,9 @@ var Teakle = (function () {
     wishlistCount: wishlistCount,
     generateOTP: generateOTP,
     verifyOTP: verifyOTP,
+    getConsent: getConsent,
+    setConsent: setConsent,
+    consentAllows: consentAllows,
     updateCounts: updateCounts,
     updateHeaderAuth: updateHeaderAuth,
     init: init

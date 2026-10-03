@@ -4,7 +4,7 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/account', '/checkout', '/cart'],
+        disallow: ['/account', '/checkout', '/cart', '/login', '/wishlist', '/admin', '/api'],
       },
     ],
     sitemap: 'https://teakle.in/sitemap.xml',

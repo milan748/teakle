@@ -58,7 +58,7 @@ export default function Footer() {
             <ul>
               <li><Link href="/trade">Trade &amp; Bulk Inquiries</Link></li>
               <li><Link href="/contact">Contact</Link></li>
-              <li><Link href="/custom">Custom Orders</Link></li>
+              <li><Link href="/custom">Commission</Link></li>
             </ul>
             </nav>
           </div>
@@ -69,6 +69,11 @@ export default function Footer() {
               <label htmlFor="footer-email" className="visually-hidden">Email address for newsletter</label>
               <input type="email" id="footer-email" name="email" placeholder="Your email" required aria-label="Email address for newsletter" />
               <button type="submit">Send</button>
+              <label className="newsletter-consent" htmlFor="footer-newsletter-consent">
+                <input type="checkbox" id="footer-newsletter-consent" name="marketingConsent" defaultChecked />
+                <span>Yes, send me workshop stories by email.</span>
+              </label>
+              <p className="newsletter-hint" id="footerNewsletterHint" role="status">Please tick the box above to receive workshop stories.</p>
             </form>
           </div>
         </div>
@@ -81,6 +86,8 @@ export default function Footer() {
             <Link href="/returns-and-refunds">Returns &amp; Refunds</Link>
             <Link href="/cancellation">Cancellation</Link>
             <Link href="/warranty">Warranty</Link>
+            <Link href="/grievance">Grievance</Link>
+            <button type="button" className="footer-legal-btn" data-open-cookie-prefs>Cookie Preferences</button>
           </div>
         </div>
       </div>

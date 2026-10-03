@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function ContactForm() {
   const [status, setStatus] = useState('idle');
@@ -65,6 +66,7 @@ export default function ContactForm() {
       <button type="submit" className="btn-primary contact-submit" disabled={status === 'sending'}>
         {status === 'sending' ? 'Sending...' : 'Send Message'}
       </button>
+      <p className="form-privacy-note">By submitting this form, you acknowledge that your information will be handled in accordance with our <Link href="/privacy">Privacy Policy</Link>.</p>
       {status === 'success' && (
         <p className="contact-form-status is-visible" role="status">
           Message received. We will reply within two working days.

@@ -5,7 +5,7 @@ import { PRODUCTS } from '../data/products';
 export const metadata = {
   title: 'Gallery',
   description: 'Browse the full Teakle collection. Solid teak furniture and objects for kitchen, living, bedroom, office, and outdoor spaces.',
-  openGraph: { title: 'Gallery — Teakle', description: 'Browse the full Teakle collection.' },
+  openGraph: { title: 'Gallery — Teakle', description: 'Browse the full Teakle collection.', url: 'https://teakle.in/gallery' },
   alternates: { canonical: 'https://teakle.in/gallery' },
 };
 

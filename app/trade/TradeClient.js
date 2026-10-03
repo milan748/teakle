@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 
 export default function TradeClient({ cms = {}, cmsKeys = [] }) {
@@ -129,21 +130,7 @@ export default function TradeClient({ cms = {}, cmsKeys = [] }) {
       {!introDisabled && (
       <section className="trade-section">
         <div className="container trade-grid">
-          <div className="trade-text">
-            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
-            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'A short conversation before anything is quoted.'}</h2>
-            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
-              "Every custom or bulk piece starts with understanding the space it\u2019s going into \u2014 dimensions, use, and timeline. We\u2019ll reply with what\u2019s realistic before any commitment is made on either side.",
-              'We take on a limited number of these projects at a time, since each one is still built by the same small team.'
-            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
-            <div className="trade-list reveal">
-              <div className="trade-list-item"><strong>Architects &amp; Interior Designers</strong> — custom sizing, finish matching, and trade-friendly timelines.</div>
-              <div className="trade-list-item"><strong>Hospitality</strong> — consistent pieces across multiple units, built in batches.</div>
-              <div className="trade-list-item"><strong>Bulk &amp; Repeat Orders</strong> — for homes or spaces needing several pieces at once.</div>
-            </div>
-          </div>
-
-          <form ref={formRef} className="inquiry-form reveal" id="tradeForm">
+          <form ref={formRef} className="inquiry-form reveal" id="tradeForm" suppressHydrationWarning>
             <div className="form-two-col">
               <div className="form-row">
                 <label htmlFor="tradeName">Name</label>
@@ -170,8 +157,23 @@ export default function TradeClient({ cms = {}, cmsKeys = [] }) {
               <textarea id="tradeDetails" name="details" placeholder="Number of pieces, timeline, and any sizing needs." required></textarea>
             </div>
             <button type="submit" className="btn-primary inquiry-submit">Send Inquiry</button>
+            <p className="form-privacy-note">By submitting this form, you acknowledge that your information will be handled in accordance with our <Link href="/privacy">Privacy Policy</Link>.</p>
             <p ref={statusRef} className="trade-form-status" id="tradeFormStatus" role="status"></p>
           </form>
+
+          <div className="trade-text">
+            <span className="eyebrow reveal">{intro.eyebrow || 'How It Works'}</span>
+            <h2 className="reveal" style={{ fontSize: 'clamp(1.5rem, 2.6vw, var(--text-h2))', margin: '0.5rem 0 var(--space-sm)', maxWidth: 'none' }}>{intro.title || 'A short conversation before anything is quoted.'}</h2>
+            {(intro.body ? intro.body.split('\n').filter(Boolean) : [
+              "Every custom or bulk piece starts with understanding the space it\u2019s going into \u2014 dimensions, use, and timeline. We\u2019ll reply with what\u2019s realistic before any commitment is made on either side.",
+              'We take on a limited number of these projects at a time, since each one is still built by the same small team.'
+            ]).map((p, i) => <p key={i} className="reveal">{p}</p>)}
+            <div className="trade-list reveal">
+              <div className="trade-list-item"><strong>Architects &amp; Interior Designers</strong> — custom sizing, finish matching, and trade-friendly timelines.</div>
+              <div className="trade-list-item"><strong>Hospitality</strong> — consistent pieces across multiple units, built in batches.</div>
+              <div className="trade-list-item"><strong>Bulk &amp; Repeat Orders</strong> — for homes or spaces needing several pieces at once.</div>
+            </div>
+          </div>
         </div>
       </section>
       )}

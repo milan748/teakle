@@ -8,6 +8,7 @@ export default function sitemap() {
   const staticPages = [
     { url: `${base}/`, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
     { url: `${base}/gallery`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${base}/subcategory`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     { url: `${base}/studio`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/journal`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/archive`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
@@ -20,6 +21,7 @@ export default function sitemap() {
     { url: `${base}/returns-and-refunds`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
     { url: `${base}/cancellation`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
     { url: `${base}/warranty`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
+    { url: `${base}/grievance`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
   ];
 
   const collections = ['kitchen-dining', 'home-decor', 'everyday-living', 'storage'];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
@@ -205,7 +205,7 @@ const galleryStyles = `
   transition: max-height 400ms var(--ease), padding 400ms var(--ease);
 }
 .gal-filters.is-open {
-  max-height: 340px;
+  max-height: 720px;
   padding-bottom: var(--space-md);
   border-bottom: var(--border-subtle);
 }
@@ -515,6 +515,171 @@ const galleryStyles = `
   .gal-cat-nav::-webkit-scrollbar { display: none; }
   .gal-cat-pill { flex-shrink: 0; }
 }
+
+/* Filter drawer chrome — shared across breakpoints (positioning is mobile-only below) */
+.gal-filter-backdrop { display: none; }
+.gal-filter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  border-bottom: var(--border-subtle);
+}
+.gal-filter-head h3 {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin: 0;
+}
+.gal-filter-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.gal-filter-close:hover { color: var(--text-primary); }
+.gal-filter-close:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
+.gal-price-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+.gal-price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.gal-price-field input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  background: none;
+  border: var(--border-hair);
+  border-radius: var(--radius-sm);
+  padding: 0.65em 0.75em;
+  min-height: 48px;
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.gal-price-field input:focus { border-color: var(--bronze); }
+.gal-filter-apply {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+  background: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  min-height: 48px;
+  padding: 0.4em 1.5em;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.gal-filter-apply:hover { background: var(--bronze); border-color: var(--bronze); }
+.gal-filter-apply:focus-visible,
+.gal-filter-clear:focus-visible { outline: 2px solid var(--bronze); outline-offset: 2px; }
+
+/* Filter drawer (mobile) — same sidebar pattern as the nav drawer:
+   controlled-width panel, right side, own backdrop + close control.
+   Desktop keeps the inline expanding panel above. */
+@media (max-width: 860px) {
+  .gal-filter-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(43,34,27,0.45);
+    z-index: 410;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur-slow) var(--ease), visibility var(--dur-slow) var(--ease);
+    pointer-events: none;
+  }
+  .gal-filter-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .gal-filters {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100dvh;
+    height: 100vh;
+    width: clamp(280px, 75vw, 340px);
+    max-width: 100%;
+    background: var(--bg-primary);
+    z-index: 420;
+    margin: 0;
+    padding: 0;
+    max-height: none;
+    border-bottom: none;
+    box-shadow: -4px 0 32px rgba(43,34,27,0.12);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform var(--dur-normal) var(--ease-luxury), visibility 0s linear 300ms;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+  }
+  .gal-filters.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--dur-normal) var(--ease-luxury), visibility 0s;
+    max-height: none;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .gal-filter-head {
+    padding: var(--space-md) var(--space-lg);
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary);
+    z-index: 1;
+  }
+  .gal-filter-close {
+    margin-right: calc(var(--space-lg) * -1 + 0.5rem);
+  }
+  .gal-filters-inner {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    padding: var(--space-lg);
+    border-bottom: none;
+    flex: 1;
+  }
+  .gal-filter-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-primary);
+    border-top: 1px solid rgba(43,34,27,0.10);
+    padding: var(--space-md) var(--space-lg);
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+    margin-top: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+  }
+  .gal-filter-apply:hover { background: var(--bronze); border-color: var(--bronze); }
+  .gal-filter-clear {
+    border: var(--border-hair);
+    min-height: 48px;
+    padding: 0.4em;
+  }
+}
 `;
 
 export default function GalleryClient({ products: serverProducts }) {
@@ -529,6 +694,56 @@ export default function GalleryClient({ products: serverProducts }) {
   const [priceMin, setPriceMin] = useState(PRICE_bounds.min);
   const [priceMax, setPriceMax] = useState(PRICE_bounds.max);
   const [availability, setAvailability] = useState(urlAvailability);
+  /* Drawer drafts — edited inside the filter drawer, committed on Apply. */
+  const [draftMin, setDraftMin] = useState(PRICE_bounds.min);
+  const [draftMax, setDraftMax] = useState(PRICE_bounds.max);
+  const [draftAvail, setDraftAvail] = useState(urlAvailability);
+  const filterCloseRef = useRef(null);
+
+  function clampPrice(v, fallback) {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(PRICE_bounds.max, Math.max(PRICE_bounds.min, Math.round(n)));
+  }
+
+  const openFilters = useCallback(() => {
+    setDraftMin(priceMin);
+    setDraftMax(priceMax);
+    setDraftAvail(availability);
+    setFiltersOpen(true);
+  }, [priceMin, priceMax, availability]);
+
+  const closeFilters = useCallback(() => {
+    setFiltersOpen(false);
+  }, []);
+
+  const applyFilters = useCallback(() => {
+    let lo = clampPrice(draftMin, PRICE_bounds.min);
+    let hi = clampPrice(draftMax, PRICE_bounds.max);
+    if (lo > hi) { const t = lo; lo = hi; hi = t; }
+    setPriceMin(lo);
+    setPriceMax(hi);
+    setDraftMin(lo);
+    setDraftMax(hi);
+    setAvailability(draftAvail);
+    setFiltersOpen(false);
+  }, [draftMin, draftMax, draftAvail]);
+
+  /* Escape closes the drawer; body scroll locks while it is open. */
+  useEffect(() => {
+    if (!filtersOpen) return;
+    filterCloseRef.current?.focus();
+    function onKeyDown(e) {
+      if (e.key === 'Escape') setFiltersOpen(false);
+    }
+    document.addEventListener('keydown', onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [filtersOpen]);
 
   const searchQuery = urlSearch.trim();
 
@@ -621,7 +836,10 @@ export default function GalleryClient({ products: serverProducts }) {
     setActiveCategory('all');
     setPriceMin(PRICE_bounds.min);
     setPriceMax(PRICE_bounds.max);
+    setDraftMin(PRICE_bounds.min);
+    setDraftMax(PRICE_bounds.max);
     setAvailability('all');
+    setDraftAvail('all');
     setSortBy('featured');
     router.push('/gallery');
   }, [router]);
@@ -630,8 +848,13 @@ export default function GalleryClient({ products: serverProducts }) {
     if (type === 'price') {
       setPriceMin(PRICE_bounds.min);
       setPriceMax(PRICE_bounds.max);
+      setDraftMin(PRICE_bounds.min);
+      setDraftMax(PRICE_bounds.max);
     }
-    if (type === 'availability') setAvailability('all');
+    if (type === 'availability') {
+      setAvailability('all');
+      setDraftAvail('all');
+    }
   }, []);
 
   return (
@@ -675,8 +898,9 @@ export default function GalleryClient({ products: serverProducts }) {
             </span>
             <button
               className={`gal-filter-toggle${hasActiveFilters ? ' is-active' : ''}`}
-              onClick={() => setFiltersOpen(!filtersOpen)}
+              onClick={() => (filtersOpen ? closeFilters() : openFilters())}
               aria-expanded={filtersOpen}
+              aria-controls="gal-filter-drawer"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M3 6h18M7 12h10M10 18h4" />
@@ -696,13 +920,56 @@ export default function GalleryClient({ products: serverProducts }) {
           </select>
         </div>
 
-        <div className={`gal-filters${filtersOpen ? ' is-open' : ''}`} role="region" aria-label="Product filters">
+        <div className={`gal-filter-backdrop${filtersOpen ? ' is-open' : ''}`} onClick={closeFilters} aria-hidden="true"></div>
+        <aside
+          id="gal-filter-drawer"
+          className={`gal-filters${filtersOpen ? ' is-open' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Product filters"
+          aria-hidden={!filtersOpen}
+          inert={!filtersOpen}
+        >
+          <div className="gal-filter-head">
+            <h3>Filters</h3>
+            <button ref={filterCloseRef} type="button" className="gal-filter-close" onClick={closeFilters} aria-label="Close filters">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
           <div className="gal-filters-inner">
             <div className="gal-filter-group gal-filter-price">
               <h4>Price Range</h4>
+              <div className="gal-price-inputs">
+                <label className="gal-price-field">
+                  From ₹
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={PRICE_bounds.min}
+                    max={PRICE_bounds.max}
+                    step="500"
+                    value={draftMin}
+                    onChange={(e) => setDraftMin(e.target.value === '' ? '' : Number(e.target.value))}
+                    aria-label="Minimum price in rupees"
+                  />
+                </label>
+                <label className="gal-price-field">
+                  To ₹
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={PRICE_bounds.min}
+                    max={PRICE_bounds.max}
+                    step="500"
+                    value={draftMax}
+                    onChange={(e) => setDraftMax(e.target.value === '' ? '' : Number(e.target.value))}
+                    aria-label="Maximum price in rupees"
+                  />
+                </label>
+              </div>
               <div className="gal-price-display">
-                <span>₹{priceMin.toLocaleString('en-IN')}</span>
-                <span>₹{priceMax.toLocaleString('en-IN')}</span>
+                <span>₹{clampPrice(draftMin, PRICE_bounds.min).toLocaleString('en-IN')}</span>
+                <span>₹{clampPrice(draftMax, PRICE_bounds.max).toLocaleString('en-IN')}</span>
               </div>
               <div className="gal-price-sliders">
                 <input
@@ -710,10 +977,10 @@ export default function GalleryClient({ products: serverProducts }) {
                   min={PRICE_bounds.min}
                   max={PRICE_bounds.max}
                   step="500"
-                  value={priceMin}
+                  value={clampPrice(draftMin, PRICE_bounds.min)}
                   onChange={(e) => {
                     const v = Number(e.target.value);
-                    if (v <= priceMax) setPriceMin(v);
+                    if (v <= clampPrice(draftMax, PRICE_bounds.max)) setDraftMin(v);
                   }}
                   aria-label="Minimum price"
                 />
@@ -722,10 +989,10 @@ export default function GalleryClient({ products: serverProducts }) {
                   min={PRICE_bounds.min}
                   max={PRICE_bounds.max}
                   step="500"
-                  value={priceMax}
+                  value={clampPrice(draftMax, PRICE_bounds.max)}
                   onChange={(e) => {
                     const v = Number(e.target.value);
-                    if (v >= priceMin) setPriceMax(v);
+                    if (v >= clampPrice(draftMin, PRICE_bounds.min)) setDraftMax(v);
                   }}
                   aria-label="Maximum price"
                 />
@@ -738,8 +1005,8 @@ export default function GalleryClient({ products: serverProducts }) {
                   <input
                     type="radio"
                     name="gal-availability"
-                    checked={availability === opt.value}
-                    onChange={() => setAvailability(opt.value)}
+                    checked={draftAvail === opt.value}
+                    onChange={() => setDraftAvail(opt.value)}
                   />
                   {opt.label}
                 </label>
@@ -747,11 +1014,14 @@ export default function GalleryClient({ products: serverProducts }) {
             </div>
           </div>
           <div className="gal-filter-actions">
-            <button className="gal-filter-clear" onClick={clearFilters}>
-              Clear All Filters
+            <button type="button" className="gal-filter-apply" onClick={applyFilters}>
+              Apply
+            </button>
+            <button type="button" className="gal-filter-clear" onClick={clearFilters}>
+              Clear all
             </button>
           </div>
-        </div>
+        </aside>
 
         {hasActiveFilters && !searchQuery && (
           <div className="gal-search-banner">
@@ -827,7 +1097,7 @@ export default function GalleryClient({ products: serverProducts }) {
           <p>
             Most pieces are in stock and ship within a week. For bespoke
             creations, visit our{' '}
-            <Link href="/custom">custom orders page</Link>.
+            <Link href="/custom">commission page</Link>.
           </p>
         </div>
       </div>

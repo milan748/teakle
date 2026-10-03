@@ -4,9 +4,9 @@ import { getPublishedPageSections } from '@/lib/cms'
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Custom Orders',
+  title: 'Commission',
   description: 'Commission a custom teak piece. Tell us what you need and we\'ll build it by hand in solid teak.',
-  openGraph: { title: 'Custom Orders \u2014 Teakle', description: 'Commission a custom teak piece. Tell us what you need and we\'ll build it by hand in solid teak.' },
+  openGraph: { title: 'Commission \u2014 Teakle', description: 'Commission a custom teak piece. Tell us what you need and we\'ll build it by hand in solid teak.' },
   alternates: { canonical: 'https://teakle.in/custom' },
 };
 
