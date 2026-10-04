@@ -90,7 +90,7 @@ test('native share with clipboard fallback', client.includes('navigator.share') 
 
 console.log('\n=== 7. Data model: video-ready, nothing fabricated ===');
 test('process data still has anchor-table slug', processData.includes("slug: 'anchor-table'"));
-test('film block video-ready with null URL', /videoUrl:\s*null/.test(processData));
+test('film source is either empty or the supplied local asset', /videoUrl:\s*null/.test(processData) || /videoUrl:\s*['"]\/assets\/videos\/[^'"]+/.test(processData));
 test('no video URLs fabricated in data', !/videoUrl:\s*['"]http/i.test(processData));
 test('product build time intact in dataset', productsData.includes('"~18 hours"') || productsData.includes('~18 hours'));
 

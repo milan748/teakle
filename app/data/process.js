@@ -25,11 +25,9 @@ export const PROCESSES = [
     intro: 'The Anchor Table begins as a single teak log, selected from a managed plantation in southern India. Every joint is hand-cut. The grain runs the full length of the top, unbroken. Nothing here is rushed.',
     heroImage: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600',
     heroImageAlt: 'Hand-planing a solid teak surface in natural workshop light.',
-    /* — Editorial film block (self-hosted/CDN-ready). videoUrl stays null
-       until TEAKLE supplies the final production video; the layout below
-       does not change when it arrives — the <video> element simply gains
-       a <source>. posterUrl reuses the existing process hero image. */
-    videoUrl: null,
+    /* — Editorial film block (self-hosted/CDN-ready). Points at the
+       supplied production video; the layout renders it as-is. */
+    videoUrl: '/assets/videos/0714.mp4',
     posterUrl: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600',
     /* Small contextual label rendered above the product name. */
     contextLabel: 'Atelier Stories — One of One',
