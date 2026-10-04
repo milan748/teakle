@@ -1,5 +1,6 @@
 import SubcategoryClient from './SubcategoryClient';
-import { PRODUCTS } from '../data/products';
+/* Standard catalogue only — the Atelier hero is excluded by design. */
+import { getCatalogueProducts } from '../data/products';
 
 export const metadata = {
   title: 'Shop',
@@ -9,5 +10,5 @@ export const metadata = {
 };
 
 export default function SubcategoryPage() {
-  return <SubcategoryClient products={PRODUCTS} />;
+  return <SubcategoryClient products={getCatalogueProducts()} />;
 }

@@ -750,7 +750,8 @@ export default function GalleryClient({ products: serverProducts }) {
   useEffect(() => {
     document.title = searchQuery ? `Search: ${searchQuery} — Teakle` : 'Gallery — Teakle';
     if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS && (!serverProducts || !serverProducts.length)) {
-      setProducts(window.TEAKLE_PRODUCTS);
+      /* Standard catalogue only — the Atelier hero is excluded by design. */
+      setProducts(window.TEAKLE_PRODUCTS.filter((p) => !p.isHero));
     }
   }, [searchQuery, serverProducts]);
 
@@ -764,7 +765,8 @@ export default function GalleryClient({ products: serverProducts }) {
   }, [searchParams]);
 
   const categoryCounts = useMemo(() => {
-    let base = [...products];
+    /* Standard catalogue only — the Atelier hero is excluded by design. */
+    let base = [...products].filter((p) => !p.isHero);
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
       base = base.filter((p) => {
@@ -785,7 +787,8 @@ export default function GalleryClient({ products: serverProducts }) {
   }, [products, searchQuery]);
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    /* Standard catalogue only — the Atelier hero is excluded by design. */
+    let result = [...products].filter((p) => !p.isHero);
 
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();

@@ -461,8 +461,9 @@ export default function SubcategoryClient({ products: serverProducts }) {
 
     const source = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (serverProducts || []);
     if (!source.length) return;
+    /* Standard catalogue only — the Atelier hero is excluded by design. */
     const filtered = source.filter(
-      (p) => p.category === ck && p.subcategory === sk
+      (p) => !p.isHero && p.category === ck && p.subcategory === sk
     );
     setAllProducts(filtered);
     setProducts(filtered);

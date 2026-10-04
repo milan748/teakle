@@ -1,22 +1,37 @@
 /**
- * TEAKLE T09 — Watch the Process experience.
+ * TEAKLE — Watch the Process / making-of experience (hero Atelier Stories piece).
+ *
+ * Short editorial composition, wide extreme left/right grid:
+ *   01 Opening — product name, full-width 16:9 process film, short intro
+ *   02 What it is — story left, factual record right
+ *   03 Why teak — philosophy left, supporting image right
+ *   04 The making — five-stage horizontal sequence, one line each
+ *   05 Craft — finished plate left, hand-finishing text right
+ *   06 One object — closing philosophy + CTA (inquire, buy, archive)
+ *   07 Related Atelier Stories navigation
  *
  * Data contract (app/data/process.js + app/data/products.js):
- *   - process: slug, productId, title, subtitle, intro, heroImage, heroImageAlt, stages[]
- *   - product: name, material, dimensions, weight, finish, buildTime, priceFormatted,
- *     shortDescription, description, images[], specifications[]
- *   - Every stage: { number, title, description, videoUrl, posterUrl, isFinal? }
+ *   - process: slug, videoUrl, posterUrl, contextLabel, introduction,
+ *     whyTeak, oneOfOne { eyebrow, heading, body[] }, relationship,
+ *     closing, ctaLabels, stages[] (number, title, description, isFinal?),
+ *     heroImageAlt
+ *   - product: name, shortDescription, material, dimensions, buildTime,
+ *     priceFormatted, availabilityNote, images[], specifications[]
  *
  * Content-integrity notes:
- *   - No video asset exists in the repository (all stage videoUrl values are null),
- *     so this page opens with a cinematic editorial hero built from the existing
- *     process hero image — no footage is fabricated and no fake player is rendered.
- *   - All copy below is drawn from process.js / products.js. Nothing is invented:
- *     no artisans, workshops locations, timelines, awards, or social accounts
- *     beyond the existing instagram.com/teaklestudio destination.
- *   - app/components/ProcessVideo.js remains as documented infrastructure for
- *     real manufacturing footage (see process.js header comment); it is not
- *     rendered here because there is nothing authentic to play yet.
+ *   - No video asset exists in the repository (videoUrl is null), so the
+ *     film block renders a native <video> with poster + controls and no
+ *     <source>. When TEAKLE supplies footage, only the data field changes.
+ *   - Stage descriptions show their opening sentence in the sequence; the
+ *     full approved copy stays intact in the data file.
+ *   - All copy below is drawn from process.js / products.js. Nothing is
+ *     invented: no people, places, dates, awards, or provenance beyond
+ *     the existing dataset.
+ *   - Static editorial render. No scroll-reveal, no gradients, no autoplay.
+ *
+ * WordPress migration: every block maps 1:1 to a CMS field
+ * (title, video + poster, intro, record, philosophy, image, stages,
+ * craft, closing, CTA labels/links).
  */
 'use client'
 
@@ -29,7 +44,8 @@ export default function ProcessPageClient({ process, product }) {
   const [shareCopied, setShareCopied] = useState(false)
 
   const stages = (process.stages || []).filter((s) => !s.isFinal)
-  const finalStage = (process.stages || []).find((s) => s.isFinal)
+  const inspectionStage = stages.find((s) => s.number === '06') || null
+  const sequenceStages = stages.filter((s) => s.number !== '06').slice(0, 5)
 
   /* Share — native share where supported, clipboard fallback, never errors. */
   const handleShare = useCallback(async () => {
@@ -38,8 +54,8 @@ export default function ProcessPageClient({ process, product }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: process?.title || 'Teakle',
-          text: process?.subtitle || '',
+          title: product?.name || process?.title || 'Teakle',
+          text: product?.shortDescription || '',
           url,
         })
         return
@@ -66,40 +82,53 @@ export default function ProcessPageClient({ process, product }) {
     } catch (e) {
       // Sharing unavailable — leave the control untouched, never raise.
     }
-  }, [process])
+  }, [process, product])
 
-  /* Material record — surfaced only from the authoritative product data. */
+  /* Facts surfaced only from the authoritative product data. */
   const specValue = (label) =>
     product?.specifications?.find((s) => s.label === label)?.value || null
-  const materialRecord = [
-    ['Material', specValue('Material') || product?.material],
-    ['Dimensions', specValue('Dimensions') || product?.dimensions],
-    ['Weight', specValue('Weight') || product?.weight],
-    ['Finish', specValue('Finish') || product?.finish],
-    ['Seating', specValue('Seating')],
-    ['Joinery', specValue('Joinery')],
-    ['Build time', specValue('Build Time') || product?.buildTime],
-  ].filter(([, v]) => Boolean(v))
 
-  const heroMeta = [product?.material, product?.buildTime, product?.dimensions].filter(Boolean)
+  /* Supporting record row (right rail) — values only from product data. */
+  const edRow = ([label, value]) => value ? (
+    <div key={label} className="mk-ed-row">
+      <span className="mk-ed-label">{label}</span>
+      <span className="mk-ed-value">{value}</span>
+    </div>
+  ) : null
 
-  const makingIntro = stages[0] || null
-  const settlingStages = stages.slice(1, 3)
-  const joiningStage = stages[3] || null
-  const finishingStages = stages.slice(4, 6)
+  /* Opening sentence of a stage description (full copy stays in data). */
+  const firstSentence = (text) => {
+    if (!text) return ''
+    const idx = text.indexOf('. ')
+    return idx === -1 ? text : text.slice(0, idx + 1)
+  }
+
+  const para = (text, i) => <p key={i}>{text}</p>
+
+  const name = product?.name || 'The Anchor Table'
+  const filmUrl = process.videoUrl || null
+  const posterUrl = process.posterUrl || process.heroImage || product?.images?.[0] || null
+  const intro = process.introduction || null
+  const whyTeak = process.whyTeak || null
+  const oneOfOne = process.oneOfOne || null
+  const relationship = process.relationship || null
+  const images = product?.images || []
+  const labels = process.ctaLabels || {}
+  const livingCoda = relationship && relationship.body.length > 1
+    ? relationship.body.slice(1).map(para)
+    : null
 
   return (
-    <div className="proc-page">
+    <div className="mk-page">
       <style>{`
-        .proc-page { overflow-x: clip; background: var(--bg-primary); }
+        .mk-page { overflow-x: clip; background: var(--bg-primary); }
 
         /* ---- Breadcrumb ---- */
-        .proc-breadcrumb {
-          background: var(--bg-secondary);
-          padding: var(--space-md) 0;
+        .mk-breadcrumb {
           border-bottom: var(--border-subtle);
+          padding: var(--space-sm) 0;
         }
-        .proc-breadcrumb-inner {
+        .mk-breadcrumb-inner {
           max-width: var(--container);
           margin: 0 auto;
           padding: 0 var(--space-md);
@@ -111,225 +140,235 @@ export default function ProcessPageClient({ process, product }) {
           letter-spacing: 0.04em;
           flex-wrap: wrap;
         }
-        .proc-breadcrumb a {
-          color: var(--text-secondary);
-          text-decoration: none;
-          transition: color 0.2s var(--ease);
-        }
-        .proc-breadcrumb a:hover { color: var(--bronze); }
-        .proc-breadcrumb-sep { opacity: 0.4; }
+        .mk-breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .mk-breadcrumb a:hover { color: var(--bronze); }
+        .mk-breadcrumb-sep { opacity: 0.4; }
 
-        /* ---- Hero: full-bleed cinematic opening ---- */
-        .proc-hero {
-          position: relative;
-          min-height: 82vh;
-          display: flex;
-          align-items: flex-end;
-          background: var(--walnut);
-          overflow: hidden;
+        /* ---- 01 · Opening: product name first, extremely restrained ---- */
+        .mk-open {
+          max-width: var(--container);
+          margin: 0 auto;
+          padding: clamp(var(--space-xl), 6vw, calc(var(--space-2xl) * 1.25)) var(--space-md) var(--space-lg);
         }
-        .proc-hero-bg {
-          position: absolute;
-          inset: 0;
-          z-index: 0;
-        }
-        .proc-hero-bg img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: 50% 30%;
-          }
-        .proc-hero-bg::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(28,19,13,0.88) 0%, rgba(28,19,13,0.35) 52%, rgba(28,19,13,0.12) 100%);
-        }
-        .proc-hero-content {
-          position: relative;
-          z-index: 1;
-          width: 100%;
-          max-width: none;
-          margin: 0;
-          padding: var(--space-2xl) clamp(var(--space-md), 6vw, calc((100vw - var(--container)) / 2 + var(--space-md))) var(--space-xl);
-        }
-        .proc-hero h1 {
-          color: var(--bg-primary);
+        .mk-open h1 {
           font-size: clamp(2.25rem, 5vw, 3.75rem);
           font-weight: 500;
           letter-spacing: -0.02em;
           line-height: 1.05;
-          max-width: 16ch;
+          text-transform: uppercase;
           margin: 0 0 var(--space-sm);
+          max-width: 16ch;
         }
-        .proc-hero-sub {
-          color: var(--stone);
+        .mk-open-desc {
+          color: var(--text-secondary);
           font-size: var(--text-lede);
           line-height: var(--lh-relaxed);
-          max-width: 46ch;
-          margin: 0 0 var(--space-md);
+          max-width: 52ch;
+          margin: 0;
         }
-        .proc-hero-meta {
-          display: flex;
-          flex-wrap: wrap;
-          gap: var(--space-xs) var(--space-md);
-          margin: 0 0 var(--space-lg);
-          padding-top: var(--space-md);
-          border-top: 1px solid rgba(221,216,208,0.25);
-          max-width: 720px;
-        }
-        .proc-hero-meta span {
-          color: var(--bg-primary);
-          font-size: var(--text-caption);
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-        .proc-hero-cue {
-          display: inline-flex;
-          align-items: center;
-          gap: var(--space-xs);
-          color: var(--bronze-on-dark);
-          font-size: var(--text-caption);
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          text-decoration: none;
-        }
-        .proc-hero-cue:hover { color: var(--bg-primary); }
 
-        /* ---- Journey ledger: MATERIAL → MAKING → TIME → OBJECT ---- */
-        .proc-journey {
-          background: var(--walnut);
-          border-top: 1px solid rgba(221,216,208,0.16);
-          padding: var(--space-md) 0;
+        /* ---- Film: full-width 16:9, no card, no frame ---- */
+        .mk-film { margin: 0; background: #000; }
+        .mk-film video {
+          display: block;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          object-fit: contain;
+          background: #000;
         }
-        .proc-journey-inner {
+        .mk-film-cap {
+          background: var(--bg-primary);
+          border-bottom: var(--border-subtle);
+        }
+        .mk-film-cap-inner {
           max-width: var(--container);
           margin: 0 auto;
-          padding: 0 var(--space-md);
-          display: flex;
-          align-items: center;
-          gap: var(--space-sm);
-          flex-wrap: wrap;
-        }
-        .proc-journey a {
-          color: var(--stone);
+          padding: var(--space-xs) var(--space-md) var(--space-md);
+          color: var(--text-tertiary);
           font-size: var(--text-caption);
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          text-decoration: none;
-          transition: color 0.2s var(--ease);
+          letter-spacing: 0.04em;
         }
-        .proc-journey a:hover { color: var(--bronze-on-dark); }
-        .proc-journey-arrow { color: var(--bronze-on-dark); opacity: 0.7; }
+        .mk-film-title {
+          display: block;
+          color: var(--text-primary);
+          font-size: var(--text-body-lg);
+          font-weight: 500;
+          letter-spacing: 0.02em;
+          margin-bottom: 2px;
+        }
 
-        /* ---- Material: wide editorial split ---- */
-        .proc-material {
-          background: var(--bg-primary);
-          padding: var(--space-2xl) 0;
-        }
-        .proc-material-inner {
+        /* ---- Editorial sections ---- */
+        .mk-section { padding: clamp(var(--space-lg), 5vw, var(--space-xl)) 0 0; }
+
+        /* ---- Extreme grid: story left, supporting record right ---- */
+        .mk-ed {
           max-width: var(--container);
           margin: 0 auto;
           padding: 0 var(--space-md);
           display: grid;
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: var(--space-2xl);
+          grid-template-columns: minmax(0, 1fr) 260px;
+          gap: var(--space-xl) var(--space-2xl);
           align-items: start;
         }
-        .proc-material-lede {
-          color: var(--text-primary);
-          font-size: clamp(1.125rem, 1.8vw, 1.375rem);
-          line-height: 1.65;
-          max-width: 34ch;
+        .mk-ed-main { min-width: 0; max-width: 60ch; }
+        .mk-ed-main h2 {
+          font-size: clamp(1.6rem, 3vw, 2.25rem);
+          font-weight: 500;
+          letter-spacing: -0.015em;
+          margin: var(--space-xs) 0 var(--space-md);
+          max-width: 22ch;
         }
-        .proc-record {
-          border-top: var(--border-hair);
+        .mk-ed-main p {
+          color: var(--text-secondary);
+          font-size: var(--text-body-lg);
+          line-height: 1.75;
+          margin: 0 0 var(--space-md);
         }
-        .proc-record-title {
+        .mk-ed-main p:last-child { margin-bottom: 0; }
+        .mk-ed-side { min-width: 0; }
+        .mk-ed-side-title {
+          color: var(--text-tertiary);
           font-size: var(--text-caption);
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          color: var(--text-tertiary);
-          padding: var(--space-sm) 0;
+          padding: var(--space-sm) 0 var(--space-xs);
+          border-top: var(--border-hair);
         }
-        .proc-record-row {
+        .mk-ed-row {
           display: flex;
           justify-content: space-between;
           align-items: baseline;
           gap: var(--space-md);
-          padding: 0.6rem 0;
+          padding: 0.55rem 0;
           border-top: var(--border-hair);
           font-size: var(--text-body);
         }
-        .proc-record-label { color: var(--text-secondary); flex-shrink: 0; }
-        .proc-record-value { color: var(--text-primary); text-align: right; font-weight: 500; }
+        .mk-ed-row:last-child { border-bottom: var(--border-hair); }
+        .mk-ed-label { color: var(--text-secondary); flex-shrink: 0; }
+        .mk-ed-value { color: var(--text-primary); text-align: right; font-weight: 500; }
+        .mk-ed-figure { margin: 0; }
+        .mk-ed-figure img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .mk-ed-figure figcaption {
+          color: var(--text-tertiary);
+          font-size: var(--text-caption);
+          letter-spacing: 0.04em;
+          padding-top: var(--space-xs);
+        }
 
-        /* ---- Making: section head ---- */
-        .proc-making { background: var(--bg-primary); padding: 0 0 var(--space-xl); }
-        .proc-making-head {
+        /* ---- Landscape plates: full container width, never cropped ---- */
+        .mk-plate {
           max-width: var(--container);
-          margin: 0 auto;
-          padding: 0 var(--space-md) var(--space-lg);
+          margin: var(--space-xl) auto 0;
+          padding: 0 var(--space-md);
         }
-        .proc-making-head h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+        .mk-plate figure { margin: 0; }
+        .mk-plate img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .mk-plate figcaption {
+          color: var(--text-tertiary);
+          font-size: var(--text-caption);
+          letter-spacing: 0.04em;
+          padding-top: var(--space-xs);
+        }
+
+        /* ---- Making sequence: five stages in one row ---- */
+        .mk-steps {
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
+          gap: var(--space-lg);
+          margin-top: var(--space-lg);
+          padding-top: var(--space-lg);
+          border-top: var(--border-hair);
+        }
+        .mk-step-number {
+          display: block;
+          font-size: var(--text-caption);
+          letter-spacing: 0.12em;
+          color: var(--bronze-text);
+          margin-bottom: var(--space-xs);
+        }
+        .mk-step h3 {
+          font-size: var(--text-body-lg);
           font-weight: 500;
-          letter-spacing: -0.015em;
-          max-width: 20ch;
-          margin-top: var(--space-xs);
+          letter-spacing: -0.01em;
+          margin: 0 0 var(--space-xs);
         }
-        .proc-making-head p {
+        .mk-step p {
           color: var(--text-secondary);
           font-size: var(--text-body);
           line-height: var(--lh-relaxed);
+          margin: 0;
+        }
+        .mk-steps-note {
+          color: var(--text-tertiary);
+          font-size: var(--text-body);
+          line-height: var(--lh-relaxed);
+          margin: var(--space-md) 0 0;
           max-width: 60ch;
-          margin-top: var(--space-sm);
         }
 
-        /* ---- Stage 01: full-width feature ---- */
-        .proc-feature {
+        /* ---- Craft band: finished plate beside hand-finishing text ---- */
+        .mk-time {
+          background: var(--walnut);
+          margin-top: clamp(var(--space-lg), 5vw, var(--space-xl));
+          padding: var(--space-2xl) 0;
+        }
+        .mk-time-inner {
           max-width: var(--container);
           margin: 0 auto;
-          padding: 0 var(--space-md) var(--space-xl);
+          padding: 0 var(--space-md);
+          display: grid;
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: var(--space-2xl);
+          align-items: center;
         }
-        .proc-feature-number {
-          display: inline-block;
+        .mk-time figure { margin: 0; }
+        .mk-time img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+        .mk-time figcaption {
+          color: var(--stone);
           font-size: var(--text-caption);
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: var(--bronze-text);
-          border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-full);
-          padding: 3px 14px;
-          margin-bottom: var(--space-sm);
+          letter-spacing: 0.04em;
+          padding-top: var(--space-xs);
+          opacity: 0.8;
         }
-        .proc-feature h3 {
-          font-size: clamp(1.5rem, 3vw, 2.125rem);
+        .mk-time h2 {
+          color: var(--bg-primary);
+          font-size: clamp(1.6rem, 3vw, 2.25rem);
           font-weight: 500;
           letter-spacing: -0.015em;
-          max-width: 22ch;
-          margin-bottom: var(--space-sm);
+          margin: var(--space-xs) 0 var(--space-md);
+          max-width: 20ch;
         }
-        .proc-feature p {
-          color: var(--text-secondary);
+        .mk-time-lede {
+          color: var(--stone);
           font-size: var(--text-body-lg);
-          line-height: var(--lh-relaxed);
-          max-width: 64ch;
+          line-height: 1.75;
+          margin: 0 0 var(--space-md);
         }
+        .mk-time-lede:last-child { margin-bottom: 0; }
 
-        /* ---- Ultra-wide cinematic break ---- */
-        .proc-break {
-          margin: 0 0 var(--space-xl);
+        /* ---- Full-bleed still ---- */
+        .mk-break { margin: clamp(var(--space-lg), 5vw, var(--space-xl)) 0 0; }
+        .mk-break figure { margin: 0; }
+        .mk-break img {
+          display: block;
+          width: 100%;
+          height: clamp(320px, 60vh, 560px);
+          object-fit: cover;
+          object-position: 50% 40%;
         }
-        .proc-break figure { margin: 0; }
-        .proc-break img {
-            display: block;
-            width: 100%;
-            height: clamp(320px, 62vh, 620px);
-            object-fit: cover;
-            object-position: 50% 30%;
-          }
-        .proc-break figcaption {
+        .mk-break figcaption {
           max-width: var(--container);
           margin: 0 auto;
           padding: var(--space-xs) var(--space-md) 0;
@@ -338,497 +377,320 @@ export default function ProcessPageClient({ process, product }) {
           letter-spacing: 0.04em;
         }
 
-        /* ---- Paired ledger (02+03, 05+06) ---- */
-        .proc-pair {
+        /* ---- Closing: philosophy + CTA ---- */
+        .mk-close {
           max-width: var(--container);
           margin: 0 auto;
-          padding: 0 var(--space-md) var(--space-xl);
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: var(--space-xl);
+          padding: clamp(var(--space-lg), 5vw, var(--space-xl)) var(--space-md) 0;
         }
-        .proc-ledger { border-top: var(--border-hair); padding-top: var(--space-md); }
-        .proc-ledger-number {
+        .mk-close h2 {
+          font-size: clamp(1.6rem, 3vw, 2.25rem);
+          font-weight: 500;
+          letter-spacing: -0.015em;
+          margin: var(--space-xs) 0 var(--space-md);
+          max-width: 22ch;
+        }
+        .mk-close p {
+          color: var(--text-secondary);
+          font-size: var(--text-body);
+          line-height: 1.75;
+          margin: 0 0 var(--space-md);
+          max-width: 60ch;
+        }
+        .mk-close-price {
+          color: var(--text-primary);
+          font-size: var(--text-body-lg);
+          font-weight: 500;
+          margin: var(--space-lg) 0 0;
+        }
+        .mk-close-actions {
+          display: flex;
+          gap: var(--space-md);
+          flex-wrap: wrap;
+          align-items: center;
+          margin-top: var(--space-md);
+        }
+        .mk-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 48px;
+          padding: 0.8rem 1.75rem;
           font-size: var(--text-caption);
           letter-spacing: 0.1em;
           text-transform: uppercase;
-          color: var(--bronze-text);
-          margin-bottom: var(--space-xs);
+          text-decoration: none;
+          border: 1px solid var(--text-primary);
+          color: var(--text-primary);
+          background: none;
+          cursor: pointer;
         }
-        .proc-ledger h3 {
-          font-size: var(--text-h2);
-          font-weight: 500;
-          letter-spacing: -0.015em;
-          margin-bottom: var(--space-sm);
-        }
-        .proc-ledger p {
-          color: var(--text-secondary);
-          font-size: var(--text-body);
-          line-height: var(--lh-relaxed);
-          max-width: 44ch;
-        }
+        .mk-btn:hover { border-color: var(--bronze); color: var(--bronze); }
+        .mk-close-archive { margin-top: var(--space-md); }
 
-        /* ---- Stage 04: extreme-right figure ---- */
-        .proc-split {
-          display: grid;
-          grid-template-columns: 0.9fr 1.1fr;
-          gap: 0;
-          align-items: stretch;
-          margin: 0 0 var(--space-xl);
-          background: var(--bg-secondary);
-        }
-        .proc-split-text {
-          padding: clamp(var(--space-lg), 5vw, var(--space-2xl));
-          align-self: center;
-        }
-        .proc-split-text h3 {
-          font-size: clamp(1.5rem, 3vw, 2.125rem);
-          font-weight: 500;
-          letter-spacing: -0.015em;
-          margin: var(--space-sm) 0;
-          max-width: 18ch;
-        }
-        .proc-split-text p {
-          color: var(--text-secondary);
-          font-size: var(--text-body);
-          line-height: var(--lh-relaxed);
-          max-width: 44ch;
-        }
-        .proc-split figure { margin: 0; min-height: 100%; }
-        .proc-split img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            min-height: 420px;
-            max-height: 640px;
-            object-fit: cover;
-            object-position: 50% 40%;
-          }
-        .proc-split figcaption {
-          color: var(--text-tertiary);
-          font-size: var(--text-caption);
-          letter-spacing: 0.04em;
-          padding: var(--space-xs) 0 0;
-        }
-
-        /* ---- Time band: dark espresso ---- */
-        .proc-time {
-          background: var(--walnut);
-          padding: var(--space-2xl) 0;
-        }
-        .proc-time-inner {
+        /* ---- Related Atelier Stories ---- */
+        .mk-related { border-top: var(--border-subtle); margin-top: clamp(var(--space-lg), 5vw, var(--space-xl)); }
+        .mk-related-inner {
           max-width: var(--container);
           margin: 0 auto;
-          padding: 0 var(--space-md);
-        }
-        .proc-time h2 {
-          color: var(--bg-primary);
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          font-weight: 500;
-          letter-spacing: -0.015em;
-          max-width: 22ch;
-          margin-top: var(--space-xs);
-        }
-        .proc-time-lede {
-          color: var(--stone);
-          font-size: var(--text-body-lg);
-          line-height: var(--lh-relaxed);
-          max-width: 62ch;
-          margin-top: var(--space-sm);
-        }
-        .proc-time-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: var(--space-lg);
-          margin-top: var(--space-xl);
-          padding-top: var(--space-lg);
-          border-top: 1px solid rgba(221,216,208,0.2);
-        }
-        .proc-time-stat strong {
-          display: block;
-          color: var(--bg-primary);
-          font-size: clamp(1.25rem, 2.2vw, 1.75rem);
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          margin-bottom: var(--space-xs);
-        }
-        .proc-time-stat span {
-          color: var(--stone);
-          font-size: var(--text-caption);
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        /* ---- Object: connection back to the finished piece ---- */
-        .proc-object { background: var(--bg-primary); padding: var(--space-2xl) 0 0; }
-        .proc-object-inner {
-          max-width: var(--container);
-          margin: 0 auto;
-          padding: 0 var(--space-md);
-          display: grid;
-          grid-template-columns: 1.1fr 0.9fr;
-          gap: var(--space-2xl);
-          align-items: center;
-        }
-        .proc-object figure { margin: 0; }
-        .proc-object img {
-          display: block;
-          width: 100%;
-          aspect-ratio: 4 / 5;
-          object-fit: cover;
-        }
-        .proc-object figcaption {
-          color: var(--text-tertiary);
-          font-size: var(--text-caption);
-          letter-spacing: 0.04em;
-          padding-top: var(--space-xs);
-        }
-        .proc-object-text h2 {
-          font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-          font-weight: 500;
-          letter-spacing: -0.015em;
-          margin-top: var(--space-xs);
-        }
-        .proc-object-text .proc-object-name {
-          font-size: var(--text-body-lg);
-          color: var(--text-primary);
-          font-weight: 500;
-          margin-top: var(--space-md);
-        }
-        .proc-object-text .proc-object-price {
-          font-size: var(--text-body-lg);
-          color: var(--text-primary);
-          margin-top: var(--space-xs);
-        }
-        .proc-object-text p {
-          color: var(--text-secondary);
-          font-size: var(--text-body);
-          line-height: var(--lh-relaxed);
-          max-width: 46ch;
-          margin-top: var(--space-sm);
-        }
-        .proc-object-actions {
+          padding: var(--space-md);
           display: flex;
-          align-items: center;
-          gap: var(--space-lg);
+          gap: var(--space-md) var(--space-lg);
           flex-wrap: wrap;
-          margin-top: var(--space-lg);
+          align-items: center;
+        }
+        .mk-related-label {
+          font-size: var(--text-caption);
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--text-tertiary);
+          margin-right: auto;
         }
 
         /* ---- Share ---- */
-        .proc-share {
-          background: var(--bg-primary);
-          padding: var(--space-2xl) 0;
-        }
-        .proc-share-inner {
+        .mk-share { border-top: var(--border-subtle); }
+        .mk-share-inner {
           max-width: var(--container);
           margin: 0 auto;
-          padding: var(--space-xl) var(--space-md) 0;
-          border-top: var(--border-hair);
+          padding: var(--space-md);
           display: flex;
-          align-items: flex-start;
-          justify-content: space-between;
-          gap: var(--space-lg);
-          flex-wrap: wrap;
-        }
-        .proc-share-text h2 {
-          font-size: var(--text-h2);
-          font-weight: 500;
-          letter-spacing: -0.015em;
-          margin-top: var(--space-xs);
-        }
-        .proc-share-text p {
-          color: var(--text-secondary);
-          font-size: var(--text-body);
-          line-height: var(--lh-relaxed);
-          max-width: 48ch;
-          margin-top: var(--space-xs);
-        }
-        .proc-share-actions {
-          display: flex;
-          align-items: center;
           gap: var(--space-md);
+          align-items: center;
           flex-wrap: wrap;
-          padding-top: var(--space-sm);
         }
-        .proc-share-btn {
+        .mk-share-btn {
           display: inline-flex;
           align-items: center;
           gap: 0.4rem;
           min-height: 44px;
-          padding: 0.65rem 1.1rem;
+          padding: 0.6rem 1rem;
           background: none;
           border: 1px solid var(--stone);
           cursor: pointer;
-          font-family: var(--font-body);
           font-size: var(--text-caption);
           letter-spacing: 0.08em;
           text-transform: uppercase;
           color: var(--text-secondary);
-          transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
         }
-        .proc-share-btn:hover { color: var(--bronze); border-color: var(--bronze); }
+        .mk-share-btn:hover { color: var(--bronze); border-color: var(--bronze); }
 
-        /* ---- Responsive: mobile as composed experience ---- */
-        @media (max-width: 860px) {
-          .proc-hero { min-height: 72vh; }
-          .proc-hero-content {
-            padding-left: var(--space-md);
-            padding-right: var(--space-md);
-          }
-          .proc-material-inner { grid-template-columns: 1fr; gap: var(--space-lg); }
-          .proc-material-lede { max-width: none; }
-          .proc-pair { grid-template-columns: 1fr; gap: var(--space-lg); }
-          .proc-ledger p { max-width: none; }
-          .proc-split { grid-template-columns: 1fr; }
-          .proc-split img { min-height: 0; max-height: none; aspect-ratio: 16 / 10; }
-          .proc-split-text { padding: var(--space-lg) var(--space-md); }
-          .proc-time-grid { grid-template-columns: repeat(2, 1fr); }
-          .proc-object-inner { grid-template-columns: 1fr; gap: var(--space-lg); }
-          .proc-object img { aspect-ratio: 16 / 10; }
-          .proc-share-inner { flex-direction: column; }
+        /* ---- Responsive: collapse grids naturally, left-aligned ---- */
+        @media (max-width: 1100px) {
+          .mk-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .mk-time-inner { grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); }
+        }
+        @media (max-width: 900px) {
+          .mk-ed { grid-template-columns: minmax(0, 1fr); }
         }
         @media (max-width: 560px) {
-          .proc-hero { min-height: 64vh; }
-          .proc-hero h1 { font-size: clamp(1.9rem, 9vw, 2.5rem); }
-          .proc-break img { height: 300px; }
-          .proc-time-grid { grid-template-columns: 1fr 1fr; gap: var(--space-md); }
-          .proc-object-actions { flex-direction: column; align-items: stretch; }
-          .proc-object-actions .btn-primary { text-align: center; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .proc-page .reveal { transition: none !important; }
+          .mk-steps { grid-template-columns: minmax(0, 1fr); }
+          .mk-close-actions { flex-direction: column; align-items: stretch; }
+          .mk-close-actions .btn-primary { text-align: center; }
+          .mk-break img { height: 300px; }
         }
       `}</style>
 
       {/* Breadcrumb */}
-      <nav className="proc-breadcrumb" aria-label="Breadcrumb">
-        <div className="proc-breadcrumb-inner">
+      <nav className="mk-breadcrumb" aria-label="Breadcrumb">
+        <div className="mk-breadcrumb-inner">
           <Link href="/">Home</Link>
-          <span className="proc-breadcrumb-sep">/</span>
+          <span className="mk-breadcrumb-sep">/</span>
           <Link href="/studio">Studio</Link>
-          <span className="proc-breadcrumb-sep">/</span>
+          <span className="mk-breadcrumb-sep">/</span>
           <span aria-current="page">{process.title}</span>
         </div>
       </nav>
 
-      {/* Hero — cinematic editorial opening (no fabricated footage) */}
-      <section className="proc-hero">
-        <div className="proc-hero-bg">
-          <img
-            src={process.heroImage}
-            alt={process.heroImageAlt}
-            width="1600"
-            height="900"
-            fetchPriority="high"
-          />
+      {/* 01 · Opening: product name, film, short introduction */}
+      <header className="mk-open">
+        <span className="eyebrow">{process.contextLabel || 'Atelier Stories'}</span>
+        <h1>{name}</h1>
+        {product?.shortDescription ? <p className="mk-open-desc">{product.shortDescription}</p> : null}
+      </header>
+
+      <figure className="mk-film" id="film" style={{ margin: 0 }}>
+        <video
+          controls
+          playsInline
+          preload="none"
+          poster={posterUrl || undefined}
+          aria-label={`The making of ${name} — process film`}
+        >
+          {filmUrl ? <source src={filmUrl} type="video/mp4" /> : null}
+          <p>This film documents the making of {name}, from a single teak block to the finished table.</p>
+        </video>
+      </figure>
+      <div className="mk-film-cap">
+        <div className="mk-film-cap-inner">
+          <span className="mk-film-title">From timber to object.</span>
+          <span>The making of {name} — from a single teak block to the finished table.</span>
         </div>
-        <div className="proc-hero-content">
-          <span className="eyebrow eyebrow-light">Process{product ? ` — ${product.name}` : ''}</span>
-          <h1>{process.title}</h1>
-          <p className="proc-hero-sub">{process.subtitle}</p>
-          {heroMeta.length > 0 && (
-            <div className="proc-hero-meta" aria-label="Piece at a glance">
-              {heroMeta.map((m) => (
-                <span key={m}>{m}</span>
-              ))}
+      </div>
+
+      {/* 02 · What it is — story left, record right */}
+      {intro ? (
+        <section className="mk-section" id="introduction" aria-label={intro.heading}>
+          <div className="mk-ed">
+            <div className="mk-ed-main">
+              <span className="eyebrow">{intro.eyebrow}</span>
+              <h2>{intro.heading}</h2>
+              {intro.body.map(para)}
             </div>
-          )}
-          <a className="proc-hero-cue" href="#making">Follow the making ↓</a>
+            <aside className="mk-ed-side" aria-label="Key information">
+              <div className="mk-ed-side-title">Key information</div>
+              {[
+                ['Material', specValue('Material') || product?.material],
+                ['Form', specValue('Dimensions') || product?.dimensions],
+                ['Build time', specValue('Build Time') || product?.buildTime],
+                ['Edition', 'One of One'],
+              ].map(edRow)}
+            </aside>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Large plate: the object in full */}
+      {images[0] ? (
+        <div className="mk-plate">
+          <figure>
+            <img src={images[0]} alt={`${name} — the finished table`} width="1200" height="900" loading="lazy" />
+            <figcaption>The grain runs the full length of the top, unbroken.</figcaption>
+          </figure>
+        </div>
+      ) : null}
+
+      {/* 03 · Why teak — philosophy left, supporting image right */}
+      {whyTeak ? (
+        <section className="mk-section" id="material" aria-label={whyTeak.heading}>
+          <div className="mk-ed">
+            <div className="mk-ed-main">
+              <span className="eyebrow">{whyTeak.eyebrow}</span>
+              <h2>{whyTeak.heading}</h2>
+              {whyTeak.body.map(para)}
+            </div>
+            {images[1] ? (
+              <figure className="mk-ed-figure">
+                <img src={images[1]} alt={`${name} — surface detail`} width="1200" height="900" loading="lazy" />
+                <figcaption>Hand-planed, oiled, and left to cure.</figcaption>
+              </figure>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
+      {/* 04 · The making — five stages in one row */}
+      <section className="mk-section" id="making" aria-label="From material to object">
+        <div className="mk-ed">
+          <div className="mk-ed-main" style={{ maxWidth: 'none' }}>
+            <span className="eyebrow">From material to object</span>
+            <h2>A sequence of decisions.</h2>
+            <p>Each stage below is how the piece is actually put together — the same construction described on the product page, followed in order.</p>
+          </div>
+        </div>
+        <div className="mk-ed" style={{ marginTop: '0' }}>
+          <div className="mk-steps" style={{ gridColumn: '1 / -1' }}>
+            {sequenceStages.map((stage) => (
+              <div key={stage.number} className="mk-step">
+                <span className="mk-step-number">Stage {stage.number}</span>
+                <h3>{stage.title}</h3>
+                <p>{firstSentence(stage.description)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {inspectionStage ? (
+          <div className="mk-ed" style={{ marginTop: '0' }}>
+            <p className="mk-steps-note" style={{ gridColumn: '1 / -1' }}>Before it is finished: {inspectionStage.description}</p>
+          </div>
+        ) : null}
+      </section>
+
+      {/* 05 · Craft — finished plate beside hand-finishing text */}
+      <section className="mk-time" id="time" aria-label="Craft and hand-finishing">
+        <div className="mk-time-inner">
+          {images[2] ? (
+            <figure>
+              <img src={images[2]} alt={`${name} — the finished piece`} width="1200" height="900" loading="lazy" />
+              <figcaption>Joined by hand — no metal fasteners.</figcaption>
+            </figure>
+          ) : null}
+          <div>
+            <span className="eyebrow eyebrow-light">Time &amp; effort</span>
+            <h2>About eighteen hours, by hand.</h2>
+            <p className="mk-time-lede">
+              Every joint is hand-cut — mortise and tenon, no metal fasteners, no
+              screws. The surface is planed by hand, not sanded, to keep the
+              grain&rsquo;s natural lustre. Thin coats of food-safe oil are worked
+              in by hand, each left to cure — so the patina deepens with use
+              instead of wearing through.
+            </p>
+            {relationship && relationship.body.length > 0 ? (
+              <p className="mk-time-lede">{relationship.body[0]}</p>
+            ) : null}
+          </div>
         </div>
       </section>
 
-      {/* Journey ledger */}
-      <nav className="proc-journey" aria-label="The making journey">
-        <div className="proc-journey-inner">
-          <a href="#material">Material</a>
-          <span className="proc-journey-arrow" aria-hidden="true">→</span>
-          <a href="#making">Making</a>
-          <span className="proc-journey-arrow" aria-hidden="true">→</span>
-          <a href="#time">Time</a>
-          <span className="proc-journey-arrow" aria-hidden="true">→</span>
-          <a href="#object">Object</a>
+      {/* Full-bleed still */}
+      {images[3] ? (
+        <div className="mk-break">
+          <figure>
+            <img
+              src={images[3]}
+              alt={`${name} — living with the finished table`}
+              width="1600"
+              height="900"
+              loading="lazy"
+            />
+            <figcaption>Teak deepens with use — a patina, not wear.</figcaption>
+          </figure>
+        </div>
+      ) : null}
+
+      {/* 06 · One object — closing philosophy + CTA */}
+      {oneOfOne ? (
+        <section className="mk-close" id="object" aria-label={oneOfOne.heading}>
+          <span className="eyebrow">{oneOfOne.eyebrow}</span>
+          <h2>{oneOfOne.heading}</h2>
+          {oneOfOne.body.map(para)}
+          {livingCoda}
+          <p className="mk-close-price">
+            {[product?.priceFormatted, product?.availabilityNote || product?.availability].filter(Boolean).join(' · ')}
+          </p>
+          <div className="mk-close-actions">
+            <Link href={`/inquire/${product.id}`} className="btn-primary">{labels.inquire || 'INQUIRE TO OWN'}</Link>
+            <Link href={`/shop/${product.id}`} className="mk-btn">{labels.buy || 'BUY NOW'}</Link>
+          </div>
+          <div className="mk-close-archive">
+            <Link href="/archive" className="link-quiet">{labels.archive || 'SEE PAST COLLECTIONS'}</Link>
+          </div>
+        </section>
+      ) : null}
+
+      {/* 07 · Related Atelier Stories */}
+      <nav className="mk-related" id="own" aria-label="Continue">
+        <div className="mk-related-inner">
+          <span className="mk-related-label">Next Atelier Stories</span>
+          <Link href={`/inquire/${product.id}`} className="link-quiet">Inquire to Own</Link>
+          <Link href={`/shop/${product.id}`} className="link-quiet">Buy Now</Link>
+          <Link href="/archive" className="link-quiet">Past Collections</Link>
+          <Link href="/studio" className="link-quiet">Visit the Studio</Link>
+          <Link href="/journal" className="link-quiet">Journal</Link>
         </div>
       </nav>
 
-      {/* Material */}
-      <section className="proc-material" id="material">
-        <div className="proc-material-inner reveal">
-          <div>
-            <span className="eyebrow">Material</span>
-            <p className="proc-material-lede" style={{ marginTop: 'var(--space-md)' }}>{process.intro}</p>
-          </div>
-          <div className="proc-record" aria-label="Material record">
-            <div className="proc-record-title">Material record — {product?.name || 'this piece'}</div>
-            {materialRecord.map(([label, value]) => (
-              <div key={label} className="proc-record-row">
-                <span className="proc-record-label">{label}</span>
-                <span className="proc-record-value">{value}</span>
-              </div>
-            ))}
-          </div>
+      {/* Quiet share row (existing behaviour, kept minimal) */}
+      <div className="mk-share">
+        <div className="mk-share-inner">
+          <button type="button" className="mk-share-btn" onClick={handleShare}>
+            {shareCopied ? 'Copied!' : 'Share'}
+          </button>
+          <a className="link-quiet" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            Instagram
+          </a>
+          <Link href="/journal" className="link-quiet">More writing — the Journal</Link>
         </div>
-      </section>
-
-      {/* Making */}
-      <section className="proc-making" id="making">
-        <div className="proc-making-head reveal">
-          <span className="eyebrow">Making</span>
-          <h2>From log to table.</h2>
-          <p>Each stage below is how the piece is actually put together — the same construction described on the product page, followed in order.</p>
-        </div>
-
-        {makingIntro && (
-          <div className="proc-feature reveal">
-            <span className="proc-feature-number">Stage {makingIntro.number}</span>
-            <h3>{makingIntro.title}</h3>
-            <p>{makingIntro.description}</p>
-          </div>
-        )}
-
-        <div className="proc-break editorial-wide-break reveal">
-          <figure>
-            <img
-              src="https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=2000"
-              alt="Close-up of a craftsman's hand guiding a chisel in the workshop."
-              width="2000"
-              height="1125"
-              loading="lazy"
-            />
-            <figcaption>Hands and tools — the workshop.</figcaption>
-          </figure>
-        </div>
-
-        {settlingStages.length > 0 && (
-          <div className="proc-pair">
-            {settlingStages.map((stage) => (
-              <div key={stage.number} className="proc-ledger reveal">
-                <div className="proc-ledger-number">Stage {stage.number}</div>
-                <h3>{stage.title}</h3>
-                <p>{stage.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {joiningStage && (
-          <div className="proc-split reveal">
-            <div className="proc-split-text">
-              <span className="eyebrow">Stage {joiningStage.number}</span>
-              <h3>{joiningStage.title}</h3>
-              <p>{joiningStage.description}</p>
-            </div>
-            <figure>
-              <img
-                src={product?.images?.[2] || product?.images?.[0]}
-                alt={`${product?.name || 'The finished piece'} — joined without metal fasteners.`}
-                width="1200"
-                height="900"
-                loading="lazy"
-              />
-              <figcaption className="proc-split-caption" style={{ padding: 'var(--space-xs) var(--space-md)' }}>
-                {product?.name} — mortise and tenon, no metal fasteners.
-              </figcaption>
-            </figure>
-          </div>
-        )}
-
-        {finishingStages.length > 0 && (
-          <div className="proc-pair">
-            {finishingStages.map((stage) => (
-              <div key={stage.number} className="proc-ledger reveal">
-                <div className="proc-ledger-number">Stage {stage.number}</div>
-                <h3>{stage.title}</h3>
-                <p>{stage.description}</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Time / effort / value — only documented measurements */}
-      <section className="proc-time" id="time">
-        <div className="proc-time-inner reveal">
-          <span className="eyebrow eyebrow-light">Time &amp; effort</span>
-          <h2>Why the piece feels the way it does.</h2>
-          <p className="proc-time-lede">
-            The surface is planed by hand, not sanded, to keep the grain&apos;s natural lustre.
-            Joints are cut as mortise and tenon and fitted dry before any finish goes on.
-            Thin coats of food-safe oil are worked in by hand, each left to cure — so the
-            patina deepens with use instead of wearing through.
-          </p>
-          <div className="proc-time-grid">
-            <div className="proc-time-stat">
-              <strong>{product?.buildTime || specValue('Build Time') || '—'}</strong>
-              <span>Hands-on build</span>
-            </div>
-            <div className="proc-time-stat">
-              <strong>{specValue('Joinery') || '—'}</strong>
-              <span>Joinery</span>
-            </div>
-            <div className="proc-time-stat">
-              <strong>{specValue('Finish') || product?.finish || '—'}</strong>
-              <span>Finish</span>
-            </div>
-            <div className="proc-time-stat">
-              <strong>{product?.weight || specValue('Weight') || '—'}</strong>
-              <span>Solid teak weight</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Object — back to the finished piece */}
-      {product && (
-        <section className="proc-object" id="object">
-          <div className="proc-object-inner reveal">
-            <figure>
-              <img
-                src={product.images?.[0]}
-                alt={product.name}
-                width="800"
-                height="1000"
-                loading="lazy"
-              />
-              <figcaption>The grain runs the full length of the top, unbroken.</figcaption>
-            </figure>
-            <div className="proc-object-text">
-              <span className="eyebrow">The finished object</span>
-              <h2>{finalStage ? finalStage.title : 'The Finished Piece'}</h2>
-              <div className="proc-object-name">{product.name}</div>
-              <div className="proc-object-price">{product.priceFormatted}</div>
-              <p>{product.shortDescription}</p>
-              {finalStage && <p>{finalStage.description}</p>}
-              <div className="proc-object-actions">
-                <Link href={`/shop/${product.id}`} className="btn-primary">View This Piece</Link>
-                <Link href="/studio" className="link-quiet">Visit the Studio</Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Share */}
-      <section className="proc-share">
-        <div className="proc-share-inner reveal">
-          <div className="proc-share-text">
-            <span className="eyebrow">Share</span>
-            <h2>Pass it on.</h2>
-            <p>Send this making story to someone choosing a table — or follow the workshop on Instagram.</p>
-          </div>
-          <div className="proc-share-actions">
-            <button type="button" className="proc-share-btn" onClick={handleShare}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }} aria-hidden="true"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>
-              {shareCopied ? 'Copied!' : 'Share'}
-            </button>
-            <a className="proc-share-btn" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }} aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="4" /><line x1="17.5" y1="6.5" x2="17.5" y2="6.5" /></svg>
-              Instagram
-            </a>
-            <Link href="/journal" className="link-quiet">Atelier Stories</Link>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   )
 }

@@ -128,7 +128,9 @@ export default function Header() {
     if (!q || q.length < 2) { setSearchResults([]); return; }
     if (typeof window === 'undefined' || !window.TEAKLE_PRODUCTS) return;
     const lower = q.toLowerCase().trim();
+    /* Standard catalogue only — the Atelier hero is excluded by design. */
     const results = window.TEAKLE_PRODUCTS.filter((p) => {
+      if (p.isHero) return false;
       const haystack = [
         p.name, p.material, p.category, p.categoryName,
         p.subcategory, p.subcategoryName, p.shortDescription,
@@ -359,11 +361,6 @@ export default function Header() {
               </button>
             </div>
             <ul className="nav-dropdown-menu" id="gallery-dropdown-menu">
-              <li className="nav-dropdown-featured">
-                <Link href="/shop/anchor-table" className={`nav-dropdown-featured-link${isActive('/shop/anchor-table') ? ' is-active' : ''}`} aria-current={isActive('/shop/anchor-table') ? 'page' : undefined} onClick={closeDrawer}>
-                  <span className="nav-dropdown-featured-label">Hero Edition</span>
-                </Link>
-              </li>
               <li className="nav-dropdown-featured">
                 <Link href="/gallery?availability=Limited+Edition" className="nav-dropdown-featured-link" onClick={closeDrawer}>
                   <span className="nav-dropdown-featured-label">Limited Edition</span>

@@ -11,8 +11,8 @@
  *   - description uses verified shortDescription with no appended invention
  *   - wishlist control is present and uses the existing window.Teakle store
  *     API (same as the product page: toggleWishlist / isInWishlist)
- *   - purchase path preserved: verified price, INQUIRE TO OWN -> /shop/:id,
- *     process CTA, past-editions link, thumbnails, studio tab
+ *   - purchase path preserved: verified price, INQUIRE TO OWN -> /inquire/:id
+ *     (Atelier product experience), process CTA, past-editions link, thumbnails, studio tab
  *   - annotation-style hierarchy: availability eyebrow above the object name
  *   - quiet commerce: underline text wishlist control, no cards/badges/fills
  *   - keyboard + touch: aria-pressed/label, visible focus, 44px target
@@ -78,8 +78,8 @@ console.log('\n=== 3. Wishlist + purchase controls functional ===')
     homeClient.includes('Save to Wishlist') && homeClient.includes('Saved to Wishlist'))
   test('price renders from data', homeClient.includes('priceFormatted'))
   test('ownership CTA preserved', homeClient.includes('INQUIRE TO OWN'))
-  test('ownership CTA routes to the featured product page',
-    homeClient.includes('/shop/${heroProduct?.id'))
+  test('ownership CTA routes to the Atelier product experience',
+    homeClient.includes('/inquire/${heroProduct?.id'))
   test('process CTA preserved', homeClient.includes('WATCH THE PROCESS'))
   test('past-editions link preserved', homeClient.includes('See past editions'))
   test('gallery thumbnails preserved', homeClient.includes('v2-sig-editorial-thumb'))

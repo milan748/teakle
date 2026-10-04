@@ -892,7 +892,7 @@ const pageStyles = `
 }
 `;
 
-export default function ShopDetailClient({ product: initialProduct, productId: initialProductId, processSlug = null }) {
+export default function ShopDetailClient({ product: initialProduct, productId: initialProductId, processSlug = null, sold = false }) {
   const productId = initialProductId;
 
   const [product, setProduct] = useState({
@@ -977,11 +977,12 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
         return changed ? next : prev;
       });
     }
-    /* Resolve related products client-side to avoid server/client hydration mismatch */
+    /* Resolve related products client-side to avoid server/client hydration mismatch.
+       Standard catalogue only — the Atelier hero is excluded by design. */
     if (product?.relatedProducts?.length > 0) {
       const resolved = product.relatedProducts
         .map((rid) => window.TEAKLE_PRODUCTS.find((rp) => rp.id === rid))
-        .filter(Boolean);
+        .filter((rp) => rp && !rp.isHero);
       setRelatedProducts(resolved);
     }
   }, [productId, product?.relatedProducts]);
@@ -1097,9 +1098,10 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Add to Cart */
+  /* Add to Cart — never for a sold piece (server + store enforce the same rule) */
   const handleAddToCart = useCallback(() => {
     if (!product || typeof window === 'undefined') return;
+    if (sold) return;
     if (window.Teakle) {
       const addQty = product.isHero ? 1 : qty;
       window.Teakle.addToCart({ id: product.id, name: product.name, price: product.priceFormatted, image: product.images[0], qty: addQty });
@@ -1157,7 +1159,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
   }, [product]);
 
   /* Badge */
-  const badgeText = !product ? '' : product.availability === 'Limited Edition' ? 'Limited Edition' : product.availability === 'In Stock' ? 'In Stock' : 'Handcrafted';
+  const badgeText = !product ? '' : sold ? 'Sold' : product.availability === 'Limited Edition' ? 'Limited Edition' : product.availability === 'In Stock' ? 'In Stock' : 'Handcrafted';
 
   /* Category */
   const cat = product && typeof window !== 'undefined' ? window?.TEAKLE_CATEGORIES?.[product.category] : null;
@@ -1255,11 +1257,15 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
 
   const renderMobileCta = () => (
     <div className={`pd-mobile-cta ${mobileStickyVisible ? 'is-visible' : ''}`}>
-      <span className="pd-mobile-price">{product.priceFormatted}</span>
+      <span className="pd-mobile-price">{sold ? 'Sold' : product.priceFormatted}</span>
+      {sold ? (
+        <span className="pd-mobile-btn" role="status" style={{ justifyContent: 'center' }}>Sold</span>
+      ) : (
       <button className="pd-mobile-btn" onClick={handleAddToCart}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
         Add to Cart
       </button>
+      )}
     </div>
   );
 
@@ -1378,6 +1384,12 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
               )}
             </div>
             <div className="pd-actions">
+              {sold ? (
+                <div role="status" style={{ padding: '0.9rem 0', borderTop: 'var(--border-hair)', borderBottom: 'var(--border-hair)' }}>
+                  <div style={{ fontSize: 'var(--text-body-lg)', fontWeight: 500, letterSpacing: '0.06em' }}>SOLD</div>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', marginTop: '0.25rem' }}>One of One · No longer available. This piece remains as part of TEAKLE&rsquo;s history.</div>
+                </div>
+              ) : (
               <button ref={addToCartBtnRef} className={`pd-btn-add ${isAdded ? 'is-added' : ''}`} onClick={handleAddToCart}>
                 {isAdded ? (
                   <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><polyline points="20 6 9 17 4 12" /></svg> Added to Cart</>
@@ -1385,6 +1397,7 @@ export default function ShopDetailClient({ product: initialProduct, productId: i
                   <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 16, height: 16 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg> Add to Cart</>
                 )}
               </button>
+              )}
               <button className={`pd-btn-secondary ${isWishlisted ? 'is-active' : ''}`} onClick={handleWishlist}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
                 Add to Wishlist

@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import GalleryClient from './GalleryClient';
-import { PRODUCTS } from '../data/products';
+/* Standard catalogue only — the Atelier hero is excluded by design
+   (discovered via Homepage → Atelier Stories, never via browsing). */
+import { getCatalogueProducts } from '../data/products';
 
 export const metadata = {
   title: 'Gallery',
@@ -12,7 +14,7 @@ export const metadata = {
 export default function GalleryPage() {
   return (
     <Suspense>
-      <GalleryClient products={PRODUCTS} />
+      <GalleryClient products={getCatalogueProducts()} />
     </Suspense>
   );
 }

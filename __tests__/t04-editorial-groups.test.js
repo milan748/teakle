@@ -48,7 +48,8 @@ console.log('\n=== 2. Two groups of exactly three ===')
   test('group 2 marker exists', homeClient.includes('data-group="2"'))
   test('exactly two v2-edit-group blocks', (homeClient.match(/v2-edit-group[ "--]/g) || []).length >= 2 && (homeClient.match(/data-group="/g) || []).length === 2)
   test('group split is 3 + 3', homeClient.includes('six.slice(0, 3)') && homeClient.includes('six.slice(3, 6)'))
-  test('six products required before render', /const six = resolveProducts\(orderedIds\)\.slice\(0, 6\)/.test(homeClient) && homeClient.includes('if (six.length < 6) return null'))
+  test('six products required before render', /const six = resolveProducts\(orderedIds\)\.filter\(\(p\) => !p\.isHero\)\.slice\(0, 6\)/.test(homeClient) && homeClient.includes('if (six.length < 6) return null'))
+  test('Atelier hero excluded from catalogue groups', homeClient.includes('.filter((p) => !p.isHero)'))
 }
 
 console.log('\n=== 3. Authentic product data, commerce preserved ===')

@@ -455,7 +455,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                     {/* CTAs — ownership + process. Watch the Process links to the existing
                         dedicated process page for this exact piece. */}
                     <div className="v2-sig-editorial-actions">
-                      <Link href={`/shop/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-primary">INQUIRE TO OWN</Link>
+                      <Link href={`/inquire/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-primary">INQUIRE TO OWN</Link>
                       <Link href={`/process/${heroProduct?.id || 'anchor-table'}`} className="v2-sig-btn-outline">WATCH THE PROCESS</Link>
                     </div>
 
@@ -522,7 +522,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
           backfilled from the authoritative product dataset so the two
           groups stay distinct (no invented products). */}
       {(!carouselDisabled || !productGridDisabled) && (() => {
-        const FALLBACK_IDS = ['anchor-table', 'bearing-chair', 'circle-table', 'hollow-bench', 'drift-sculpture', 'hourglass-vase']
+        const FALLBACK_IDS = ['anchor-table', 'bearing-chair', 'circle-table', 'hollow-bench', 'drift-sculpture', 'hourglass-vase', 'spice-shelf', 'bread-box']
         const carouselIds = parseProductIds(collectionCarousel.body)
         const gridIds = parseProductIds(productGrid.body)
         const seen = new Set()
@@ -530,7 +530,8 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
         for (const id of [...carouselIds, ...gridIds, ...FALLBACK_IDS]) {
           if (!seen.has(id)) { seen.add(id); orderedIds.push(id) }
         }
-        const six = resolveProducts(orderedIds).slice(0, 6)
+        /* Standard catalogue only — the Atelier hero is excluded by design. */
+        const six = resolveProducts(orderedIds).filter((p) => !p.isHero).slice(0, 6)
         if (six.length < 6) return null
         const group1 = six.slice(0, 3)
         const group2 = six.slice(3, 6)

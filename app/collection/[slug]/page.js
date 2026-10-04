@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import CollectionClient from './CollectionClient';
-import { PRODUCTS } from '../../data/products';
+/* Standard catalogue only — the Atelier hero is excluded by design. */
+import { getCatalogueProducts } from '../../data/products';
 
 export const dynamicParams = false;
 
@@ -32,5 +33,5 @@ export default async function CollectionPage({ params }) {
   const { slug } = await params;
   if (!COLLECTIONS[slug]) notFound();
 
-  return <CollectionClient products={PRODUCTS} />;
+  return <CollectionClient products={getCatalogueProducts()} />;
 }

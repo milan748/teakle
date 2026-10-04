@@ -264,7 +264,8 @@ export default function CollectionClient({ products: serverProducts }) {
 
     const source = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (serverProducts || []);
     if (!source.length) return;
-    const all = source;
+    /* Standard catalogue only — the Atelier hero is excluded by design. */
+    const all = source.filter((p) => !p.isHero);
     const filtered = all.filter(
       (p) => col.categories.includes(p.category) || col.subcategories.includes(p.subcategory)
     );

@@ -4056,10 +4056,39 @@ export function getRelatedProducts(product) {
   if (!product?.relatedProducts?.length) return [];
   return product.relatedProducts
     .map((id) => getProductById(id))
-    .filter(Boolean);
+    .filter((p) => p && !p.isHero);
+}
+
+/**
+ * Standard catalogue query — everything a normal shopper may discover
+ * through Gallery, collections, search, homepage grids, and related
+ * sections. The Atelier Stories hero (isHero) is EXCLUDED by design:
+ * it is discovered only via Homepage → Atelier Stories → its dedicated
+ * inquire/process experience, never through catalogue browsing.
+ * Future heroes inherit the isolation automatically via the flag.
+ */
+export function getCatalogueProducts() {
+  return PRODUCTS.filter((p) => !p.isHero);
 }
 
 export function getHeroProduct() {
   return PRODUCTS.find((p) => p.isHero === true) || null;
+}
+
+/**
+ * Data-driven sold detection for one-of-one / catalogue pieces.
+ * A piece counts as sold when the studio marks it so: active flag off,
+ * inventory at zero, or an explicit sold availability label. All three are
+ * set through product data or the admin product-metadata overlay (which
+ * requires a rebuild to reflect on static pages) — never inferred here.
+ * A sold Atelier object stays published as archive/history; it simply
+ * cannot be purchased again.
+ */
+export function isProductSold(product) {
+  if (!product) return false;
+  if (product.active === false) return true;
+  if (typeof product.inventoryQuantity === 'number' && product.inventoryQuantity <= 0) return true;
+  const label = (product.availability || '').trim().toLowerCase();
+  return label === 'sold' || label === 'sold out' || label === 'no longer available';
 }
 

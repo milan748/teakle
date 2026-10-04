@@ -53,5 +53,12 @@ export default function sitemap() {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...collectionPages, ...productPages, ...journalPages, ...processPages];
+  const inquirePages = PRODUCTS.filter((p) => p.isHero).map((product) => ({
+    url: `${base}/inquire/${product.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...collectionPages, ...productPages, ...journalPages, ...processPages, ...inquirePages];
 }

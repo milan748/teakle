@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getProductById, getAllProductIds } from '../../data/products';
+import { getProductById, getAllProductIds, isProductSold } from '../../data/products';
 import { getProcessBySlug } from '../../data/process';
 import ShopDetailClient from './ShopDetailClient';
 import StructuredData from '../../components/StructuredData';
@@ -61,7 +61,9 @@ function buildProductSchema(product) {
     },
   };
 
-  if (product.availability === 'In Stock') {
+  if (isProductSold(product)) {
+    schema.offers.availability = 'https://schema.org/OutOfStock';
+  } else if (product.availability === 'In Stock') {
     schema.offers.availability = 'https://schema.org/InStock';
   } else if (product.availability === 'Limited Edition') {
     schema.offers.availability = 'https://schema.org/InStock';
@@ -92,7 +94,7 @@ export default async function ShopDetailPage({ params }) {
     <>
       <StructuredData data={productSchema} />
       <StructuredData data={breadcrumbSchema} />
-      <ShopDetailClient product={product} productId={id} processSlug={processSlug} />
+      <ShopDetailClient product={product} productId={id} processSlug={processSlug} sold={isProductSold(product)} />
     </>
   );
 }
