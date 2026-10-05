@@ -1640,11 +1640,10 @@
   .v2-hero--split .v2-hero-split-image { max-height: 400px; }
   .v2-hero--minimal { min-height: 400px; }
 
-  .v2-trust-inner {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm) var(--space-lg);
+  /* Trust bar is desktop-only: hidden entirely on mobile (no reserved space). */
+  .v2-trust {
+    display: none;
   }
-  .v2-trust-item { font-size: var(--text-caption); }
 
   .v2-atelier-wrapper { padding: 0; }
   .v2-atelier-title { padding: clamp(1rem, 2vw, 1.5rem) var(--space-lg); }
