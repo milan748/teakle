@@ -58,8 +58,8 @@ console.log('\n=== 2. Craft text hierarchy ===')
   test('craft copy preserved (hand-cut joints claim)',
     homeClient.includes('Joints are cut by hand and fitted dry'))
   test('craft link preserved', homeClient.includes('Visit the Studio'))
-  test('craft image source unchanged (no stock swap)',
-    homeClient.includes('pexels-photo-5974275'))
+  test('craft image source is the approved temporary asset (no stock swap)',
+    homeClient.includes('/temporary-images/home-craft-joinery-01.jpg'))
 }
 
 console.log('\n=== 3. Workshop/process rhythm is differentiated ===')

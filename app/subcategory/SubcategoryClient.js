@@ -11,7 +11,7 @@ import ProductCard from '../components/ProductCard';
 const CATS = {
   kitchen: {
     name: 'Kitchen',
-    image: 'https://images.pexels.com/photos/4805236/pexels-photo-4805236.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-kitchen-hero-01.jpg',
     description: 'Solid teak boards, bowls, and utensil holders for daily kitchen use.',
     subs: [
       { key: 'countertop-essentials', name: 'Countertop Essentials', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -23,10 +23,11 @@ const CATS = {
       { key: 'baking-essentials', name: 'Baking Essentials', image: 'https://images.pexels.com/photos/4750274/pexels-photo-4750274.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'pantry-organization', name: 'Pantry Organization', image: 'https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['carving-board', 'nesting-bowls', 'tea-caddy', 'flour-dish', 'rolling-pin'],
   },
   dining: {
     name: 'Dining',
-    image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-dining-hero-01.jpg',
     description: 'Serving boards, trays, and dining centrepieces for every occasion.',
     subs: [
       { key: 'serving-boards', name: 'Serving Boards', image: 'https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -37,10 +38,11 @@ const CATS = {
       { key: 'table-centerpieces', name: 'Table Centerpieces', image: 'https://images.pexels.com/photos/6474502/pexels-photo-6474502.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'dining-decor', name: 'Dining Decor', image: 'https://images.pexels.com/photos/8662032/pexels-photo-8662032.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['the-tray', 'centrepiece-bowl', 'candle-bowl', 'wine-coaster'],
   },
   living: {
     name: 'Living Room',
-    image: 'https://images.pexels.com/photos/5858085/pexels-photo-5858085.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-living-hero-01.jpg',
     description: 'Sculptural objects, vases, and coffee table pieces for your living space.',
     subs: [
       { key: 'sculptures', name: 'Sculptures', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -51,10 +53,11 @@ const CATS = {
       { key: 'shelving-decor', name: 'Shelving Decor', image: 'https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'candle-holders', name: 'Candle Holders', image: 'https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['drift-sculpture', 'hourglass-vase', 'decorative-objects-set'],
   },
   bedroom: {
     name: 'Bedroom',
-    image: 'https://images.pexels.com/photos/6045088/pexels-photo-6045088.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-bedroom-hero-01.jpg',
     description: 'Nightstand essentials, organisers, and mirrors for private spaces.',
     subs: [
       { key: 'nightstand-essentials', name: 'Nightstand Essentials', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -64,10 +67,11 @@ const CATS = {
       { key: 'decorative-accents', name: 'Decorative Accents', image: 'https://images.pexels.com/photos/6045088/pexels-photo-6045088.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'bedroom-decor', name: 'Bedroom Decor', image: 'https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['jewellery-box', 'file-organizer', 'desk-clock'],
   },
   office: {
     name: 'Office',
-    image: 'https://images.pexels.com/photos/7979604/pexels-photo-7979604.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-office-hero-01.jpg',
     description: 'Desk organisers, pen holders, and laptop stands for your workspace.',
     subs: [
       { key: 'desk-organization', name: 'Desk Organization', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -77,10 +81,11 @@ const CATS = {
       { key: 'office-decor', name: 'Office Decor', image: 'https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'accessories', name: 'Accessories', image: 'https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['desk-caddy', 'pen-stand', 'laptop-riser'],
   },
   bathroom: {
     name: 'Bathroom',
-    image: 'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-bathroom-hero-01.jpg',
     description: 'Vanity organisers, soap dispensers, and toothbrush holders.',
     subs: [
       { key: 'vanity-organizers', name: 'Vanity Organizers', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -89,10 +94,11 @@ const CATS = {
       { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/8005397/pexels-photo-8005397.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'bathroom-decor', name: 'Bathroom Decor', image: 'https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['soap-stone', 'bath-mat', 'bath-shelf'],
   },
   outdoor: {
     name: 'Outdoor',
-    image: 'https://images.pexels.com/photos/6480210/pexels-photo-6480210.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-outdoor-hero-01.jpg',
     description: 'Planters, garden decor, and outdoor serving pieces.',
     subs: [
       { key: 'planters', name: 'Planters', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -101,10 +107,11 @@ const CATS = {
       { key: 'patio-accessories', name: 'Patio Accessories', image: 'https://images.pexels.com/photos/6480210/pexels-photo-6480210.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'storage', name: 'Storage', image: 'https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['herb-planter', 'garden-tool-set', 'limited-vase'],
   },
   seasonal: {
     name: 'Seasonal',
-    image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    image: '/temporary-images/subcat-seasonal-hero-01.jpg',
     description: 'Festive decor, collectors pieces, and limited edition collections.',
     subs: [
       { key: 'festive-decor', name: 'Festive Decor', image: 'https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=900' },
@@ -112,6 +119,7 @@ const CATS = {
       { key: 'limited-editions', name: 'Limited Editions', image: 'https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=900' },
       { key: 'gift-collections', name: 'Gift Collections', image: 'https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=900' },
     ],
+    allowedProductIds: ['diya-holder', 'collectors-bowl', 'gift-box'],
   },
 };
 
@@ -415,7 +423,7 @@ const subStyles = `
 `;
 
 export default function SubcategoryClient({ products: serverProducts }) {
-  const [heroImg, setHeroImg] = useState('https://images.pexels.com/photos/6044266/pexels-photo-6044266.jpeg?auto=compress&cs=tinysrgb&w=1600');
+  const [heroImg, setHeroImg] = useState('/temporary-images/subcat-default-timber-01.jpg');
   const [heroTitle, setHeroTitle] = useState('Gallery');
   const [heroDesc, setHeroDesc] = useState('Browse handcrafted solid timber products.');
   const [catName, setCatName] = useState('');
@@ -462,9 +470,13 @@ export default function SubcategoryClient({ products: serverProducts }) {
     const source = (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS) ? window.TEAKLE_PRODUCTS : (serverProducts || []);
     if (!source.length) return;
     /* Standard catalogue only — the Atelier hero is excluded by design. */
-    const filtered = source.filter(
+    let filtered = source.filter(
       (p) => !p.isHero && p.category === ck && p.subcategory === sk
     );
+    /* Restrict display to approved product concepts per category rules. */
+    if (cat.allowedProductIds && cat.allowedProductIds.length > 0) {
+      filtered = filtered.filter((p) => cat.allowedProductIds.includes(p.id));
+    }
     setAllProducts(filtered);
     setProducts(filtered);
     setLoading(false);

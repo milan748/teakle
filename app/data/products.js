@@ -547,7 +547,7 @@ export const PRODUCTS = [
     finish: "Food-safe mineral oil",
     buildTime: "~3 hours",
     images: [
-      "https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/carving-board-pinterest-01.jpg",
       "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -627,7 +627,7 @@ export const PRODUCTS = [
     finish: "Food-safe oil",
     buildTime: "~5 hours",
     images: [
-      "https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bread-box-01.jpg",
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -707,7 +707,7 @@ export const PRODUCTS = [
     finish: "Natural oil on teak, raw stone",
     buildTime: "~8 hours",
     images: [
-      "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/drift-sculpture-01.jpg",
       "https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -787,7 +787,7 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~3 hours",
     images: [
-      "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/hourglass-vase-pinterest-01.png",
       "https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -1019,7 +1019,7 @@ export const PRODUCTS = [
     finish: "Natural oil exterior, felt interior",
     buildTime: "~4 hours",
     images: [
-      "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/jewellery-box-pinterest-01.jpg",
       "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -1183,7 +1183,7 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~3 hours",
     images: [
-      "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/desk-caddy-pinterest-01.webp",
       "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -1495,7 +1495,7 @@ export const PRODUCTS = [
     finish: "Teak oil",
     buildTime: "~1 hour",
     images: [
-      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/soap-stone-01.png",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -1647,7 +1647,7 @@ export const PRODUCTS = [
     finish: "Untreated (natural weathering)",
     buildTime: "~3 hours",
     images: [
-      "https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/herb-planter-01.jpg",
       "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -2656,7 +2656,7 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~1.5 hours (set)",
     images: [
-      "https://images.pexels.com/photos/6474495/pexels-photo-6474495.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/wine-coasters-01.jpg",
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -3575,7 +3575,7 @@ export const PRODUCTS = [
     finish: "Teak oil",
     buildTime: "~3 hours",
     images: [
-      "https://images.pexels.com/photos/8005389/pexels-photo-8005389.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bath-shelf-pinterest-01.jpg",
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -3651,7 +3651,7 @@ export const PRODUCTS = [
     finish: "Teak oil",
     buildTime: "~4 hours",
     images: [
-      "https://images.pexels.com/photos/8005387/pexels-photo-8005387.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bath-mat-pinterest-01.jpg",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -3880,7 +3880,7 @@ export const PRODUCTS = [
     finish: "Natural oil",
     buildTime: "~8 hours",
     images: [
-      "https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/limited-vase-pinterest-01.jpg",
       "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     thumbnails: [
@@ -4023,6 +4023,918 @@ export const PRODUCTS = [
       "curated",
       "set"
     ]
+  },
+  {
+    id: "elan",
+    name: "ÉLAN",
+    slug: "elan",
+    category: "flower-vases",
+    categoryName: "Flower Vases",
+    subcategory: "flower-vases",
+    subcategoryName: "Flower Vases",
+    price: 32000,
+    priceFormatted: "₹32,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Sculptural teak vase in the form of a female torso.",
+    description: "ÉLAN is sculpted from solid teak in the form of a female torso — bust, narrow waist, and wide hips — with an irregular draped top edge forming the vase opening. Finished in natural oil.",
+    material: "Solid Teak",
+    dimensions: "1.5 ft H × 9 in W (18 × 9 in)",
+    weight: "4 kg",
+    finish: "Natural oil",
+    buildTime: "~10 hours",
+    images: [
+      "/temporary-images/elan-01.png"
+    ],
+    thumbnails: [
+      "/temporary-images/elan-01.png"
+    ],
+    story: "ÉLAN is shaped as a study of the human form in teak, each piece carved by hand so no two torsos are identical.",
+    craftsmanship: "Hand-carved from solid teak and finished with natural oil to enhance the grain.",
+    materials: "Sustainably sourced solid teak with a natural oil finish.",
+    careInstructions: "Dust with a soft cloth. Display away from direct sunlight. Use with dried botanicals.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "1.5 ft H × 9 in W (18 × 9 in)"
+      },
+      {
+        label: "Finish",
+        value: "Natural oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Can it hold water for fresh flowers?",
+        a: "No, solid wood vases are not watertight. We recommend dried flowers or botanicals."
+      }
+    ],
+    relatedProducts: [
+      "solenne",
+      "forma"
+    ],
+    tags: [
+      "vase",
+      "flower-vases",
+      "teak",
+      "sculptural",
+      "first-production"
+    ]
+  },
+  {
+    id: "solenne",
+    name: "SOLENNE",
+    slug: "solenne",
+    category: "flower-vases",
+    categoryName: "Flower Vases",
+    subcategory: "flower-vases",
+    subcategoryName: "Flower Vases",
+    price: 24000,
+    priceFormatted: "₹24,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Tall slender teardrop bud vase in solid teak.",
+    description: "SOLENNE is a tall, slender teardrop bud vase. Two overlapping petal-like walls wrap around each other to form a vertical slit opening. A study in balance and form, in sustainably sourced teak with a natural oil finish.",
+    material: "Solid Teak",
+    dimensions: "12 in H × 5 in W × 4.5 in D (approx.)",
+    weight: "1.2 kg",
+    finish: "Natural oil",
+    buildTime: "~6 hours",
+    images: [
+      "/temporary-images/solenne-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/solenne-01.jpg"
+    ],
+    story: "SOLENNE draws inspiration from the quiet strength of nature — a bud form celebrating shape and negative space in harmony.",
+    craftsmanship: "Hand-shaped from solid teak. Dimensions are approximate and may vary slightly due to the handcrafted nature of each piece.",
+    materials: "Sustainably sourced solid teak, chosen for strength and warm tone. Natural oil finish.",
+    careInstructions: "Dust with a soft cloth. Use with dried botanicals.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "12 in H × 5 in W × 4.5 in D (approx.)"
+      },
+      {
+        label: "Finish",
+        value: "Natural oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Can it hold water for fresh flowers?",
+        a: "No, solid wood vases are not watertight. We recommend dried flowers or botanicals."
+      }
+    ],
+    relatedProducts: [
+      "elan",
+      "forma"
+    ],
+    tags: [
+      "vase",
+      "flower-vases",
+      "teak",
+      "bud",
+      "first-production"
+    ]
+  },
+  {
+    id: "forma",
+    name: "FORMA",
+    slug: "forma",
+    category: "flower-vases",
+    categoryName: "Flower Vases",
+    subcategory: "flower-vases",
+    subcategoryName: "Flower Vases",
+    price: 26000,
+    priceFormatted: "₹26,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Ovoid teak vase with dark natural grain.",
+    description: "FORMA is a plump ovoid teak vase with a small cap-like mouth, showing prominent dark grain swirls. Simple forms, lasting beauty — finished in natural oil.",
+    material: "Solid Teak",
+    dimensions: "12 in H × 8 in W × 7.5–8 in D (approx.)",
+    weight: "2.5 kg",
+    finish: "Natural oil",
+    buildTime: "~7 hours",
+    images: [
+      "/temporary-images/forma-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/forma-01.jpg"
+    ],
+    story: "FORMA is turned and carved from solid teak into a timeless ovoid, letting the dark natural grain carry the design.",
+    craftsmanship: "Hand-shaped from solid teak. Dimensions are approximate and may vary slightly due to the handcrafted nature of each piece.",
+    materials: "Solid teak with a natural oil finish.",
+    careInstructions: "Dust with a soft cloth. Use with dried botanicals.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "12 in H × 8 in W × 7.5–8 in D (approx.)"
+      },
+      {
+        label: "Finish",
+        value: "Natural oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Can it hold water for fresh flowers?",
+        a: "No, solid wood vases are not watertight. We recommend dried flowers or botanicals."
+      }
+    ],
+    relatedProducts: [
+      "elan",
+      "solenne"
+    ],
+    tags: [
+      "vase",
+      "flower-vases",
+      "teak",
+      "ovoid",
+      "first-production"
+    ]
+  },
+  {
+    id: "boate",
+    name: "BOATÉ",
+    slug: "boate",
+    category: "fruit-bowls",
+    categoryName: "Fruit Bowls",
+    subcategory: "fruit-bowls",
+    subcategoryName: "Fruit Bowls",
+    price: 16000,
+    priceFormatted: "₹16,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Boat-shaped sculptural fruit bowl in solid teak.",
+    description: "BOATÉ takes the grace of traditional wooden boats into a sculptural fruit bowl — an elongated hull with two upturned pointed prows. Premium solid teak with a food-safe natural oil finish.",
+    material: "Solid Teak",
+    dimensions: "14 in L × 6 in W × 4 in H (35.6 × 15.2 × 10.2 cm)",
+    weight: "2 kg",
+    finish: "Food-safe oil",
+    buildTime: "~6 hours",
+    images: [
+      "/temporary-images/boate-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/boate-01.jpg"
+    ],
+    story: "Inspired by the grace of traditional wooden boats, BOATÉ is a sculptural centrepiece where heritage craftsmanship meets modern luxury.",
+    craftsmanship: "Hand-carved from solid teak with a food-safe natural oil finish.",
+    materials: "Premium solid teak, food-safe natural oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally with food-safe oil.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "14 in L × 6 in W × 4 in H (35.6 × 15.2 × 10.2 cm)"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it food-safe?",
+        a: "Yes, finished with food-safe natural oil and suitable for serving fruit."
+      }
+    ],
+    relatedProducts: [
+      "petale",
+      "venus"
+    ],
+    tags: [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "boat",
+      "first-production"
+    ]
+  },
+  {
+    id: "petale",
+    name: "PÉTALE",
+    slug: "petale",
+    category: "fruit-bowls",
+    categoryName: "Fruit Bowls",
+    subcategory: "fruit-bowls",
+    subcategoryName: "Fruit Bowls",
+    price: 14000,
+    priceFormatted: "₹14,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Petal-carved lotus bowl in solid teak.",
+    description: "PÉTALE is a round bowl carved as a blooming flower — overlapping petals with a scalloped rim, smooth interior, and flat circular base. Natural, handcrafted, timeless.",
+    material: "Solid Teak",
+    dimensions: "10 in L × 10 in W × 4.5 in H (254 × 254 × 114 mm)",
+    weight: "1.8 kg",
+    finish: "Food-safe oil",
+    buildTime: "~5 hours",
+    images: [
+      "/temporary-images/petale-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/petale-01.jpg"
+    ],
+    story: "PÉTALE is carved petal by petal from solid teak, a blooming lotus for the table.",
+    craftsmanship: "Hand-carved petals with a smooth interior, finished in food-safe oil.",
+    materials: "Solid teak, food-safe oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally with food-safe oil.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "10 in L × 10 in W × 4.5 in H (254 × 254 × 114 mm)"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it food-safe?",
+        a: "Yes, finished with food-safe natural oil and suitable for serving fruit."
+      }
+    ],
+    relatedProducts: [
+      "boate",
+      "venus"
+    ],
+    tags: [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "petal",
+      "first-production"
+    ]
+  },
+  {
+    id: "venus",
+    name: "VÉNUS",
+    slug: "venus",
+    category: "fruit-bowls",
+    categoryName: "Fruit Bowls",
+    subcategory: "fruit-bowls",
+    subcategoryName: "Fruit Bowls",
+    price: 18000,
+    priceFormatted: "₹18,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Conch-shell fruit bowl with hand-carved spiral.",
+    description: "VÉNUS is a conch-shell fruit bowl — a wide flared opening with a ruffled wave edge tapering to a tight hand-carved spiral scroll, with natural teak grain and a smooth interior.",
+    material: "Solid Teak",
+    dimensions: "12 in L × 10.9 in W × 6.1 in H (approx.)",
+    weight: "2.2 kg",
+    finish: "Food-safe oil",
+    buildTime: "~7 hours",
+    images: [
+      "/temporary-images/venus-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/venus-01.jpg"
+    ],
+    story: "VÉNUS follows the warty venus shell — an organic wave edge and spiral carved entirely by hand.",
+    craftsmanship: "Hand-carved spiral and wave edge, smooth interior, food-safe oil finish. Dimensions approximate.",
+    materials: "Solid teak, food-safe oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally with food-safe oil.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "12 in L × 10.9 in W × 6.1 in H (approx.)"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it food-safe?",
+        a: "Yes, finished with food-safe natural oil and suitable for serving fruit."
+      }
+    ],
+    relatedProducts: [
+      "boate",
+      "petale"
+    ],
+    tags: [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "shell",
+      "first-production"
+    ]
+  },
+  {
+    id: "ligne",
+    name: "LIGNE",
+    slug: "ligne",
+    category: "chopping-boards",
+    categoryName: "Chopping Boards",
+    subcategory: "chopping-boards",
+    subcategoryName: "Chopping Boards",
+    price: 9500,
+    priceFormatted: "₹9,500",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Thick rectangular teak board with juice groove.",
+    description: "LIGNE is a thick rectangular teak chopping board with a recessed perimeter juice groove, sharp square edges, finger-handle cutouts on the short ends, and rubber grips on the base. Food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "18 in L × 12 in W × 1.5 in H",
+    weight: "4.5 kg",
+    finish: "Food-safe oil",
+    buildTime: "~4 hours",
+    images: [
+      "/temporary-images/ligne-01.png"
+    ],
+    thumbnails: [
+      "/temporary-images/ligne-01.png"
+    ],
+    story: "LIGNE is the essential thick-slab board — square edges, deep groove, built for daily chopping.",
+    craftsmanship: "Cut from solid teak with a hand-routed juice groove and food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish. Rubber grips on the base.",
+    careInstructions: "Hand wash only. Do not soak. Wipe dry immediately. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "18 in L × 12 in W × 1.5 in H"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "How do I maintain it?",
+        a: "Hand wash, wipe dry immediately, and oil occasionally to maintain the surface."
+      }
+    ],
+    relatedProducts: [
+      "bloc",
+      "halo"
+    ],
+    tags: [
+      "board",
+      "chopping-boards",
+      "teak",
+      "juice-groove",
+      "first-production"
+    ]
+  },
+  {
+    id: "bloc",
+    name: "BLOC",
+    slug: "bloc",
+    category: "chopping-boards",
+    categoryName: "Chopping Boards",
+    subcategory: "chopping-boards",
+    subcategoryName: "Chopping Boards",
+    price: 11000,
+    priceFormatted: "₹11,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Rectangular teak board with twin juice wells.",
+    description: "BLOC is a rectangular teak chopping board distinguished by two recessed collector wells at one end for juices, with slightly rounded edges and rubber grips on the base. Food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "15 in L × 10 in W × 1 in H (25.4 mm)",
+    weight: "3 kg",
+    finish: "Food-safe oil",
+    buildTime: "~4 hours",
+    images: [
+      "/temporary-images/bloc-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/bloc-01.jpg"
+    ],
+    story: "BLOC adds twin collector wells to the classic rectangular board — juices captured, surface protected.",
+    craftsmanship: "Cut from solid teak with hand-finished wells and food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish. Rubber grips on the base.",
+    careInstructions: "Hand wash only. Do not soak. Wipe dry immediately. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "15 in L × 10 in W × 1 in H (25.4 mm)"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "How do I maintain it?",
+        a: "Hand wash, wipe dry immediately, and oil occasionally to maintain the surface."
+      }
+    ],
+    relatedProducts: [
+      "ligne",
+      "halo"
+    ],
+    tags: [
+      "board",
+      "chopping-boards",
+      "teak",
+      "juice-wells",
+      "first-production"
+    ]
+  },
+  {
+    id: "halo",
+    name: "HALO",
+    slug: "halo",
+    category: "chopping-boards",
+    categoryName: "Chopping Boards",
+    subcategory: "chopping-boards",
+    subcategoryName: "Chopping Boards",
+    price: 8500,
+    priceFormatted: "₹8,500",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Round handled teak board with hanging hole.",
+    description: "HALO is a round paddle-style teak board with a short tapered handle, hanging hole, and inset juice groove. Thin profile with rubber grips on the base. Food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "16.3 in overall L × 11.8 in W × 0.6 in thick (handle: 4.7 in)",
+    weight: "1.8 kg",
+    finish: "Food-safe oil",
+    buildTime: "~3 hours",
+    images: [
+      "/temporary-images/halo-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/halo-01.jpg"
+    ],
+    story: "HALO is the round paddle — serve on it, hang it up after.",
+    craftsmanship: "Shaped from solid teak with an inset juice groove and food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish. Rubber grips on the base.",
+    careInstructions: "Hand wash only. Do not soak. Wipe dry immediately. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "16.3 in overall L × 11.8 in W × 0.6 in thick (handle: 4.7 in)"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "How do I maintain it?",
+        a: "Hand wash, wipe dry immediately, and oil occasionally to maintain the surface."
+      }
+    ],
+    relatedProducts: [
+      "ligne",
+      "bloc"
+    ],
+    tags: [
+      "board",
+      "chopping-boards",
+      "teak",
+      "paddle",
+      "first-production"
+    ]
+  },
+  {
+    id: "rive",
+    name: "RIVE",
+    slug: "rive",
+    category: "serving-trays",
+    categoryName: "Serving Trays",
+    subcategory: "serving-trays",
+    subcategoryName: "Serving Trays",
+    price: 12000,
+    priceFormatted: "₹12,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Slatted flexible sofa-arm serving tray.",
+    description: "RIVE is a flexible slatted serving tray that drapes over a sofa arm — a flat serving surface flowing into a slatted side flap. Solid teak with a food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "18 in L × 12 in W",
+    weight: "1.5 kg",
+    finish: "Food-safe oil",
+    buildTime: "~4 hours",
+    images: [
+      "/temporary-images/rive-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/rive-01.jpg"
+    ],
+    story: "RIVE brings the table to the sofa — slats joined to flex over any armrest.",
+    craftsmanship: "Slatted solid teak, joined for flexibility, food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "18 in L × 12 in W"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Will it fit my sofa arm?",
+        a: "The flexible slats adapt to standard sofa arm widths."
+      }
+    ],
+    relatedProducts: [
+      "orbe",
+      "eclat"
+    ],
+    tags: [
+      "tray",
+      "serving-trays",
+      "teak",
+      "armrest",
+      "first-production"
+    ]
+  },
+  {
+    id: "orbe",
+    name: "ORBE",
+    slug: "orbe",
+    category: "serving-trays",
+    categoryName: "Serving Trays",
+    subcategory: "serving-trays",
+    subcategoryName: "Serving Trays",
+    price: 15000,
+    priceFormatted: "₹15,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Large rectangular tray with slot handles.",
+    description: "ORBE is a large rectangular serving tray with raised ends and elongated slot cut-out handles. Low profile, smooth grain, solid teak with a food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "20 in L × 14 in W × 2 in H",
+    weight: "3 kg",
+    finish: "Food-safe oil",
+    buildTime: "~5 hours",
+    images: [
+      "/temporary-images/orbe-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/orbe-01.jpg"
+    ],
+    story: "ORBE is the generous rectangular server — slot handles, low walls, room for everything.",
+    craftsmanship: "Shaped from solid teak with cut-out handles and food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "20 in L × 14 in W × 2 in H"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it food-safe?",
+        a: "Yes, finished with food-safe natural oil."
+      }
+    ],
+    relatedProducts: [
+      "rive",
+      "eclat"
+    ],
+    tags: [
+      "tray",
+      "serving-trays",
+      "teak",
+      "handles",
+      "first-production"
+    ]
+  },
+  {
+    id: "eclat",
+    name: "ÉCLAT",
+    slug: "eclat",
+    category: "serving-trays",
+    categoryName: "Serving Trays",
+    subcategory: "serving-trays",
+    subcategoryName: "Serving Trays",
+    price: 9000,
+    priceFormatted: "₹9,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Round serving tray with hand-carved edge.",
+    description: "ÉCLAT is a round serving tray with a hand-carved detailed rim — a shallow dish in solid teak with a food-safe oil finish.",
+    material: "Solid Teak",
+    dimensions: "12 in diameter × 1 in H",
+    weight: "1.2 kg",
+    finish: "Food-safe oil",
+    buildTime: "~3 hours",
+    images: [
+      "/temporary-images/eclat-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/eclat-01.jpg"
+    ],
+    story: "ÉCLAT is the round server — a carved rim elevating the everyday tray.",
+    craftsmanship: "Shaped from solid teak with a hand-carved rim and food-safe oil finish.",
+    materials: "Solid teak, food-safe oil finish.",
+    careInstructions: "Wipe with a damp cloth. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "12 in diameter × 1 in H"
+      },
+      {
+        label: "Finish",
+        value: "Food-safe oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it food-safe?",
+        a: "Yes, finished with food-safe natural oil."
+      }
+    ],
+    relatedProducts: [
+      "rive",
+      "orbe"
+    ],
+    tags: [
+      "tray",
+      "serving-trays",
+      "teak",
+      "round",
+      "first-production"
+    ]
+  },
+  {
+    id: "quadre",
+    name: "QUADRÉ",
+    slug: "quadre",
+    category: "coasters",
+    categoryName: "Coasters",
+    subcategory: "coasters",
+    subcategoryName: "Coasters",
+    price: 5000,
+    priceFormatted: "₹5,000",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Set of four square teak coasters.",
+    description: "QUADRÉ is a set of four square solid-teak coasters with sharp square corners, each with a shallow recessed dish. Natural oil finish.",
+    material: "Solid Teak",
+    dimensions: "4 × 4 in (10.16 × 10.16 cm), thickness 0.5 in (1.27 cm)",
+    weight: "0.4 kg (set)",
+    finish: "Natural oil",
+    buildTime: "~1 hour (set)",
+    images: [
+      "/temporary-images/quadre-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/quadre-01.jpg"
+    ],
+    story: "QUADRÉ is the square coaster set — sharp corners, recessed dish, solid teak.",
+    craftsmanship: "Cut from solid teak with a recessed dish and natural oil finish.",
+    materials: "Solid teak, natural oil finish.",
+    careInstructions: "Wipe clean. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "4 × 4 in (10.16 × 10.16 cm), thickness 0.5 in (1.27 cm)"
+      },
+      {
+        label: "Quantity",
+        value: "Set of 4"
+      },
+      {
+        label: "Finish",
+        value: "Natural oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "How many coasters are included?",
+        a: "Four square coasters."
+      }
+    ],
+    relatedProducts: [
+      "cercle"
+    ],
+    tags: [
+      "coaster",
+      "coasters",
+      "teak",
+      "square",
+      "first-production"
+    ]
+  },
+  {
+    id: "cercle",
+    name: "CERCLE",
+    slug: "cercle",
+    category: "coasters",
+    categoryName: "Coasters",
+    subcategory: "coasters",
+    subcategoryName: "Coasters",
+    price: 1500,
+    priceFormatted: "₹1,500",
+    currency: "INR",
+    availability: "In Stock",
+    availabilityNote: "Ships in 3–5 days",
+    inventoryQuantity: null,
+    shortDescription: "Round solid-teak coaster.",
+    description: "CERCLE is a round solid-teak coaster with a smooth rounded edge. Natural oil finish.",
+    material: "Solid Teak",
+    dimensions: "4 in diameter (10.16 cm), thickness approx. 0.5 in (1.27 cm)",
+    weight: "0.1 kg",
+    finish: "Natural oil",
+    buildTime: "~0.5 hours",
+    images: [
+      "/temporary-images/cercle-01.jpg"
+    ],
+    thumbnails: [
+      "/temporary-images/cercle-01.jpg"
+    ],
+    story: "CERCLE is the round coaster — a single honest disc of teak.",
+    craftsmanship: "Cut from solid teak with a natural oil finish.",
+    materials: "Solid teak, natural oil finish.",
+    careInstructions: "Wipe clean. Oil occasionally.",
+    shipping: "Ships in 3–5 days in protective packaging.",
+    returns: "Returns accepted within 7 days if unused.",
+    specifications: [
+      {
+        label: "Material",
+        value: "Solid Teak"
+      },
+      {
+        label: "Dimensions",
+        value: "4 in diameter (10.16 cm), thickness approx. 0.5 in (1.27 cm)"
+      },
+      {
+        label: "Finish",
+        value: "Natural oil"
+      }
+    ],
+    faqs: [
+      {
+        q: "Is it sold individually or as a set?",
+        a: "CERCLE is sold as a single coaster. Contact us for sets."
+      }
+    ],
+    relatedProducts: [
+      "quadre"
+    ],
+    tags: [
+      "coaster",
+      "coasters",
+      "teak",
+      "round",
+      "first-production"
+    ]
   }
 ];
 
@@ -4069,6 +4981,37 @@ export function getRelatedProducts(product) {
  */
 export function getCatalogueProducts() {
   return PRODUCTS.filter((p) => !p.isHero);
+}
+
+/**
+ * FIRST PRODUCTION CATALOGUE — the authoritative Gallery source of truth.
+ * Exactly the 14 standard production products from
+ * Teakle_Product_Catalogue_White_15_Products.pdf:
+ * Flower Vases (ÉLAN, SOLENNE, FORMA), Fruit Bowls (BOATÉ, PÉTALE, VÉNUS),
+ * Chopping Boards (LIGNE, BLOC, HALO), Serving Trays (RIVE, ORBE, ÉCLAT),
+ * Coasters (QUADRÉ, CERCLE).
+ * PANTHÈRE (Atelier Collection) is excluded by design — it lives only in
+ * the Atelier Stories experience and has no standard Gallery listing.
+ */
+export const FIRST_PRODUCTION_IDS = [
+  "elan",
+  "solenne",
+  "forma",
+  "boate",
+  "petale",
+  "venus",
+  "ligne",
+  "bloc",
+  "halo",
+  "rive",
+  "orbe",
+  "eclat",
+  "quadre",
+  "cercle",
+];
+
+export function getGalleryProducts() {
+  return FIRST_PRODUCTION_IDS.map((id) => getProductById(id)).filter(Boolean);
 }
 
 export function getHeroProduct() {

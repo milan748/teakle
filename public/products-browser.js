@@ -198,7 +198,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak carving board with juice groove.",
     "images": [
-      "https://images.pexels.com/photos/5807560/pexels-photo-5807560.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/carving-board-pinterest-01.jpg",
       "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -227,7 +227,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak bread bin with rolling lid.",
     "images": [
-      "https://images.pexels.com/photos/6474478/pexels-photo-6474478.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bread-box-01.jpg",
       "https://images.pexels.com/photos/6996084/pexels-photo-6996084.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -256,7 +256,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Hand-carved teak sculpture on stone base.",
     "images": [
-      "https://images.pexels.com/photos/6044820/pexels-photo-6044820.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/drift-sculpture-01.jpg",
       "https://images.pexels.com/photos/6044814/pexels-photo-6044814.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -285,7 +285,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Hand-turned teak vase with hourglass silhouette.",
     "images": [
-      "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/hourglass-vase-pinterest-01.png",
       "https://images.pexels.com/photos/6044810/pexels-photo-6044810.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -372,7 +372,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Hinged-lid teak jewellery box with felt interior.",
     "images": [
-      "https://images.pexels.com/photos/6045082/pexels-photo-6045082.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/jewellery-box-pinterest-01.jpg",
       "https://images.pexels.com/photos/6045086/pexels-photo-6045086.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -430,7 +430,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Multi-compartment desk organiser in solid teak.",
     "images": [
-      "https://images.pexels.com/photos/7979602/pexels-photo-7979602.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/desk-caddy-pinterest-01.webp",
       "https://images.pexels.com/photos/7979600/pexels-photo-7979600.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -546,7 +546,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak soap dish with drainage grooves.",
     "images": [
-      "https://images.pexels.com/photos/38417093/pexels-photo-38417093.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/soap-stone-01.png",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -604,7 +604,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Solid teak planter box for herbs and small plants.",
     "images": [
-      "https://images.pexels.com/photos/6480208/pexels-photo-6480208.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/herb-planter-01.jpg",
       "https://images.pexels.com/photos/6480206/pexels-photo-6480206.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -986,7 +986,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Set of six teak coasters with felt base.",
     "images": [
-      "https://images.pexels.com/photos/6474495/pexels-photo-6474495.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/wine-coasters-01.jpg",
       "https://images.pexels.com/photos/6996090/pexels-photo-6996090.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -1341,7 +1341,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Teak bath shelf that spans the bathtub edge.",
     "images": [
-      "https://images.pexels.com/photos/8005389/pexels-photo-8005389.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bath-shelf-pinterest-01.jpg",
       "https://images.pexels.com/photos/8005395/pexels-photo-8005395.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -1370,7 +1370,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "In Stock",
     "shortDescription": "Slatted teak bath mat for the shower or tub.",
     "images": [
-      "https://images.pexels.com/photos/8005387/pexels-photo-8005387.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/bath-mat-pinterest-01.jpg",
       "https://images.pexels.com/photos/8005391/pexels-photo-8005391.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -1458,7 +1458,7 @@ var TEAKLE_PRODUCTS = [
     "availability": "Limited Edition",
     "shortDescription": "Limited edition teak vase, numbered and signed.",
     "images": [
-      "https://images.pexels.com/photos/6045072/pexels-photo-6045072.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "/temporary-images/limited-vase-pinterest-01.jpg",
       "https://images.pexels.com/photos/6044816/pexels-photo-6044816.jpeg?auto=compress&cs=tinysrgb&w=1200"
     ],
     "thumbnails": [
@@ -1502,6 +1502,384 @@ var TEAKLE_PRODUCTS = [
       "teak",
       "curated",
       "set"
+    ]
+  },
+  {
+    "id": "elan",
+    "name": "ÉLAN",
+    "slug": "elan",
+    "price": 32000,
+    "priceFormatted": "₹32,000",
+    "category": "flower-vases",
+    "categoryName": "Flower Vases",
+    "subcategory": "flower-vases",
+    "subcategoryName": "Flower Vases",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Sculptural teak vase in the form of a female torso.",
+    "images": [
+      "/temporary-images/elan-01.png"
+    ],
+    "thumbnails": [
+      "/temporary-images/elan-01.png"
+    ],
+    "tags": [
+      "vase",
+      "flower-vases",
+      "teak",
+      "sculptural",
+      "first-production"
+    ]
+  },
+  {
+    "id": "solenne",
+    "name": "SOLENNE",
+    "slug": "solenne",
+    "price": 24000,
+    "priceFormatted": "₹24,000",
+    "category": "flower-vases",
+    "categoryName": "Flower Vases",
+    "subcategory": "flower-vases",
+    "subcategoryName": "Flower Vases",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Tall slender teardrop bud vase in solid teak.",
+    "images": [
+      "/temporary-images/solenne-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/solenne-01.jpg"
+    ],
+    "tags": [
+      "vase",
+      "flower-vases",
+      "teak",
+      "bud",
+      "first-production"
+    ]
+  },
+  {
+    "id": "forma",
+    "name": "FORMA",
+    "slug": "forma",
+    "price": 26000,
+    "priceFormatted": "₹26,000",
+    "category": "flower-vases",
+    "categoryName": "Flower Vases",
+    "subcategory": "flower-vases",
+    "subcategoryName": "Flower Vases",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Ovoid teak vase with dark natural grain.",
+    "images": [
+      "/temporary-images/forma-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/forma-01.jpg"
+    ],
+    "tags": [
+      "vase",
+      "flower-vases",
+      "teak",
+      "ovoid",
+      "first-production"
+    ]
+  },
+  {
+    "id": "boate",
+    "name": "BOATÉ",
+    "slug": "boate",
+    "price": 16000,
+    "priceFormatted": "₹16,000",
+    "category": "fruit-bowls",
+    "categoryName": "Fruit Bowls",
+    "subcategory": "fruit-bowls",
+    "subcategoryName": "Fruit Bowls",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Boat-shaped sculptural fruit bowl in solid teak.",
+    "images": [
+      "/temporary-images/boate-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/boate-01.jpg"
+    ],
+    "tags": [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "boat",
+      "first-production"
+    ]
+  },
+  {
+    "id": "petale",
+    "name": "PÉTALE",
+    "slug": "petale",
+    "price": 14000,
+    "priceFormatted": "₹14,000",
+    "category": "fruit-bowls",
+    "categoryName": "Fruit Bowls",
+    "subcategory": "fruit-bowls",
+    "subcategoryName": "Fruit Bowls",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Petal-carved lotus bowl in solid teak.",
+    "images": [
+      "/temporary-images/petale-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/petale-01.jpg"
+    ],
+    "tags": [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "petal",
+      "first-production"
+    ]
+  },
+  {
+    "id": "venus",
+    "name": "VÉNUS",
+    "slug": "venus",
+    "price": 18000,
+    "priceFormatted": "₹18,000",
+    "category": "fruit-bowls",
+    "categoryName": "Fruit Bowls",
+    "subcategory": "fruit-bowls",
+    "subcategoryName": "Fruit Bowls",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Conch-shell fruit bowl with hand-carved spiral.",
+    "images": [
+      "/temporary-images/venus-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/venus-01.jpg"
+    ],
+    "tags": [
+      "bowl",
+      "fruit-bowls",
+      "teak",
+      "shell",
+      "first-production"
+    ]
+  },
+  {
+    "id": "ligne",
+    "name": "LIGNE",
+    "slug": "ligne",
+    "price": 9500,
+    "priceFormatted": "₹9,500",
+    "category": "chopping-boards",
+    "categoryName": "Chopping Boards",
+    "subcategory": "chopping-boards",
+    "subcategoryName": "Chopping Boards",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Thick rectangular teak board with juice groove.",
+    "images": [
+      "/temporary-images/ligne-01.png"
+    ],
+    "thumbnails": [
+      "/temporary-images/ligne-01.png"
+    ],
+    "tags": [
+      "board",
+      "chopping-boards",
+      "teak",
+      "juice-groove",
+      "first-production"
+    ]
+  },
+  {
+    "id": "bloc",
+    "name": "BLOC",
+    "slug": "bloc",
+    "price": 11000,
+    "priceFormatted": "₹11,000",
+    "category": "chopping-boards",
+    "categoryName": "Chopping Boards",
+    "subcategory": "chopping-boards",
+    "subcategoryName": "Chopping Boards",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Rectangular teak board with twin juice wells.",
+    "images": [
+      "/temporary-images/bloc-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/bloc-01.jpg"
+    ],
+    "tags": [
+      "board",
+      "chopping-boards",
+      "teak",
+      "juice-wells",
+      "first-production"
+    ]
+  },
+  {
+    "id": "halo",
+    "name": "HALO",
+    "slug": "halo",
+    "price": 8500,
+    "priceFormatted": "₹8,500",
+    "category": "chopping-boards",
+    "categoryName": "Chopping Boards",
+    "subcategory": "chopping-boards",
+    "subcategoryName": "Chopping Boards",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Round handled teak board with hanging hole.",
+    "images": [
+      "/temporary-images/halo-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/halo-01.jpg"
+    ],
+    "tags": [
+      "board",
+      "chopping-boards",
+      "teak",
+      "paddle",
+      "first-production"
+    ]
+  },
+  {
+    "id": "rive",
+    "name": "RIVE",
+    "slug": "rive",
+    "price": 12000,
+    "priceFormatted": "₹12,000",
+    "category": "serving-trays",
+    "categoryName": "Serving Trays",
+    "subcategory": "serving-trays",
+    "subcategoryName": "Serving Trays",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Slatted flexible sofa-arm serving tray.",
+    "images": [
+      "/temporary-images/rive-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/rive-01.jpg"
+    ],
+    "tags": [
+      "tray",
+      "serving-trays",
+      "teak",
+      "armrest",
+      "first-production"
+    ]
+  },
+  {
+    "id": "orbe",
+    "name": "ORBE",
+    "slug": "orbe",
+    "price": 15000,
+    "priceFormatted": "₹15,000",
+    "category": "serving-trays",
+    "categoryName": "Serving Trays",
+    "subcategory": "serving-trays",
+    "subcategoryName": "Serving Trays",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Large rectangular tray with slot handles.",
+    "images": [
+      "/temporary-images/orbe-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/orbe-01.jpg"
+    ],
+    "tags": [
+      "tray",
+      "serving-trays",
+      "teak",
+      "handles",
+      "first-production"
+    ]
+  },
+  {
+    "id": "eclat",
+    "name": "ÉCLAT",
+    "slug": "eclat",
+    "price": 9000,
+    "priceFormatted": "₹9,000",
+    "category": "serving-trays",
+    "categoryName": "Serving Trays",
+    "subcategory": "serving-trays",
+    "subcategoryName": "Serving Trays",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Round serving tray with hand-carved edge.",
+    "images": [
+      "/temporary-images/eclat-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/eclat-01.jpg"
+    ],
+    "tags": [
+      "tray",
+      "serving-trays",
+      "teak",
+      "round",
+      "first-production"
+    ]
+  },
+  {
+    "id": "quadre",
+    "name": "QUADRÉ",
+    "slug": "quadre",
+    "price": 5000,
+    "priceFormatted": "₹5,000",
+    "category": "coasters",
+    "categoryName": "Coasters",
+    "subcategory": "coasters",
+    "subcategoryName": "Coasters",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Set of four square teak coasters.",
+    "images": [
+      "/temporary-images/quadre-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/quadre-01.jpg"
+    ],
+    "tags": [
+      "coaster",
+      "coasters",
+      "teak",
+      "square",
+      "first-production"
+    ]
+  },
+  {
+    "id": "cercle",
+    "name": "CERCLE",
+    "slug": "cercle",
+    "price": 1500,
+    "priceFormatted": "₹1,500",
+    "category": "coasters",
+    "categoryName": "Coasters",
+    "subcategory": "coasters",
+    "subcategoryName": "Coasters",
+    "material": "Solid Teak",
+    "availability": "In Stock",
+    "shortDescription": "Round solid-teak coaster.",
+    "images": [
+      "/temporary-images/cercle-01.jpg"
+    ],
+    "thumbnails": [
+      "/temporary-images/cercle-01.jpg"
+    ],
+    "tags": [
+      "coaster",
+      "coasters",
+      "teak",
+      "round",
+      "first-production"
     ]
   }
 ];

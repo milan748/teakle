@@ -27,6 +27,17 @@ export default function LoginPage() {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.Teakle && window.Teakle.isLoggedIn()) {
       window.location.href = '/account';
+      return;
+    }
+    // Deep-link support: /login?tab=register opens the Create Account tab
+    // (used by the header Account menu's "Create Account" item).
+    if (typeof window !== 'undefined') {
+      try {
+        const tab = new URLSearchParams(window.location.search).get('tab');
+        if (tab === 'register' || tab === 'signup') setActiveTab('register');
+      } catch {
+        /* ignore malformed query strings */
+      }
     }
   }, []);
 

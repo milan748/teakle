@@ -130,7 +130,7 @@ export default function TradeClient({ cms = {}, cmsKeys = [] }) {
 
       {!heroDisabled && (
       <section className="page-hero">
-        <img src={hero.image || "https://images.pexels.com/photos/12278576/pexels-photo-12278576.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="Stacked timber boards drying in a workshop." />
+        <img src={hero.image || "/temporary-images/trade-timber-stock-01.jpg"} alt="Stacked timber boards drying in a workshop." />
         <div className="page-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Trade & Bulk Inquiries'}</span>
           <h1>{hero.title || 'For projects that need more than one piece.'}</h1>

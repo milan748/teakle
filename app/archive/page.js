@@ -43,7 +43,7 @@ export default function ArchivePage() {
   const heroEyebrow = hero.eyebrow || 'Archive';
   const heroTitle = hero.title || 'A record of what has been made.';
   const heroBody = hero.body || "Past collections, limited editions, and one-of-one pieces. Once they're gone, they're documented here.";
-  const heroImage = hero.image || 'https://images.pexels.com/photos/5974327/pexels-photo-5974327.jpeg?auto=compress&cs=tinysrgb&w=1600';
+  const heroImage = hero.image || '/temporary-images/archive-hero-timber-01.jpg';
 
   const works = getArchivedWorks();
   const heroProduct = PRODUCTS.find((p) => p.isHero === true);
@@ -551,7 +551,7 @@ export default function ArchivePage() {
         {/* Ultra-wide editorial break — environmental/workshop context */}
         <figure className="arch-break" aria-label="Workshop environment">
           <img 
-            src="https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=2400"
+            src="/temporary-images/archive-workshop-break-01.jpg"
             alt="Close-up of a craftsman's hand guiding a chisel in the workshop."
             width="2400" height="900"
             loading="lazy"

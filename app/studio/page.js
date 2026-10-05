@@ -11,7 +11,7 @@ export const metadata = {
     title: 'Studio — Teakle',
     description: 'Inside the Teakle workshop.',
     url: 'https://teakle.in/studio',
-    images: [{ url: 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1200', alt: 'A craftsman planing a wooden board in natural light.' }],
+    images: [{ url: '/temporary-images/studio-hero-planing-01.jpg', alt: 'A craftsman planing a wooden board in natural light.' }],
   },
   alternates: { canonical: 'https://teakle.in/studio' },
 };
@@ -646,7 +646,7 @@ export default function StudioPage() {
       >
         <img 
           fetchPriority="high" 
-          src={hero.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600"} 
+          src={hero.image || "/temporary-images/studio-hero-planing-01.jpg"} 
           alt="A craftsman planing a wooden board in natural light." 
           width="1600" height="900" 
         />
@@ -668,7 +668,7 @@ export default function StudioPage() {
       >
         <div className="origin-grid">
           <div className="origin-image reveal" suppressHydrationWarning>
-            <img loading="lazy" src={origin.image || "https://images.pexels.com/photos/5973919/pexels-photo-5973919.jpeg?auto=compress&cs=tinysrgb&w=900"} alt="An older craftsman examining a piece of raw timber in a workshop." width="900" height="1125" />
+            <img loading="lazy" src={origin.image || "/temporary-images/studio-origin-carver-01.jpg"} alt="An older craftsman examining a piece of raw timber in a workshop." width="900" height="1125" />
           </div>
           <div className="origin-text">
             <span className="eyebrow reveal" suppressHydrationWarning>{origin.eyebrow || 'Where We Started'}</span>
@@ -700,7 +700,7 @@ export default function StudioPage() {
         <div className="editorial-image">
           <img 
             loading="lazy" 
-            src="https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600" 
+            src="/temporary-images/studio-material-joinery-01.jpg" 
             alt="Close-up of hand-cut joinery on a solid teak furniture piece, showing grain detail."
             width="1600" height="1067"
           />
@@ -829,13 +829,13 @@ export default function StudioPage() {
           </div>
           <div className="gallery-grid">
             <div className="gallery-item gallery-item--hero img-zoom reveal" suppressHydrationWarning>
-              <img loading="lazy" src={gallery.image || "https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1000"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
+              <img loading="lazy" src={gallery.image || "/temporary-images/studio-workshop-overview-01.jpg"} alt="A craftsman planing a wooden board in natural light." width="1000" height="667" />
             </div>
             <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
-              <img loading="lazy" src="https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Close-up of hand tools laid out on a workbench." width="700" height="467" />
+              <img loading="lazy" src="/temporary-images/studio-tools-roll-01.jpg" alt="Close-up of hand tools laid out on a workbench." width="700" height="467" />
             </div>
             <div className="gallery-item gallery-item--supporting img-zoom reveal" suppressHydrationWarning>
-              <img loading="lazy" src="https://images.pexels.com/photos/5974251/pexels-photo-5974251.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Wood shavings and dust on a workshop floor." width="700" height="467" />
+              <img loading="lazy" src="/temporary-images/studio-shavings-texture-01.jpg" alt="Wood shavings and dust on a workshop floor." width="700" height="467" />
             </div>
           </div>
         </div>

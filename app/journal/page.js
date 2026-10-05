@@ -477,7 +477,7 @@ export default function JournalPage() {
 
       {!heroDisabled && (
       <section className="journal-hero">
-        <img src={hero.image || "https://images.pexels.com/photos/5974028/pexels-photo-5974028.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="Hand tools arranged on a workshop bench." />
+        <img src={hero.image || "/temporary-images/journal-hero-tools-01.jpg"} alt="Hand tools arranged on a workshop bench." />
         <div className="journal-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Journal'}</span>
           <h1>{hero.title || 'Stories, wood facts, and how to care for your piece.'}</h1>

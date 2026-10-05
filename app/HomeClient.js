@@ -399,7 +399,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                       here — it lives in the craftsmanship/process sections below. */}
                   <div className="v2-sig-editorial-img">
                     <img
-                      src={sigPrimarySrc || signature.image || 'https://images.pexels.com/photos/31817693/pexels-photo-31817693.jpeg?auto=compress&cs=tinysrgb&w=1200'}
+                      src={sigPrimarySrc || signature.image || '/temporary-images/home-atelier-fallback-01.jpg'}
                       alt={`${heroProduct?.name || signature.title || 'Teakle Atelier signature piece'}, handcrafted solid teak`}
                       width="1200" height="800" loading="lazy"
                       style={resolveElementStyle('image', {}, sigOver, isMobile)}
@@ -508,7 +508,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                 <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
               </div>
               <div className="v2-craft-img">
-                <img src={craftsmanship.image || 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1200'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), ...(hasExplicitFocal(craftOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) } : {}) }} />
+                <img src={craftsmanship.image || '/temporary-images/home-craft-joinery-01.jpg'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), ...(hasExplicitFocal(craftOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) } : {}) }} />
               </div>
             </div>
           </section>
@@ -522,7 +522,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
           backfilled from the authoritative product dataset so the two
           groups stay distinct (no invented products). */}
       {(!carouselDisabled || !productGridDisabled) && (() => {
-        const FALLBACK_IDS = ['anchor-table', 'bearing-chair', 'circle-table', 'hollow-bench', 'drift-sculpture', 'hourglass-vase', 'spice-shelf', 'bread-box']
+        const FALLBACK_IDS = ['elan', 'boate', 'ligne', 'rive', 'quadre', 'solenne', 'petale', 'bloc', 'orbe', 'cercle', 'forma', 'venus', 'halo', 'eclat']
         const carouselIds = parseProductIds(collectionCarousel.body)
         const gridIds = parseProductIds(productGrid.body)
         const seen = new Set()
@@ -580,7 +580,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
       {!workshopDisabled && (
         <RevealOnMount threshold={0.15} className="reveal-section">
           <section className="v2-lifestyle">
-            <img className="v2-lifestyle-bg" src={workshopStory.image || 'https://images.pexels.com/photos/5974417/pexels-photo-5974417.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Close-up of a craftsman's hand guiding a chisel in the workshop." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, workshopOver, isMobile), ...(hasExplicitFocal(workshopOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(workshopOver, 'image', isMobile)) } : {}) }} />
+            <img className="v2-lifestyle-bg" src={workshopStory.image || '/temporary-images/home-workshop-chisel-01.jpg'} alt="Close-up of a craftsman's hand guiding a chisel in the workshop." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, workshopOver, isMobile), ...(hasExplicitFocal(workshopOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(workshopOver, 'image', isMobile)) } : {}) }} />
             <div className="v2-lifestyle-content">
               <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, workshopOver, isMobile)}>{workshopStory.eyebrow || 'The Workshop'}</span>
               <h2 style={resolveTypography('title', {}, workshopOver, isMobile)}>{workshopStory.title || 'A family workshop, unchanged in method for three generations.'}</h2>
@@ -595,7 +595,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
       {!processDisabled && (
         <RevealOnMount threshold={0.15} className="reveal-section">
           <section className="v2-lifestyle v2-lifestyle--watch">
-            <img className="v2-lifestyle-bg" src={processStory.image || 'https://images.pexels.com/photos/5710742/pexels-photo-5710742.jpeg?auto=compress&cs=tinysrgb&w=1600'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), ...(hasExplicitFocal(processOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) } : {}) }} />
+            <img className="v2-lifestyle-bg" src={processStory.image || '/temporary-images/home-process-timber-01.jpg'} alt="Timber being shaped by hand, filmed for a process video." width="1600" height="1067" loading="lazy" style={{ ...resolveElementStyle('image', {}, processOver, isMobile), ...(hasExplicitFocal(processOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(processOver, 'image', isMobile)) } : {}) }} />
             <div className="v2-lifestyle-content">
               <span className="eyebrow eyebrow-light" style={resolveTypography('eyebrow', {}, processOver, isMobile)}>{processStory.eyebrow || 'Watch It Made'}</span>
               <h2 style={resolveTypography('title', {}, processOver, isMobile)}>{processStory.title || 'Every piece is documented from timber to finish.'}</h2>

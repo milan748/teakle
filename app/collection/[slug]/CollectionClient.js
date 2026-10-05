@@ -14,33 +14,37 @@ const COLLECTIONS = {
     name: 'Kitchen & Dining',
     tagline: 'Where meals begin and memories form.',
     description: 'Handcrafted boards, bowls, and serving pieces designed for daily use. Each piece is shaped from solid teak, finished with food-safe oil, and built to develop a rich patina over years of use.',
-    heroImage: 'https://images.pexels.com/photos/6910978/pexels-photo-6910978.jpeg?auto=compress&cs=tinysrgb&w=1800',
+    heroImage: '/temporary-images/collection-kitchen-dining-01.jpg',
     categories: ['kitchen', 'dining'],
     subcategories: ['serving-boards', 'trays', 'bowls', 'countertop-essentials', 'cooking-essentials', 'dining-serving'],
+    allowedProductIds: ['carving-board', 'nesting-bowls'],
   },
   'home-decor': {
     name: 'Home Décor',
     tagline: 'Objects that anchor a room.',
     description: 'Sculptural objects, vases, and candle holders crafted to bring warmth and character to any space. Each piece is unique — shaped by hand, never by machine.',
-    heroImage: 'https://images.pexels.com/photos/4612501/pexels-photo-4612501.jpeg?auto=compress&cs=tinysrgb&w=1800',
+    heroImage: '/temporary-images/collection-home-decor-01.jpg',
     categories: ['living', 'outdoor'],
     subcategories: ['sculptures', 'vases', 'candle-holders', 'coffee-table-decor', 'planters'],
+    allowedProductIds: ['drift-sculpture'],
   },
   'everyday-living': {
     name: 'Everyday Living',
     tagline: 'Handmade rituals for daily life.',
     description: 'Trays, boxes, and organisers shaped by hand for the small rituals that make a home. Designed to be used every day, and to look better with each year.',
-    heroImage: 'https://images.pexels.com/photos/33395641/pexels-photo-33395641.jpeg?auto=compress&cs=tinysrgb&w=1800',
+    heroImage: '/temporary-images/collection-everyday-living-01.jpg',
     categories: ['living', 'bedroom'],
     subcategories: ['storage-boxes', 'nightstand-essentials', 'organizers', 'decorative-objects'],
+    allowedProductIds: ['nesting-bowls', 'wine-coaster'],
   },
   'storage': {
     name: 'Storage',
     tagline: 'Functional craft for organised spaces.',
     description: 'Pen holders, desk trays, vanity organisers, and storage boxes — each one handcrafted from solid timber. Functional objects that bring order and beauty to everyday spaces.',
-    heroImage: 'https://images.pexels.com/photos/6340708/pexels-photo-6340708.jpeg?auto=compress&cs=tinysrgb&w=1800',
+    heroImage: '/temporary-images/collection-storage-01.jpg',
     categories: ['office', 'bathroom', 'bedroom'],
     subcategories: ['desk-organization', 'pen-holders', 'vanity-organizers', 'organizers', 'laptop-stands'],
+    allowedProductIds: ['bread-box'],
   },
 };
 
@@ -266,9 +270,13 @@ export default function CollectionClient({ products: serverProducts }) {
     if (!source.length) return;
     /* Standard catalogue only — the Atelier hero is excluded by design. */
     const all = source.filter((p) => !p.isHero);
-    const filtered = all.filter(
+    let filtered = all.filter(
       (p) => col.categories.includes(p.category) || col.subcategories.includes(p.subcategory)
     );
+    /* Restrict display to approved product concepts per category rules. */
+    if (col.allowedProductIds && col.allowedProductIds.length > 0) {
+      filtered = filtered.filter((p) => col.allowedProductIds.includes(p.id));
+    }
     setProducts(filtered);
     setLoading(false);
   }, [slug]);

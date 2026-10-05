@@ -120,7 +120,7 @@ export default function ContactPage() {
 
       {!heroDisabled && (
       <section className="page-hero">
-        <img src={hero.image || "https://images.pexels.com/photos/7234682/pexels-photo-7234682.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A hand rubbing oil finish into a wooden surface." />
+        <img src={hero.image || "/temporary-images/contact-hand-finishing-01.jpg"} alt="A hand rubbing oil finish into a wooden surface." />
         <div className="page-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Contact'}</span>
           <h1>{hero.title || 'Questions before you order are always welcome.'}</h1>

@@ -318,7 +318,7 @@ export default function CustomClient({ cms = {}, cmsKeys = [] }) {
 
       {!heroDisabled && (
       <section className="page-hero">
-        <img src={hero.image || "https://images.pexels.com/photos/5974327/pexels-photo-5974327.jpeg?auto=compress&cs=tinysrgb&w=1600"} alt="A craftsman hand-shaping a wooden surface in the workshop." />
+        <img src={hero.image || "/temporary-images/commission-carver-01.jpg"} alt="A craftsman hand-shaping a wooden surface in the workshop." />
         <div className="page-hero-content">
           <span className="eyebrow eyebrow-light">{hero.eyebrow || 'Commission'}</span>
           <h1>{hero.title || 'Custom Wooden Creations'}</h1>

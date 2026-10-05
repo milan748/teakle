@@ -6,48 +6,50 @@ import Link from 'next/link';
 import ProductCard from '../components/ProductCard';
 
 /* ============================================
-   GALLERY — Curated Product Discovery
-   Use-case categories + filtering + sorting
+   GALLERY — First Production Catalogue
+   Five production categories from
+   Teakle_Product_Catalogue_White_15_Products.pdf.
+   PANTHÈRE (Atelier Collection) is excluded by design.
    ============================================ */
 
 const CATEGORIES = [
   {
-    key: 'kitchen-dining',
-    title: 'Kitchen & Dining',
-    description: 'Cooking, serving, and gathering around the table.',
-    filter: (p) => p.category === 'kitchen' || p.category === 'dining',
+    key: 'flower-vases',
+    title: 'Flower Vases',
+    description: 'Sculptural vases in solid teak.',
+    filter: (p) => p.category === 'flower-vases',
   },
   {
-    key: 'coffee-tea',
-    title: 'Coffee & Tea',
-    description: 'Stations, caddies, and accessories for the daily ritual.',
-    filter: (p) => p.subcategory === 'coffee-tea-station' || p.subcategory === 'pantry-organization' || p.id === 'tea-caddy',
+    key: 'fruit-bowls',
+    title: 'Fruit Bowls',
+    description: 'Boat, petal, and shell forms for the table.',
+    filter: (p) => p.category === 'fruit-bowls',
   },
   {
-    key: 'storage-organization',
-    title: 'Storage & Organization',
-    description: 'Shelves, caddies, and organisers for every room.',
-    filter: (p) => p.subcategory === 'storage-organization' || p.subcategory === 'organizers' || p.subcategory === 'desk-organization' || p.subcategory === 'pantry-organization' || p.subcategory === 'storage-boxes' || p.subcategory === 'pen-holders' || p.subcategory === 'laptop-stands' || p.subcategory === 'document-storage' || p.subcategory === 'office-decor' || p.subcategory === 'accessories' || p.id === 'blanket-ladder' || p.id === 'floating-shelf-set',
+    key: 'chopping-boards',
+    title: 'Chopping Boards',
+    description: 'Thick slabs, wells, and handled rounds.',
+    filter: (p) => p.category === 'chopping-boards',
   },
   {
-    key: 'home-decor',
-    title: 'Home Décor',
-    description: 'Sculptural objects, vases, and candle holders.',
-    filter: (p) => p.subcategory === 'sculptures' || p.subcategory === 'vases' || p.subcategory === 'coffee-table-decor' || p.subcategory === 'candle-holders' || p.subcategory === 'decorative-objects' || p.subcategory === 'shelving-decor' || p.subcategory === 'mirrors' || p.subcategory === 'nightstand-essentials' || p.subcategory === 'jewelry-storage' || p.subcategory === 'decorative-accents' || p.subcategory === 'bedroom-decor',
+    key: 'serving-trays',
+    title: 'Serving Trays',
+    description: 'Armrest, rectangular, and round servers.',
+    filter: (p) => p.category === 'serving-trays',
   },
   {
-    key: 'bathroom',
-    title: 'Bathroom',
-    description: 'Vanity trays, soap dishes, and tumblers.',
-    filter: (p) => p.category === 'bathroom',
-  },
-  {
-    key: 'everyday-living',
-    title: 'Everyday Living',
-    description: 'Planters, outdoor serving, and limited editions.',
-    filter: (p) => p.category === 'outdoor' || p.category === 'seasonal',
+    key: 'coasters',
+    title: 'Coasters',
+    description: 'Square sets and round singles.',
+    filter: (p) => p.category === 'coasters',
   },
 ];
+
+/* First-production gate — Gallery shows ONLY the 14 standard catalogue
+   products (PANTHÈRE excluded by design). Old demo records remain in the
+   dataset for deep links but can never reappear in Gallery. */
+const GALLERY_CATEGORY_KEYS = new Set(CATEGORIES.map((c) => c.key));
+const isGalleryProduct = (p) => p && !p.isHero && GALLERY_CATEGORY_KEYS.has(p.category);
 
 const SORT_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -56,7 +58,7 @@ const SORT_OPTIONS = [
   { value: 'name-asc', label: 'Name: A–Z' },
 ];
 
-const PRICE_bounds = { min: 3500, max: 185000 };
+const PRICE_bounds = { min: 1500, max: 32000 };
 
 const AVAILABILITY_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -750,8 +752,8 @@ export default function GalleryClient({ products: serverProducts }) {
   useEffect(() => {
     document.title = searchQuery ? `Search: ${searchQuery} — Teakle` : 'Gallery — Teakle';
     if (typeof window !== 'undefined' && window.TEAKLE_PRODUCTS && (!serverProducts || !serverProducts.length)) {
-      /* Standard catalogue only — the Atelier hero is excluded by design. */
-      setProducts(window.TEAKLE_PRODUCTS.filter((p) => !p.isHero));
+      /* First production only — the Atelier hero is excluded by design. */
+      setProducts(window.TEAKLE_PRODUCTS.filter(isGalleryProduct));
     }
   }, [searchQuery, serverProducts]);
 
@@ -765,8 +767,8 @@ export default function GalleryClient({ products: serverProducts }) {
   }, [searchParams]);
 
   const categoryCounts = useMemo(() => {
-    /* Standard catalogue only — the Atelier hero is excluded by design. */
-    let base = [...products].filter((p) => !p.isHero);
+    /* First production only — the Atelier hero is excluded by design. */
+    let base = [...products].filter(isGalleryProduct);
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
       base = base.filter((p) => {
@@ -787,8 +789,8 @@ export default function GalleryClient({ products: serverProducts }) {
   }, [products, searchQuery]);
 
   const filteredProducts = useMemo(() => {
-    /* Standard catalogue only — the Atelier hero is excluded by design. */
-    let result = [...products].filter((p) => !p.isHero);
+    /* First production only — the Atelier hero is excluded by design. */
+    let result = [...products].filter(isGalleryProduct);
 
     if (searchQuery) {
       const lower = searchQuery.toLowerCase();
@@ -866,11 +868,11 @@ export default function GalleryClient({ products: serverProducts }) {
 
       <div className="gal-page">
         <section className="page-hero">
-          <img src="https://images.pexels.com/photos/6474475/pexels-photo-6474475.jpeg?auto=compress&cs=tinysrgb&w=1600" alt="A curated collection of handcrafted teak serving pieces on a wooden table." />
+          <img src="/temporary-images/gallery-serving-banner-01.jpg" alt="A curated collection of handcrafted teak serving pieces on a wooden table." />
           <div className="page-hero-content">
             <span className="eyebrow eyebrow-light">Gallery</span>
             <h1>Every piece, handcrafted from solid timber.</h1>
-            <p>Browse by use case &mdash; kitchen, coffee, storage, d&eacute;cor, bathroom, and everyday living.</p>
+            <p>Browse the first production &mdash; flower vases, fruit bowls, chopping boards, serving trays, and coasters.</p>
           </div>
         </section>
 

@@ -75,7 +75,10 @@ console.log('\n=== 4. Commerce + filtering preserved ===')
   test('product name rendered', card.includes('<h3>{product.name}</h3>'))
   test('category pills preserved', gallery.includes('gal-cat-pill') && gallery.includes("setActiveCategory"))
   test('all existing categories preserved',
-    ['kitchen-dining', 'coffee-tea', 'storage-organization', 'home-decor', 'bathroom', 'everyday-living']
+    // Production catalogue taxonomy (Teakle_Product_Catalogue_White_15_Products.pdf):
+    // the six temporary demo categories were intentionally replaced by the
+    // five first-production categories. PANTHÈRE (Atelier) has no Gallery listing.
+    ['flower-vases', 'fruit-bowls', 'chopping-boards', 'serving-trays', 'coasters']
       .every((k) => gallery.includes(`key: '${k}'`)))
   test('sort control preserved', gallery.includes('gal-sort-select'))
   test('price + availability filters preserved', gallery.includes('PRICE_bounds') && gallery.includes('gal-availability'))

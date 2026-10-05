@@ -47,12 +47,13 @@ const photoIds = (src) => {
   return out
 }
 
-// Pexels photo IDs verified relevant to Teakle editorial sections.
+// Temporary Pinterest-sourced stand-ins approved for the homepage
+// editorial slots (see TEMPORARY_IMAGE_MAP.md). No Pexels IDs remain.
 const VERIFIED_EDITORIAL = {
-  '31817693': 'rustic wooden stools (signature fallback / CMS image)',
-  '5974275': 'artisan cutting joint with chisel (craftsmanship)',
-  '5974417': 'woodworker hands with chisel and hammer (workshop-story)',
-  '5710742': 'craftsman sanding plank in workshop (process-story)',
+  'home-atelier-fallback-01.jpg': 'solid-walnut bench (signature fallback / CMS image)',
+  'home-craft-joinery-01.jpg': 'hand-cut dovetail joint macro (craftsmanship)',
+  'home-workshop-chisel-01.jpg': 'hand gripping chisel (workshop-story)',
+  'home-process-timber-01.jpg': 'vintage plane with shavings (process-story)',
 }
 
 // Pexels photo IDs verified UNRELATED (removed during the T01 audit).
@@ -60,28 +61,27 @@ const KNOWN_UNRELATED = ['11112745', '4564013']
 
 console.log('=== 1. Homepage editorial images are all verified-relevant ===')
 {
-  const ids = photoIds(homeClient)
-  test('HomeClient references editorial imagery', ids.length > 0, `found [${ids}]`)
-  for (const pid of new Set(ids)) {
-    // Product images are audited by homepage-image-integrity.test.js; here we
-    // only require that no KNOWN-UNRELATED photo appears anywhere on the page.
-    test(`photo ${pid} is not known-unrelated`, !KNOWN_UNRELATED.includes(pid), 'known-unrelated photo on homepage')
+  const files = [...homeClient.matchAll(/\/temporary-images\/([\w-]+\.jpg)/g)].map(m => m[1])
+  test('HomeClient references editorial imagery', files.length > 0, `found [${files}]`)
+  for (const f of new Set(files)) {
+    test(`file ${f} is an approved temporary asset`, f in VERIFIED_EDITORIAL, 'unapproved image on homepage')
   }
-  for (const pid of Object.keys(VERIFIED_EDITORIAL)) {
-    test(`verified editorial photo ${pid} still referenced (${VERIFIED_EDITORIAL[pid]})`, ids.includes(pid), 'missing from HomeClient')
+  for (const f of Object.keys(VERIFIED_EDITORIAL)) {
+    test(`verified editorial file ${f} still referenced (${VERIFIED_EDITORIAL[f]})`, files.includes(f), 'missing from HomeClient')
   }
+  test('no Pexels URLs remain on homepage', !homeClient.includes('images.pexels.com'), 'pexels URL still present')
   test('hero uses local brand asset', homeClient.includes('/assets/hero-luxury-entryway.png'), 'hero fallback changed')
 }
 
 console.log('\n=== 2. Seed CMS homepage images match the verified set ===')
 {
   // seed-cms.js owns the craftsmanship / workshop-story / process-story
-  // images. (The 31817693 signature fallback lives in HomeClient.js and the
+  // images. (The atelier fallback lives in HomeClient.js and the
   // live CMS row, covered in section 1.)
-  const ids = photoIds(seedCms)
-  for (const pid of ['5974275', '5974417', '5710742']) {
-    test(`seed-cms keeps verified photo ${pid}`, ids.includes(pid), 'missing from seed-cms.js')
+  for (const f of ['home-craft-joinery-01.jpg', 'home-workshop-chisel-01.jpg', 'home-process-timber-01.jpg']) {
+    test(`seed-cms keeps verified file ${f}`, seedCms.includes(f), 'missing from seed-cms.js')
   }
+  test('no Pexels URLs remain in seed file', !seedCms.includes('images.pexels.com'), 'pexels URL still present')
 }
 
 console.log('\n=== 3. Image descriptions match the rendered image content ===')

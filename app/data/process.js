@@ -23,12 +23,12 @@ export const PROCESSES = [
     title: 'The Making of The Anchor Table',
     subtitle: 'From a single teak block to a dining table built to outlast its owner.',
     intro: 'The Anchor Table begins as a single teak log, selected from a managed plantation in southern India. Every joint is hand-cut. The grain runs the full length of the top, unbroken. Nothing here is rushed.',
-    heroImage: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    heroImage: '/temporary-images/process-poster-workshop-01.jpg',
     heroImageAlt: 'Hand-planing a solid teak surface in natural workshop light.',
     /* — Editorial film block (self-hosted/CDN-ready). Points at the
        supplied production video; the layout renders it as-is. */
     videoUrl: '/assets/videos/0714.mp4',
-    posterUrl: 'https://images.pexels.com/photos/5974275/pexels-photo-5974275.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    posterUrl: '/temporary-images/process-poster-workshop-01.jpg',
     /* Small contextual label rendered above the product name. */
     contextLabel: 'Atelier Stories — One of One',
     /* — CMS-ready editorial sections (future WordPress blocks). Every

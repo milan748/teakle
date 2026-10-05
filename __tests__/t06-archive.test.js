@@ -87,7 +87,7 @@ console.log('\n=== 5. CMS hero integrity ===')
   test('reads published hero body (not subtitle)', /hero\.body/.test(archive))
   test('fallback matches published CMS copy',
     archive.includes('Past collections, limited editions') && archive.includes('A record of what has been made.'))
-  test('fallback image matches CMS image', archive.includes('5974327'))
+  test('fallback image matches CMS image', archive.includes('/temporary-images/archive-hero-timber-01.jpg'))
 }
 
 console.log(`\n${passed} passed, ${failed} failed`)
