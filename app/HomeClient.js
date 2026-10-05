@@ -508,7 +508,7 @@ export default function HomeClient({ cms = {}, cmsKeys = new Set(), heroProduct 
                 <Link href={craftsmanship.buttonUrl || '/studio'} className="link-quiet">{craftsmanship.buttonLabel || 'Visit the Studio'}</Link>
               </div>
               <div className="v2-craft-img">
-                <img src={craftsmanship.image || '/temporary-images/home-craft-joinery-01.jpg'} alt="Close-up of hand-cut joinery on a solid teak furniture piece." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), ...(hasExplicitFocal(craftOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) } : {}) }} />
+                <img src={craftsmanship.image || '/temporary-images/home-craft-artisan-01.jpg'} alt="Indian craftsman hand-turning solid timber in the Teakle workshop." width="1200" height="1500" loading="lazy" style={{ ...resolveElementStyle('image', {}, craftOver, isMobile), ...(hasExplicitFocal(craftOver, 'image', isMobile) ? { objectPosition: focalPointToObjectPosition(resolveFocalPoint(craftOver, 'image', isMobile)) } : {}) }} />
               </div>
             </div>
           </section>

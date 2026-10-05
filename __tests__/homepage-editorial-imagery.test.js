@@ -51,7 +51,7 @@ const photoIds = (src) => {
 // editorial slots (see TEMPORARY_IMAGE_MAP.md). No Pexels IDs remain.
 const VERIFIED_EDITORIAL = {
   'home-atelier-fallback-01.jpg': 'solid-walnut bench (signature fallback / CMS image)',
-  'home-craft-joinery-01.jpg': 'hand-cut dovetail joint macro (craftsmanship)',
+  'home-craft-artisan-01.jpg': 'indian craftsman hand-turning timber (craftsmanship)',
   'home-workshop-chisel-01.jpg': 'hand gripping chisel (workshop-story)',
   'home-process-timber-01.jpg': 'vintage plane with shavings (process-story)',
 }
@@ -78,7 +78,7 @@ console.log('\n=== 2. Seed CMS homepage images match the verified set ===')
   // seed-cms.js owns the craftsmanship / workshop-story / process-story
   // images. (The atelier fallback lives in HomeClient.js and the
   // live CMS row, covered in section 1.)
-  for (const f of ['home-craft-joinery-01.jpg', 'home-workshop-chisel-01.jpg', 'home-process-timber-01.jpg']) {
+  for (const f of ['home-craft-artisan-01.jpg', 'home-workshop-chisel-01.jpg', 'home-process-timber-01.jpg']) {
     test(`seed-cms keeps verified file ${f}`, seedCms.includes(f), 'missing from seed-cms.js')
   }
   test('no Pexels URLs remain in seed file', !seedCms.includes('images.pexels.com'), 'pexels URL still present')

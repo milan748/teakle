@@ -59,7 +59,7 @@ console.log('\n=== 2. Craft text hierarchy ===')
     homeClient.includes('Joints are cut by hand and fitted dry'))
   test('craft link preserved', homeClient.includes('Visit the Studio'))
   test('craft image source is the approved temporary asset (no stock swap)',
-    homeClient.includes('/temporary-images/home-craft-joinery-01.jpg'))
+    homeClient.includes('/temporary-images/home-craft-artisan-01.jpg'))
 }
 
 console.log('\n=== 3. Workshop/process rhythm is differentiated ===')

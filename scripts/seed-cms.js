@@ -59,7 +59,7 @@ const SECTIONS = [
     eyebrow: 'Craftsmanship',
     title: 'Every piece passes through one pair of hands, start to finish.',
     body: 'We work in solid timber, never veneer or particleboard. A single block is selected, dried, and left to settle before a tool ever touches it \u2014 rushing this step is the most common way a piece fails early.\n\nJoints are cut by hand and fitted dry before any finish is applied. The oil we use is food-safe and reapplied over the piece\u2019s life, not sealed under lacquer that traps moisture and cracks.',
-    image: '/temporary-images/home-craft-joinery-01.jpg',
+    image: '/temporary-images/home-craft-artisan-01.jpg',
     mobileImage: null,
     buttonLabel: 'Visit the Studio',
     buttonUrl: '/studio',
